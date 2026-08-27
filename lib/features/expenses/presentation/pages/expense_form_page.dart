@@ -342,25 +342,22 @@ class _SubmitBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocSelector<ExpenseFormCubit, ExpenseFormState, bool>(
       selector: (state) => state.isSubmitting,
+      // Scaffold already lifts its bottomNavigationBar above the keyboard, so
+      // adding the view inset here would push the button up twice.
       builder: (context, isSubmitting) => SafeArea(
         minimum: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.viewInsetsOf(context).bottom,
-          ),
-          child: FilledButton.icon(
-            onPressed: isSubmitting ? null : onSubmit,
-            icon: isSubmitting
-                ? const SizedBox.square(
-                    dimension: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Icon(isEditing ? Icons.check_rounded : Icons.add_rounded),
-            label: Text(
-              isEditing
-                  ? context.strings.saveChanges
-                  : context.strings.addExpense,
-            ),
+        child: FilledButton.icon(
+          onPressed: isSubmitting ? null : onSubmit,
+          icon: isSubmitting
+              ? const SizedBox.square(
+                  dimension: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Icon(isEditing ? Icons.check_rounded : Icons.add_rounded),
+          label: Text(
+            isEditing
+                ? context.strings.saveChanges
+                : context.strings.addExpense,
           ),
         ),
       ),
