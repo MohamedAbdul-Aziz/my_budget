@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:my_budget/core/error/api_result.dart';
 import 'package:my_budget/core/error/failures.dart';
 import 'package:my_budget/features/categories/domain/entities/expense_category.dart';
@@ -9,7 +7,6 @@ import 'package:my_budget/features/expenses/domain/entities/expense.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
 import 'package:my_budget/features/expenses/domain/entities/monthly_summary.dart';
 import 'package:my_budget/features/expenses/domain/repositories/expense_repository.dart';
-import 'package:my_budget/features/quick_expense/domain/entities/quick_add_request.dart';
 import 'package:my_budget/features/quick_expense/domain/entities/quick_expense_snapshot.dart';
 import 'package:my_budget/features/quick_expense/domain/repositories/quick_expense_widget_repository.dart';
 import 'package:my_budget/features/settings/domain/entities/app_settings.dart';
@@ -226,15 +223,9 @@ class FakeSettingsRepository implements SettingsRepository {
 }
 
 /// Stands in for the Android home screen widget: records what the app would
-/// have drawn on it, and can play back a tap.
+/// have drawn on it.
 class FakeQuickExpenseWidgetRepository implements QuickExpenseWidgetRepository {
   final List<QuickExpenseSnapshot> published = [];
-
-  /// Primed by a test to simulate the app being cold-started by a widget tap.
-  QuickAddRequest? launchRequest;
-
-  final StreamController<QuickAddRequest> _requests =
-      StreamController<QuickAddRequest>.broadcast();
 
   QuickExpenseSnapshot? get latest =>
       published.isEmpty ? null : published.last;
@@ -244,19 +235,4 @@ class FakeQuickExpenseWidgetRepository implements QuickExpenseWidgetRepository {
     published.add(snapshot);
     return const Success(null);
   }
-
-  @override
-  Future<QuickAddRequest?> consumeLaunchRequest() async {
-    final request = launchRequest;
-    launchRequest = null;
-    return request;
-  }
-
-  @override
-  Stream<QuickAddRequest> get requests => _requests.stream;
-
-  /// Simulates a tap while the app is already running.
-  void tap(QuickAddRequest request) => _requests.add(request);
-
-  Future<void> dispose() => _requests.close();
 }

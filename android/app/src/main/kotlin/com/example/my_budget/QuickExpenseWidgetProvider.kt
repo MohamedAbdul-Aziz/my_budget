@@ -38,7 +38,6 @@ class QuickExpenseWidgetProvider : AppWidgetProvider() {
     companion object {
         const val PREFS_NAME = "quick_expense_widget"
         const val KEY_SNAPSHOT = "snapshot"
-        const val EXTRA_FROM_WIDGET = "quick_expense_from_widget"
         const val EXTRA_CATEGORY_ID = "quick_expense_category_id"
 
         private val CHIP_IDS = intArrayOf(
@@ -176,11 +175,13 @@ class QuickExpenseWidgetProvider : AppWidgetProvider() {
             requestCode: Int,
             categoryId: String?
         ): PendingIntent {
-            val intent = Intent(context, MainActivity::class.java).apply {
-                action = Intent.ACTION_MAIN
-                addCategory(Intent.CATEGORY_LAUNCHER)
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                putExtra(EXTRA_FROM_WIDGET, true)
+            // QuickAddActivity, never MainActivity: a widget tap must not
+            // land the user on the app's home screen. CLEAR_TASK means a
+            // second tap replaces the first rather than stacking, so the
+            // category the user just pressed is always the one that opens.
+            val intent = Intent(context, QuickAddActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK
                 if (categoryId != null) putExtra(EXTRA_CATEGORY_ID, categoryId)
             }
             var flags = PendingIntent.FLAG_UPDATE_CURRENT

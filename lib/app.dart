@@ -14,17 +14,8 @@ import 'features/settings/presentation/cubit/settings_state.dart';
 
 /// Hosts the three long-lived cubits. They are resolved from the service
 /// locator with `.value`, so navigating away never closes them.
-class MyBudgetApp extends StatefulWidget {
+class MyBudgetApp extends StatelessWidget {
   const MyBudgetApp({super.key});
-
-  @override
-  State<MyBudgetApp> createState() => _MyBudgetAppState();
-}
-
-class _MyBudgetAppState extends State<MyBudgetApp> {
-  /// Lets the home screen widget open the quick-add sheet from outside the
-  /// widget tree.
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +34,6 @@ class _MyBudgetAppState extends State<MyBudgetApp> {
           return MaterialApp(
             onGenerateTitle: (context) => context.strings.appTitle,
             debugShowCheckedModeBanner: false,
-            navigatorKey: _navigatorKey,
             theme: AppTheme.light,
             darkTheme: AppTheme.dark,
             themeMode: themeMode,
@@ -57,7 +47,6 @@ class _MyBudgetAppState extends State<MyBudgetApp> {
               GlobalCupertinoLocalizations.delegate,
             ],
             builder: (context, child) => QuickExpenseBridge(
-              navigatorKey: _navigatorKey,
               child: child ?? const SizedBox.shrink(),
             ),
             home: const HomePage(),

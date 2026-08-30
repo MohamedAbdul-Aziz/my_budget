@@ -1,5 +1,4 @@
 import '../../../../core/error/api_result.dart';
-import '../../domain/entities/quick_add_request.dart';
 import '../../domain/entities/quick_expense_snapshot.dart';
 import '../../domain/repositories/quick_expense_widget_repository.dart';
 import '../datasources/quick_expense_widget_channel.dart';
@@ -15,11 +14,4 @@ class QuickExpenseWidgetRepositoryImpl implements QuickExpenseWidgetRepository {
       ApiResult.guard(
         () async => _channel.publish(QuickExpensePayload.encode(snapshot)),
       );
-
-  @override
-  Future<QuickAddRequest?> consumeLaunchRequest() =>
-      _channel.consumeLaunchRequest();
-
-  @override
-  Stream<QuickAddRequest> get requests => _channel.requests;
 }

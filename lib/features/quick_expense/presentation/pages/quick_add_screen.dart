@@ -6,50 +6,55 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/l10n/app_strings.dart';
 import '../../../categories/domain/entities/expense_category.dart';
+import '../../../categories/presentation/category_label.dart';
 import '../../../categories/presentation/cubit/categories_cubit.dart';
 import '../../../categories/presentation/cubit/categories_state.dart';
+import '../../../categories/presentation/widgets/category_avatar.dart';
 import '../../../categories/presentation/widgets/category_picker.dart';
 import '../../../expenses/presentation/cubit/expense_form_cubit.dart';
 import '../../../expenses/presentation/cubit/expense_form_state.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
+import '../publish_widget.dart';
 
-/// The fastest way to record an expense: amount, category, save.
+/// The entire UI behind a home screen widget tap: amount, category, save.
 ///
-/// This is what the Android home screen widget opens. Android widgets cannot
-/// host a text field, so the widget carries the category choice and this sheet
-/// collects the one thing it cannot — the amount. It opens with the keyboard
-/// up and a category already selected, so saving is: type a number, tap Save.
-class QuickAddSheet extends StatefulWidget {
-  const QuickAddSheet({super.key});
+/// It is the only thing the quick-add activity shows — the app's home screen
+/// is never built. The category arrives already chosen from the widget, the
+/// date is today and the note is skipped, so recording an expense is one
+/// number and one tap. Saving redraws the widget and closes the dialog,
+/// returning the user to the launcher.
+class QuickAddScreen extends StatelessWidget {
+  const QuickAddScreen({super.key, this.categoryId});
 
-  /// Resolves [categoryId] against the loaded categories and opens the sheet.
-  /// Returns true when an expense was saved.
-  static Future<bool?> show(BuildContext context, {String? categoryId}) {
+  /// The category the user tapped on the widget.
+  final String? categoryId;
+
+  @override
+  Widget build(BuildContext context) {
     final categories = switch (sl<CategoriesCubit>().state) {
       CategoriesReady(:final categories) => categories,
       _ => const <ExpenseCategory>[],
     };
-    final selected = categories.where((c) => c.id == categoryId).firstOrNull;
+    final tapped = categories.where((c) => c.id == categoryId).firstOrNull;
 
-    return showModalBottomSheet<bool>(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => BlocProvider(
-        create: (_) => sl<ExpenseFormCubit>()
-          ..start(
-            // Falls back to the first shortcut so there is always a category.
-            suggestedCategory: selected ?? categories.firstOrNull,
-          ),
-        child: const QuickAddSheet(),
-      ),
+    return BlocProvider(
+      create: (_) => sl<ExpenseFormCubit>()
+        // Falls back to the first shortcut, so there is always a category and
+        // the amount really is the only required input.
+        ..start(suggestedCategory: tapped ?? categories.firstOrNull),
+      child: const _QuickAddView(),
     );
   }
-
-  @override
-  State<QuickAddSheet> createState() => _QuickAddSheetState();
 }
 
-class _QuickAddSheetState extends State<QuickAddSheet> {
+class _QuickAddView extends StatefulWidget {
+  const _QuickAddView();
+
+  @override
+  State<_QuickAddView> createState() => _QuickAddViewState();
+}
+
+class _QuickAddViewState extends State<_QuickAddView> {
   late final TextEditingController _amountController;
   late final FocusNode _amountFocus;
 
@@ -67,28 +72,38 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
     super.dispose();
   }
 
-  // Quick entry never asks for a note; the date is always today.
-  void _submit() =>
-      context.read<ExpenseFormCubit>().submit(amountText: _amountController.text);
+  /// Quick entry never asks for a note, and the date is always today.
+  void _submit() => context.read<ExpenseFormCubit>().submit(
+    amountText: _amountController.text,
+  );
+
+  /// Closes the activity, which drops the user back on the home screen.
+  Future<void> _close() => SystemNavigator.pop();
+
+  Future<void> _onSaved() async {
+    await publishQuickExpenseWidget();
+    await _close();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final strings = context.strings;
 
     return BlocListener<ExpenseFormCubit, ExpenseFormState>(
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
         switch (state.status) {
           case ExpenseFormStatus.success:
-            Navigator.of(context).pop(true);
+            _onSaved();
           case ExpenseFormStatus.failure:
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
                 SnackBar(
                   content: Text(
-                    strings.failure(state.error ?? FailureCode.unknown),
+                    context.strings.failure(
+                      state.error ?? FailureCode.unknown,
+                    ),
                   ),
                 ),
               );
@@ -96,36 +111,108 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
             break;
         }
       },
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          bottom: MediaQuery.viewInsetsOf(context).bottom + 20,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                strings.quickExpense,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            // Tapping away from the card cancels, like any dialog.
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: _close,
+                child: ColoredBox(color: Colors.black.withValues(alpha: 0.45)),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Material(
+                color: theme.colorScheme.surface,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      top: 20,
+                      bottom: MediaQuery.viewInsetsOf(context).bottom + 20,
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const _Header(),
+                          const SizedBox(height: 16),
+                          _AmountField(
+                            controller: _amountController,
+                            focusNode: _amountFocus,
+                            onSubmitted: _submit,
+                          ),
+                          const SizedBox(height: 20),
+                          const _QuickCategoryPicker(),
+                          const SizedBox(height: 20),
+                          _SaveButton(onSubmit: _submit),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 16),
-              _AmountField(
-                controller: _amountController,
-                focusNode: _amountFocus,
-                onSubmitted: _submit,
-              ),
-              const SizedBox(height: 20),
-              const _QuickCategoryPicker(),
-              const SizedBox(height: 20),
-              _SaveButton(onSubmit: _submit),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+}
+
+/// Names the category that was tapped, so the user can see at a glance that
+/// the widget passed the right one through.
+class _Header extends StatelessWidget {
+  const _Header();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final strings = context.strings;
+
+    return BlocSelector<ExpenseFormCubit, ExpenseFormState, ExpenseCategory?>(
+      selector: (state) => state.category,
+      builder: (context, category) => Row(
+        children: [
+          if (category != null) ...[
+            CategoryAvatar(category: category, size: 36),
+            const SizedBox(width: 12),
+          ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  strings.quickExpense,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                if (category != null)
+                  Text(
+                    categoryLabel(strings, category),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.close_rounded),
+            onPressed: SystemNavigator.pop,
+          ),
+        ],
       ),
     );
   }

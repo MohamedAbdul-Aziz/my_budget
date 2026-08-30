@@ -1,34 +1,22 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/injection.dart';
-import '../../../../core/l10n/app_strings.dart';
 import '../../../expenses/presentation/cubit/home_cubit.dart';
 import '../../../expenses/presentation/cubit/home_state.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../../settings/presentation/cubit/settings_state.dart';
-import '../../domain/entities/quick_add_request.dart';
-import '../../domain/usecases/consume_quick_add_launch.dart';
-import '../../domain/usecases/watch_quick_add_requests.dart';
-import '../pages/quick_add_sheet.dart';
-import '../quick_expense_widget_sync.dart';
+import '../publish_widget.dart';
 
-/// Connects the Android home screen widget to the running app.
+/// Keeps the home screen widget in step with the running app.
 ///
-/// It does two things: opens the quick-add sheet when the widget is tapped,
-/// and republishes the widget's contents whenever the data or the user's
-/// language and currency change.
+/// Widget taps do not come through here — they open the quick-add activity
+/// directly. This only republishes the widget's contents when the data or the
+/// user's language and currency change, and picks up expenses that the
+/// quick-add dialog added while the app was in the background.
 class QuickExpenseBridge extends StatefulWidget {
-  const QuickExpenseBridge({
-    super.key,
-    required this.navigatorKey,
-    required this.child,
-  });
+  const QuickExpenseBridge({super.key, required this.child});
 
-  /// The sheet and its snackbars need a context below the Navigator.
-  final GlobalKey<NavigatorState> navigatorKey;
   final Widget child;
 
   @override
@@ -36,67 +24,25 @@ class QuickExpenseBridge extends StatefulWidget {
 }
 
 class _QuickExpenseBridgeState extends State<QuickExpenseBridge> {
-  StreamSubscription<QuickAddRequest>? _subscription;
-
-  /// Guards against a second tap stacking another sheet on the first.
-  bool _sheetOpen = false;
+  late final AppLifecycleListener _lifecycle;
 
   @override
   void initState() {
     super.initState();
-    _subscription = sl<WatchQuickAddRequests>()().listen(_openSheet);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _handleLaunch());
+    // The quick-add dialog writes to the same database from its own engine,
+    // so the app reloads the month whenever it comes back to the foreground.
+    _lifecycle = AppLifecycleListener(onResume: sl<HomeCubit>().refresh);
+    // Publish once at startup so a freshly placed widget fills in even if
+    // nothing has changed since the last run.
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => publishQuickExpenseWidget(),
+    );
   }
 
   @override
   void dispose() {
-    _subscription?.cancel();
+    _lifecycle.dispose();
     super.dispose();
-  }
-
-  Future<void> _handleLaunch() async {
-    // Publish once at startup so a freshly placed widget fills in even if
-    // nothing has changed since the last run.
-    await _publish();
-    final request = await sl<ConsumeQuickAddLaunch>()();
-    if (request != null) await _openSheet(request);
-  }
-
-  Future<void> _openSheet(QuickAddRequest request) async {
-    final context = widget.navigatorKey.currentContext;
-    if (_sheetOpen || context == null || !context.mounted) return;
-
-    _sheetOpen = true;
-    final saved = await QuickAddSheet.show(
-      context,
-      categoryId: request.categoryId,
-    );
-    _sheetOpen = false;
-
-    if (saved ?? false) {
-      // Refreshing the month also republishes the widget, via the listener.
-      await sl<HomeCubit>().refresh();
-      _confirmSaved();
-    }
-  }
-
-  void _confirmSaved() {
-    final context = widget.navigatorKey.currentContext;
-    if (context == null || !context.mounted) return;
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(AppStrings.of(context).expenseSaved)));
-  }
-
-  /// Reads the language from settings rather than from the widget tree: the
-  /// listener fires as the state changes, before the tree has rebuilt with the
-  /// new locale, so `AppStrings.of(context)` would still be the old language.
-  Future<void> _publish() async {
-    final settings = sl<SettingsCubit>().state;
-    await sl<QuickExpenseWidgetSync>().refresh(
-      strings: AppStrings.forLanguageCode(settings.languageCode),
-      formats: settings.formats,
-    );
   }
 
   @override
@@ -105,11 +51,11 @@ class _QuickExpenseBridgeState extends State<QuickExpenseBridge> {
       listeners: [
         // Any change to the month's expenses.
         BlocListener<HomeCubit, HomeState>(
-          listener: (_, _) => _publish(),
+          listener: (_, _) => publishQuickExpenseWidget(),
         ),
         // Language or currency changed, so the widget's text must change too.
         BlocListener<SettingsCubit, SettingsState>(
-          listener: (_, _) => _publish(),
+          listener: (_, _) => publishQuickExpenseWidget(),
         ),
       ],
       child: widget.child,

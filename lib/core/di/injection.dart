@@ -21,10 +21,8 @@ import '../../features/expenses/presentation/cubit/home_cubit.dart';
 import '../../features/quick_expense/data/datasources/quick_expense_widget_channel.dart';
 import '../../features/quick_expense/data/repositories/quick_expense_widget_repository_impl.dart';
 import '../../features/quick_expense/domain/repositories/quick_expense_widget_repository.dart';
-import '../../features/quick_expense/domain/usecases/consume_quick_add_launch.dart';
 import '../../features/quick_expense/domain/usecases/get_quick_expense_data.dart';
 import '../../features/quick_expense/domain/usecases/publish_quick_expense_widget.dart';
-import '../../features/quick_expense/domain/usecases/watch_quick_add_requests.dart';
 import '../../features/quick_expense/presentation/quick_expense_widget_sync.dart';
 import '../../features/settings/data/datasources/settings_local_data_source.dart';
 import '../../features/settings/data/repositories/settings_repository_impl.dart';
@@ -124,8 +122,6 @@ void _registerQuickExpense() {
       ),
     )
     ..registerLazySingleton(() => PublishQuickExpenseWidget(sl()))
-    ..registerLazySingleton(() => WatchQuickAddRequests(sl()))
-    ..registerLazySingleton(() => ConsumeQuickAddLaunch(sl()))
     ..registerLazySingleton(
       () => QuickExpenseWidgetSync(getData: sl(), publish: sl()),
     );

@@ -25,6 +25,18 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!-- Opened by the widget instead of MainActivity. Its own task with
+             no recents entry, so finishing after a save returns the user to
+             the launcher rather than into the app. -->
+        <activity
+            android:name=".QuickAddActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:taskAffinity=".QuickAdd"
+            android:theme="@style/QuickAddTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize" />
         <!-- Quick Expense home screen widget. Not exported: only the system
              AppWidget host binds to it. -->
         <receiver
