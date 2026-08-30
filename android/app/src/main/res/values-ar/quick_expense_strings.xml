@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_expense_widget_label">مصروف سريع</string>
+    <string name="quick_expense_widget_description">سجّل مصروفًا بضغطتين.</string>
+
+    <string name="quick_expense_title">مصروف سريع</string>
+    <string name="quick_expense_add">إضافة مصروف</string>
+    <string name="quick_expense_empty_total">—</string>
+</resources>

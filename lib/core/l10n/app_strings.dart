@@ -21,6 +21,11 @@ abstract class AppStrings {
       Localizations.of<AppStrings>(context, AppStrings) ??
       const AppStringsEn();
 
+  /// Resolves a language code the same way the delegate does. Anything the app
+  /// does not translate falls back to English.
+  static AppStrings forLanguageCode(String? languageCode) =>
+      languageCode == 'ar' ? const AppStringsAr() : const AppStringsEn();
+
   /// Locale used for numbers and dates.
   String get localeName;
 
@@ -35,6 +40,10 @@ abstract class AppStrings {
   String get yourMonths;
   String spentIn(String month);
   String expenseCount(int count);
+
+  // Quick expense (home screen widget + quick-add sheet)
+  String get quickExpense;
+  String get expenseSaved;
 
   // Expense form
   String get newExpense;
@@ -150,6 +159,12 @@ class AppStringsEn extends AppStrings {
   @override
   String expenseCount(int count) =>
       count == 1 ? '1 expense' : '$count expenses';
+
+  @override
+  String get quickExpense => 'Quick expense';
+
+  @override
+  String get expenseSaved => 'Expense saved';
 
   @override
   String get newExpense => 'New expense';
@@ -353,6 +368,12 @@ class AppStringsAr extends AppStrings {
   };
 
   @override
+  String get quickExpense => 'مصروف سريع';
+
+  @override
+  String get expenseSaved => 'تم حفظ المصروف';
+
+  @override
   String get newExpense => 'مصروف جديد';
 
   @override
@@ -522,11 +543,8 @@ class _AppStringsDelegate extends LocalizationsDelegate<AppStrings> {
       );
 
   @override
-  Future<AppStrings> load(Locale locale) => SynchronousFuture(
-    locale.languageCode == 'ar'
-        ? const AppStringsAr()
-        : const AppStringsEn(),
-  );
+  Future<AppStrings> load(Locale locale) =>
+      SynchronousFuture(AppStrings.forLanguageCode(locale.languageCode));
 
   @override
   bool shouldReload(_AppStringsDelegate old) => false;

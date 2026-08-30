@@ -18,6 +18,14 @@ import '../../features/expenses/domain/usecases/get_monthly_summaries.dart';
 import '../../features/expenses/domain/usecases/update_expense.dart';
 import '../../features/expenses/presentation/cubit/expense_form_cubit.dart';
 import '../../features/expenses/presentation/cubit/home_cubit.dart';
+import '../../features/quick_expense/data/datasources/quick_expense_widget_channel.dart';
+import '../../features/quick_expense/data/repositories/quick_expense_widget_repository_impl.dart';
+import '../../features/quick_expense/domain/repositories/quick_expense_widget_repository.dart';
+import '../../features/quick_expense/domain/usecases/consume_quick_add_launch.dart';
+import '../../features/quick_expense/domain/usecases/get_quick_expense_data.dart';
+import '../../features/quick_expense/domain/usecases/publish_quick_expense_widget.dart';
+import '../../features/quick_expense/domain/usecases/watch_quick_add_requests.dart';
+import '../../features/quick_expense/presentation/quick_expense_widget_sync.dart';
 import '../../features/settings/data/datasources/settings_local_data_source.dart';
 import '../../features/settings/data/repositories/settings_repository_impl.dart';
 import '../../features/settings/domain/repositories/settings_repository.dart';
@@ -41,6 +49,7 @@ void configureDependencies({AppDatabase? database}) {
   _registerCategories();
   _registerExpenses();
   _registerSettings();
+  _registerQuickExpense();
 }
 
 /// Repositories are the seam tests replace, so they are only registered when
@@ -97,6 +106,28 @@ void _registerExpenses() {
     // One per add/edit screen: each form owns its own draft state.
     ..registerFactory(
       () => ExpenseFormCubit(addExpense: sl(), updateExpense: sl()),
+    );
+}
+
+void _registerQuickExpense() {
+  _registerRepository<QuickExpenseWidgetRepository>(
+    () => QuickExpenseWidgetRepositoryImpl(sl()),
+  );
+  sl
+    ..registerLazySingleton<QuickExpenseWidgetChannel>(
+      QuickExpenseWidgetChannelImpl.new,
+    )
+    ..registerLazySingleton(
+      () => GetQuickExpenseData(
+        expenseRepository: sl(),
+        categoryRepository: sl(),
+      ),
+    )
+    ..registerLazySingleton(() => PublishQuickExpenseWidget(sl()))
+    ..registerLazySingleton(() => WatchQuickAddRequests(sl()))
+    ..registerLazySingleton(() => ConsumeQuickAddLaunch(sl()))
+    ..registerLazySingleton(
+      () => QuickExpenseWidgetSync(getData: sl(), publish: sl()),
     );
 }
 

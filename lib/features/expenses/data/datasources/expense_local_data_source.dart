@@ -2,6 +2,7 @@ import 'package:sqflite/sqflite.dart';
 
 import '../../../../core/database/app_database.dart';
 import '../../../../core/error/failures.dart';
+import '../../domain/entities/category_usage.dart';
 import '../../domain/entities/month.dart';
 import '../../domain/entities/monthly_summary.dart';
 import '../models/expense_model.dart';
@@ -10,6 +11,8 @@ abstract interface class ExpenseLocalDataSource {
   Future<List<ExpenseModel>> getExpensesForMonth(Month month);
 
   Future<List<MonthlySummary>> getMonthlySummaries();
+
+  Future<List<CategoryUsage>> getCategoryUsage();
 
   Future<ExpenseModel> getExpenseById(String id);
 
@@ -61,6 +64,29 @@ class ExpenseLocalDataSourceImpl implements ExpenseLocalDataSource {
           .toList();
     } on DatabaseException catch (error) {
       throw DatabaseFailure('load summaries: $error');
+    }
+  }
+
+  @override
+  Future<List<CategoryUsage>> getCategoryUsage() async {
+    try {
+      final db = await _appDatabase.database;
+      final rows = await db.rawQuery('''
+        SELECT category_id, COUNT(*) AS uses
+        FROM expenses
+        GROUP BY category_id
+        ORDER BY uses DESC, category_id ASC
+      ''');
+      return rows
+          .map(
+            (row) => CategoryUsage(
+              categoryId: row['category_id']! as String,
+              count: (row['uses'] as num?)?.toInt() ?? 0,
+            ),
+          )
+          .toList();
+    } on DatabaseException catch (error) {
+      throw DatabaseFailure('load category usage: $error');
     }
   }
 
