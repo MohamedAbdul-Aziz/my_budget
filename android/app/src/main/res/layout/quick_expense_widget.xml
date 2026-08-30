@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android widgets cannot host a text field, so the widget collects the
+     category (one tap) and hands the amount over to a focused sheet in the
+     app. Every label is filled in at runtime from the app, already
+     translated and formatted. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/quick_expense_widget_background"
+    android:orientation="vertical"
+    android:paddingStart="14dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="14dp"
+    android:paddingBottom="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/quick_expense_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/quick_expense_title"
+            android:textColor="@color/quick_expense_on_surface_variant"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/quick_expense_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/quick_expense_on_surface_variant"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/quick_expense_total"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/quick_expense_empty_total"
+        android:textColor="@color/quick_expense_on_surface"
+        android:textSize="26sp"
+        android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/quick_expense_row_0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/quick_expense_chip_0"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="3dp"
+                    android:background="@drawable/quick_expense_chip_background"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingTop="9dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="9dp">
+
+                    <ImageView
+                        android:id="@+id/quick_expense_chip_dot_0"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/quick_expense_dot" />
+
+                    <TextView
+                        android:id="@+id/quick_expense_chip_label_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="7dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/quick_expense_on_surface"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/quick_expense_chip_1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/quick_expense_chip_background"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingTop="9dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="9dp">
+
+                    <ImageView
+                        android:id="@+id/quick_expense_chip_dot_1"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/quick_expense_dot" />
+
+                    <TextView
+                        android:id="@+id/quick_expense_chip_label_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="7dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/quick_expense_on_surface"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/quick_expense_row_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/quick_expense_chip_2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="3dp"
+                    android:background="@drawable/quick_expense_chip_background"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingTop="9dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="9dp">
+
+                    <ImageView
+                        android:id="@+id/quick_expense_chip_dot_2"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/quick_expense_dot" />
+
+                    <TextView
+                        android:id="@+id/quick_expense_chip_label_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="7dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/quick_expense_on_surface"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/quick_expense_chip_3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/quick_expense_chip_background"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingTop="9dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="9dp">
+
+                    <ImageView
+                        android:id="@+id/quick_expense_chip_dot_3"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/quick_expense_dot" />
+
+                    <TextView
+                        android:id="@+id/quick_expense_chip_label_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="7dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/quick_expense_on_surface"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+    <TextView
+        android:id="@+id/quick_expense_add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/quick_expense_button_background"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:paddingStart="12dp"
+        android:paddingTop="11dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="11dp"
+        android:text="@string/quick_expense_add"
+        android:textColor="@color/quick_expense_on_accent"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+</LinearLayout>

@@ -8,6 +8,7 @@ import 'core/theme/app_theme.dart';
 import 'features/categories/presentation/cubit/categories_cubit.dart';
 import 'features/expenses/presentation/cubit/home_cubit.dart';
 import 'features/expenses/presentation/pages/home_page.dart';
+import 'features/quick_expense/presentation/widgets/quick_expense_bridge.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 import 'features/settings/presentation/cubit/settings_state.dart';
 
@@ -45,6 +46,9 @@ class MyBudgetApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
+            builder: (context, child) => QuickExpenseBridge(
+              child: child ?? const SizedBox.shrink(),
+            ),
             home: const HomePage(),
           );
         },

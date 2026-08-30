@@ -1,4 +1,5 @@
 import '../../../../core/error/api_result.dart';
+import '../entities/category_usage.dart';
 import '../entities/expense.dart';
 import '../entities/month.dart';
 import '../entities/monthly_summary.dart';
@@ -9,6 +10,9 @@ abstract interface class ExpenseRepository {
 
   /// One row per month that has at least one expense, newest month first.
   Future<ApiResult<List<MonthlySummary>>> getMonthlySummaries();
+
+  /// Categories that have been used at least once, most used first.
+  Future<ApiResult<List<CategoryUsage>>> getCategoryUsage();
 
   Future<ApiResult<Expense>> addExpense({
     required double amount,

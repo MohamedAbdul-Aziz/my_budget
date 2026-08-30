@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="quick_expense_surface">#FF12140F</color>
+    <color name="quick_expense_on_surface">#FFE2E3DD</color>
+    <color name="quick_expense_on_surface_variant">#FFA9AFA8</color>
+    <color name="quick_expense_chip">#FF262B27</color>
+    <color name="quick_expense_accent">#FF8FD5B8</color>
+    <color name="quick_expense_on_accent">#FF00382A</color>
+</resources>

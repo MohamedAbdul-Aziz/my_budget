@@ -167,6 +167,31 @@ void main() {
     );
   });
 
+  test('ranks categories by how often they are used', () async {
+    for (var i = 0; i < 3; i++) {
+      await expenses.addExpense(
+        amount: 5,
+        categoryId: 'cat_food',
+        date: DateTime(2026, 8, 2 + i),
+      );
+    }
+    await expenses.addExpense(
+      amount: 5,
+      categoryId: 'cat_bills',
+      date: DateTime(2026, 8, 9),
+    );
+
+    final usage = (await expenses.getCategoryUsage()).dataOrNull!;
+
+    expect(usage.map((row) => row.categoryId), ['cat_food', 'cat_bills']);
+    expect(usage.first.count, 3);
+    expect(usage.last.count, 1);
+  });
+
+  test('reports no usage before anything is recorded', () async {
+    expect((await expenses.getCategoryUsage()).dataOrNull, isEmpty);
+  });
+
   test('a renamed built-in category stops being a built-in', () async {
     final food = (await categories.getCategories()).dataOrNull!.firstWhere(
       (category) => category.id == 'cat_food',

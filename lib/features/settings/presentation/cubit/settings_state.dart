@@ -41,6 +41,11 @@ class SettingsState extends Equatable {
     AppLanguage.arabic => const Locale('ar'),
   };
 
+  /// The language actually being displayed, for code that cannot read it from
+  /// the widget tree — an unsupported device locale resolves to English.
+  String get languageCode =>
+      locale?.languageCode ?? systemLocaleName.split(RegExp('[_-]')).first;
+
   @override
   List<Object?> get props => [settings, formats, systemLocaleName];
 }

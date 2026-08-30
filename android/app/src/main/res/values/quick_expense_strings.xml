@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shown in the widget picker. -->
+    <string name="quick_expense_widget_label">Quick expense</string>
+    <string name="quick_expense_widget_description">Add an expense in two taps.</string>
+
+    <!-- Placeholders only: once the app has run, every label on the widget
+         comes from the app, already translated and formatted. -->
+    <string name="quick_expense_title">Quick expense</string>
+    <string name="quick_expense_add">Add expense</string>
+    <string name="quick_expense_empty_total">—</string>
+</resources>

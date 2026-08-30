@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light theme. The widget host inflates with its own configuration, so
+         values-night supplies the dark equivalents automatically. -->
+    <color name="quick_expense_surface">#FFF7F9F6</color>
+    <color name="quick_expense_on_surface">#FF1A1C1B</color>
+    <color name="quick_expense_on_surface_variant">#FF5A605C</color>
+    <color name="quick_expense_chip">#FFEAEFEA</color>
+    <color name="quick_expense_accent">#FF2E7D63</color>
+    <color name="quick_expense_on_accent">#FFFFFFFF</color>
+</resources>

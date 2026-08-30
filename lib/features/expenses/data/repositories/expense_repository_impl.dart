@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import '../../../../core/error/api_result.dart';
+import '../../domain/entities/category_usage.dart';
 import '../../domain/entities/expense.dart';
 import '../../domain/entities/month.dart';
 import '../../domain/entities/monthly_summary.dart';
@@ -21,6 +22,10 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   @override
   Future<ApiResult<List<MonthlySummary>>> getMonthlySummaries() =>
       ApiResult.guard(() async => await _localDataSource.getMonthlySummaries());
+
+  @override
+  Future<ApiResult<List<CategoryUsage>>> getCategoryUsage() =>
+      ApiResult.guard(() async => await _localDataSource.getCategoryUsage());
 
   @override
   Future<ApiResult<Expense>> addExpense({
