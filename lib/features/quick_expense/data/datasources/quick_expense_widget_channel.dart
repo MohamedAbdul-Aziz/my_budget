@@ -22,7 +22,7 @@ class QuickExpenseWidgetChannelImpl implements QuickExpenseWidgetChannel {
   }) : _channel = channel,
        _platform = platform;
 
-  static const String channelName = 'com.example.my_budget/quick_expense';
+  static const String channelName = 'com.mybudget/quick_expense';
 
   final MethodChannel _channel;
   final TargetPlatform? _platform;

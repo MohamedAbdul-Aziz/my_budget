@@ -1,4 +1,4 @@
-package com.example.my_budget
+package com.mybudget
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager

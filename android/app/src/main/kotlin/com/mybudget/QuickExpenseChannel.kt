@@ -1,4 +1,4 @@
-package com.example.my_budget
+package com.mybudget
 
 import android.content.Context
 import io.flutter.embedding.engine.FlutterEngine
@@ -12,7 +12,7 @@ import io.flutter.plugin.common.MethodChannel
  */
 object QuickExpenseChannel {
 
-    const val NAME = "com.example.my_budget/quick_expense"
+    const val NAME = "com.mybudget/quick_expense"
 
     fun register(context: Context, engine: FlutterEngine): MethodChannel {
         val appContext = context.applicationContext
