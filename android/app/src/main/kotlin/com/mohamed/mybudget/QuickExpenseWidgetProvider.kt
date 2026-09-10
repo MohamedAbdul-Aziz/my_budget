@@ -1,4 +1,4 @@
-package com.mybudget
+package com.mohamed.mybudget
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager

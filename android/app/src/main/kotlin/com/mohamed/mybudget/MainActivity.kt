@@ -1,4 +1,4 @@
-package com.mybudget
+package com.mohamed.mybudget
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine

@@ -8,7 +8,7 @@
 PRODUCT_NAME = my_budget
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.mybudget
+PRODUCT_BUNDLE_IDENTIFIER = com.mohamed.mybudget
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2026 com.mybudget. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2026 com.mohamed.mybudget. All rights reserved.
