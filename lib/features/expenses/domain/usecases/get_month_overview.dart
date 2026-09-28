@@ -19,7 +19,18 @@ class GetMonthOverview {
 
   MonthOverview _overviewFrom(Month month, List<Expense> expenses) {
     if (expenses.isEmpty) return MonthOverview.empty(month);
+    final (total, breakdown) = breakdownOf(expenses);
+    return MonthOverview(
+      month: month,
+      expenses: expenses,
+      total: total,
+      breakdown: breakdown,
+    );
+  }
 
+  /// The total of [expenses] and its split by category, largest share first.
+  /// Shared with the analyses page so both screens always agree.
+  static (double, List<CategoryBreakdown>) breakdownOf(List<Expense> expenses) {
     final totals = <String, double>{};
     final categories = <String, ExpenseCategory>{};
     var total = 0.0;
@@ -31,22 +42,17 @@ class GetMonthOverview {
       categories[id] = expense.category;
     }
 
-    final breakdown = totals.entries
-        .map(
-          (entry) => CategoryBreakdown(
-            category: categories[entry.key]!,
-            total: entry.value,
-            share: total == 0 ? 0 : entry.value / total,
-          ),
-        )
-        .toList()
-      ..sort((a, b) => b.total.compareTo(a.total));
-
-    return MonthOverview(
-      month: month,
-      expenses: expenses,
-      total: total,
-      breakdown: breakdown,
-    );
+    final breakdown =
+        totals.entries
+            .map(
+              (entry) => CategoryBreakdown(
+                category: categories[entry.key]!,
+                total: entry.value,
+                share: total == 0 ? 0 : entry.value / total,
+              ),
+            )
+            .toList()
+          ..sort((a, b) => b.total.compareTo(a.total));
+    return (total, breakdown);
   }
 }

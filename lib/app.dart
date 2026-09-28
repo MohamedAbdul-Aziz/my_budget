@@ -5,13 +5,15 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/di/injection.dart';
 import 'core/l10n/app_strings.dart';
 import 'core/theme/app_theme.dart';
+import 'features/analyses/presentation/cubit/analyses_cubit.dart';
 import 'features/auth/presentation/cubit/account_cubit.dart';
 import 'features/categories/presentation/cubit/categories_cubit.dart';
 import 'features/expenses/presentation/cubit/home_cubit.dart';
-import 'features/expenses/presentation/pages/home_page.dart';
+import 'features/expenses/presentation/cubit/home_state.dart';
 import 'features/quick_expense/presentation/widgets/quick_expense_bridge.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 import 'features/settings/presentation/cubit/settings_state.dart';
+import 'features/shell/presentation/app_shell.dart';
 import 'features/sync/presentation/cubit/sync_cubit.dart';
 import 'features/sync/presentation/cubit/sync_state.dart';
 
@@ -29,17 +31,33 @@ class MyBudgetApp extends StatelessWidget {
         BlocProvider.value(value: sl<HomeCubit>()),
         BlocProvider.value(value: sl<AccountCubit>()),
         BlocProvider.value(value: sl<SyncCubit>()),
+        BlocProvider.value(value: sl<AnalysesCubit>()),
       ],
       // A restore rewrites the database underneath the other cubits, so they
       // read it again. The home screen widget follows HomeCubit on its own.
-      child: BlocListener<SyncCubit, SyncState>(
-        listenWhen: (_, state) =>
-            state is SyncSucceeded && state.kind == SyncKind.restore,
-        listener: (context, _) {
-          context.read<CategoriesCubit>().load();
-          context.read<HomeCubit>().refresh();
-          context.read<SettingsCubit>().load();
-        },
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<SyncCubit, SyncState>(
+            listenWhen: (_, state) =>
+                state is SyncSucceeded && state.kind == SyncKind.restore,
+            listener: (context, _) {
+              context.read<CategoriesCubit>().load();
+              context.read<HomeCubit>().refresh();
+              context.read<SettingsCubit>().load();
+            },
+          ),
+          // Analyses follow the home screen: its selected month, and every
+          // change to that month's expenses.
+          BlocListener<HomeCubit, HomeState>(
+            listenWhen: (previous, current) =>
+                current is HomeReady &&
+                (previous is! HomeReady ||
+                    previous.overview != current.overview ||
+                    previous.months != current.months),
+            listener: (context, state) =>
+                context.read<AnalysesCubit>().load((state as HomeReady).month),
+          ),
+        ],
         // Only theme and language rebuild MaterialApp — the currency format
         // is read further down the tree.
         child: BlocSelector<SettingsCubit, SettingsState, (ThemeMode, Locale?)>(
@@ -63,7 +81,7 @@ class MyBudgetApp extends StatelessWidget {
               ],
               builder: (context, child) =>
                   QuickExpenseBridge(child: child ?? const SizedBox.shrink()),
-              home: const HomePage(),
+              home: const AppShell(),
             );
           },
         ),

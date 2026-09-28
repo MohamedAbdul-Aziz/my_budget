@@ -60,6 +60,10 @@ class SyncRepositoryImpl implements SyncRepository {
         return _finish(userId, applied);
       });
 
+  @override
+  Future<ApiResult<void>> forgetAccount(String userId) =>
+      ApiResult.guard(() => _local.forgetAccount(userId));
+
   /// The phone's data carries no owner of its own, so the first account to
   /// sync it claims it. Syncing it with any other account afterwards is
   /// refused: that would upload one person's expenses into someone else's

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/error/failures.dart';
 import '../../../../core/l10n/app_strings.dart';
 import '../../../auth/domain/entities/app_user.dart';
 import '../../../auth/presentation/cubit/account_cubit.dart';
@@ -112,8 +113,94 @@ class _AccountSection extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             const BackupSection(),
+            const SizedBox(height: 12),
+            const _DeleteAccountButton(),
           ],
         ),
+      },
+    );
+  }
+}
+
+/// Google Play requires a way to delete the account from inside any app that
+/// lets people create one.
+class _DeleteAccountButton extends StatelessWidget {
+  const _DeleteAccountButton();
+
+  Future<void> _confirmAndDelete(BuildContext context) async {
+    final strings = context.strings;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(strings.deleteAccountTitle),
+        content: Text(strings.deleteAccountBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(strings.cancel),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(dialogContext).colorScheme.error,
+            ),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(strings.delete),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final deleted = await context.read<AccountCubit>().deleteAccount();
+    if (!deleted) return;
+
+    // Close the sheet so the confirmation shows on the home screen.
+    navigator.pop();
+    messenger.showSnackBar(SnackBar(content: Text(strings.accountDeleted)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = context.strings;
+    final errorColor = Theme.of(context).colorScheme.error;
+
+    return BlocSelector<AccountCubit, AccountState, (bool, FailureCode?)>(
+      selector: (state) => switch (state) {
+        SignedIn(:final isDeleting, :final deleteError) => (
+          isDeleting,
+          deleteError,
+        ),
+        SignedOut() => (false, null),
+      },
+      builder: (context, status) {
+        final (isDeleting, error) = status;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (isDeleting)
+              Row(
+                children: [
+                  const SizedBox.square(
+                    dimension: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(strings.deletingAccount),
+                ],
+              )
+            else
+              TextButton.icon(
+                style: TextButton.styleFrom(foregroundColor: errorColor),
+                icon: const Icon(Icons.delete_forever_outlined),
+                label: Text(strings.deleteAccount),
+                onPressed: () => _confirmAndDelete(context),
+              ),
+            if (error != null)
+              Text(strings.failure(error), style: TextStyle(color: errorColor)),
+          ],
+        );
       },
     );
   }

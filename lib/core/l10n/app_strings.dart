@@ -118,6 +118,26 @@ abstract class AppStrings {
   String get restoreDone;
   String get neverSynced;
   String lastSynced(String when);
+
+  // Account deletion
+  String get deleteAccount;
+  String get deleteAccountTitle;
+  String get deleteAccountBody;
+  String get deletingAccount;
+  String get accountDeleted;
+
+  // Analyses
+  String get home;
+  String get analyses;
+  String get vsLastMonth;
+  String lastMonthTotal(String amount);
+  String get noComparison;
+  String get dailySpending;
+  String get dailyAverage;
+  String get topDay;
+  String get byCategory;
+  String get noSpendingThisMonth;
+  String get monthlyTrend;
   String get showPassword;
   String get hidePassword;
 
@@ -399,6 +419,57 @@ class AppStringsEn extends AppStrings {
   String lastSynced(String when) => 'Last synced $when';
 
   @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountTitle => 'Delete your account?';
+
+  @override
+  String get deleteAccountBody =>
+      'This permanently deletes your account and the backup of your expenses '
+      'stored with it. It cannot be undone. The expenses on this phone stay '
+      'here, and you can keep using the app without an account.';
+
+  @override
+  String get deletingAccount => 'Deleting your account…';
+
+  @override
+  String get accountDeleted => 'Your account was deleted';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get analyses => 'Analyses';
+
+  @override
+  String get vsLastMonth => 'Compared with last month';
+
+  @override
+  String get noComparison => 'No data last month';
+
+  @override
+  String get dailySpending => 'Daily spending';
+
+  @override
+  String get dailyAverage => 'Average per day';
+
+  @override
+  String get topDay => 'Highest day';
+
+  @override
+  String get byCategory => 'Spending by category';
+
+  @override
+  String get noSpendingThisMonth => 'Nothing spent this month yet.';
+
+  @override
+  String get monthlyTrend => 'Last 6 months';
+
+  @override
+  String lastMonthTotal(String amount) => 'Last month: $amount';
+
+  @override
   String get showPassword => 'Show password';
 
   @override
@@ -440,10 +511,12 @@ class AppStringsEn extends AppStrings {
     FailureCode.emailNotConfirmed =>
       'Confirm your email first with the code we sent you.',
     FailureCode.codeInvalid => 'That code is wrong or has expired.',
-    FailureCode.signInRequired => 'Sign in again to sync your data.',
+    FailureCode.signInRequired => 'Sign in again, then try once more.',
     FailureCode.syncOtherAccount =>
       "This phone's data is linked to a different account.",
     FailureCode.syncFailed => "Couldn't sync with your account. Try again.",
+    FailureCode.accountDeletionFailed =>
+      "Couldn't delete your account. Try again.",
     FailureCode.tooManyAttempts =>
       'Too many attempts. Wait a moment and try again.',
   };
@@ -712,6 +785,57 @@ class AppStringsAr extends AppStrings {
   String lastSynced(String when) => 'آخر مزامنة: $when';
 
   @override
+  String get deleteAccount => 'حذف الحساب';
+
+  @override
+  String get deleteAccountTitle => 'حذف حسابك؟';
+
+  @override
+  String get deleteAccountBody =>
+      'سيؤدي هذا إلى حذف حسابك نهائيًا مع النسخة الاحتياطية لمصروفاتك المحفوظة '
+      'فيه، ولا يمكن التراجع عنه. تبقى المصروفات الموجودة على هذا الهاتف كما هي، '
+      'ويمكنك الاستمرار في استخدام التطبيق بدون حساب.';
+
+  @override
+  String get deletingAccount => 'جارٍ حذف حسابك…';
+
+  @override
+  String get accountDeleted => 'تم حذف حسابك';
+
+  @override
+  String get home => 'الرئيسية';
+
+  @override
+  String get analyses => 'التحليلات';
+
+  @override
+  String get vsLastMonth => 'مقارنة بالشهر الماضي';
+
+  @override
+  String get noComparison => 'لا بيانات للشهر الماضي';
+
+  @override
+  String get dailySpending => 'الإنفاق اليومي';
+
+  @override
+  String get dailyAverage => 'المتوسط اليومي';
+
+  @override
+  String get topDay => 'أعلى يوم';
+
+  @override
+  String get byCategory => 'الإنفاق حسب الفئة';
+
+  @override
+  String get noSpendingThisMonth => 'لا مصروفات في هذا الشهر بعد.';
+
+  @override
+  String get monthlyTrend => 'آخر ٦ أشهر';
+
+  @override
+  String lastMonthTotal(String amount) => 'الشهر الماضي: $amount';
+
+  @override
   String get showPassword => 'إظهار كلمة المرور';
 
   @override
@@ -750,9 +874,10 @@ class AppStringsAr extends AppStrings {
     FailureCode.emailTaken => 'يوجد حساب بهذا البريد بالفعل.',
     FailureCode.emailNotConfirmed => 'أكّد بريدك أولًا بالرمز الذي أرسلناه لك.',
     FailureCode.codeInvalid => 'الرمز غير صحيح أو انتهت صلاحيته.',
-    FailureCode.signInRequired => 'سجّل الدخول مرة أخرى لمزامنة بياناتك.',
+    FailureCode.signInRequired => 'سجّل الدخول مرة أخرى، ثم حاول من جديد.',
     FailureCode.syncOtherAccount => 'بيانات هذا الهاتف مرتبطة بحساب آخر.',
     FailureCode.syncFailed => 'تعذّرت المزامنة مع حسابك. حاول مرة أخرى.',
+    FailureCode.accountDeletionFailed => 'تعذّر حذف حسابك. حاول مرة أخرى.',
     FailureCode.tooManyAttempts =>
       'محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.',
   };

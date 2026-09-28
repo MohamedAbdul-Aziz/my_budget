@@ -38,6 +38,8 @@ class AppFormats {
       weekdayDayMonth: DateFormat.MMMEd(dateLocale),
       dayMonthYear: DateFormat.yMMMd(dateLocale),
       time: DateFormat.jm(dateLocale),
+      shortMonth: DateFormat.MMM(dateLocale),
+      percent: NumberFormat.percentPattern(numberLocale),
     );
   }
 
@@ -67,13 +69,17 @@ class AppFormats {
     required DateFormat weekdayDayMonth,
     required DateFormat dayMonthYear,
     required DateFormat time,
+    required DateFormat shortMonth,
+    required NumberFormat percent,
   }) : _full = full,
        _whole = whole,
        _monthYear = monthYear,
        _dayMonth = dayMonth,
        _weekdayDayMonth = weekdayDayMonth,
        _dayMonthYear = dayMonthYear,
-       _time = time;
+       _time = time,
+       _shortMonth = shortMonth,
+       _percent = percent;
 
   final String localeName;
   final String symbol;
@@ -84,6 +90,8 @@ class AppFormats {
   final DateFormat _weekdayDayMonth;
   final DateFormat _dayMonthYear;
   final DateFormat _time;
+  final DateFormat _shortMonth;
+  final NumberFormat _percent;
 
   /// `$12.50` — always two decimals.
   String money(double amount) => _full.format(amount);
@@ -110,6 +118,12 @@ class AppFormats {
 
   /// `2:05 PM`, or the local equivalent.
   String time(DateTime date) => _time.format(date);
+
+  /// `Aug`.
+  String shortMonth(Month month) => _shortMonth.format(month.start);
+
+  /// `25%` for 0.25.
+  String percent(double fraction) => _percent.format(fraction);
 
   /// 0 for today, 1 for yesterday, and so on.
   static int daysAgo(DateTime date, {DateTime? now}) =>

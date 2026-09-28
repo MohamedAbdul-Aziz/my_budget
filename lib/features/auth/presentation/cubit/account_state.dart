@@ -32,10 +32,16 @@ final class SignedOut extends AccountState {
 }
 
 final class SignedIn extends AccountState {
-  const SignedIn(this.user);
+  const SignedIn(this.user, {this.isDeleting = false, this.deleteError});
 
   final AppUser user;
 
+  /// The account is being deleted.
+  final bool isDeleting;
+
+  /// Why the last attempt to delete the account failed.
+  final FailureCode? deleteError;
+
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [user, isDeleting, deleteError];
 }

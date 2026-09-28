@@ -25,6 +25,7 @@ enum FailureCode {
   signInRequired,
   syncOtherAccount,
   syncFailed,
+  accountDeletionFailed,
 }
 
 /// Typed failures produced by the data layer and surfaced through `ApiResult`.

@@ -324,6 +324,25 @@ class FakeAuthRepository implements AuthRepository {
     return const Success(null);
   }
 
+  /// Emails of the accounts deleted so far.
+  final List<String> deletedAccounts = [];
+
+  /// When set, deleting the account fails with it.
+  Failure? deleteFailure;
+
+  @override
+  Future<ApiResult<void>> deleteAccount() async {
+    final failure = deleteFailure;
+    if (failure != null) return ResultFailure(failure);
+    final email = currentUser!.email;
+    deletedAccounts.add(email);
+    passwords.remove(email);
+    confirmed.remove(email);
+    // The real data source signs the phone out once the account is gone.
+    _changes.add(currentUser = null);
+    return const Success(null);
+  }
+
   static AppUser _userFor(String email) =>
       AppUser(id: 'user_$email', email: email);
 }
@@ -341,6 +360,9 @@ class FakeSyncRepository implements SyncRepository {
   /// Runs during a restore, standing in for rows arriving on the phone.
   Future<void> Function()? onRestore;
 
+  /// Accounts whose link to this phone's data was dropped.
+  final List<String> forgottenAccounts = [];
+
   @override
   Future<ApiResult<DateTime?>> lastSyncedAt() async => Success(last);
 
@@ -355,6 +377,12 @@ class FakeSyncRepository implements SyncRepository {
     restores++;
     await onRestore?.call();
     return _finish(onProgress);
+  }
+
+  @override
+  Future<ApiResult<void>> forgetAccount(String userId) async {
+    forgottenAccounts.add(userId);
+    return const Success(null);
   }
 
   ApiResult<SyncReport> _finish(SyncProgress? onProgress) {

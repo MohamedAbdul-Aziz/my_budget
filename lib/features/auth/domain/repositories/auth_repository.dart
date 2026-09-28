@@ -33,4 +33,8 @@ abstract interface class AuthRepository {
   Future<ApiResult<void>> resendSignUpCode({required String email});
 
   Future<ApiResult<void>> signOut();
+
+  /// Permanently deletes the signed-in account and the data stored with it
+  /// in the cloud, and signs this phone out.
+  Future<ApiResult<void>> deleteAccount();
 }

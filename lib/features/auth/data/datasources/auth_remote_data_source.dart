@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/error/failures.dart';
@@ -18,6 +21,10 @@ abstract interface class AuthRemoteDataSource {
   Future<void> resendSignUpCode({required String email});
 
   Future<void> signOut();
+
+  /// Permanently deletes the signed-in account and everything stored with it
+  /// in the cloud, then signs this phone out.
+  Future<void> deleteAccount();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -103,6 +110,35 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   /// this signs the user out locally even when offline.
   @override
   Future<void> signOut() => _guard(_auth.signOut);
+
+  /// Deleting a user needs the project's secret key, which must never ship
+  /// in the app. The `delete-account` Edge Function holds it, works out the
+  /// account from the caller's own session, and deletes only that one. The
+  /// cloud tables reference the user with `on delete cascade`, so the backup
+  /// goes with it.
+  @override
+  Future<void> deleteAccount() async {
+    try {
+      await _client.functions.invoke('delete-account');
+    } on FunctionException catch (error) {
+      throw error.status == 401
+          ? AuthFailure(FailureCode.signInRequired, '$error')
+          : AuthFailure(FailureCode.accountDeletionFailed, '$error');
+    } on SocketException catch (error) {
+      throw NetworkFailure('$error');
+    } on http.ClientException catch (error) {
+      throw NetworkFailure('$error');
+    }
+
+    // The account no longer exists, so telling the server about the sign-out
+    // can only fail, and that changes nothing: the session is dropped from
+    // this phone before the server is contacted.
+    try {
+      await _auth.signOut();
+    } on Exception {
+      // Nothing left to undo.
+    }
+  }
 
   static AppUser _toAppUser(User user) =>
       AppUser(id: user.id, email: user.email ?? '');

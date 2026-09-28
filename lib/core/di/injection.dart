@@ -1,10 +1,13 @@
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../features/analyses/domain/usecases/get_month_analysis.dart';
+import '../../features/analyses/presentation/cubit/analyses_cubit.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/domain/usecases/confirm_sign_up.dart';
+import '../../features/auth/domain/usecases/delete_account.dart';
 import '../../features/auth/domain/usecases/get_current_user.dart';
 import '../../features/auth/domain/usecases/resend_sign_up_code.dart';
 import '../../features/auth/domain/usecases/sign_in.dart';
@@ -70,6 +73,7 @@ void configureDependencies({AppDatabase? database}) {
   _registerSettings();
   _registerQuickExpense();
   _registerSync();
+  _registerAnalyses();
 }
 
 /// Repositories are the seam tests replace, so they are only registered when
@@ -98,6 +102,9 @@ void _registerAuth() {
     ..registerLazySingleton(() => SignUp(sl()))
     ..registerLazySingleton(() => ConfirmSignUp(sl()))
     ..registerLazySingleton(() => ResendSignUpCode(sl()))
+    ..registerLazySingleton(
+      () => DeleteAccount(authRepository: sl(), syncRepository: sl()),
+    )
     ..registerLazySingleton(() => SignOut(sl()))
     ..registerLazySingleton(
       () => AccountCubit(
@@ -108,6 +115,7 @@ void _registerAuth() {
         confirmSignUp: sl(),
         resendSignUpCode: sl(),
         signOut: sl(),
+        deleteAccount: sl(),
       ),
     );
 }
@@ -219,4 +227,10 @@ void _registerSync() {
       () =>
           SyncCubit(getLastSyncedAt: sl(), backUpData: sl(), restoreData: sl()),
     );
+}
+
+void _registerAnalyses() {
+  sl
+    ..registerLazySingleton(() => GetMonthAnalysis(sl()))
+    ..registerLazySingleton(() => AnalysesCubit(getMonthAnalysis: sl()));
 }

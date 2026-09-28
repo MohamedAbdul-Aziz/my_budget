@@ -218,6 +218,26 @@ void main() {
     expect(cloud.rows('expenses', userId: 'someone-else'), isEmpty);
   });
 
+  test(
+    'once the account is deleted, another account can back up everything',
+    () async {
+      final lunch = await phoneA.addExpense(12.5);
+      final dinner = await phoneA.addExpense(20);
+      await phoneA.expenses.deleteExpense(dinner.id);
+      await phoneA.sync.backUp();
+
+      await phoneA.sync.forgetAccount('user-1');
+      phoneA.remote.userId = 'user-2';
+      final report = (await phoneA.sync.backUp()).dataOrNull!;
+
+      // The 8 built-in categories and the one expense left. The deleted
+      // expense only existed to reach user-1's backup, so it is gone.
+      expect(report.changes, 9);
+      expect(cloud.rows('expenses', userId: 'user-2').single['id'], lunch.id);
+      expect((await phoneA.sync.lastSyncedAt()).dataOrNull, report.finishedAt);
+    },
+  );
+
   test('needs a signed-in user', () async {
     phoneA.remote.userId = null;
 

@@ -20,4 +20,9 @@ abstract interface class SyncRepository {
   /// Merges the account's copy into this phone. Nothing that exists only on
   /// the phone is removed.
   Future<ApiResult<SyncReport>> restore({SyncProgress? onProgress});
+
+  /// The account [userId] was deleted along with its cloud copy. Unlinks this
+  /// phone's data from it, so a different account can back everything up
+  /// from scratch. The phone's own records are kept.
+  Future<ApiResult<void>> forgetAccount(String userId);
 }

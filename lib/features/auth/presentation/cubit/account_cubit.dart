@@ -6,6 +6,7 @@ import '../../../../core/error/api_result.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/app_user.dart';
 import '../../domain/usecases/confirm_sign_up.dart';
+import '../../domain/usecases/delete_account.dart';
 import '../../domain/usecases/get_current_user.dart';
 import '../../domain/usecases/resend_sign_up_code.dart';
 import '../../domain/usecases/sign_in.dart';
@@ -25,11 +26,13 @@ class AccountCubit extends Cubit<AccountState> {
     required ConfirmSignUp confirmSignUp,
     required ResendSignUpCode resendSignUpCode,
     required SignOut signOut,
+    required DeleteAccount deleteAccount,
   }) : _signIn = signIn,
        _signUp = signUp,
        _confirmSignUp = confirmSignUp,
        _resendSignUpCode = resendSignUpCode,
        _signOut = signOut,
+       _deleteAccount = deleteAccount,
        super(switch (getCurrentUser()) {
          final user? => SignedIn(user),
          null => const SignedOut(),
@@ -49,6 +52,7 @@ class AccountCubit extends Cubit<AccountState> {
   final ConfirmSignUp _confirmSignUp;
   final ResendSignUpCode _resendSignUpCode;
   final SignOut _signOut;
+  final DeleteAccount _deleteAccount;
 
   late final StreamSubscription<AppUser?> _userSubscription;
 
@@ -125,6 +129,23 @@ class AccountCubit extends Cubit<AccountState> {
     emit(const SignedOut());
   }
 
+  /// Returns true once the account is gone; a failure is shown through the
+  /// state.
+  Future<bool> deleteAccount() async {
+    final current = state;
+    if (current is! SignedIn || current.isDeleting) return false;
+
+    emit(SignedIn(current.user, isDeleting: true));
+    switch (await _deleteAccount()) {
+      case Success():
+        emit(const SignedOut());
+        return true;
+      case ResultFailure(:final failure):
+        emit(SignedIn(current.user, deleteError: failure.code));
+        return false;
+    }
+  }
+
   String? get _unconfirmedEmail => switch (state) {
     SignedOut(:final unconfirmedEmail) => unconfirmedEmail,
     SignedIn() => null,
@@ -137,6 +158,11 @@ class AccountCubit extends Cubit<AccountState> {
 
   void _onUserChanged(AppUser? user) {
     if (user != null) {
+      // A token refresh reports the same user again; keep whatever the
+      // account section is showing.
+      if (state case SignedIn(user: final current) when current == user) {
+        return;
+      }
       emit(SignedIn(user));
     } else if (state is SignedIn) {
       emit(const SignedOut());
