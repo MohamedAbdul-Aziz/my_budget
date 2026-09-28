@@ -88,6 +88,28 @@ abstract class AppStrings {
   String get currencySymbolHint;
   String get storedOnThisDevice;
 
+  // Account
+  String get account;
+  String get accountOptional;
+  String get signIn;
+  String get signOut;
+  String get signedIn;
+  String get createAccount;
+  String get noAccountYet;
+  String get haveAnAccount;
+  String get email;
+  String get password;
+  String get passwordRules;
+  String get confirmEmail;
+  String codeSentTo(String email);
+  String get confirmationCode;
+  String get confirm;
+  String get resendCode;
+  String get codeResent;
+  String get useDifferentEmail;
+  String get showPassword;
+  String get hidePassword;
+
   /// Localized names for the seeded categories; null for user-made ones.
   String? defaultCategoryName(String id);
 
@@ -280,6 +302,69 @@ class AppStringsEn extends AppStrings {
       'Your expenses are stored only on this device.';
 
   @override
+  String get account => 'Account';
+
+  @override
+  String get accountOptional =>
+      'An account is optional. The app works fully without one.';
+
+  @override
+  String get signIn => 'Sign in';
+
+  @override
+  String get signOut => 'Sign out';
+
+  @override
+  String get signedIn => 'Signed in';
+
+  @override
+  String get createAccount => 'Create account';
+
+  @override
+  String get noAccountYet => 'No account yet? Create one';
+
+  @override
+  String get haveAnAccount => 'Already have an account? Sign in';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get passwordRules => 'At least 6 characters';
+
+  @override
+  String get confirmEmail => 'Confirm your email';
+
+  @override
+  String codeSentTo(String email) =>
+      'We sent a code to $email. Enter it below to finish creating your '
+      'account.';
+
+  @override
+  String get confirmationCode => 'Code';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get resendCode => 'Send a new code';
+
+  @override
+  String get codeResent => 'A new code is on its way';
+
+  @override
+  String get useDifferentEmail => 'Use a different email';
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
+
+  @override
   String? defaultCategoryName(String id) => switch (id) {
     'cat_food' => 'Food',
     'cat_transport' => 'Transportation',
@@ -305,6 +390,16 @@ class AppStringsEn extends AppStrings {
     FailureCode.categoryNameTooLong => 'Keep the name under 30 characters.',
     FailureCode.categoryProtected => 'This category cannot be deleted.',
     FailureCode.currencySymbolInvalid => 'Use 1 to 4 characters.',
+    FailureCode.network =>
+      "Couldn't connect. Check your internet and try again.",
+    FailureCode.emailInvalid => 'Enter a valid email address.',
+    FailureCode.passwordTooShort => 'Use at least 6 characters for the password.',
+    FailureCode.invalidCredentials => 'Wrong email or password.',
+    FailureCode.emailTaken => 'An account with this email already exists.',
+    FailureCode.emailNotConfirmed =>
+      'Confirm your email first with the code we sent you.',
+    FailureCode.codeInvalid => 'That code is wrong or has expired.',
+    FailureCode.tooManyAttempts => 'Too many attempts. Wait a moment and try again.',
   };
 
   @override
@@ -486,6 +581,67 @@ class AppStringsAr extends AppStrings {
   String get storedOnThisDevice => 'تُحفظ مصروفاتك على هذا الجهاز فقط.';
 
   @override
+  String get account => 'الحساب';
+
+  @override
+  String get accountOptional => 'الحساب اختياري، ويعمل التطبيق بالكامل بدونه.';
+
+  @override
+  String get signIn => 'تسجيل الدخول';
+
+  @override
+  String get signOut => 'تسجيل الخروج';
+
+  @override
+  String get signedIn => 'تم تسجيل الدخول';
+
+  @override
+  String get createAccount => 'إنشاء حساب';
+
+  @override
+  String get noAccountYet => 'ليس لديك حساب؟ أنشئ حسابًا';
+
+  @override
+  String get haveAnAccount => 'لديك حساب بالفعل؟ سجّل الدخول';
+
+  @override
+  String get email => 'البريد الإلكتروني';
+
+  @override
+  String get password => 'كلمة المرور';
+
+  @override
+  String get passwordRules => '٦ أحرف على الأقل';
+
+  @override
+  String get confirmEmail => 'تأكيد البريد';
+
+  @override
+  String codeSentTo(String email) =>
+      'أرسلنا رمزًا إلى $email. أدخله هنا لإكمال إنشاء حسابك.';
+
+  @override
+  String get confirmationCode => 'الرمز';
+
+  @override
+  String get confirm => 'تأكيد';
+
+  @override
+  String get resendCode => 'إرسال رمز جديد';
+
+  @override
+  String get codeResent => 'تم إرسال رمز جديد';
+
+  @override
+  String get useDifferentEmail => 'استخدام بريد آخر';
+
+  @override
+  String get showPassword => 'إظهار كلمة المرور';
+
+  @override
+  String get hidePassword => 'إخفاء كلمة المرور';
+
+  @override
   String? defaultCategoryName(String id) => switch (id) {
     'cat_food' => 'طعام',
     'cat_transport' => 'مواصلات',
@@ -511,6 +667,14 @@ class AppStringsAr extends AppStrings {
     FailureCode.categoryNameTooLong => 'اجعل الاسم أقل من ٣٠ حرفًا.',
     FailureCode.categoryProtected => 'لا يمكن حذف هذه الفئة.',
     FailureCode.currencySymbolInvalid => 'استخدم من رمز إلى ٤ رموز.',
+    FailureCode.network => 'تعذّر الاتصال. تحقّق من الإنترنت وحاول مرة أخرى.',
+    FailureCode.emailInvalid => 'أدخل بريدًا إلكترونيًا صحيحًا.',
+    FailureCode.passwordTooShort => 'استخدم ٦ أحرف على الأقل لكلمة المرور.',
+    FailureCode.invalidCredentials => 'البريد أو كلمة المرور غير صحيحة.',
+    FailureCode.emailTaken => 'يوجد حساب بهذا البريد بالفعل.',
+    FailureCode.emailNotConfirmed => 'أكّد بريدك أولًا بالرمز الذي أرسلناه لك.',
+    FailureCode.codeInvalid => 'الرمز غير صحيح أو انتهت صلاحيته.',
+    FailureCode.tooManyAttempts => 'محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.',
   };
 
   @override

@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/l10n/app_strings.dart';
+import '../../../auth/domain/entities/app_user.dart';
+import '../../../auth/presentation/cubit/account_cubit.dart';
+import '../../../auth/presentation/cubit/account_state.dart';
+import '../../../auth/presentation/pages/sign_in_page.dart';
 import '../../domain/entities/app_settings.dart';
 import '../../domain/usecases/save_currency_symbol.dart';
 import '../cubit/settings_cubit.dart';
 import '../cubit/settings_state.dart';
 
-/// Appearance, language and currency. Everything stays on the device.
+/// Account, appearance, language and currency.
 class SettingsSheet extends StatelessWidget {
   const SettingsSheet({super.key});
 
@@ -46,6 +50,10 @@ class SettingsSheet extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
+              Text(strings.account, style: theme.textTheme.labelLarge),
+              const SizedBox(height: 10),
+              const _AccountSection(),
+              const SizedBox(height: 24),
               Text(strings.appearance, style: theme.textTheme.labelLarge),
               const SizedBox(height: 10),
               const _ThemeModeSelector(),
@@ -68,6 +76,43 @@ class SettingsSheet extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Who is signed in, or a way to sign in. Signing in is optional.
+class _AccountSection extends StatelessWidget {
+  const _AccountSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = context.strings;
+
+    return BlocSelector<AccountCubit, AccountState, AppUser?>(
+      selector: (state) => switch (state) {
+        SignedIn(:final user) => user,
+        SignedOut() => null,
+      },
+      builder: (context, user) => switch (user) {
+        null => SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            icon: const Icon(Icons.login_rounded),
+            label: Text(strings.signIn),
+            onPressed: () => Navigator.of(context).push(SignInPage.route()),
+          ),
+        ),
+        final user => ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const CircleAvatar(child: Icon(Icons.person_rounded)),
+          title: Text(user.email, overflow: TextOverflow.ellipsis),
+          subtitle: Text(strings.signedIn),
+          trailing: TextButton(
+            onPressed: () => context.read<AccountCubit>().signOut(),
+            child: Text(strings.signOut),
+          ),
+        ),
+      },
     );
   }
 }

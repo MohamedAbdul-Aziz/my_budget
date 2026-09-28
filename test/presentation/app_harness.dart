@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:my_budget/app.dart';
 import 'package:my_budget/core/di/injection.dart';
+import 'package:my_budget/features/auth/domain/repositories/auth_repository.dart';
 import 'package:my_budget/features/categories/domain/repositories/category_repository.dart';
 import 'package:my_budget/features/categories/presentation/cubit/categories_cubit.dart';
 import 'package:my_budget/features/expenses/domain/repositories/expense_repository.dart';
@@ -23,12 +24,14 @@ class AppHarness {
     required this.expenses,
     required this.settings,
     required this.widget,
+    required this.auth,
   });
 
   final FakeCategoryRepository categories;
   final FakeExpenseRepository expenses;
   final FakeSettingsRepository settings;
   final FakeQuickExpenseWidgetRepository widget;
+  final FakeAuthRepository auth;
 }
 
 /// Boots the real widget tree and cubits over in-memory repositories.
@@ -69,12 +72,14 @@ Future<AppHarness> _bootDependencies(
   final expenses = FakeExpenseRepository(categories);
   final settings = FakeSettingsRepository();
   final widget = FakeQuickExpenseWidgetRepository();
+  final auth = FakeAuthRepository();
 
   sl
     ..registerLazySingleton<CategoryRepository>(() => categories)
     ..registerLazySingleton<ExpenseRepository>(() => expenses)
     ..registerLazySingleton<SettingsRepository>(() => settings)
-    ..registerLazySingleton<QuickExpenseWidgetRepository>(() => widget);
+    ..registerLazySingleton<QuickExpenseWidgetRepository>(() => widget)
+    ..registerLazySingleton<AuthRepository>(() => auth);
   configureDependencies();
 
   await sl<SettingsCubit>().load(localeName: localeName);
@@ -85,6 +90,7 @@ Future<AppHarness> _bootDependencies(
     expenses: expenses,
     settings: settings,
     widget: widget,
+    auth: auth,
   );
 }
 

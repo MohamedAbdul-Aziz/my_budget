@@ -28,6 +28,21 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- The link in the sign-up confirmation email. Supabase reads it
+                 through app_links and finishes signing the user in. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="com.mohamed.mybudget"
+                    android:host="login-callback"/>
+            </intent-filter>
+            <!-- Otherwise Flutter would also try to open the link as a route,
+                 and the app has no route by that name. -->
+            <meta-data
+                android:name="flutter_deeplinking_enabled"
+                android:value="false"/>
         </activity>
         <!-- Opened by the widget instead of MainActivity. Its own task with
              no recents entry, so finishing after a save returns the user to

@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/di/injection.dart';
 import 'core/l10n/app_strings.dart';
 import 'core/theme/app_theme.dart';
+import 'features/auth/presentation/cubit/account_cubit.dart';
 import 'features/categories/presentation/cubit/categories_cubit.dart';
 import 'features/expenses/presentation/cubit/home_cubit.dart';
 import 'features/expenses/presentation/pages/home_page.dart';
@@ -12,7 +13,7 @@ import 'features/quick_expense/presentation/widgets/quick_expense_bridge.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 import 'features/settings/presentation/cubit/settings_state.dart';
 
-/// Hosts the three long-lived cubits. They are resolved from the service
+/// Hosts the four long-lived cubits. They are resolved from the service
 /// locator with `.value`, so navigating away never closes them.
 class MyBudgetApp extends StatelessWidget {
   const MyBudgetApp({super.key});
@@ -24,6 +25,7 @@ class MyBudgetApp extends StatelessWidget {
         BlocProvider.value(value: sl<SettingsCubit>()),
         BlocProvider.value(value: sl<CategoriesCubit>()),
         BlocProvider.value(value: sl<HomeCubit>()),
+        BlocProvider.value(value: sl<AccountCubit>()),
       ],
       // Only theme and language rebuild MaterialApp — the currency format is
       // read further down the tree.

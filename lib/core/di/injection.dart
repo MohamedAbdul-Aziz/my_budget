@@ -1,6 +1,17 @@
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../features/auth/data/datasources/auth_remote_data_source.dart';
+import '../../features/auth/data/repositories/auth_repository_impl.dart';
+import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../../features/auth/domain/usecases/confirm_sign_up.dart';
+import '../../features/auth/domain/usecases/get_current_user.dart';
+import '../../features/auth/domain/usecases/resend_sign_up_code.dart';
+import '../../features/auth/domain/usecases/sign_in.dart';
+import '../../features/auth/domain/usecases/sign_out.dart';
+import '../../features/auth/domain/usecases/sign_up.dart';
+import '../../features/auth/domain/usecases/watch_user.dart';
+import '../../features/auth/presentation/cubit/account_cubit.dart';
 import '../../features/categories/data/datasources/category_local_data_source.dart';
 import '../../features/categories/data/repositories/category_repository_impl.dart';
 import '../../features/categories/domain/repositories/category_repository.dart';
@@ -45,6 +56,7 @@ final GetIt sl = GetIt.instance;
 /// [database] lets a test point the data layer at an in-memory database.
 void configureDependencies({AppDatabase? database}) {
   _registerCore(database);
+  _registerAuth();
   _registerCategories();
   _registerExpenses();
   _registerSettings();
@@ -63,6 +75,32 @@ void _registerCore(AppDatabase? database) {
   if (!sl.isRegistered<SupabaseClient>()) {
     sl.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
   }
+}
+
+void _registerAuth() {
+  _registerRepository<AuthRepository>(() => AuthRepositoryImpl(sl()));
+  sl
+    ..registerLazySingleton<AuthRemoteDataSource>(
+      () => AuthRemoteDataSourceImpl(sl()),
+    )
+    ..registerLazySingleton(() => GetCurrentUser(sl()))
+    ..registerLazySingleton(() => WatchUser(sl()))
+    ..registerLazySingleton(() => SignIn(sl()))
+    ..registerLazySingleton(() => SignUp(sl()))
+    ..registerLazySingleton(() => ConfirmSignUp(sl()))
+    ..registerLazySingleton(() => ResendSignUpCode(sl()))
+    ..registerLazySingleton(() => SignOut(sl()))
+    ..registerLazySingleton(
+      () => AccountCubit(
+        getCurrentUser: sl(),
+        watchUser: sl(),
+        signIn: sl(),
+        signUp: sl(),
+        confirmSignUp: sl(),
+        resendSignUpCode: sl(),
+        signOut: sl(),
+      ),
+    );
 }
 
 void _registerCategories() {

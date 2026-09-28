@@ -14,6 +14,14 @@ enum FailureCode {
   categoryNameTooLong,
   categoryProtected,
   currencySymbolInvalid,
+  network,
+  emailInvalid,
+  passwordTooShort,
+  invalidCredentials,
+  emailTaken,
+  emailNotConfirmed,
+  codeInvalid,
+  tooManyAttempts,
 }
 
 /// Typed failures produced by the data layer and surfaced through `ApiResult`.
@@ -36,6 +44,17 @@ sealed class Failure {
 final class DatabaseFailure extends Failure {
   const DatabaseFailure([String debugMessage = ''])
     : super(FailureCode.database, debugMessage);
+}
+
+/// The server could not be reached.
+final class NetworkFailure extends Failure {
+  const NetworkFailure([String debugMessage = ''])
+    : super(FailureCode.network, debugMessage);
+}
+
+/// The server refused a sign-in or sign-up.
+final class AuthFailure extends Failure {
+  const AuthFailure(super.code, [super.debugMessage]);
 }
 
 /// The requested record does not exist.

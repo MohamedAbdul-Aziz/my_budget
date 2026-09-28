@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:my_budget/core/error/api_result.dart';
 import 'package:my_budget/core/error/failures.dart';
+import 'package:my_budget/features/auth/domain/entities/app_user.dart';
+import 'package:my_budget/features/auth/domain/repositories/auth_repository.dart';
 import 'package:my_budget/features/categories/domain/entities/expense_category.dart';
 import 'package:my_budget/features/categories/domain/repositories/category_repository.dart';
 import 'package:my_budget/features/expenses/domain/entities/category_usage.dart';
@@ -235,4 +239,89 @@ class FakeQuickExpenseWidgetRepository implements QuickExpenseWidgetRepository {
     published.add(snapshot);
     return const Success(null);
   }
+}
+
+/// Stands in for Supabase Auth with "Confirm email" on: a new account cannot
+/// sign in until it is confirmed with the code in [codes].
+class FakeAuthRepository implements AuthRepository {
+  final Map<String, String> passwords = {};
+  final Set<String> confirmed = {};
+
+  /// The code each unconfirmed account was last emailed.
+  final Map<String, String> codes = {};
+  int resends = 0;
+
+  final StreamController<AppUser?> _changes =
+      StreamController<AppUser?>.broadcast();
+
+  @override
+  AppUser? currentUser;
+
+  @override
+  Stream<AppUser?> get userChanges => _changes.stream;
+
+  /// What tapping a confirmation link does on the phone: the account is
+  /// confirmed and the app is signed in from outside the cubit.
+  void openConfirmationLink(String email) {
+    confirmed.add(email);
+    _changes.add(currentUser = _userFor(email));
+  }
+
+  /// An account that already went through confirmation.
+  void addConfirmedAccount(String email, String password) {
+    passwords[email] = password;
+    confirmed.add(email);
+  }
+
+  @override
+  Future<ApiResult<AppUser>> signIn({
+    required String email,
+    required String password,
+  }) async {
+    if (passwords[email] != password) {
+      return const ResultFailure(AuthFailure(FailureCode.invalidCredentials));
+    }
+    if (!confirmed.contains(email)) {
+      return const ResultFailure(AuthFailure(FailureCode.emailNotConfirmed));
+    }
+    return Success(currentUser = _userFor(email));
+  }
+
+  @override
+  Future<ApiResult<AppUser?>> signUp({
+    required String email,
+    required String password,
+  }) async {
+    passwords[email] = password;
+    codes[email] = '123456';
+    return const Success(null);
+  }
+
+  @override
+  Future<ApiResult<AppUser>> confirmSignUp({
+    required String email,
+    required String code,
+  }) async {
+    if (codes[email] != code) {
+      return const ResultFailure(AuthFailure(FailureCode.codeInvalid));
+    }
+    confirmed.add(email);
+    return Success(currentUser = _userFor(email));
+  }
+
+  @override
+  Future<ApiResult<void>> resendSignUpCode({required String email}) async {
+    resends++;
+    codes[email] = '654321';
+    return const Success(null);
+  }
+
+  @override
+  Future<ApiResult<void>> signOut() async {
+    currentUser = null;
+    return const Success(null);
+  }
+
+  static AppUser _userFor(String email) =>
+      AppUser(id: 'user_$email', email: email);
 }
