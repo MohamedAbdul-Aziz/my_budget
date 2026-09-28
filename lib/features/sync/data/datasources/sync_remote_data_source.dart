@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/error/failures.dart';
-import '../models/cloud_rows.dart';
-import '../models/sync_batch.dart';
+import '../../../../core/database/portable_records.dart';
+import '../../../../core/database/record_batch.dart';
 
 abstract interface class SyncRemoteDataSource {
   /// The signed-in user, or null.
@@ -15,14 +15,14 @@ abstract interface class SyncRemoteDataSource {
   /// Upserts [batch] into the user's cloud tables. [onUploaded] is told how
   /// many rows each request carried.
   Future<void> upload(
-    SyncBatch batch, {
+    RecordBatch batch, {
     required String userId,
     void Function(int count)? onUploaded,
   });
 
   /// Every cloud row the signed-in user owns, deleted ones included so that
   /// deletes reach the phone. [onProgress] runs after each table.
-  Future<SyncBatch> download({void Function(double fraction)? onProgress});
+  Future<RecordBatch> download({void Function(double fraction)? onProgress});
 }
 
 /// The Supabase tables mirror the phone's SQLite tables column for column,
@@ -46,7 +46,7 @@ class SyncRemoteDataSourceImpl implements SyncRemoteDataSource {
 
   @override
   Future<void> upload(
-    SyncBatch batch, {
+    RecordBatch batch, {
     required String userId,
     void Function(int count)? onUploaded,
   }) => _guard(() async {
@@ -54,18 +54,20 @@ class SyncRemoteDataSourceImpl implements SyncRemoteDataSource {
     // has not arrived yet.
     await _upsert('categories', 'user_id,id', [
       for (final row in batch.categories)
-        CloudRows.categoryToCloud(row, userId),
+        {'user_id': userId, ...PortableRecords.categoryToPortable(row)},
     ], onUploaded);
     await _upsert('expenses', 'user_id,id', [
-      for (final row in batch.expenses) CloudRows.expenseToCloud(row, userId),
+      for (final row in batch.expenses)
+        {'user_id': userId, ...PortableRecords.expenseToPortable(row)},
     ], onUploaded);
     await _upsert('user_settings', 'user_id,key', [
-      for (final row in batch.settings) CloudRows.settingToCloud(row, userId),
+      for (final row in batch.settings)
+        {'user_id': userId, ...PortableRecords.settingToPortable(row)},
     ], onUploaded);
   });
 
   @override
-  Future<SyncBatch> download({void Function(double fraction)? onProgress}) =>
+  Future<RecordBatch> download({void Function(double fraction)? onProgress}) =>
       _guard(() async {
         final categories = await _readAll('categories', 'id');
         onProgress?.call(1 / 3);
@@ -73,10 +75,12 @@ class SyncRemoteDataSourceImpl implements SyncRemoteDataSource {
         onProgress?.call(2 / 3);
         final settings = await _readAll('user_settings', 'key');
         onProgress?.call(1);
-        return SyncBatch(
-          categories: categories.map(CloudRows.categoryFromCloud).toList(),
-          expenses: expenses.map(CloudRows.expenseFromCloud).toList(),
-          settings: settings.map(CloudRows.settingFromCloud).toList(),
+        return RecordBatch(
+          categories: categories
+              .map(PortableRecords.categoryFromPortable)
+              .toList(),
+          expenses: expenses.map(PortableRecords.expenseFromPortable).toList(),
+          settings: settings.map(PortableRecords.settingFromPortable).toList(),
         );
       });
 

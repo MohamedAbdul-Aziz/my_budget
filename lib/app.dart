@@ -7,6 +7,8 @@ import 'core/l10n/app_strings.dart';
 import 'core/theme/app_theme.dart';
 import 'features/analyses/presentation/cubit/analyses_cubit.dart';
 import 'features/auth/presentation/cubit/account_cubit.dart';
+import 'features/data_management/presentation/cubit/data_management_cubit.dart';
+import 'features/data_management/presentation/cubit/data_management_state.dart';
 import 'features/categories/presentation/cubit/categories_cubit.dart';
 import 'features/expenses/presentation/cubit/home_cubit.dart';
 import 'features/expenses/presentation/cubit/home_state.dart';
@@ -32,19 +34,22 @@ class MyBudgetApp extends StatelessWidget {
         BlocProvider.value(value: sl<AccountCubit>()),
         BlocProvider.value(value: sl<SyncCubit>()),
         BlocProvider.value(value: sl<AnalysesCubit>()),
+        BlocProvider.value(value: sl<DataManagementCubit>()),
       ],
-      // A restore rewrites the database underneath the other cubits, so they
-      // read it again. The home screen widget follows HomeCubit on its own.
       child: MultiBlocListener(
         listeners: [
+          // A restore or an import rewrites the database underneath the other
+          // cubits, so they read it again. The home screen widget and the
+          // analyses follow HomeCubit on their own.
           BlocListener<SyncCubit, SyncState>(
             listenWhen: (_, state) =>
                 state is SyncSucceeded && state.kind == SyncKind.restore,
-            listener: (context, _) {
-              context.read<CategoriesCubit>().load();
-              context.read<HomeCubit>().refresh();
-              context.read<SettingsCubit>().load();
-            },
+            listener: (context, _) => _reloadData(context),
+          ),
+          BlocListener<DataManagementCubit, DataManagementState>(
+            listenWhen: (_, state) =>
+                state is DataImported && state.changes > 0,
+            listener: (context, _) => _reloadData(context),
           ),
           // Analyses follow the home screen: its selected month, and every
           // change to that month's expenses.
@@ -87,5 +92,11 @@ class MyBudgetApp extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  static void _reloadData(BuildContext context) {
+    context.read<CategoriesCubit>().load();
+    context.read<HomeCubit>().refresh();
+    context.read<SettingsCubit>().load();
   }
 }

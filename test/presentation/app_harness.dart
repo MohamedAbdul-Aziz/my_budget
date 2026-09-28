@@ -6,6 +6,7 @@ import 'package:my_budget/app.dart';
 import 'package:my_budget/core/di/injection.dart';
 import 'package:my_budget/features/auth/domain/repositories/auth_repository.dart';
 import 'package:my_budget/features/categories/domain/repositories/category_repository.dart';
+import 'package:my_budget/features/data_management/domain/repositories/data_management_repository.dart';
 import 'package:my_budget/features/categories/presentation/cubit/categories_cubit.dart';
 import 'package:my_budget/features/expenses/domain/repositories/expense_repository.dart';
 import 'package:my_budget/features/expenses/presentation/cubit/home_cubit.dart';
@@ -27,6 +28,7 @@ class AppHarness {
     required this.widget,
     required this.auth,
     required this.sync,
+    required this.files,
   });
 
   final FakeCategoryRepository categories;
@@ -35,6 +37,7 @@ class AppHarness {
   final FakeQuickExpenseWidgetRepository widget;
   final FakeAuthRepository auth;
   final FakeSyncRepository sync;
+  final FakeDataManagementRepository files;
 }
 
 /// Boots the real widget tree and cubits over in-memory repositories.
@@ -77,6 +80,7 @@ Future<AppHarness> _bootDependencies(
   final widget = FakeQuickExpenseWidgetRepository();
   final auth = FakeAuthRepository();
   final sync = FakeSyncRepository();
+  final files = FakeDataManagementRepository();
 
   sl
     ..registerLazySingleton<CategoryRepository>(() => categories)
@@ -84,7 +88,8 @@ Future<AppHarness> _bootDependencies(
     ..registerLazySingleton<SettingsRepository>(() => settings)
     ..registerLazySingleton<QuickExpenseWidgetRepository>(() => widget)
     ..registerLazySingleton<AuthRepository>(() => auth)
-    ..registerLazySingleton<SyncRepository>(() => sync);
+    ..registerLazySingleton<SyncRepository>(() => sync)
+    ..registerLazySingleton<DataManagementRepository>(() => files);
   configureDependencies();
 
   await sl<SettingsCubit>().load(localeName: localeName);
@@ -97,6 +102,7 @@ Future<AppHarness> _bootDependencies(
     widget: widget,
     auth: auth,
     sync: sync,
+    files: files,
   );
 }
 
