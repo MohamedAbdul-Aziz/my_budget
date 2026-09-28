@@ -1,9 +1,6 @@
-/// Rows of each user-data table, in the phone's SQLite column format.
-///
-/// The one currency for moving data in or out in bulk: the cloud sync and
-/// the file backup both read, write and merge records as a [RecordBatch].
-class RecordBatch {
-  const RecordBatch({
+/// Rows of each synced table, in the phone's SQLite column format.
+class SyncBatch {
+  const SyncBatch({
     this.categories = const [],
     this.expenses = const [],
     this.settings = const [],

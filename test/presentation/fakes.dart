@@ -7,13 +7,6 @@ import 'package:my_budget/features/auth/domain/repositories/auth_repository.dart
 import 'package:my_budget/features/budgets/domain/entities/budget_limits.dart';
 import 'package:my_budget/features/budgets/domain/repositories/budget_repository.dart';
 import 'package:my_budget/features/categories/domain/entities/expense_category.dart';
-import 'package:my_budget/features/data_management/domain/entities/backup_preview.dart';
-import 'package:my_budget/features/data_management/domain/entities/export_format.dart';
-import 'package:my_budget/features/data_management/domain/entities/export_locale.dart';
-import 'package:my_budget/features/data_management/domain/entities/exported_file.dart';
-import 'package:my_budget/features/data_management/domain/entities/import_mode.dart';
-import 'package:my_budget/features/data_management/domain/entities/share_anchor.dart';
-import 'package:my_budget/features/data_management/domain/repositories/data_management_repository.dart';
 import 'package:my_budget/features/categories/domain/repositories/category_repository.dart';
 import 'package:my_budget/features/expenses/domain/entities/category_usage.dart';
 import 'package:my_budget/features/expenses/domain/entities/expense.dart';
@@ -428,95 +421,5 @@ class FakeSyncRepository implements SyncRepository {
     onProgress?.call(1);
     final at = last = DateTime.now();
     return Success(SyncReport(changes: 1, finishedAt: at));
-  }
-}
-
-/// Stands in for exports, sharing, saving and importing; the real files are
-/// covered by `test/data/data_management_test.dart`.
-class FakeDataManagementRepository implements DataManagementRepository {
-  final List<ExportFormat> exports = [];
-  final List<ExportLocale> exportLocales = [];
-  final List<List<ExportedFile>> shared = [];
-  final List<List<ExportedFile>> saved = [];
-  final List<ImportMode> imports = [];
-
-  /// When set, exporting fails with it.
-  Failure? exportFailure;
-
-  /// What the save dialog answers: false is the user cancelling.
-  bool saveConfirmed = true;
-
-  /// What the file chooser returns: null is the user cancelling.
-  String? pickedPath = '/picked/backup.mybudget.json';
-
-  /// When set, checking the picked file fails with it.
-  Failure? previewFailure;
-
-  BackupPreview preview = BackupPreview(
-    path: '/picked/backup.mybudget.json',
-    expenses: 12,
-    categories: 9,
-    exportedAt: DateTime(2026, 9, 1, 10),
-  );
-
-  /// Runs during an import, standing in for records arriving on the phone.
-  Future<void> Function()? onImport;
-  int importChanges = 3;
-
-  @override
-  Future<ApiResult<List<ExportedFile>>> export(
-    ExportFormat format,
-    ExportLocale locale, {
-    DataProgress? onProgress,
-  }) async {
-    exports.add(format);
-    exportLocales.add(locale);
-    final failure = exportFailure;
-    if (failure != null) return ResultFailure(failure);
-    onProgress?.call(1);
-    return Success([
-      ExportedFile(
-        path: '/tmp/export.${format.name}',
-        name: 'export.${format.name}',
-        mimeType: 'application/octet-stream',
-      ),
-    ]);
-  }
-
-  @override
-  Future<ApiResult<void>> share(
-    List<ExportedFile> files, {
-    ShareAnchor? anchor,
-  }) async {
-    shared.add(files);
-    return const Success(null);
-  }
-
-  @override
-  Future<ApiResult<bool>> saveToDevice(List<ExportedFile> files) async {
-    if (saveConfirmed) saved.add(files);
-    return Success(saveConfirmed);
-  }
-
-  @override
-  Future<ApiResult<String?>> pickFile() async => Success(pickedPath);
-
-  @override
-  Future<ApiResult<BackupPreview>> previewBackup(String path) async {
-    final failure = previewFailure;
-    if (failure != null) return ResultFailure(failure);
-    return Success(preview);
-  }
-
-  @override
-  Future<ApiResult<int>> importBackup(
-    String path,
-    ImportMode mode, {
-    DataProgress? onProgress,
-  }) async {
-    imports.add(mode);
-    await onImport?.call();
-    onProgress?.call(1);
-    return Success(importChanges);
   }
 }

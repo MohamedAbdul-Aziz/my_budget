@@ -7,15 +7,13 @@ import '../../../auth/domain/entities/app_user.dart';
 import '../../../auth/presentation/cubit/account_cubit.dart';
 import '../../../auth/presentation/cubit/account_state.dart';
 import '../../../auth/presentation/pages/sign_in_page.dart';
-import '../../../data_management/presentation/widgets/data_management_section.dart';
 import '../../../sync/presentation/widgets/backup_section.dart';
 import '../../domain/entities/app_settings.dart';
 import '../../domain/usecases/save_currency_symbol.dart';
 import '../cubit/settings_cubit.dart';
 import '../cubit/settings_state.dart';
 
-/// Account and cloud backup, files kept on the phone, appearance, language
-/// and currency.
+/// Account and backup, appearance, language and currency.
 class SettingsSheet extends StatelessWidget {
   const SettingsSheet({super.key});
 
@@ -57,10 +55,6 @@ class SettingsSheet extends StatelessWidget {
               Text(strings.account, style: theme.textTheme.labelLarge),
               const SizedBox(height: 10),
               const _AccountSection(),
-              const SizedBox(height: 24),
-              Text(strings.dataManagement, style: theme.textTheme.labelLarge),
-              const SizedBox(height: 6),
-              const DataManagementSection(),
               const SizedBox(height: 24),
               Text(strings.appearance, style: theme.textTheme.labelLarge),
               const SizedBox(height: 10),

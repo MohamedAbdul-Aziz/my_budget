@@ -26,14 +26,6 @@ enum FailureCode {
   syncOtherAccount,
   syncFailed,
   accountDeletionFailed,
-  backupNotRecognized,
-  backupTooNew,
-  backupDamaged,
-  fileUnavailable,
-  storageFull,
-  exportFailed,
-  shareUnavailable,
-  saveFailed,
 }
 
 /// Typed failures produced by the data layer and surfaced through `ApiResult`.
@@ -72,12 +64,6 @@ final class AuthFailure extends Failure {
 /// A backup or restore could not be completed.
 final class SyncFailure extends Failure {
   const SyncFailure(super.code, [super.debugMessage]);
-}
-
-/// A file could not be written, read, shared or saved, or is not a usable
-/// backup.
-final class FileFailure extends Failure {
-  const FileFailure(super.code, [super.debugMessage]);
 }
 
 /// The requested record does not exist.

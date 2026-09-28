@@ -4,16 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../features/analyses/domain/usecases/get_month_analysis.dart';
 import '../../features/analyses/presentation/cubit/analyses_cubit.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
-import '../../features/data_management/data/datasources/device_files_data_source.dart';
-import '../../features/data_management/data/datasources/report_fonts_data_source.dart';
-import '../../features/data_management/data/repositories/data_management_repository_impl.dart';
-import '../../features/data_management/domain/repositories/data_management_repository.dart';
-import '../../features/data_management/domain/usecases/choose_backup.dart';
-import '../../features/data_management/domain/usecases/export_data.dart';
-import '../../features/data_management/domain/usecases/import_backup.dart';
-import '../../features/data_management/domain/usecases/save_files.dart';
-import '../../features/data_management/domain/usecases/share_files.dart';
-import '../../features/data_management/presentation/cubit/data_management_cubit.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/domain/usecases/confirm_sign_up.dart';
@@ -74,7 +64,6 @@ import '../../features/sync/domain/usecases/get_last_synced_at.dart';
 import '../../features/sync/domain/usecases/restore_data.dart';
 import '../../features/sync/presentation/cubit/sync_cubit.dart';
 import '../database/app_database.dart';
-import '../database/local_records.dart';
 
 /// The single service locator. Nothing in the app constructs a cubit, use case
 /// or repository by hand — everything is resolved from here.
@@ -94,7 +83,6 @@ void configureDependencies({AppDatabase? database}) {
   _registerQuickExpense();
   _registerSync();
   _registerAnalyses();
-  _registerDataManagement();
 }
 
 /// Repositories are the seam tests replace, so they are only registered when
@@ -104,10 +92,7 @@ void _registerRepository<T extends Object>(T Function() create) {
 }
 
 void _registerCore(AppDatabase? database) {
-  sl
-    ..registerLazySingleton<AppDatabase>(() => database ?? AppDatabase())
-    // Bulk record moves shared by cloud sync and file backups.
-    ..registerLazySingleton(() => LocalRecords(sl()));
+  sl.registerLazySingleton<AppDatabase>(() => database ?? AppDatabase());
   // Lazy so tests that never touch the network need no Supabase.initialize.
   if (!sl.isRegistered<SupabaseClient>()) {
     sl.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
@@ -268,7 +253,7 @@ void _registerSync() {
   );
   sl
     ..registerLazySingleton<SyncLocalDataSource>(
-      () => SyncLocalDataSourceImpl(sl(), sl()),
+      () => SyncLocalDataSourceImpl(sl()),
     )
     ..registerLazySingleton<SyncRemoteDataSource>(
       () => SyncRemoteDataSourceImpl(sl()),
@@ -288,33 +273,4 @@ void _registerAnalyses() {
   sl
     ..registerLazySingleton(() => GetMonthAnalysis(sl()))
     ..registerLazySingleton(() => AnalysesCubit(getMonthAnalysis: sl()));
-}
-
-void _registerDataManagement() {
-  _registerRepository<DataManagementRepository>(
-    () => DataManagementRepositoryImpl(records: sl(), files: sl(), fonts: sl()),
-  );
-  sl
-    ..registerLazySingleton<DeviceFilesDataSource>(
-      DeviceFilesDataSourceImpl.new,
-    )
-    ..registerLazySingleton<ReportFontsDataSource>(
-      ReportFontsDataSourceImpl.new,
-    )
-    ..registerLazySingleton(() => ExportData(sl()))
-    ..registerLazySingleton(() => ShareFiles(sl()))
-    ..registerLazySingleton(() => SaveFiles(sl()))
-    ..registerLazySingleton(() => ChooseBackup(sl()))
-    ..registerLazySingleton(() => ImportBackup(sl()))
-    // Shared, so an export or import keeps running and reporting when the
-    // settings sheet is closed and reopened.
-    ..registerLazySingleton(
-      () => DataManagementCubit(
-        exportData: sl(),
-        shareFiles: sl(),
-        saveFiles: sl(),
-        chooseBackup: sl(),
-        importBackup: sl(),
-      ),
-    );
 }

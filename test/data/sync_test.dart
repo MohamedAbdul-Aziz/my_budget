@@ -1,8 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_budget/core/database/app_database.dart';
-import 'package:my_budget/core/database/local_records.dart';
-import 'package:my_budget/core/database/portable_records.dart';
-import 'package:my_budget/core/database/record_batch.dart';
 import 'package:my_budget/core/error/api_result.dart';
 import 'package:my_budget/core/error/failures.dart';
 import 'package:my_budget/features/categories/data/datasources/category_local_data_source.dart';
@@ -16,6 +13,8 @@ import 'package:my_budget/features/settings/data/datasources/settings_local_data
 import 'package:my_budget/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:my_budget/features/sync/data/datasources/sync_local_data_source.dart';
 import 'package:my_budget/features/sync/data/datasources/sync_remote_data_source.dart';
+import 'package:my_budget/features/sync/data/models/cloud_rows.dart';
+import 'package:my_budget/features/sync/data/models/sync_batch.dart';
 import 'package:my_budget/features/sync/data/repositories/sync_repository_impl.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -255,7 +254,7 @@ void main() {
     expect((await phoneA.sync.lastSyncedAt()).dataOrNull, report.finishedAt);
   });
 
-  test('rows survive the trip off the phone and back unchanged', () {
+  test('rows survive the trip to the cloud and back unchanged', () {
     const category = {
       'id': 'cat_1',
       'name': 'Pets',
@@ -279,19 +278,16 @@ void main() {
     };
     const setting = {'key': 'currency_symbol', 'value': '€', 'updated_at': 5};
 
-    final portable = PortableRecords.categoryToPortable(category);
-    expect(portable['is_default'], isTrue);
-    expect(PortableRecords.categoryFromPortable(portable), category);
+    final cloudCategory = CloudRows.categoryToCloud(category, 'user-1');
+    expect(cloudCategory['user_id'], 'user-1');
+    expect(cloudCategory['is_default'], isTrue);
+    expect(CloudRows.categoryFromCloud(cloudCategory), category);
     expect(
-      PortableRecords.expenseFromPortable(
-        PortableRecords.expenseToPortable(expense),
-      ),
+      CloudRows.expenseFromCloud(CloudRows.expenseToCloud(expense, 'user-1')),
       expense,
     );
     expect(
-      PortableRecords.settingFromPortable(
-        PortableRecords.settingToPortable(setting),
-      ),
+      CloudRows.settingFromCloud(CloudRows.settingToCloud(setting, 'user-1')),
       setting,
     );
   });
@@ -311,7 +307,7 @@ class Phone {
       SettingsLocalDataSourceImpl(database),
     );
     sync = SyncRepositoryImpl(
-      local: SyncLocalDataSourceImpl(database, LocalRecords(database)),
+      local: SyncLocalDataSourceImpl(database),
       remote: remote,
     );
   }
@@ -401,7 +397,7 @@ class FakeRemote implements SyncRemoteDataSource {
 
   @override
   Future<void> upload(
-    RecordBatch batch, {
+    SyncBatch batch, {
     required String userId,
     void Function(int count)? onUploaded,
   }) async {
@@ -418,12 +414,12 @@ class FakeRemote implements SyncRemoteDataSource {
   }
 
   @override
-  Future<RecordBatch> download({
+  Future<SyncBatch> download({
     void Function(double fraction)? onProgress,
   }) async {
     final user = userId!;
     onProgress?.call(1);
-    return RecordBatch(
+    return SyncBatch(
       categories: cloud.rows('categories', userId: user),
       expenses: cloud.rows('expenses', userId: user),
       settings: cloud.rows('user_settings', userId: user),
