@@ -6,12 +6,13 @@ import '../../../auth/domain/entities/app_user.dart';
 import '../../../auth/presentation/cubit/account_cubit.dart';
 import '../../../auth/presentation/cubit/account_state.dart';
 import '../../../auth/presentation/pages/sign_in_page.dart';
+import '../../../sync/presentation/widgets/backup_section.dart';
 import '../../domain/entities/app_settings.dart';
 import '../../domain/usecases/save_currency_symbol.dart';
 import '../cubit/settings_cubit.dart';
 import '../cubit/settings_state.dart';
 
-/// Account, appearance, language and currency.
+/// Account and backup, appearance, language and currency.
 class SettingsSheet extends StatelessWidget {
   const SettingsSheet({super.key});
 
@@ -65,13 +66,7 @@ class SettingsSheet extends StatelessWidget {
               Text(strings.currency, style: theme.textTheme.labelLarge),
               const SizedBox(height: 10),
               const _CurrencyField(),
-              const SizedBox(height: 20),
-              Text(
-                strings.storedOnThisDevice,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
+              const _GuestStorageNote(),
             ],
           ),
         ),
@@ -102,17 +97,50 @@ class _AccountSection extends StatelessWidget {
             onPressed: () => Navigator.of(context).push(SignInPage.route()),
           ),
         ),
-        final user => ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: const CircleAvatar(child: Icon(Icons.person_rounded)),
-          title: Text(user.email, overflow: TextOverflow.ellipsis),
-          subtitle: Text(strings.signedIn),
-          trailing: TextButton(
-            onPressed: () => context.read<AccountCubit>().signOut(),
-            child: Text(strings.signOut),
-          ),
+        final user => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const CircleAvatar(child: Icon(Icons.person_rounded)),
+              title: Text(user.email, overflow: TextOverflow.ellipsis),
+              subtitle: Text(strings.signedIn),
+              trailing: TextButton(
+                onPressed: () => context.read<AccountCubit>().signOut(),
+                child: Text(strings.signOut),
+              ),
+            ),
+            const SizedBox(height: 8),
+            const BackupSection(),
+          ],
         ),
       },
+    );
+  }
+}
+
+/// Where a guest's data lives. A signed-in user sees the backup controls
+/// instead.
+class _GuestStorageNote extends StatelessWidget {
+  const _GuestStorageNote();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return BlocSelector<AccountCubit, AccountState, bool>(
+      selector: (state) => state is SignedOut,
+      builder: (context, isGuest) => isGuest
+          ? Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Text(
+                context.strings.storedOnThisDevice,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            )
+          : const SizedBox.shrink(),
     );
   }
 }

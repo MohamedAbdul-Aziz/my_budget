@@ -7,12 +7,30 @@ import '../../features/categories/domain/entities/expense_category.dart';
 
 /// Owns the single on-device SQLite connection.
 ///
-/// Everything the app stores lives here. Supabase is connected, but no feature
-/// reads or writes remote data yet.
+/// Everything the app stores lives here. A signed-in user can copy it to their
+/// Supabase account and back (see `features/sync`); the app itself only ever
+/// reads from this database.
+///
+/// Sync bookkeeping, added in schema version 2:
+/// * `updated_at`: when the row last changed, in milliseconds. When the same
+///   row changed on two phones, the newer change wins.
+/// * `deleted_at`: set instead of deleting, so a delete can reach the cloud.
+///   Every read skips these rows.
+/// * `dirty`: 1 while the row has changes the cloud has not seen yet.
 class AppDatabase {
   AppDatabase({this.fileName = 'my_budget.db', this.inMemory = false});
 
-  static const int _schemaVersion = 1;
+  static const int _schemaVersion = 2;
+
+  /// Now, in the form stored in `updated_at` and `deleted_at`.
+  static int nowMillis() => DateTime.now().millisecondsSinceEpoch;
+
+  /// [row] stamped as a local change the cloud has not seen yet.
+  static Map<String, Object?> changed(Map<String, Object?> row) => {
+    ...row,
+    'updated_at': nowMillis(),
+    'dirty': 1,
+  };
 
   final String fileName;
 
@@ -39,6 +57,7 @@ class AppDatabase {
       version: _schemaVersion,
       onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -96,7 +115,71 @@ class AppDatabase {
       });
     }
 
+    // A fresh install takes the same upgrade path as an existing one, so both
+    // end up with exactly the same schema.
+    _addSyncColumns(batch);
+
     await batch.commit(noResult: true);
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    final batch = db.batch();
+    if (oldVersion < 2) _addSyncColumns(batch);
+    await batch.commit(noResult: true);
+  }
+
+  /// Schema version 2. Everything already on the phone starts out dirty, so
+  /// the first backup uploads all of it.
+  void _addSyncColumns(Batch batch) {
+    for (final table in ['categories', 'expenses']) {
+      batch
+        ..execute(
+          'ALTER TABLE $table ADD COLUMN updated_at INTEGER NOT NULL DEFAULT 0',
+        )
+        ..execute('ALTER TABLE $table ADD COLUMN deleted_at INTEGER')
+        ..execute(
+          'ALTER TABLE $table ADD COLUMN dirty INTEGER NOT NULL DEFAULT 1',
+        )
+        ..execute(
+          'CREATE INDEX idx_${table}_dirty ON $table (dirty) WHERE dirty = 1',
+        );
+    }
+    batch
+      ..execute(
+        'ALTER TABLE settings ADD COLUMN updated_at INTEGER NOT NULL DEFAULT 0',
+      )
+      ..execute(
+        'ALTER TABLE settings ADD COLUMN dirty INTEGER NOT NULL DEFAULT 1',
+      );
+
+    final now = nowMillis();
+    batch
+      ..execute('UPDATE expenses SET updated_at = created_at')
+      ..execute('UPDATE categories SET updated_at = ?', [now])
+      ..execute('UPDATE settings SET updated_at = ?', [now]);
+    // A built-in category nobody has edited is the same on every phone. It
+    // stays at 0 so that an edit to it made anywhere else always wins.
+    for (final category in defaultCategories) {
+      batch.execute(
+        'UPDATE categories SET updated_at = 0 '
+        'WHERE id = ? AND name = ? AND icon_name = ? AND color_value = ?',
+        [
+          category['id'],
+          category['name'],
+          category['icon_name'],
+          category['color_value'],
+        ],
+      );
+    }
+
+    // Local bookkeeping for sync (who this phone's data belongs to, when it
+    // last synced). Never uploaded.
+    batch.execute('''
+      CREATE TABLE sync_meta (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      )
+    ''');
   }
 
   /// Seeded on first launch. `icon_name` is a key into the app's const icon

@@ -22,6 +22,9 @@ enum FailureCode {
   emailNotConfirmed,
   codeInvalid,
   tooManyAttempts,
+  signInRequired,
+  syncOtherAccount,
+  syncFailed,
 }
 
 /// Typed failures produced by the data layer and surfaced through `ApiResult`.
@@ -55,6 +58,11 @@ final class NetworkFailure extends Failure {
 /// The server refused a sign-in or sign-up.
 final class AuthFailure extends Failure {
   const AuthFailure(super.code, [super.debugMessage]);
+}
+
+/// A backup or restore could not be completed.
+final class SyncFailure extends Failure {
+  const SyncFailure(super.code, [super.debugMessage]);
 }
 
 /// The requested record does not exist.

@@ -107,6 +107,17 @@ abstract class AppStrings {
   String get resendCode;
   String get codeResent;
   String get useDifferentEmail;
+
+  // Backup
+  String get backupHint;
+  String get backUpNow;
+  String get restoreData;
+  String get backingUp;
+  String get restoring;
+  String get backupDone;
+  String get restoreDone;
+  String get neverSynced;
+  String lastSynced(String when);
   String get showPassword;
   String get hidePassword;
 
@@ -299,7 +310,7 @@ class AppStringsEn extends AppStrings {
 
   @override
   String get storedOnThisDevice =>
-      'Your expenses are stored only on this device.';
+      'Your expenses are stored on this device. Sign in to back them up.';
 
   @override
   String get account => 'Account';
@@ -359,6 +370,35 @@ class AppStringsEn extends AppStrings {
   String get useDifferentEmail => 'Use a different email';
 
   @override
+  String get backupHint =>
+      'Back up to keep a copy of your expenses in your account. Restore '
+      'brings that copy to this phone without removing anything already here.';
+
+  @override
+  String get backUpNow => 'Back up now';
+
+  @override
+  String get restoreData => 'Restore';
+
+  @override
+  String get backingUp => 'Backing up…';
+
+  @override
+  String get restoring => 'Restoring…';
+
+  @override
+  String get backupDone => 'Backup complete';
+
+  @override
+  String get restoreDone => 'Restore complete';
+
+  @override
+  String get neverSynced => 'Not backed up yet';
+
+  @override
+  String lastSynced(String when) => 'Last synced $when';
+
+  @override
   String get showPassword => 'Show password';
 
   @override
@@ -393,13 +433,19 @@ class AppStringsEn extends AppStrings {
     FailureCode.network =>
       "Couldn't connect. Check your internet and try again.",
     FailureCode.emailInvalid => 'Enter a valid email address.',
-    FailureCode.passwordTooShort => 'Use at least 6 characters for the password.',
+    FailureCode.passwordTooShort =>
+      'Use at least 6 characters for the password.',
     FailureCode.invalidCredentials => 'Wrong email or password.',
     FailureCode.emailTaken => 'An account with this email already exists.',
     FailureCode.emailNotConfirmed =>
       'Confirm your email first with the code we sent you.',
     FailureCode.codeInvalid => 'That code is wrong or has expired.',
-    FailureCode.tooManyAttempts => 'Too many attempts. Wait a moment and try again.',
+    FailureCode.signInRequired => 'Sign in again to sync your data.',
+    FailureCode.syncOtherAccount =>
+      "This phone's data is linked to a different account.",
+    FailureCode.syncFailed => "Couldn't sync with your account. Try again.",
+    FailureCode.tooManyAttempts =>
+      'Too many attempts. Wait a moment and try again.',
   };
 
   @override
@@ -578,7 +624,8 @@ class AppStringsAr extends AppStrings {
   String get currencySymbolHint => 'يظهر بجانب كل مبلغ';
 
   @override
-  String get storedOnThisDevice => 'تُحفظ مصروفاتك على هذا الجهاز فقط.';
+  String get storedOnThisDevice =>
+      'تُحفظ مصروفاتك على هذا الجهاز. سجّل الدخول لنسخها احتياطيًا.';
 
   @override
   String get account => 'الحساب';
@@ -636,6 +683,35 @@ class AppStringsAr extends AppStrings {
   String get useDifferentEmail => 'استخدام بريد آخر';
 
   @override
+  String get backupHint =>
+      'انسخ مصروفاتك احتياطيًا لتحتفظ بنسخة منها في حسابك. الاستعادة تنقل '
+      'هذه النسخة إلى هذا الهاتف دون حذف أي شيء موجود عليه.';
+
+  @override
+  String get backUpNow => 'نسخ احتياطي الآن';
+
+  @override
+  String get restoreData => 'استعادة';
+
+  @override
+  String get backingUp => 'جارٍ النسخ الاحتياطي…';
+
+  @override
+  String get restoring => 'جارٍ الاستعادة…';
+
+  @override
+  String get backupDone => 'اكتمل النسخ الاحتياطي';
+
+  @override
+  String get restoreDone => 'اكتملت الاستعادة';
+
+  @override
+  String get neverSynced => 'لم يُنسخ احتياطيًا بعد';
+
+  @override
+  String lastSynced(String when) => 'آخر مزامنة: $when';
+
+  @override
   String get showPassword => 'إظهار كلمة المرور';
 
   @override
@@ -674,7 +750,11 @@ class AppStringsAr extends AppStrings {
     FailureCode.emailTaken => 'يوجد حساب بهذا البريد بالفعل.',
     FailureCode.emailNotConfirmed => 'أكّد بريدك أولًا بالرمز الذي أرسلناه لك.',
     FailureCode.codeInvalid => 'الرمز غير صحيح أو انتهت صلاحيته.',
-    FailureCode.tooManyAttempts => 'محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.',
+    FailureCode.signInRequired => 'سجّل الدخول مرة أخرى لمزامنة بياناتك.',
+    FailureCode.syncOtherAccount => 'بيانات هذا الهاتف مرتبطة بحساب آخر.',
+    FailureCode.syncFailed => 'تعذّرت المزامنة مع حسابك. حاول مرة أخرى.',
+    FailureCode.tooManyAttempts =>
+      'محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.',
   };
 
   @override

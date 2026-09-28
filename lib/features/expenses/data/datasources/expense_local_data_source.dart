@@ -33,7 +33,8 @@ class ExpenseLocalDataSourceImpl implements ExpenseLocalDataSource {
     try {
       final db = await _appDatabase.database;
       final rows = await db.rawQuery(
-        '${ExpenseModel.selectJoin} WHERE e.month_key = ? '
+        '${ExpenseModel.selectJoin} '
+        'WHERE e.month_key = ? AND e.deleted_at IS NULL '
         'ORDER BY e.date DESC, e.created_at DESC',
         [month.key],
       );
@@ -50,6 +51,7 @@ class ExpenseLocalDataSourceImpl implements ExpenseLocalDataSource {
       final rows = await db.rawQuery('''
         SELECT month_key, SUM(amount) AS total, COUNT(*) AS entries
         FROM expenses
+        WHERE deleted_at IS NULL
         GROUP BY month_key
         ORDER BY month_key DESC
       ''');
@@ -74,6 +76,7 @@ class ExpenseLocalDataSourceImpl implements ExpenseLocalDataSource {
       final rows = await db.rawQuery('''
         SELECT category_id, COUNT(*) AS uses
         FROM expenses
+        WHERE deleted_at IS NULL
         GROUP BY category_id
         ORDER BY uses DESC, category_id ASC
       ''');
@@ -95,7 +98,8 @@ class ExpenseLocalDataSourceImpl implements ExpenseLocalDataSource {
     try {
       final db = await _appDatabase.database;
       final rows = await db.rawQuery(
-        '${ExpenseModel.selectJoin} WHERE e.id = ? LIMIT 1',
+        '${ExpenseModel.selectJoin} '
+        'WHERE e.id = ? AND e.deleted_at IS NULL LIMIT 1',
         [id],
       );
       if (rows.isEmpty) {
@@ -111,7 +115,7 @@ class ExpenseLocalDataSourceImpl implements ExpenseLocalDataSource {
   Future<void> insertExpense(Map<String, Object?> row) async {
     try {
       final db = await _appDatabase.database;
-      await db.insert('expenses', row);
+      await db.insert('expenses', AppDatabase.changed(row));
     } on DatabaseException catch (error) {
       throw DatabaseFailure('insert expense: $error');
     }
@@ -123,8 +127,8 @@ class ExpenseLocalDataSourceImpl implements ExpenseLocalDataSource {
       final db = await _appDatabase.database;
       final count = await db.update(
         'expenses',
-        row,
-        where: 'id = ?',
+        AppDatabase.changed(row),
+        where: 'id = ? AND deleted_at IS NULL',
         whereArgs: [id],
       );
       if (count == 0) {
@@ -139,7 +143,14 @@ class ExpenseLocalDataSourceImpl implements ExpenseLocalDataSource {
   Future<void> deleteExpense(String id) async {
     try {
       final db = await _appDatabase.database;
-      await db.delete('expenses', where: 'id = ?', whereArgs: [id]);
+      // Kept as a marked row rather than deleted, so the delete can sync.
+      final now = AppDatabase.nowMillis();
+      await db.update(
+        'expenses',
+        {'deleted_at': now, 'updated_at': now, 'dirty': 1},
+        where: 'id = ? AND deleted_at IS NULL',
+        whereArgs: [id],
+      );
     } on DatabaseException catch (error) {
       throw DatabaseFailure('delete expense: $error');
     }

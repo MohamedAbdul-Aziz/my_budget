@@ -15,6 +15,8 @@ import 'package:my_budget/features/quick_expense/domain/entities/quick_expense_s
 import 'package:my_budget/features/quick_expense/domain/repositories/quick_expense_widget_repository.dart';
 import 'package:my_budget/features/settings/domain/entities/app_settings.dart';
 import 'package:my_budget/features/settings/domain/repositories/settings_repository.dart';
+import 'package:my_budget/features/sync/domain/entities/sync_report.dart';
+import 'package:my_budget/features/sync/domain/repositories/sync_repository.dart';
 
 /// In-memory stand-ins for the sqflite repositories.
 ///
@@ -324,4 +326,42 @@ class FakeAuthRepository implements AuthRepository {
 
   static AppUser _userFor(String email) =>
       AppUser(id: 'user_$email', email: email);
+}
+
+/// Stands in for backup and restore; the real data layer is covered by
+/// `test/data/sync_test.dart`.
+class FakeSyncRepository implements SyncRepository {
+  int backUps = 0;
+  int restores = 0;
+  DateTime? last;
+
+  /// When set, the next backup or restore fails with it.
+  Failure? failWith;
+
+  /// Runs during a restore, standing in for rows arriving on the phone.
+  Future<void> Function()? onRestore;
+
+  @override
+  Future<ApiResult<DateTime?>> lastSyncedAt() async => Success(last);
+
+  @override
+  Future<ApiResult<SyncReport>> backUp({SyncProgress? onProgress}) async {
+    backUps++;
+    return _finish(onProgress);
+  }
+
+  @override
+  Future<ApiResult<SyncReport>> restore({SyncProgress? onProgress}) async {
+    restores++;
+    await onRestore?.call();
+    return _finish(onProgress);
+  }
+
+  ApiResult<SyncReport> _finish(SyncProgress? onProgress) {
+    final failure = failWith;
+    if (failure != null) return ResultFailure(failure);
+    onProgress?.call(1);
+    final at = last = DateTime.now();
+    return Success(SyncReport(changes: 1, finishedAt: at));
+  }
 }

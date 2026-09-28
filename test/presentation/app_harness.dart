@@ -13,6 +13,7 @@ import 'package:my_budget/features/quick_expense/domain/repositories/quick_expen
 import 'package:my_budget/features/quick_expense/presentation/quick_add_app.dart';
 import 'package:my_budget/features/settings/domain/repositories/settings_repository.dart';
 import 'package:my_budget/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:my_budget/features/sync/domain/repositories/sync_repository.dart';
 
 import 'fakes.dart';
 
@@ -25,6 +26,7 @@ class AppHarness {
     required this.settings,
     required this.widget,
     required this.auth,
+    required this.sync,
   });
 
   final FakeCategoryRepository categories;
@@ -32,6 +34,7 @@ class AppHarness {
   final FakeSettingsRepository settings;
   final FakeQuickExpenseWidgetRepository widget;
   final FakeAuthRepository auth;
+  final FakeSyncRepository sync;
 }
 
 /// Boots the real widget tree and cubits over in-memory repositories.
@@ -73,13 +76,15 @@ Future<AppHarness> _bootDependencies(
   final settings = FakeSettingsRepository();
   final widget = FakeQuickExpenseWidgetRepository();
   final auth = FakeAuthRepository();
+  final sync = FakeSyncRepository();
 
   sl
     ..registerLazySingleton<CategoryRepository>(() => categories)
     ..registerLazySingleton<ExpenseRepository>(() => expenses)
     ..registerLazySingleton<SettingsRepository>(() => settings)
     ..registerLazySingleton<QuickExpenseWidgetRepository>(() => widget)
-    ..registerLazySingleton<AuthRepository>(() => auth);
+    ..registerLazySingleton<AuthRepository>(() => auth)
+    ..registerLazySingleton<SyncRepository>(() => sync);
   configureDependencies();
 
   await sl<SettingsCubit>().load(localeName: localeName);
@@ -91,6 +96,7 @@ Future<AppHarness> _bootDependencies(
     settings: settings,
     widget: widget,
     auth: auth,
+    sync: sync,
   );
 }
 

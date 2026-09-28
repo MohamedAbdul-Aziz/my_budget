@@ -44,6 +44,14 @@ import '../../features/settings/domain/usecases/save_currency_symbol.dart';
 import '../../features/settings/domain/usecases/save_language.dart';
 import '../../features/settings/domain/usecases/save_theme_mode.dart';
 import '../../features/settings/presentation/cubit/settings_cubit.dart';
+import '../../features/sync/data/datasources/sync_local_data_source.dart';
+import '../../features/sync/data/datasources/sync_remote_data_source.dart';
+import '../../features/sync/data/repositories/sync_repository_impl.dart';
+import '../../features/sync/domain/repositories/sync_repository.dart';
+import '../../features/sync/domain/usecases/back_up_data.dart';
+import '../../features/sync/domain/usecases/get_last_synced_at.dart';
+import '../../features/sync/domain/usecases/restore_data.dart';
+import '../../features/sync/presentation/cubit/sync_cubit.dart';
 import '../database/app_database.dart';
 
 /// The single service locator. Nothing in the app constructs a cubit, use case
@@ -61,6 +69,7 @@ void configureDependencies({AppDatabase? database}) {
   _registerExpenses();
   _registerSettings();
   _registerQuickExpense();
+  _registerSync();
 }
 
 /// Repositories are the seam tests replace, so they are only registered when
@@ -187,5 +196,27 @@ void _registerSettings() {
         saveLanguage: sl(),
         saveCurrencySymbol: sl(),
       ),
+    );
+}
+
+void _registerSync() {
+  _registerRepository<SyncRepository>(
+    () => SyncRepositoryImpl(local: sl(), remote: sl()),
+  );
+  sl
+    ..registerLazySingleton<SyncLocalDataSource>(
+      () => SyncLocalDataSourceImpl(sl()),
+    )
+    ..registerLazySingleton<SyncRemoteDataSource>(
+      () => SyncRemoteDataSourceImpl(sl()),
+    )
+    ..registerLazySingleton(() => GetLastSyncedAt(sl()))
+    ..registerLazySingleton(() => BackUpData(sl()))
+    ..registerLazySingleton(() => RestoreData(sl()))
+    // Shared, so a backup keeps running and reporting when the settings
+    // sheet is closed and reopened.
+    ..registerLazySingleton(
+      () =>
+          SyncCubit(getLastSyncedAt: sl(), backUpData: sl(), restoreData: sl()),
     );
 }

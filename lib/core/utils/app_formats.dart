@@ -37,6 +37,7 @@ class AppFormats {
       dayMonth: DateFormat.MMMd(dateLocale),
       weekdayDayMonth: DateFormat.MMMEd(dateLocale),
       dayMonthYear: DateFormat.yMMMd(dateLocale),
+      time: DateFormat.jm(dateLocale),
     );
   }
 
@@ -65,12 +66,14 @@ class AppFormats {
     required DateFormat dayMonth,
     required DateFormat weekdayDayMonth,
     required DateFormat dayMonthYear,
+    required DateFormat time,
   }) : _full = full,
        _whole = whole,
        _monthYear = monthYear,
        _dayMonth = dayMonth,
        _weekdayDayMonth = weekdayDayMonth,
-       _dayMonthYear = dayMonthYear;
+       _dayMonthYear = dayMonthYear,
+       _time = time;
 
   final String localeName;
   final String symbol;
@@ -80,6 +83,7 @@ class AppFormats {
   final DateFormat _dayMonth;
   final DateFormat _weekdayDayMonth;
   final DateFormat _dayMonthYear;
+  final DateFormat _time;
 
   /// `$12.50` — always two decimals.
   String money(double amount) => _full.format(amount);
@@ -103,6 +107,9 @@ class AppFormats {
         ? _weekdayDayMonth.format(date)
         : _dayMonthYear.format(date);
   }
+
+  /// `2:05 PM`, or the local equivalent.
+  String time(DateTime date) => _time.format(date);
 
   /// 0 for today, 1 for yesterday, and so on.
   static int daysAgo(DateTime date, {DateTime? now}) =>
