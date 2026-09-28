@@ -7,8 +7,8 @@ import '../../features/categories/domain/entities/expense_category.dart';
 
 /// Owns the single on-device SQLite connection.
 ///
-/// Everything the app stores lives here — there is no network layer and no
-/// remote data source anywhere in the project.
+/// Everything the app stores lives here. Supabase is connected, but no feature
+/// reads or writes remote data yet.
 class AppDatabase {
   AppDatabase({this.fileName = 'my_budget.db', this.inMemory = false});
 

@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../features/categories/data/datasources/category_local_data_source.dart';
 import '../../features/categories/data/repositories/category_repository_impl.dart';
@@ -58,6 +59,10 @@ void _registerRepository<T extends Object>(T Function() create) {
 
 void _registerCore(AppDatabase? database) {
   sl.registerLazySingleton<AppDatabase>(() => database ?? AppDatabase());
+  // Lazy so tests that never touch the network need no Supabase.initialize.
+  if (!sl.isRegistered<SupabaseClient>()) {
+    sl.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
+  }
 }
 
 void _registerCategories() {

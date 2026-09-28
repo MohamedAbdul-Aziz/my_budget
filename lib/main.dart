@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
+import 'core/config/supabase_config.dart';
 import 'core/database/app_database.dart';
 import 'core/di/injection.dart';
 import 'features/categories/presentation/cubit/categories_cubit.dart';
@@ -16,6 +18,13 @@ Future<void> main() async {
 
   // Month and day names for every supported language.
   await initializeDateFormatting();
+
+  // Only restores a saved session from local storage, so it works offline and
+  // does not delay the first frame on a network call.
+  await Supabase.initialize(
+    url: SupabaseConfig.url,
+    publishableKey: SupabaseConfig.publishableKey,
+  );
 
   // Everything is on-device: open the local database and read the stored
   // preferences before the first frame so the app opens straight into data.

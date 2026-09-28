@@ -43,6 +43,7 @@ dependencies:
   sqflite_common_ffi: ^2.3.7+1
   flutter_localizations:
     sdk: flutter
+  supabase_flutter: ^2.17.2
 
 dev_dependencies:
   flutter_test:
