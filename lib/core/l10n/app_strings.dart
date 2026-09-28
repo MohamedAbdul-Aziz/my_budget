@@ -139,6 +139,38 @@ abstract class AppStrings {
   String get noSpendingThisMonth;
   String get monthlyTrend;
 
+  // Budgets
+  String get budgets;
+  String get monthlyBudget;
+  String get setMonthlyBudget;
+  String get setBudgetHint;
+  String get setBudget;
+  String get editBudget;
+  String get removeBudget;
+  String get save;
+  String amountLeft(String amount);
+  String amountOver(String amount);
+  String spentOfLimit(String spent, String limit);
+  String amountSpent(String amount);
+  String budgetUsed(String percent);
+  String get categoryBudgets;
+  String get categoryBudgetsHint;
+  String categoryBudgetTitle(String name);
+  String get setLimit;
+  String get closeToLimit;
+  String budgetsRepeatHint(String nearing, String reached);
+
+  // Budget alerts, shown when an expense crosses a threshold
+  String get budgetAlertTitle;
+  String get ok;
+  String get view;
+  String monthlyBudgetNearing(String percent);
+  String get monthlyBudgetUsedUp;
+  String monthlyBudgetExceeded(String amount);
+  String categoryBudgetNearing(String name, String percent);
+  String categoryBudgetUsedUp(String name);
+  String categoryBudgetExceeded(String name, String amount);
+
   // Data management (files kept by the user)
   String get dataManagement;
   String get dataManagementHint;
@@ -523,6 +555,98 @@ class AppStringsEn extends AppStrings {
 
   @override
   String lastMonthTotal(String amount) => 'Last month: $amount';
+
+  @override
+  String get budgets => 'Budgets';
+
+  @override
+  String get monthlyBudget => 'Monthly budget';
+
+  @override
+  String get setMonthlyBudget => 'Set a monthly budget';
+
+  @override
+  String get setBudgetHint =>
+      "See what's left and get a heads-up before you overspend.";
+
+  @override
+  String get setBudget => 'Set';
+
+  @override
+  String get editBudget => 'Edit budget';
+
+  @override
+  String get removeBudget => 'Remove';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String amountLeft(String amount) => '$amount left';
+
+  @override
+  String amountOver(String amount) => '$amount over budget';
+
+  @override
+  String spentOfLimit(String spent, String limit) => '$spent of $limit spent';
+
+  @override
+  String amountSpent(String amount) => '$amount spent';
+
+  @override
+  String budgetUsed(String percent) => '$percent of the budget used';
+
+  @override
+  String get categoryBudgets => 'Category budgets';
+
+  @override
+  String get categoryBudgetsHint => 'Cap what you spend on a single category.';
+
+  @override
+  String categoryBudgetTitle(String name) => '$name budget';
+
+  @override
+  String get setLimit => 'Set limit';
+
+  @override
+  String get closeToLimit => 'Close to their limit';
+
+  @override
+  String budgetsRepeatHint(String nearing, String reached) =>
+      "Budgets repeat every month. You'll get a heads-up when spending "
+      'passes $nearing, and again at $reached.';
+
+  @override
+  String get budgetAlertTitle => 'Budget alert';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get view => 'View';
+
+  @override
+  String monthlyBudgetNearing(String percent) =>
+      "You've used $percent of your monthly budget";
+
+  @override
+  String get monthlyBudgetUsedUp => "You've used all of your monthly budget";
+
+  @override
+  String monthlyBudgetExceeded(String amount) =>
+      "You're $amount over your monthly budget";
+
+  @override
+  String categoryBudgetNearing(String name, String percent) =>
+      "You've used $percent of your $name budget";
+
+  @override
+  String categoryBudgetUsedUp(String name) =>
+      "You've used all of your $name budget";
+
+  @override
+  String categoryBudgetExceeded(String name, String amount) =>
+      "You're $amount over your $name budget";
 
   @override
   String get dataManagement => 'Data management';
@@ -1056,6 +1180,97 @@ class AppStringsAr extends AppStrings {
 
   @override
   String lastMonthTotal(String amount) => 'الشهر الماضي: $amount';
+
+  @override
+  String get budgets => 'الميزانيات';
+
+  @override
+  String get monthlyBudget => 'الميزانية الشهرية';
+
+  @override
+  String get setMonthlyBudget => 'حدّد ميزانية شهرية';
+
+  @override
+  String get setBudgetHint =>
+      'اعرف كم تبقّى لك، واحصل على تنبيه قبل أن تتجاوز حدّك.';
+
+  @override
+  String get setBudget => 'تحديد';
+
+  @override
+  String get editBudget => 'تعديل الميزانية';
+
+  @override
+  String get removeBudget => 'إزالة';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String amountLeft(String amount) => 'تبقّى $amount';
+
+  @override
+  String amountOver(String amount) => 'تجاوزت الميزانية بمقدار $amount';
+
+  @override
+  String spentOfLimit(String spent, String limit) => 'أنفقت $spent من $limit';
+
+  @override
+  String amountSpent(String amount) => 'الإنفاق: $amount';
+
+  @override
+  String budgetUsed(String percent) => 'استُخدم $percent من الميزانية';
+
+  @override
+  String get categoryBudgets => 'ميزانيات الفئات';
+
+  @override
+  String get categoryBudgetsHint => 'ضع حدًا لإنفاقك على فئة بعينها.';
+
+  @override
+  String categoryBudgetTitle(String name) => 'ميزانية $name';
+
+  @override
+  String get setLimit => 'تحديد حد';
+
+  @override
+  String get closeToLimit => 'قريبة من حدّها';
+
+  @override
+  String budgetsRepeatHint(String nearing, String reached) =>
+      'تتكرّر الميزانيات كل شهر. ستصلك تنبيهات عندما يتجاوز إنفاقك $nearing، '
+      'ثم عند $reached.';
+
+  @override
+  String get budgetAlertTitle => 'تنبيه الميزانية';
+
+  @override
+  String get ok => 'حسنًا';
+
+  @override
+  String get view => 'عرض';
+
+  @override
+  String monthlyBudgetNearing(String percent) =>
+      'استخدمت $percent من ميزانيتك الشهرية';
+
+  @override
+  String get monthlyBudgetUsedUp => 'استنفدت ميزانيتك الشهرية بالكامل';
+
+  @override
+  String monthlyBudgetExceeded(String amount) =>
+      'تجاوزت ميزانيتك الشهرية بمقدار $amount';
+
+  @override
+  String categoryBudgetNearing(String name, String percent) =>
+      'استخدمت $percent من ميزانية $name';
+
+  @override
+  String categoryBudgetUsedUp(String name) => 'استنفدت ميزانية $name بالكامل';
+
+  @override
+  String categoryBudgetExceeded(String name, String amount) =>
+      'تجاوزت ميزانية $name بمقدار $amount';
 
   @override
   String get dataManagement => 'إدارة البيانات';

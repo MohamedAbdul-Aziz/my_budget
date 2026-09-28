@@ -4,6 +4,8 @@ import 'package:my_budget/core/error/api_result.dart';
 import 'package:my_budget/core/error/failures.dart';
 import 'package:my_budget/features/auth/domain/entities/app_user.dart';
 import 'package:my_budget/features/auth/domain/repositories/auth_repository.dart';
+import 'package:my_budget/features/budgets/domain/entities/budget_limits.dart';
+import 'package:my_budget/features/budgets/domain/repositories/budget_repository.dart';
 import 'package:my_budget/features/categories/domain/entities/expense_category.dart';
 import 'package:my_budget/features/data_management/domain/entities/backup_preview.dart';
 import 'package:my_budget/features/data_management/domain/entities/export_format.dart';
@@ -232,6 +234,34 @@ class FakeSettingsRepository implements SettingsRepository {
   Future<ApiResult<AppSettings>> saveCurrencySymbol(String symbol) async {
     settings = settings.copyWith(currencySymbol: symbol);
     return Success(settings);
+  }
+}
+
+class FakeBudgetRepository implements BudgetRepository {
+  double? monthly;
+  final Map<String, double> byCategory = {};
+
+  @override
+  Future<ApiResult<BudgetLimits>> getLimits() async =>
+      Success(BudgetLimits(monthly: monthly, byCategory: Map.of(byCategory)));
+
+  @override
+  Future<ApiResult<void>> saveMonthlyLimit(double? limit) async {
+    monthly = limit;
+    return const Success(null);
+  }
+
+  @override
+  Future<ApiResult<void>> saveCategoryLimit(
+    String categoryId,
+    double? limit,
+  ) async {
+    if (limit == null) {
+      byCategory.remove(categoryId);
+    } else {
+      byCategory[categoryId] = limit;
+    }
+    return const Success(null);
   }
 }
 

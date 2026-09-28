@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/l10n/app_strings.dart';
+import '../../../budgets/domain/entities/budget_alert.dart';
+import '../../../budgets/presentation/widgets/budget_alert_messages.dart';
 import '../../../categories/domain/entities/expense_category.dart';
 import '../../../categories/presentation/category_label.dart';
 import '../../../categories/presentation/cubit/categories_cubit.dart';
@@ -80,8 +82,13 @@ class _QuickAddViewState extends State<_QuickAddView> {
   /// Closes the activity, which drops the user back on the home screen.
   Future<void> _close() => SystemNavigator.pop();
 
-  Future<void> _onSaved() async {
+  Future<void> _onSaved(List<BudgetAlert> alerts) async {
     await publishQuickExpenseWidget();
+    // The activity is about to close, so a budget heads-up has to be read
+    // here, before it goes.
+    if (alerts.isNotEmpty && mounted) {
+      await BudgetAlertMessages.showAsDialog(context, alerts);
+    }
     await _close();
   }
 
@@ -94,7 +101,7 @@ class _QuickAddViewState extends State<_QuickAddView> {
       listener: (context, state) {
         switch (state.status) {
           case ExpenseFormStatus.success:
-            _onSaved();
+            _onSaved(state.budgetAlerts);
           case ExpenseFormStatus.failure:
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()

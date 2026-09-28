@@ -16,6 +16,12 @@ calls anywhere in the codebase.
   deleting them.
 - **Months** — every month with spending is listed with its total; tap the
   month name in the app bar to switch.
+- **Budgets** — an optional monthly limit and optional per-category limits,
+  repeating every month. The home screen card shows what is left, with a bar
+  that turns from green to orange at 70% and red past 90%. Logging an expense
+  that passes 80% or 100% of a limit shows a warning right away. Limits are
+  stored as `budget.*` rows in the `settings` table, so they travel with the
+  cloud backup and backup files without any schema change.
 - **Settings** — light/dark/system theme, English or Arabic (with full RTL),
   and the currency symbol.
 - **Quick Expense widget (Android)** — a home screen widget showing this
@@ -66,6 +72,7 @@ lib/
   features/
     expenses/      data · domain · presentation
     categories/    data · domain · presentation
+    budgets/       data · domain · presentation
     settings/      data · domain · presentation
     quick_expense/ data · domain · presentation
 ```

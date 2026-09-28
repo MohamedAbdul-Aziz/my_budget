@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/app_formats.dart';
 import '../../../../core/utils/ui_notice.dart';
+import '../../../budgets/presentation/widgets/budget_card.dart';
 import '../../../categories/presentation/pages/categories_page.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../../settings/presentation/widgets/settings_sheet.dart';
@@ -43,11 +44,6 @@ class HomePage extends StatelessWidget {
           ),
           const SizedBox(width: 4),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _openForm(context),
-        icon: const Icon(Icons.add_rounded),
-        label: Text(strings.add),
       ),
       body: BlocConsumer<HomeCubit, HomeState>(
         listenWhen: (previous, current) =>
@@ -95,6 +91,22 @@ class HomePage extends StatelessWidget {
     ).push(ExpenseFormPage.route(existing: existing));
     if (saved ?? false) await cubit.refresh();
   }
+}
+
+/// Records a new expense.
+///
+/// The app shell's scaffold hosts it rather than [HomePage]'s own: snackbars
+/// appear on the outermost scaffold, and only a button on that same scaffold
+/// is lifted clear of them instead of being covered.
+class AddExpenseButton extends StatelessWidget {
+  const AddExpenseButton({super.key});
+
+  @override
+  Widget build(BuildContext context) => FloatingActionButton.extended(
+    onPressed: () => HomePage._openForm(context),
+    icon: const Icon(Icons.add_rounded),
+    label: Text(context.strings.add),
+  );
 }
 
 /// Tapping the month name opens the month switcher.
@@ -179,6 +191,10 @@ class _MonthView extends StatelessWidget {
             sliver: SliverToBoxAdapter(
               child: MonthTotalCard(overview: overview, formats: formats),
             ),
+          ),
+          const SliverPadding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
+            sliver: SliverToBoxAdapter(child: BudgetCard()),
           ),
           if (overview.isEmpty)
             const SliverFillRemaining(

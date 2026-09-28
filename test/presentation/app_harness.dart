@@ -5,9 +5,12 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:my_budget/app.dart';
 import 'package:my_budget/core/di/injection.dart';
 import 'package:my_budget/features/auth/domain/repositories/auth_repository.dart';
+import 'package:my_budget/features/budgets/domain/repositories/budget_repository.dart';
+import 'package:my_budget/features/budgets/presentation/cubit/budget_cubit.dart';
 import 'package:my_budget/features/categories/domain/repositories/category_repository.dart';
 import 'package:my_budget/features/data_management/domain/repositories/data_management_repository.dart';
 import 'package:my_budget/features/categories/presentation/cubit/categories_cubit.dart';
+import 'package:my_budget/features/expenses/domain/entities/month.dart';
 import 'package:my_budget/features/expenses/domain/repositories/expense_repository.dart';
 import 'package:my_budget/features/expenses/presentation/cubit/home_cubit.dart';
 import 'package:my_budget/features/quick_expense/domain/repositories/quick_expense_widget_repository.dart';
@@ -29,6 +32,7 @@ class AppHarness {
     required this.auth,
     required this.sync,
     required this.files,
+    required this.budgets,
   });
 
   final FakeCategoryRepository categories;
@@ -38,6 +42,7 @@ class AppHarness {
   final FakeAuthRepository auth;
   final FakeSyncRepository sync;
   final FakeDataManagementRepository files;
+  final FakeBudgetRepository budgets;
 }
 
 /// Boots the real widget tree and cubits over in-memory repositories.
@@ -81,6 +86,7 @@ Future<AppHarness> _bootDependencies(
   final auth = FakeAuthRepository();
   final sync = FakeSyncRepository();
   final files = FakeDataManagementRepository();
+  final budgets = FakeBudgetRepository();
 
   sl
     ..registerLazySingleton<CategoryRepository>(() => categories)
@@ -89,11 +95,16 @@ Future<AppHarness> _bootDependencies(
     ..registerLazySingleton<QuickExpenseWidgetRepository>(() => widget)
     ..registerLazySingleton<AuthRepository>(() => auth)
     ..registerLazySingleton<SyncRepository>(() => sync)
-    ..registerLazySingleton<DataManagementRepository>(() => files);
+    ..registerLazySingleton<DataManagementRepository>(() => files)
+    ..registerLazySingleton<BudgetRepository>(() => budgets);
   configureDependencies();
 
   await sl<SettingsCubit>().load(localeName: localeName);
-  await Future.wait([sl<CategoriesCubit>().load(), sl<HomeCubit>().load()]);
+  await Future.wait([
+    sl<CategoriesCubit>().load(),
+    sl<HomeCubit>().load(),
+    sl<BudgetCubit>().load(Month.current()),
+  ]);
 
   return AppHarness(
     categories: categories,
@@ -103,6 +114,7 @@ Future<AppHarness> _bootDependencies(
     auth: auth,
     sync: sync,
     files: files,
+    budgets: budgets,
   );
 }
 

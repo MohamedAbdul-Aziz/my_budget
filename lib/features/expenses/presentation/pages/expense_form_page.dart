@@ -6,6 +6,8 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/app_formats.dart';
+import '../../../budgets/presentation/pages/budgets_page.dart';
+import '../../../budgets/presentation/widgets/budget_alert_messages.dart';
 import '../../../categories/domain/entities/expense_category.dart';
 import '../../../categories/presentation/cubit/categories_cubit.dart';
 import '../../../categories/presentation/cubit/categories_state.dart';
@@ -105,7 +107,17 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> {
       listener: (context, state) {
         switch (state.status) {
           case ExpenseFormStatus.success:
-            Navigator.of(context).pop(true);
+            final navigator = Navigator.of(context);
+            if (state.budgetAlerts.isNotEmpty) {
+              // The snackbar outlives this page and stays up on the home
+              // screen, whose navigator can still open the budgets.
+              BudgetAlertMessages.showAsSnackBar(
+                context,
+                state.budgetAlerts,
+                onView: () => navigator.push(BudgetsPage.route()),
+              );
+            }
+            navigator.pop(true);
           case ExpenseFormStatus.failure:
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()

@@ -7,9 +7,11 @@ import 'core/l10n/app_strings.dart';
 import 'core/theme/app_theme.dart';
 import 'features/analyses/presentation/cubit/analyses_cubit.dart';
 import 'features/auth/presentation/cubit/account_cubit.dart';
+import 'features/budgets/presentation/cubit/budget_cubit.dart';
 import 'features/data_management/presentation/cubit/data_management_cubit.dart';
 import 'features/data_management/presentation/cubit/data_management_state.dart';
 import 'features/categories/presentation/cubit/categories_cubit.dart';
+import 'features/categories/presentation/cubit/categories_state.dart';
 import 'features/expenses/presentation/cubit/home_cubit.dart';
 import 'features/expenses/presentation/cubit/home_state.dart';
 import 'features/quick_expense/presentation/widgets/quick_expense_bridge.dart';
@@ -34,6 +36,7 @@ class MyBudgetApp extends StatelessWidget {
         BlocProvider.value(value: sl<AccountCubit>()),
         BlocProvider.value(value: sl<SyncCubit>()),
         BlocProvider.value(value: sl<AnalysesCubit>()),
+        BlocProvider.value(value: sl<BudgetCubit>()),
         BlocProvider.value(value: sl<DataManagementCubit>()),
       ],
       child: MultiBlocListener(
@@ -51,16 +54,28 @@ class MyBudgetApp extends StatelessWidget {
                 state is DataImported && state.changes > 0,
             listener: (context, _) => _reloadData(context),
           ),
-          // Analyses follow the home screen: its selected month, and every
-          // change to that month's expenses.
+          // Analyses and budgets follow the home screen: its selected month,
+          // and every change to that month's expenses.
           BlocListener<HomeCubit, HomeState>(
             listenWhen: (previous, current) =>
                 current is HomeReady &&
                 (previous is! HomeReady ||
                     previous.overview != current.overview ||
                     previous.months != current.months),
-            listener: (context, state) =>
-                context.read<AnalysesCubit>().load((state as HomeReady).month),
+            listener: (context, state) {
+              final month = (state as HomeReady).month;
+              context.read<AnalysesCubit>().load(month);
+              context.read<BudgetCubit>().load(month);
+            },
+          ),
+          // The budgets page lists every category, so it follows a category
+          // being added, renamed or deleted.
+          BlocListener<CategoriesCubit, CategoriesState>(
+            listenWhen: (previous, current) =>
+                current is CategoriesReady &&
+                (previous is! CategoriesReady ||
+                    previous.categories != current.categories),
+            listener: (context, _) => context.read<BudgetCubit>().refresh(),
           ),
         ],
         // Only theme and language rebuild MaterialApp — the currency format
@@ -98,5 +113,7 @@ class MyBudgetApp extends StatelessWidget {
     context.read<CategoriesCubit>().load();
     context.read<HomeCubit>().refresh();
     context.read<SettingsCubit>().load();
+    // Limits can change without any expense changing.
+    context.read<BudgetCubit>().refresh();
   }
 }

@@ -7,7 +7,9 @@ import 'app.dart';
 import 'core/config/supabase_config.dart';
 import 'core/database/app_database.dart';
 import 'core/di/injection.dart';
+import 'features/budgets/presentation/cubit/budget_cubit.dart';
 import 'features/categories/presentation/cubit/categories_cubit.dart';
+import 'features/expenses/domain/entities/month.dart';
 import 'features/expenses/presentation/cubit/home_cubit.dart';
 import 'features/quick_expense/presentation/quick_add_app.dart';
 import 'features/quick_expense/presentation/quick_add_launch.dart';
@@ -43,7 +45,13 @@ Future<void> main() async {
     return;
   }
 
-  await Future.wait([sl<CategoriesCubit>().load(), sl<HomeCubit>().load()]);
+  // The budget card is read up front too, so it does not pop in under the
+  // month total a moment after the first frame.
+  await Future.wait([
+    sl<CategoriesCubit>().load(),
+    sl<HomeCubit>().load(),
+    sl<BudgetCubit>().load(Month.current()),
+  ]);
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

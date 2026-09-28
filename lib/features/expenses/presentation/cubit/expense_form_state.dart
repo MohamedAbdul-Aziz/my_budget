@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/error/failures.dart';
+import '../../../budgets/domain/entities/budget_alert.dart';
 import '../../../categories/domain/entities/expense_category.dart';
 
 enum ExpenseFormStatus { editing, submitting, success, failure }
@@ -15,6 +16,7 @@ class ExpenseFormState extends Equatable {
     this.category,
     this.status = ExpenseFormStatus.editing,
     this.error,
+    this.budgetAlerts = const [],
   });
 
   factory ExpenseFormState.initial() =>
@@ -28,6 +30,10 @@ class ExpenseFormState extends Equatable {
   /// Why the last submit failed; the UI turns it into a sentence.
   final FailureCode? error;
 
+  /// Budgets the saved expense pushed past 80% or 100%. Set only with
+  /// [ExpenseFormStatus.success].
+  final List<BudgetAlert> budgetAlerts;
+
   bool get isEditing => expenseId != null;
 
   bool get isSubmitting => status == ExpenseFormStatus.submitting;
@@ -40,13 +46,16 @@ class ExpenseFormState extends Equatable {
     DateTime? date,
     ExpenseFormStatus? status,
     FailureCode? error,
+    List<BudgetAlert>? budgetAlerts,
   }) => ExpenseFormState(
     expenseId: expenseId ?? this.expenseId,
     category: category ?? this.category,
     date: date ?? this.date,
     status: status ?? this.status,
-    // Cleared unless explicitly carried over, so a stale error never sticks.
+    // Cleared unless explicitly carried over, so a stale error or alert
+    // never sticks.
     error: error,
+    budgetAlerts: budgetAlerts ?? const [],
   );
 
   @override
@@ -56,5 +65,6 @@ class ExpenseFormState extends Equatable {
     date,
     status,
     error,
+    budgetAlerts,
   ];
 }

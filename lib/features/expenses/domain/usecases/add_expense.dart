@@ -7,6 +7,9 @@ import '../repositories/expense_repository.dart';
 class AddExpense {
   const AddExpense(this._repository);
 
+  /// The largest amount the app accepts anywhere money is typed in.
+  static const double maxAmount = 1000000000;
+
   final ExpenseRepository _repository;
 
   Future<ApiResult<Expense>> call({
@@ -34,7 +37,7 @@ class AddExpense {
     if (amount <= 0) {
       return const ValidationFailure(FailureCode.amountRequired);
     }
-    if (amount > 1000000000) {
+    if (amount > maxAmount) {
       return const ValidationFailure(FailureCode.amountTooLarge);
     }
     if (categoryId.isEmpty) {

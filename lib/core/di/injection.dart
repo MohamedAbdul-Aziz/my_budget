@@ -25,6 +25,14 @@ import '../../features/auth/domain/usecases/sign_out.dart';
 import '../../features/auth/domain/usecases/sign_up.dart';
 import '../../features/auth/domain/usecases/watch_user.dart';
 import '../../features/auth/presentation/cubit/account_cubit.dart';
+import '../../features/budgets/data/datasources/budget_local_data_source.dart';
+import '../../features/budgets/data/repositories/budget_repository_impl.dart';
+import '../../features/budgets/domain/repositories/budget_repository.dart';
+import '../../features/budgets/domain/usecases/check_budget_alerts.dart';
+import '../../features/budgets/domain/usecases/get_budget_status.dart';
+import '../../features/budgets/domain/usecases/set_category_budget.dart';
+import '../../features/budgets/domain/usecases/set_monthly_budget.dart';
+import '../../features/budgets/presentation/cubit/budget_cubit.dart';
 import '../../features/categories/data/datasources/category_local_data_source.dart';
 import '../../features/categories/data/repositories/category_repository_impl.dart';
 import '../../features/categories/domain/repositories/category_repository.dart';
@@ -81,6 +89,7 @@ void configureDependencies({AppDatabase? database}) {
   _registerAuth();
   _registerCategories();
   _registerExpenses();
+  _registerBudgets();
   _registerSettings();
   _registerQuickExpense();
   _registerSync();
@@ -178,7 +187,38 @@ void _registerExpenses() {
     )
     // One per add/edit screen: each form owns its own draft state.
     ..registerFactory(
-      () => ExpenseFormCubit(addExpense: sl(), updateExpense: sl()),
+      () => ExpenseFormCubit(
+        addExpense: sl(),
+        updateExpense: sl(),
+        checkBudgetAlerts: sl(),
+      ),
+    );
+}
+
+void _registerBudgets() {
+  _registerRepository<BudgetRepository>(() => BudgetRepositoryImpl(sl()));
+  sl
+    ..registerLazySingleton<BudgetLocalDataSource>(
+      () => BudgetLocalDataSourceImpl(sl()),
+    )
+    ..registerLazySingleton(
+      () => GetBudgetStatus(
+        budgetRepository: sl(),
+        expenseRepository: sl(),
+        categoryRepository: sl(),
+      ),
+    )
+    ..registerLazySingleton(() => SetMonthlyBudget(sl()))
+    ..registerLazySingleton(() => SetCategoryBudget(sl()))
+    ..registerLazySingleton(() => CheckBudgetAlerts(sl()))
+    // Shared: the home screen card and the budgets page show the same
+    // numbers, and an edit in one is visible in the other immediately.
+    ..registerLazySingleton(
+      () => BudgetCubit(
+        getBudgetStatus: sl(),
+        setMonthlyBudget: sl(),
+        setCategoryBudget: sl(),
+      ),
     );
 }
 

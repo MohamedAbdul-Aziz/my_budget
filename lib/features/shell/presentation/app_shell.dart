@@ -42,6 +42,7 @@ class _AppShellState extends State<AppShell> {
           TickerMode(enabled: _index == 1, child: const AnalysesPage()),
         ],
       ),
+      floatingActionButton: _index == 0 ? const AddExpenseButton() : null,
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (index) => setState(() => _index = index),
