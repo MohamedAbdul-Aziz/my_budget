@@ -1,9 +1,8 @@
 import 'dart:convert';
 
-import '../../../../core/database/portable_records.dart';
 import '../../../../core/database/record_batch.dart';
+import '../../../../core/database/synced_tables.dart';
 import '../../../../core/error/failures.dart';
-import '../../../people/domain/entities/person_transaction_type.dart';
 
 /// A backup file, read and checked.
 class DecodedBackup {
@@ -47,27 +46,8 @@ abstract final class BackupCodec {
         'schema_version': schemaVersion,
         'app': 'My Budget',
         'exported_at': exportedAt.toUtc().toIso8601String(),
-        'categories': [
-          for (final row in records.categories)
-            PortableRecords.categoryToPortable(row),
-        ],
-        'expenses': [
-          for (final row in records.expenses)
-            PortableRecords.expenseToPortable(row),
-        ],
-        'settings': [
-          for (final row in records.settings)
-            PortableRecords.settingToPortable(row),
-        ],
-        'recurring_expenses': [
-          for (final row in records.recurring)
-            PortableRecords.recurringToPortable(row),
-        ],
-        for (final MapEntry(key: table, value: rows)
-            in records.peopleTables.entries)
-          table: [
-            for (final row in rows) PortableRecords.toPortable(table, row),
-          ],
+        for (final table in SyncedTables.all)
+          table.name: [for (final row in records[table]) table.toPortable(row)],
       });
 
   /// Throws a [FileFailure] unless [text] is a complete, well-formed backup
@@ -97,34 +77,15 @@ abstract final class BackupCodec {
     }
 
     try {
-      final records = RecordBatch(
-        categories: _rows(json['categories'], _category),
-        expenses: _rows(json['expenses'], _expense),
-        settings: _rows(json['settings'], _setting),
-        recurring: version < 3
-            ? const []
-            : _rows(json['recurring_expenses'], _recurring),
-        people: _since(4, version, json['people'], _person),
-        settlements: _since(4, version, json['settlements'], _settlement),
-        personTransactions: _since(
-          4,
-          version,
-          json['person_transactions'],
-          _personTransaction,
-        ),
-        personTransactionEdits: _since(
-          4,
-          version,
-          json['person_transaction_edits'],
-          _personTransactionEdit,
-        ),
-      );
-      _requireUnique(records.categories, 'id');
-      _requireUnique(records.expenses, 'id');
-      _requireUnique(records.settings, 'key');
-      _requireUnique(records.recurring, 'id');
-      for (final rows in records.peopleTables.values) {
-        _requireUnique(rows, 'id');
+      // A table added after the file's format has none of its rows.
+      final records = RecordBatch({
+        for (final table in SyncedTables.all)
+          table.name: version < table.since
+              ? const []
+              : _rows(json[table.name], table),
+      });
+      for (final table in SyncedTables.all) {
+        _requireUnique(records[table], table.key);
       }
 
       final exportedAt = json['exported_at'];
@@ -142,179 +103,19 @@ abstract final class BackupCodec {
     }
   }
 
-  static List<Map<String, Object?>> _rows(
-    Object? list,
-    Map<String, Object?> Function(Map<String, dynamic>) read,
-  ) {
-    if (list is! List) _damaged('record list missing');
+  /// [table]'s rows, each checked against the rules its columns declare.
+  static List<Map<String, Object?>> _rows(Object? list, SyncedTable table) {
+    if (list is! List) _damaged('${table.name} missing');
     return [
       for (final item in list)
         if (item is Map<String, dynamic>)
-          read(item)
+          switch (table.problemIn(item)) {
+            final problem? => _damaged('${table.name}.$problem'),
+            null => table.fromPortable(item),
+          }
         else
           _damaged('record is not an object'),
     ];
-  }
-
-  static Map<String, Object?> _category(Map<String, dynamic> json) {
-    _text(json, 'id');
-    _text(json, 'name');
-    _text(json, 'icon_name');
-    _int(json, 'color_value');
-    final type = json['type'];
-    if (type != null && type != 'expense' && type != 'income') {
-      _damaged('type');
-    }
-    if (json['is_default'] is! bool) _damaged('is_default');
-    _int(json, 'sort_order');
-    _timestamps(json);
-    return PortableRecords.categoryFromPortable(json);
-  }
-
-  static Map<String, Object?> _expense(Map<String, dynamic> json) {
-    _text(json, 'id');
-    final amount = json['amount'];
-    if (amount is! num || !amount.isFinite || amount <= 0) _damaged('amount');
-    final description = json['description'];
-    if (description != null && description is! String) {
-      _damaged('description');
-    }
-    _text(json, 'category_id');
-    _int(json, 'date');
-    final monthKey = json['month_key'];
-    if (monthKey is! String || !RegExp(r'^\d{4}-\d{2}$').hasMatch(monthKey)) {
-      _damaged('month_key');
-    }
-    _int(json, 'created_at');
-    _timestamps(json);
-    return PortableRecords.expenseFromPortable(json);
-  }
-
-  static Map<String, Object?> _recurring(Map<String, dynamic> json) {
-    _text(json, 'id');
-    _text(json, 'title');
-    final amount = json['amount'];
-    if (amount is! num || !amount.isFinite || amount <= 0) _damaged('amount');
-    _text(json, 'category_id');
-    final frequency = json['frequency'];
-    if (frequency != 'weekly' &&
-        frequency != 'monthly' &&
-        frequency != 'yearly') {
-      _damaged('frequency');
-    }
-    final dueDay = json['due_day'];
-    if (dueDay is! int || dueDay < 1 || dueDay > 31) _damaged('due_day');
-    final dueMonth = json['due_month'];
-    if (dueMonth != null &&
-        (dueMonth is! int || dueMonth < 1 || dueMonth > 12)) {
-      _damaged('due_month');
-    }
-    if (frequency == 'yearly' && dueMonth == null) _damaged('due_month');
-    final mode = json['mode'];
-    if (mode != 'auto' && mode != 'reminder') _damaged('mode');
-    _day(json, 'starts_on');
-    if (json['paid_through'] != null) _day(json, 'paid_through');
-    _int(json, 'created_at');
-    _timestamps(json);
-    return PortableRecords.recurringFromPortable(json);
-  }
-
-  static void _day(Map<String, dynamic> json, String key) {
-    final value = json[key];
-    if (value is! String ||
-        !RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(value) ||
-        DateTime.tryParse(value) == null) {
-      _damaged(key);
-    }
-  }
-
-  /// A table added in format [added]: a file from before then has none.
-  static List<Map<String, Object?>> _since(
-    int added,
-    int version,
-    Object? list,
-    Map<String, Object?> Function(Map<String, dynamic>) read,
-  ) => version < added ? const [] : _rows(list, read);
-
-  static Map<String, Object?> _person(Map<String, dynamic> json) {
-    _text(json, 'id');
-    _text(json, 'name');
-    _optionalText(json, 'phone');
-    _int(json, 'color_value');
-    _int(json, 'created_at');
-    _timestamps(json);
-    return PortableRecords.fromPortable('people', json);
-  }
-
-  static Map<String, Object?> _settlement(Map<String, dynamic> json) {
-    _text(json, 'id');
-    _text(json, 'person_id');
-    final amount = json['net_amount'];
-    if (amount is! num || !amount.isFinite) _damaged('net_amount');
-    _int(json, 'settled_at');
-    _optionalText(json, 'expense_id');
-    _int(json, 'created_at');
-    _timestamps(json);
-    return PortableRecords.fromPortable('settlements', json);
-  }
-
-  static Map<String, Object?> _personTransaction(Map<String, dynamic> json) {
-    _text(json, 'id');
-    _text(json, 'person_id');
-    _debt(json);
-    final settledAt = json['settled_at'];
-    if (settledAt != null && settledAt is! int) _damaged('settled_at');
-    _optionalText(json, 'settlement_id');
-    _int(json, 'created_at');
-    _timestamps(json);
-    return PortableRecords.fromPortable('person_transactions', json);
-  }
-
-  static Map<String, Object?> _personTransactionEdit(
-    Map<String, dynamic> json,
-  ) {
-    _text(json, 'id');
-    _text(json, 'transaction_id');
-    _debt(json);
-    _int(json, 'edited_at');
-    _timestamps(json);
-    return PortableRecords.fromPortable('person_transaction_edits', json);
-  }
-
-  /// The money fields a person transaction and its change log share.
-  static void _debt(Map<String, dynamic> json) {
-    final amount = json['amount'];
-    if (amount is! num || !amount.isFinite || amount <= 0) _damaged('amount');
-    if (PersonTransactionType.tryParse(json['type']) == null) _damaged('type');
-    _optionalText(json, 'note');
-    _int(json, 'date');
-  }
-
-  static void _optionalText(Map<String, dynamic> json, String key) {
-    final value = json[key];
-    if (value != null && value is! String) _damaged(key);
-  }
-
-  static Map<String, Object?> _setting(Map<String, dynamic> json) {
-    _text(json, 'key');
-    if (json['value'] is! String) _damaged('value');
-    _int(json, 'updated_at');
-    return PortableRecords.settingFromPortable(json);
-  }
-
-  static void _timestamps(Map<String, dynamic> json) {
-    _int(json, 'updated_at');
-    final deletedAt = json['deleted_at'];
-    if (deletedAt != null && deletedAt is! int) _damaged('deleted_at');
-  }
-
-  static void _text(Map<String, dynamic> json, String key) {
-    final value = json[key];
-    if (value is! String || value.isEmpty) _damaged(key);
-  }
-
-  static void _int(Map<String, dynamic> json, String key) {
-    if (json[key] is! int) _damaged(key);
   }
 
   static void _requireUnique(List<Map<String, Object?>> rows, String key) {

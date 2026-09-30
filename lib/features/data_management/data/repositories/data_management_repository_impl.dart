@@ -7,6 +7,8 @@ import '../../../../core/database/record_batch.dart';
 import '../../../../core/error/api_result.dart';
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/app_formats.dart';
+import '../../../budgets/data/models/budget_keys.dart';
+import '../../../budgets/domain/entities/budget_limits.dart';
 import '../../../recurring/domain/entities/recurrence_frequency.dart';
 import '../../domain/entities/backup_preview.dart';
 import '../../domain/entities/export_format.dart';
@@ -150,13 +152,7 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
     String stamp,
   ) async {
     final strings = AppStrings.forLanguageCode(locale.languageCode);
-    final (
-      expenses,
-      categories,
-      recurring,
-      people,
-      debts,
-    ) = await _spreadsheetsInBackground(
+    final sheets = await _spreadsheetsInBackground(
       records,
       _categoryNames(records, strings),
       _recurringSchedules(records, strings, locale),
@@ -164,28 +160,24 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
       _texts(strings, locale, now),
     );
     return [
-      await _writeText('my_budget_expenses_$stamp.csv', expenses),
-      await _writeText('my_budget_categories_$stamp.csv', categories),
-      // Only for someone who has recurring payments: an empty sheet would
-      // just be one more file to wonder about.
-      if (recurring != null)
-        await _writeText('my_budget_recurring_$stamp.csv', recurring),
-      // Likewise only for someone who keeps track of people.
-      if (people != null) ...[
-        await _writeText('my_budget_people_$stamp.csv', people),
-        await _writeText('my_budget_debts_$stamp.csv', debts!),
-      ],
+      for (final MapEntry(key: name, value: text) in sheets.entries)
+        await _writeText('my_budget_${name}_$stamp.csv', text),
     ];
   }
 
   Future<ExportedFile> _writeReport(
     RecordBatch records,
-    ExportLocale locale,
+    ExportLocale appLocale,
     DateTime now,
     String stamp,
   ) async {
+    // Without a bundled font for the app's script (Chinese, Japanese,
+    // Korean), the report is written in English rather than as empty boxes.
+    final locale = _fonts.supports(appLocale.languageCode)
+        ? appLocale
+        : appLocale.inEnglish;
     final strings = AppStrings.forLanguageCode(locale.languageCode);
-    final fonts = await _fonts.load();
+    final fonts = await _fonts.load(locale.languageCode);
     final bytes = await _reportInBackground(
       ReportInput(
         expenses: records.expenses,
@@ -195,14 +187,17 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
         formatsLocale: locale.formatsLocale,
         currencySymbol: locale.currencySymbol,
         rightToLeft: locale.isRightToLeft,
-        font: fonts.regular,
-        boldFont: fonts.bold,
+        font: fonts.main.regular,
+        boldFont: fonts.main.bold,
+        arabicFont: fonts.arabic?.regular,
+        arabicBoldFont: fonts.arabic?.bold,
         recurring: records.recurring,
         recurringSchedules: _recurringSchedules(records, strings, locale),
         people: records.people,
         settlements: records.settlements,
         personTransactions: records.personTransactions,
         personTransactionEdits: records.personTransactionEdits,
+        budgets: _budgets(records),
       ),
     );
     final name = 'my_budget_report_$stamp.pdf';
@@ -233,59 +228,83 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
   static Future<DecodedBackup> _decodeInBackground(String text) =>
       Isolate.run(() => BackupCodec.decode(text));
 
-  static Future<(String, String, String?, String?, String?)>
-  _spreadsheetsInBackground(
+  /// Each sheet by the name its file carries. A sheet about something the
+  /// user does not use (recurring payments, people, budgets) is left out:
+  /// an empty one would just be one more file to wonder about.
+  static Future<Map<String, String>> _spreadsheetsInBackground(
     RecordBatch records,
     Map<String, String> categoryNames,
     Map<String, String> recurringSchedules,
     String currency,
     ExportTexts texts,
   ) => Isolate.run(() {
-    final (people, debts) = _peopleSpreadsheets(records, currency, texts);
-    return (
-      CsvExport.expenses(
-        expenses: records.expenses,
-        categoryNames: categoryNames,
-        incomeCategoryIds: _incomeCategoryIds(records),
-        currency: currency,
-        texts: texts,
-      ),
-      CsvExport.categories(
-        categories: records.categories,
-        expenses: records.expenses,
-        categoryNames: categoryNames,
-        texts: texts,
-      ),
-      _liveCount(records.recurring) == 0
-          ? null
-          : CsvExport.recurring(
-              recurring: records.recurring,
-              categoryNames: categoryNames,
-              schedules: recurringSchedules,
-              currency: currency,
-              texts: texts,
-            ),
-      people,
-      debts,
-    );
-  });
-
-  /// The people and debts CSVs, or nulls for someone with no people.
-  static (String?, String?) _peopleSpreadsheets(
-    RecordBatch records,
-    String currency,
-    ExportTexts texts,
-  ) {
     final debts = DebtRows(
       people: records.people,
       settlements: records.settlements,
       transactions: records.personTransactions,
       edits: records.personTransactionEdits,
     );
-    if (debts.isEmpty) return (null, null);
-    return (
-      CsvExport.people(debts: debts, texts: texts),
-      CsvExport.debts(debts: debts, currency: currency, texts: texts),
+    final budgets = _budgets(records);
+    return {
+      'expenses': CsvExport.expenses(
+        expenses: records.expenses,
+        categoryNames: categoryNames,
+        incomeCategoryIds: _incomeCategoryIds(records),
+        currency: currency,
+        texts: texts,
+      ),
+      'categories': CsvExport.categories(
+        categories: records.categories,
+        expenses: records.expenses,
+        categoryNames: categoryNames,
+        texts: texts,
+      ),
+      if (_liveCount(records.recurring) > 0)
+        'recurring': CsvExport.recurring(
+          recurring: records.recurring,
+          categoryNames: categoryNames,
+          schedules: recurringSchedules,
+          currency: currency,
+          texts: texts,
+        ),
+      if (!debts.isEmpty) ...{
+        'people': CsvExport.people(debts: debts, texts: texts),
+        'debts': CsvExport.debts(
+          debts: debts,
+          currency: currency,
+          texts: texts,
+        ),
+      },
+      if (debts.settlements.isNotEmpty)
+        'settlements': CsvExport.settlements(
+          debts: debts,
+          currency: currency,
+          texts: texts,
+        ),
+      if (!budgets.isEmpty)
+        'budgets': CsvExport.budgets(
+          budgets: budgets,
+          categoryNames: categoryNames,
+          currency: currency,
+          texts: texts,
+        ),
+    };
+  });
+
+  /// The budgets the app shows: a budget left behind by a deleted category
+  /// no longer applies to anything.
+  static BudgetLimits _budgets(RecordBatch records) {
+    final limits = BudgetKeys.fromRows(records.settings);
+    final live = {
+      for (final row in records.categories)
+        if (row['deleted_at'] == null) row['id'],
+    };
+    return BudgetLimits(
+      monthly: limits.monthly,
+      byCategory: {
+        for (final MapEntry(key: id, value: limit) in limits.byCategory.entries)
+          if (live.contains(id)) id: limit,
+      },
     );
   }
 
@@ -400,6 +419,8 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
       owedToYou: strings.owedToYou,
       theyPaidYou: strings.theyPaidYou,
       youPaidThem: strings.youPaidThem,
+      budgets: strings.budgets,
+      monthlyBudget: strings.monthlyBudget,
     );
   }
 

@@ -60,6 +60,8 @@ class ExportTexts {
     required this.owedToYou,
     required this.theyPaidYou,
     required this.youPaidThem,
+    required this.budgets,
+    required this.monthlyBudget,
   });
 
   // Column headings.
@@ -146,4 +148,8 @@ class ExportTexts {
   String page(int page, int pages) => pageTemplate
       .replaceAll('{page}', '$page')
       .replaceAll('{pages}', '$pages');
+
+  // Budgets.
+  final String budgets;
+  final String monthlyBudget;
 }

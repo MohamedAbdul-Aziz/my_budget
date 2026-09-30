@@ -1,3 +1,4 @@
+import '../../../budgets/domain/entities/budget_limits.dart';
 import '../models/export_texts.dart';
 import 'debt_rows.dart';
 
@@ -164,6 +165,49 @@ abstract final class CsvExport {
       texts.id,
     ],
     for (final row in debts.transactions) _debtRow(row, debts, currency, texts),
+  ]);
+
+  /// Every settle-up: when, with whom, which way the money went, and how
+  /// many transactions it cleared.
+  static String settlements({
+    required DebtRows debts,
+    required String currency,
+    required ExportTexts texts,
+  }) => _document([
+    [
+      texts.person,
+      texts.settledOn,
+      texts.type,
+      texts.amount,
+      texts.currency,
+      texts.count,
+      texts.id,
+    ],
+    for (final row in debts.settlements)
+      [
+        debts.personName(row['person_id']),
+        isoDate(_int(row['settled_at'])),
+        DebtRows.settlementDirection(row, texts),
+        // Unsigned, with the type column saying which way it went.
+        amount((row['net_amount']! as num).abs()),
+        currency,
+        '${debts.clearedBy(row['id'])}',
+        '${row['id']}',
+      ],
+  ]);
+
+  /// The monthly budget first, then each category's.
+  static String budgets({
+    required BudgetLimits budgets,
+    required Map<String, String> categoryNames,
+    required String currency,
+    required ExportTexts texts,
+  }) => _document([
+    [texts.category, texts.amount, texts.currency, texts.id],
+    if (budgets.monthly case final monthly?)
+      [texts.monthlyBudget, amount(monthly), currency, ''],
+    for (final MapEntry(key: id, value: limit) in budgets.byCategory.entries)
+      [categoryNames[id] ?? id, amount(limit), currency, id],
   ]);
 
   static List<String> _personRow(

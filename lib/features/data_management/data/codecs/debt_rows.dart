@@ -104,6 +104,23 @@ class DebtRows {
         DebtDirection.settled => texts.settledUp,
       };
 
+  /// Which way a settlement's money went.
+  static String settlementDirection(
+    Map<String, Object?> row,
+    ExportTexts texts,
+  ) {
+    final net = (row['net_amount']! as num).toDouble();
+    return net > 0
+        ? texts.theyPaidYou
+        : net < 0
+        ? texts.youPaidThem
+        : texts.settledUp;
+  }
+
+  /// How many transactions [settlementId] cleared.
+  int clearedBy(Object? settlementId) =>
+      transactions.where((row) => row['settlement_id'] == settlementId).length;
+
   static DateTime time(Object? millis) =>
       DateTime.fromMillisecondsSinceEpoch(_int(millis));
 

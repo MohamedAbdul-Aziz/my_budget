@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_budget/core/database/app_database.dart';
 import 'package:my_budget/core/database/local_records.dart';
-import 'package:my_budget/core/database/portable_records.dart';
 import 'package:my_budget/core/database/record_batch.dart';
+import 'package:my_budget/core/database/synced_tables.dart';
 import 'package:my_budget/core/error/api_result.dart';
 import 'package:my_budget/core/error/failures.dart';
 import 'package:my_budget/features/categories/data/datasources/category_local_data_source.dart';
@@ -74,7 +74,7 @@ void main() {
     expect(report.changes, 16);
     expect(cloud.rows('categories'), hasLength(14));
     expect(cloud.rows('expenses'), hasLength(1));
-    expect(cloud.rows('user_settings'), hasLength(1));
+    expect(cloud.rows('settings'), hasLength(1));
   });
 
   test('later backups upload only what changed, never duplicates', () async {
@@ -445,21 +445,6 @@ void main() {
     };
     const setting = {'key': 'currency_symbol', 'value': '€', 'updated_at': 5};
 
-    final portable = PortableRecords.categoryToPortable(category);
-    expect(portable['is_default'], isTrue);
-    expect(PortableRecords.categoryFromPortable(portable), category);
-    expect(
-      PortableRecords.expenseFromPortable(
-        PortableRecords.expenseToPortable(expense),
-      ),
-      expense,
-    );
-    expect(
-      PortableRecords.settingFromPortable(
-        PortableRecords.settingToPortable(setting),
-      ),
-      setting,
-    );
     const recurring = {
       'id': 'rec_1',
       'title': 'Rent',
@@ -475,12 +460,6 @@ void main() {
       'updated_at': 1785000000001,
       'deleted_at': null,
     };
-    expect(
-      PortableRecords.recurringFromPortable(
-        PortableRecords.recurringToPortable(recurring),
-      ),
-      recurring,
-    );
     const people = <String, Map<String, Object?>>{
       'people': {
         'id': 'per_1',
@@ -526,11 +505,23 @@ void main() {
         'deleted_at': null,
       },
     };
-    for (final MapEntry(key: table, value: row) in people.entries) {
-      final portable = PortableRecords.toPortable(table, {...row, 'dirty': 1});
-      expect(portable.containsKey('dirty'), isFalse, reason: table);
-      expect(PortableRecords.fromPortable(table, portable), row);
+    final rows = <String, Map<String, Object?>>{
+      'categories': category,
+      'expenses': expense,
+      'settings': setting,
+      'recurring_expenses': recurring,
+      ...people,
+    };
+    // One sample row per synced table, so a new table needs one here too.
+    expect(rows.keys, [for (final table in SyncedTables.all) table.name]);
+    for (final table in SyncedTables.all) {
+      final row = rows[table.name]!;
+      final portable = table.toPortable({...row, 'dirty': 1});
+      expect(portable.containsKey('dirty'), isFalse, reason: table.name);
+      expect(table.problemIn(portable), isNull, reason: table.name);
+      expect(table.fromPortable(portable), row, reason: table.name);
     }
+    expect(SyncedTables.categories.toPortable(category)['is_default'], isTrue);
   });
 }
 
@@ -628,11 +619,7 @@ class Phone {
 /// replaces the stored row.
 class FakeCloud {
   final Map<String, Map<String, Map<String, Object?>>> _tables = {
-    'categories': {},
-    'expenses': {},
-    'user_settings': {},
-    'recurring_expenses': {},
-    for (final table in AppDatabase.peopleTables) table: {},
+    for (final table in SyncedTables.all) table.name: {},
   };
 
   List<Map<String, Object?>> rows(String table, {String userId = 'user-1'}) =>
@@ -676,27 +663,14 @@ class FakeRemote implements SyncRemoteDataSource {
     required String userId,
     void Function(int count)? onUploaded,
   }) async {
-    for (final row in batch.categories) {
-      cloud.upsert('categories', userId, row['id']! as String, row);
-    }
-    for (final row in batch.expenses) {
-      cloud.upsert('expenses', userId, row['id']! as String, row);
-    }
-    for (final row in batch.settings) {
-      cloud.upsert('user_settings', userId, row['key']! as String, row);
-    }
-    for (final row in batch.recurring) {
-      cloud.upsert('recurring_expenses', userId, row['id']! as String, row);
-    }
     // Through the portable form, as the real upload sends them.
-    for (final MapEntry(key: table, value: rows)
-        in batch.peopleTables.entries) {
-      for (final row in rows) {
+    for (final table in SyncedTables.all) {
+      for (final row in batch[table]) {
         cloud.upsert(
-          table,
+          table.name,
           userId,
-          row['id']! as String,
-          PortableRecords.toPortable(table, row),
+          row[table.key]! as String,
+          table.toPortable(row),
         );
       }
     }
@@ -709,20 +683,12 @@ class FakeRemote implements SyncRemoteDataSource {
   }) async {
     final user = userId!;
     onProgress?.call(1);
-    return RecordBatch(
-      categories: cloud.rows('categories', userId: user),
-      expenses: cloud.rows('expenses', userId: user),
-      settings: cloud.rows('user_settings', userId: user),
-      recurring: cloud.rows('recurring_expenses', userId: user),
-      people: _people('people', user),
-      settlements: _people('settlements', user),
-      personTransactions: _people('person_transactions', user),
-      personTransactionEdits: _people('person_transaction_edits', user),
-    );
+    return RecordBatch({
+      for (final table in SyncedTables.all)
+        table.name: [
+          for (final row in cloud.rows(table.name, userId: user))
+            table.fromPortable(row),
+        ],
+    });
   }
-
-  List<Map<String, Object?>> _people(String table, String user) => [
-    for (final row in cloud.rows(table, userId: user))
-      PortableRecords.fromPortable(table, row),
-  ];
 }

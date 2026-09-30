@@ -8,6 +8,8 @@ import 'package:my_budget/core/database/local_records.dart';
 import 'package:my_budget/core/database/record_batch.dart';
 import 'package:my_budget/core/error/api_result.dart';
 import 'package:my_budget/core/error/failures.dart';
+import 'package:my_budget/core/l10n/app_strings.dart';
+import 'package:my_budget/features/budgets/data/datasources/budget_local_data_source.dart';
 import 'package:my_budget/features/categories/data/datasources/category_local_data_source.dart';
 import 'package:my_budget/features/categories/data/repositories/category_repository_impl.dart';
 import 'package:my_budget/features/categories/domain/entities/expense_category.dart';
@@ -39,6 +41,7 @@ import 'package:my_budget/features/recurring/domain/entities/recurring_expense.d
 import 'package:my_budget/features/recurring/domain/entities/recurring_mode.dart';
 import 'package:my_budget/features/settings/data/datasources/settings_local_data_source.dart';
 import 'package:my_budget/features/settings/data/repositories/settings_repository_impl.dart';
+import 'package:my_budget/features/settings/domain/entities/app_settings.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -407,11 +410,11 @@ void main() {
     });
 
     test('an expense whose category is missing lands in Other', () async {
-      final batch = RecordBatch(
-        expenses: [
+      final batch = RecordBatch({
+        'expenses': [
           _expenseRow('exp_orphan', categoryId: 'cat_nowhere', updatedAt: 1),
         ],
-      );
+      });
 
       await phoneB.records.mergeNewest(batch, fromCloud: false);
 
@@ -532,12 +535,12 @@ void main() {
 
   group('a failure part way through rolls everything back', () {
     test('when merging', () async {
-      final batch = RecordBatch(
-        expenses: [
+      final batch = RecordBatch({
+        'expenses': [
           _expenseRow('exp_good', updatedAt: 1),
           {..._expenseRow('exp_bad', updatedAt: 1), 'amount': null},
         ],
-      );
+      });
 
       await expectLater(
         phoneB.records.mergeNewest(batch, fromCloud: false),
@@ -548,12 +551,12 @@ void main() {
 
     test('when replacing', () async {
       final kept = await phoneB.addExpense(5, note: 'Still here');
-      final batch = RecordBatch(
-        expenses: [
+      final batch = RecordBatch({
+        'expenses': [
           _expenseRow('exp_good', updatedAt: 1),
           {..._expenseRow('exp_bad', updatedAt: 1), 'amount': null},
         ],
-      );
+      });
 
       await expectLater(
         phoneB.records.replaceAll(batch),
@@ -655,6 +658,7 @@ void main() {
         startsWith('my_budget_categories_'),
         startsWith('my_budget_people_'),
         startsWith('my_budget_debts_'),
+        startsWith('my_budget_settlements_'),
       ]);
       List<String> lines(ExportedFile file) => utf8
           .decode(File(file.path).readAsBytesSync())
@@ -688,6 +692,41 @@ void main() {
           endsWith(',1,${lunch.id}'),
         ),
       );
+
+      final settlements = lines(files[4]);
+      expect(
+        settlements.first,
+        'Person,Settled on,Type,Amount,Currency,Transactions,ID',
+      );
+      expect(
+        settlements[1],
+        matches(r'^Sara,\d{4}-\d{2}-\d{2},They paid you,24\.00,\$,1,'),
+      );
+    });
+
+    test('budgets get a sheet of their own', () async {
+      final pets = await phoneA.addCategory('Pets');
+      final gone = await phoneA.addCategory('Old');
+      final budgets = BudgetLocalDataSourceImpl(phoneA.database);
+      await budgets.writeMonthly(1500);
+      await budgets.writeCategory(pets.id, 200);
+      await budgets.writeCategory(gone.id, 50);
+      await phoneA.categories.deleteCategory(gone.id);
+      // A removed budget is an empty value, which is no budget at all.
+      await budgets.writeCategory('cat_food', 300);
+      await budgets.writeCategory('cat_food', null);
+
+      final files = await phoneA.exportAll(ExportFormat.spreadsheet, english);
+      expect(files.last.name, startsWith('my_budget_budgets_'));
+      final lines = utf8
+          .decode(await File(files.last.path).readAsBytes())
+          .replaceFirst(CsvExport.byteOrderMark, '')
+          .split('\r\n');
+      expect(lines.where((line) => line.isNotEmpty), [
+        'Category,Amount,Currency,ID',
+        'Monthly budget,1500.00,\$,',
+        'Pets,200.00,\$,${pets.id}',
+      ]);
     });
 
     test('no people sheets for someone with no people', () async {
@@ -720,6 +759,25 @@ void main() {
       expect(bytes.length, greaterThan(1000));
     });
 
+    test('lists income and budgets, in Arabic too', () async {
+      await phoneA.addExpense(40, note: 'Groceries');
+      await phoneA.addExpense(2500, categoryId: 'cat_salary', note: 'راتب');
+      await BudgetLocalDataSourceImpl(phoneA.database).writeMonthly(1500);
+
+      for (final locale in [english, arabic]) {
+        final file = await phoneA.export(ExportFormat.report, locale);
+        final bytes = await File(file.path).readAsBytes();
+        expect(ascii.decode(bytes.sublist(0, 5)), '%PDF-');
+      }
+    });
+
+    test('still works with only income recorded', () async {
+      await phoneA.addExpense(2500, categoryId: 'cat_salary');
+      final file = await phoneA.export(ExportFormat.report, english);
+      final bytes = await File(file.path).readAsBytes();
+      expect(ascii.decode(bytes.sublist(0, 5)), '%PDF-');
+    });
+
     test('lists recurring payments, in Arabic too', () async {
       await phoneA.addRecurring('الإيجار');
       await phoneA.addExpense(40, note: 'Groceries');
@@ -746,6 +804,90 @@ void main() {
         final bytes = await File(file.path).readAsBytes();
         expect(ascii.decode(bytes.sublist(0, 5)), '%PDF-');
       }
+    });
+
+    group('in every translated language', () {
+      final englishTitle = RegExp(r'/Title\s*\(My Budget: expense report\)');
+
+      /// The fonts a report embeds, by name.
+      Set<String> fontsIn(String pdf) => {
+        for (final match in RegExp(r'/BaseFont\s*/([^\s/>]+)').allMatches(pdf))
+          match.group(1)!,
+      };
+      ExportLocale locale(String code) => ExportLocale(
+        languageCode: code,
+        formatsLocale: code,
+        currencySymbol: r'$',
+      );
+      Future<String> report(String code) async {
+        final file = await phoneA.export(ExportFormat.report, locale(code));
+        return latin1.decode(await File(file.path).readAsBytes());
+      }
+
+      setUp(() async {
+        await phoneA.addExpense(40, note: 'Groceries');
+        final pets = await phoneA.addCategory('حيوانات أليفة');
+        await phoneA.addExpense(
+          12.5,
+          categoryId: pets.id,
+          note: 'زيارة الطبيب',
+        );
+      });
+
+      test('Cyrillic and Latin Extended use their own font, with Arabic '
+          'names still set in the Arabic one', () async {
+        for (final code in ['ru', 'uk', 'tr', 'pl', 'vi', 'fr']) {
+          final pdf = await report(code);
+          expect(pdf, startsWith('%PDF-'));
+          expect(
+            fontsIn(pdf),
+            containsAll(['IBMPlexSans', 'IBMPlexSansArabic-Regular']),
+          );
+          expect(pdf, isNot(contains(englishTitle)));
+        }
+      });
+
+      test('Arabic, Persian and Urdu keep the Arabic font alone', () async {
+        for (final code in ['ar', 'fa', 'ur']) {
+          final fonts = fontsIn(await report(code));
+          expect(fonts, contains('IBMPlexSansArabic-Regular'), reason: code);
+          expect(fonts, isNot(contains('IBMPlexSans')), reason: code);
+          // Persian's zero-width non-joiner has no glyph; nothing falls back.
+          expect(fonts, isNot(contains('Helvetica')), reason: code);
+        }
+      });
+
+      test('Chinese, Japanese and Korean reports are written in English, '
+          'since no bundled font draws them', () async {
+        for (final code in ['zh', 'ja', 'ko']) {
+          final pdf = await report(code);
+          expect(pdf, contains(englishTitle));
+          expect(fontsIn(pdf), isNot(contains('IBMPlexSans')));
+        }
+      });
+
+      test('the spreadsheet stays in the app\'s language, even without a '
+          'PDF font for it', () async {
+        final files = await phoneA.exportAll(
+          ExportFormat.spreadsheet,
+          locale('zh'),
+        );
+        final expenses = await File(files.first.path).readAsString();
+        expect(expenses, contains(const AppStringsZh().colDate));
+      });
+
+      test('the fonts cover every translation but Chinese, Japanese and '
+          'Korean', () {
+        const fonts = ReportFontsDataSourceImpl();
+        for (final language in AppLanguage.translated) {
+          final code = language.languageCode!;
+          expect(
+            fonts.supports(code),
+            !{'zh', 'ja', 'ko'}.contains(code),
+            reason: code,
+          );
+        }
+      });
     });
 
     test('still works with nothing recorded', () async {

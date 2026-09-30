@@ -77,62 +77,18 @@ class SyncLocalDataSourceImpl implements SyncLocalDataSource {
       _records.mergeNewest(cloud, fromCloud: true);
 
   @override
-  Future<void> forgetAccount(String userId) => _guard(
-    'forget deleted account',
-    () async {
-      final db = await _appDatabase.database;
-      await db.transaction((txn) async {
-        await txn.delete(
-          'sync_meta',
-          where: 'key = ? OR (key = ? AND value = ?)',
-          whereArgs: [_lastSyncedKey(userId), _ownerKey, userId],
-        );
-        // Deleted rows only existed to carry the delete to that account's
-        // cloud copy, which is gone now. Expenses and recurring payments
-        // first: a deleted category row cannot go while anything still
-        // points at it.
-        await txn.delete('expenses', where: 'deleted_at IS NOT NULL');
-        await txn.delete('recurring_expenses', where: 'deleted_at IS NOT NULL');
-        await txn.delete(
-          'categories',
-          where:
-              'deleted_at IS NOT NULL '
-              'AND id NOT IN (SELECT category_id FROM expenses) '
-              'AND id NOT IN (SELECT category_id FROM recurring_expenses)',
-        );
-        // People and debts children first, for the same reason: a deleted
-        // row goes only once nothing points at it any more.
-        await txn.delete(
-          'person_transaction_edits',
-          where: 'deleted_at IS NOT NULL',
-        );
-        await txn.delete(
-          'person_transactions',
-          where:
-              'deleted_at IS NOT NULL AND id NOT IN '
-              '(SELECT transaction_id FROM person_transaction_edits)',
-        );
-        await txn.delete('settlements', where: 'deleted_at IS NOT NULL');
-        await txn.delete(
-          'people',
-          where:
-              'deleted_at IS NOT NULL '
-              'AND id NOT IN (SELECT person_id FROM person_transactions) '
-              'AND id NOT IN (SELECT person_id FROM settlements)',
-        );
-        // Everything left is news to whichever account backs up next.
-        for (final table in [
-          'categories',
-          'expenses',
-          'settings',
-          'recurring_expenses',
-          ...AppDatabase.peopleTables,
-        ]) {
-          await txn.update(table, {'dirty': 1});
-        }
+  Future<void> forgetAccount(String userId) =>
+      _guard('forget deleted account', () async {
+        final db = await _appDatabase.database;
+        await db.transaction((txn) async {
+          await txn.delete(
+            'sync_meta',
+            where: 'key = ? OR (key = ? AND value = ?)',
+            whereArgs: [_lastSyncedKey(userId), _ownerKey, userId],
+          );
+          await LocalRecords.forgetCloudCopy(txn);
+        });
       });
-    },
-  );
 
   static String _lastSyncedKey(String userId) => 'last_synced_at:$userId';
 
