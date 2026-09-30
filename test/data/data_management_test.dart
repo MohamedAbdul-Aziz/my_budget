@@ -658,6 +658,7 @@ void main() {
         startsWith('my_budget_categories_'),
         startsWith('my_budget_people_'),
         startsWith('my_budget_debts_'),
+        startsWith('my_budget_changes_'),
         startsWith('my_budget_settlements_'),
       ]);
       List<String> lines(ExportedFile file) => utf8
@@ -693,14 +694,25 @@ void main() {
         ),
       );
 
-      final settlements = lines(files[4]);
+      final changes = lines(files[4]);
+      expect(changes.first, 'Edited,Person,Date,Type,Amount,Currency,Note,ID');
+      // The values before the edit: 20, not the 24 it was changed to.
+      expect(
+        changes[1],
+        matches(
+          r'^\d{4}-\d{2}-\d{2},Sara,2026-08-04,I paid for them,20\.00,\$,'
+          '"Lunch, team",${lunch.id}\$',
+        ),
+      );
+
+      final settlements = lines(files[5]);
       expect(
         settlements.first,
-        'Person,Settled on,Type,Amount,Currency,Transactions,ID',
+        'Person,Settled on,Type,Amount,Currency,Transactions,In your budget,ID',
       );
       expect(
         settlements[1],
-        matches(r'^Sara,\d{4}-\d{2}-\d{2},They paid you,24\.00,\$,1,'),
+        matches(r'^Sara,\d{4}-\d{2}-\d{2},They paid you,24\.00,\$,1,No,'),
       );
     });
 

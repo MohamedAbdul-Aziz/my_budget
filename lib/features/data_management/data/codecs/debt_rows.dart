@@ -29,8 +29,11 @@ class DebtRows {
            return byDate != 0
                ? byDate
                : _int(b['created_at']).compareTo(_int(a['created_at']));
-         }) {
-    for (final edit in _live(edits)) {
+         }),
+       edits = _live(
+         edits,
+       )..sort((a, b) => _int(b['edited_at']).compareTo(_int(a['edited_at']))) {
+    for (final edit in this.edits) {
       final id = edit['transaction_id']! as String;
       final editedAt = _int(edit['edited_at']);
       final (count, last) = _edits[id] ?? (0, 0);
@@ -52,10 +55,22 @@ class DebtRows {
   /// Newest first.
   final List<Map<String, Object?>> transactions;
 
+  /// Every change to a transaction, with its values before the change;
+  /// newest first.
+  final List<Map<String, Object?>> edits;
+
   final Map<String, (int, int)> _edits = {};
   final Map<String, int> _balances = {};
 
   bool get isEmpty => people.isEmpty;
+
+  /// The transaction [id], deleted or not; null when it exists nowhere.
+  Map<String, Object?>? transaction(Object? id) {
+    for (final row in transactions) {
+      if (row['id'] == id) return row;
+    }
+    return null;
+  }
 
   String personName(Object? id) {
     for (final person in people) {

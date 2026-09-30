@@ -61,6 +61,8 @@ class ExportTexts {
     required this.theyPaidYou,
     required this.youPaidThem,
     required this.budgets,
+    required this.edited,
+    required this.loggedInBudget,
     required this.monthlyBudget,
   });
 
@@ -151,5 +153,9 @@ class ExportTexts {
 
   // Budgets.
   final String budgets;
+
+  // Change history.
+  final String edited;
+  final String loggedInBudget;
   final String monthlyBudget;
 }

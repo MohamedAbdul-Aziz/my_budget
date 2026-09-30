@@ -275,6 +275,12 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
           texts: texts,
         ),
       },
+      if (debts.edits.isNotEmpty)
+        'changes': CsvExport.changes(
+          debts: debts,
+          currency: currency,
+          texts: texts,
+        ),
       if (debts.settlements.isNotEmpty)
         'settlements': CsvExport.settlements(
           debts: debts,
@@ -420,6 +426,8 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
       theyPaidYou: strings.theyPaidYou,
       youPaidThem: strings.youPaidThem,
       budgets: strings.budgets,
+      edited: strings.edited,
+      loggedInBudget: strings.loggedInBudget,
       monthlyBudget: strings.monthlyBudget,
     );
   }

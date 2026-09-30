@@ -181,6 +181,7 @@ abstract final class CsvExport {
       texts.amount,
       texts.currency,
       texts.count,
+      texts.loggedInBudget,
       texts.id,
     ],
     for (final row in debts.settlements)
@@ -192,8 +193,41 @@ abstract final class CsvExport {
         amount((row['net_amount']! as num).abs()),
         currency,
         '${debts.clearedBy(row['id'])}',
+        row['expense_id'] == null ? texts.no : texts.yes,
         '${row['id']}',
       ],
+  ]);
+
+  /// Every edit to a transaction, newest first, with the values the
+  /// transaction had just before it: the audit trail behind the edit count
+  /// in the debts sheet.
+  static String changes({
+    required DebtRows debts,
+    required String currency,
+    required ExportTexts texts,
+  }) => _document([
+    [
+      texts.edited,
+      texts.person,
+      texts.date,
+      texts.type,
+      texts.amount,
+      texts.currency,
+      texts.note,
+      texts.id,
+    ],
+    for (final edit in debts.edits)
+      if (debts.transaction(edit['transaction_id']) case final transaction?)
+        [
+          isoDate(_int(edit['edited_at'])),
+          debts.personName(transaction['person_id']),
+          isoDate(_int(edit['date'])),
+          DebtRows.typeLabel(edit, texts),
+          amount(edit['amount']! as num),
+          currency,
+          (edit['note'] as String?) ?? '',
+          '${edit['transaction_id']}',
+        ],
   ]);
 
   /// The monthly budget first, then each category's.
