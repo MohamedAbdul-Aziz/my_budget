@@ -156,23 +156,32 @@ class _ComparisonCard extends StatelessWidget {
               ],
             ),
           ),
-          Row(
-            children: [
-              if (change != null && change != 0)
-                Icon(
-                  change > 0
-                      ? Icons.trending_up_rounded
-                      : Icons.trending_down_rounded,
-                  color: color,
+          const SizedBox(width: 12),
+          // At most half the width, so a long "no data" message wraps
+          // instead of pushing the total off the card.
+          Flexible(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (change != null && change != 0)
+                  Icon(
+                    change > 0
+                        ? Icons.trending_up_rounded
+                        : Icons.trending_down_rounded,
+                    color: color,
+                  ),
+                const SizedBox(width: 4),
+                Flexible(
+                  child: Text(
+                    change == null
+                        ? strings.noComparison
+                        : formats.percent(change.abs()),
+                    textAlign: TextAlign.end,
+                    style: theme.textTheme.titleMedium?.copyWith(color: color),
+                  ),
                 ),
-              const SizedBox(width: 4),
-              Text(
-                change == null
-                    ? strings.noComparison
-                    : formats.percent(change.abs()),
-                style: theme.textTheme.titleMedium?.copyWith(color: color),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -290,30 +299,48 @@ class _CategoryRow extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          CategoryAvatar(category: item.category, size: 32),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              categoryLabel(context.strings, item.category),
-              overflow: TextOverflow.ellipsis,
+      child: LayoutBuilder(
+        builder: (context, constraints) => Row(
+          children: [
+            CategoryAvatar(category: item.category, size: 32),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                categoryLabel(context.strings, item.category),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
-          Text(
-            formats.percent(item.share),
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+            // A large total in a long currency symbol scales down rather
+            // than pushing past the card; figures that fit are untouched.
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: constraints.maxWidth * 0.55,
+              ),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerEnd,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      formats.percent(item.share),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      formats.moneyTight(item.total),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            formats.moneyTight(item.total),
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

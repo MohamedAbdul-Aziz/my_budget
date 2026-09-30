@@ -74,9 +74,11 @@ flutter:
   uses-material-design: true
 
   # Embedded in exported PDF reports: IBM Plex Sans Arabic has Latin and
-  # every Arabic presentation form the PDF layout draws joined Arabic with,
-  # so notes and category names print correctly in either language (SIL OFL,
-  # see assets/pdf_fonts/OFL.txt).
+  # every Arabic, Persian and Urdu presentation form the PDF layout draws
+  # joined Arabic with; IBM Plex Sans adds Latin Extended and Cyrillic for the
+  # other translated languages (SIL OFL, see assets/pdf_fonts/OFL.txt).
+  # Chinese, Japanese and Korean reports are written in English instead of
+  # bundling their multi-megabyte fonts.
   assets:
     - assets/pdf_fonts/
 

@@ -6,7 +6,7 @@ Read this first in every new chat. It covers what the app is, where things live,
 ## 0) Project Snapshot
 - **Local-first**: all data is stored in one on-device SQLite DB (`sqflite`; `sqflite_common_ffi` on desktop). The app only reads from the local DB.
 - **Optional cloud backup**: a signed-in user can back up and restore to Supabase (`features/sync`, `features/auth`). Config lives in `lib/core/config/supabase_config.dart` (publishable key only; never add the service-role key).
-- **Languages**: English and Arabic, with full RTL. Settings cover theme, language, and currency symbol.
+- **Languages**: 20 (en, ar, zh, es, fr, pt, ru, de, ja, ko, tr, id, it, fa, ur, vi, pl, nl, uk, ms), with full RTL for ar/fa/ur. The picker offers only *System*, English and the device's own language. Settings cover theme, language, and currency symbol.
 - **Android home-screen widget**: Quick Expense (Kotlin in `android/app/src/main/kotlin/com/mohamed/mybudget/`).
 - Package name: `my_budget`. Android app id: `com.mohamed.mybudget`. Dart SDK `^3.9.2`.
 
@@ -32,7 +32,8 @@ lib/
                    / record_batch.dart (bulk record moves shared by sync and file backups)
     di/injection.dart   the ONLY get_it setup (`sl`)
     error/         api_result.dart (ApiResult/Success/ResultFailure/guard), failures.dart (Failure + FailureCode)
-    l10n/app_strings.dart   hand-written localizations (AppStrings, AppStringsEn, AppStringsAr)
+    l10n/           app_strings.dart (abstract AppStrings + delegate), strings/app_strings_<code>.dart
+                    (one complete class per language), plural.dart (CLDR plural forms)
     theme/         app_theme, status_colors, transaction_colors
     utils/         amount_input, app_formats (numbers and dates), category_icons, ui_notice
   features/
@@ -118,12 +119,14 @@ Data lives in **three places**: the SQLite DB on the phone, the Supabase cloud t
 - Domain layer: return `ApiResult<T>` from use cases and repositories. Input validation lives in use cases (e.g. `AddExpense.validate`) and returns `ValidationFailure(FailureCode.x)`
 - Presentation layer: map failures to user-friendly messages and UI states
 - **No user-facing text in data or domain.** Failures carry a `FailureCode`; `debugMessage` is for developers only
-- New failure: add a `FailureCode` value, then add its message in **both** `AppStringsEn` and `AppStringsAr` (the `switch` is exhaustive, so the analyzer flags any missing case)
+- New failure: add a `FailureCode` value, then add its message in **every** file under `core/l10n/strings/` (the `switch` is exhaustive, so the analyzer flags any missing case)
 
 ## 9) Localization
 - All UI text goes through `context.strings.x` (`AppStrings`). Never hard-code UI strings
-- Adding a string: declare the abstract getter/method in `AppStrings`, then implement it in `AppStringsEn` **and** `AppStringsAr`
-- Numbers and dates are formatted with `core/utils/app_formats.dart` using the active locale. Test both languages (see `test/presentation/arabic_test.dart`)
+- Adding a string: declare the abstract getter/method in `AppStrings`, then implement it in **all 20** classes under `core/l10n/strings/` (the analyzer rejects a missing one). Keep button and tab labels short: `test/presentation/languages_test.dart` fails on any overflow on a 360-wide phone
+- Counts go through `plural()` (`core/l10n/plural.dart`) so Russian/Polish/Ukrainian get their `few`/`many` forms; languages without plurals (zh, ja, ko, tr, id, ms, vi, fa) just use `'$count …'`
+- Adding a language: a new `AppLanguage` value (stored by name, so never rename one) + a `strings/` class + a case in `AppStrings.forLanguageCode`. If its script needs a font the PDF report does not bundle, `ReportFontsDataSourceImpl.supports` leaves it out and the PDF falls back to English
+- Numbers and dates are formatted with `core/utils/app_formats.dart` using the active locale. Test Arabic RTL (see `test/presentation/arabic_test.dart`) and every language on a small phone (`languages_test.dart`)
 - Use directional-aware widgets and padding (`EdgeInsetsDirectional`, `start`/`end`) for RTL
 
 ## 10) Dependency Injection
@@ -156,7 +159,7 @@ Data lives in **three places**: the SQLite DB on the phone, the Supabase cloud t
 2. `data/`: data source (SQLite via `AppDatabase`) → model with map conversion → `RepositoryImpl` that maps exceptions to `Failure`s
 3. `presentation/`: sealed state + cubit (use cases only) → pages and widgets
 4. Register it in `core/di/injection.dart`. If the cubit is app-wide, provide it in `app.dart`
-5. Add strings to En and Ar, plus any new `FailureCode` messages
+5. Add strings to every language in `core/l10n/strings/`, plus any new `FailureCode` messages
 6. Tests, including a fake repository in `test/presentation/fakes.dart`
 7. If the feature stores data, apply the full **Data Parity Rule (§3.1)**: local DB, Supabase migration + sync, backup file, and exports, all updated together
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_budget/core/di/injection.dart';
+import 'package:my_budget/core/l10n/app_strings.dart';
 import 'package:my_budget/features/recurring/domain/entities/recurrence_frequency.dart';
 import 'package:my_budget/features/recurring/domain/entities/recurring_expense.dart';
 import 'package:my_budget/features/recurring/domain/entities/recurring_mode.dart';
@@ -265,24 +266,33 @@ void main() {
       );
       await sl<SettingsCubit>().setLanguage(language);
       await tester.pumpAndSettle();
+      final strings = AppStrings.forLanguageCode(language.languageCode);
+      // Longer languages push the card below the fold on a small phone.
+      await tester.scrollUntilVisible(
+        find.byType(RecurringDueCard),
+        200,
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
       expect(find.byType(RecurringDueCard), findsOneWidget);
+      expect(find.text(strings.paymentsToConfirm), findsOneWidget);
+      expect(
+        Directionality.of(tester.element(find.byType(RecurringDueCard))),
+        language.rightToLeft ? TextDirection.rtl : TextDirection.ltr,
+      );
       if (language == AppLanguage.arabic) {
         expect(find.text('مدفوعات بانتظار التأكيد'), findsOneWidget);
-        expect(
-          Directionality.of(tester.element(find.byType(RecurringDueCard))),
-          TextDirection.rtl,
-        );
       }
 
-      await tester.tap(
-        find.byTooltip(
-          language == AppLanguage.arabic
-              ? 'المدفوعات المتكررة'
-              : 'Recurring payments',
-        ),
-      );
+      await tester.tap(find.byTooltip(strings.recurringPayments));
       await tester.pumpAndSettle();
       expect(find.byType(RecurringPage), findsOneWidget);
+      expect(find.text(strings.statusOverdue), findsWidgets);
+      expect(find.text(strings.markAsPaid), findsWidgets);
       if (language == AppLanguage.arabic) {
         expect(find.text('متأخرة'), findsWidgets);
         expect(find.text('تأكيد الدفع'), findsWidgets);
@@ -290,9 +300,7 @@ void main() {
 
       await tester.tap(find.byType(FloatingActionButton));
       await tester.pumpAndSettle();
-      await tester.tap(
-        find.text(language == AppLanguage.arabic ? 'سنويًا' : 'Yearly'),
-      );
+      await tester.tap(find.text(strings.yearly));
       await tester.pumpAndSettle();
     });
   }

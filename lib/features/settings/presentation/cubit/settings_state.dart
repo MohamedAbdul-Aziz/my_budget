@@ -35,11 +35,31 @@ class SettingsState extends Equatable {
   };
 
   /// `null` lets MaterialApp resolve the locale from the device.
-  Locale? get locale => switch (settings.language) {
-    AppLanguage.system => null,
-    AppLanguage.english => const Locale('en'),
-    AppLanguage.arabic => const Locale('ar'),
+  Locale? get locale => switch (settings.language.languageCode) {
+    final code? => Locale(code),
+    null => null,
   };
+
+  /// The device's language, when the app translates it.
+  AppLanguage? get deviceLanguage => AppLanguage.fromCode(systemLocaleName);
+
+  /// What the language picker offers: the device setting, English, and the
+  /// device's own language. Anything else chosen earlier stays listed so the
+  /// current choice never disappears from the picker.
+  List<AppLanguage> get pickerLanguages {
+    final device = deviceLanguage;
+    return [
+      AppLanguage.system,
+      AppLanguage.english,
+      if (device != null && device != AppLanguage.english) device,
+      if (!{
+        AppLanguage.system,
+        AppLanguage.english,
+        device,
+      }.contains(settings.language))
+        settings.language,
+    ];
+  }
 
   /// The language actually being displayed, for code that cannot read it from
   /// the widget tree — an unsupported device locale resolves to English.

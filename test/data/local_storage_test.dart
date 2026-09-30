@@ -12,6 +12,9 @@ import 'package:my_budget/features/expenses/data/datasources/expense_local_data_
 import 'package:my_budget/features/expenses/data/repositories/expense_repository_impl.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
 import 'package:my_budget/features/expenses/domain/repositories/expense_repository.dart';
+import 'package:my_budget/features/settings/data/datasources/settings_local_data_source.dart';
+import 'package:my_budget/features/settings/data/repositories/settings_repository_impl.dart';
+import 'package:my_budget/features/settings/domain/entities/app_settings.dart';
 
 void main() {
   late AppDatabase database;
@@ -292,5 +295,43 @@ void main() {
 
     expect(result, isA<ResultFailure<dynamic>>());
     expect(result.failureOrNull, isA<DatabaseFailure>());
+  });
+
+  group('the language preference', () {
+    test('keeps any translated language across restarts', () async {
+      final settings = SettingsRepositoryImpl(
+        SettingsLocalDataSourceImpl(database),
+      );
+      await settings.saveLanguage(AppLanguage.ukrainian);
+
+      final reopened = SettingsRepositoryImpl(
+        SettingsLocalDataSourceImpl(database),
+      );
+      expect(
+        (await reopened.loadSettings()).dataOrNull!.language,
+        AppLanguage.ukrainian,
+      );
+    });
+
+    test('reads a language this version does not know as the device '
+        'setting', () async {
+      // As a newer app version might have left it, e.g. through a restore.
+      await SettingsLocalDataSourceImpl(database).write('language', 'klingon');
+
+      final settings = SettingsRepositoryImpl(
+        SettingsLocalDataSourceImpl(database),
+      );
+      expect(
+        (await settings.loadSettings()).dataOrNull!.language,
+        AppLanguage.system,
+      );
+    });
+
+    test('keeps the names older versions stored', () {
+      // Stored by name: renaming one would silently reset users to "system".
+      expect(AppLanguage.english.name, 'english');
+      expect(AppLanguage.arabic.name, 'arabic');
+      expect(AppLanguage.system.name, 'system');
+    });
   });
 }

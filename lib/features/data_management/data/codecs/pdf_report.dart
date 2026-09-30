@@ -5,6 +5,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../../../../core/utils/app_formats.dart';
+import '../../../budgets/domain/entities/budget_limits.dart';
 import '../../../expenses/domain/entities/month.dart';
 import '../models/export_texts.dart';
 import 'debt_rows.dart';
@@ -22,12 +23,15 @@ class ReportInput {
     required this.rightToLeft,
     required this.font,
     required this.boldFont,
+    this.arabicFont,
+    this.arabicBoldFont,
     this.recurring = const [],
     this.recurringSchedules = const {},
     this.people = const [],
     this.settlements = const [],
     this.personTransactions = const [],
     this.personTransactionEdits = const [],
+    this.budgets = const BudgetLimits(),
   });
 
   /// Rows in the phone's format; deleted ones are skipped.
@@ -43,11 +47,18 @@ class ReportInput {
   final String currencySymbol;
   final bool rightToLeft;
 
-  /// One font with Arabic and Latin: the PDF's built-in fonts have no
-  /// Arabic, and notes and category names can be in either language
-  /// whatever the app's language is.
+  /// The report's font: the PDF's built-in fonts cover little beyond basic
+  /// Latin. For English and Arabic-script reports it has Arabic and Latin,
+  /// since notes and category names can be in either whatever the app's
+  /// language is.
   final Uint8List font;
   final Uint8List boldFont;
+
+  /// Set when [font] has no Arabic. Text with Arabic letters is then set
+  /// wholly in this font: the layout only joins Arabic within one font, so
+  /// falling back letter by letter would print it broken.
+  final Uint8List? arabicFont;
+  final Uint8List? arabicBoldFont;
 
   /// `recurring_expenses` rows; deleted ones are skipped.
   final List<Map<String, Object?>> recurring;
@@ -60,14 +71,17 @@ class ReportInput {
   final List<Map<String, Object?>> settlements;
   final List<Map<String, Object?>> personTransactions;
   final List<Map<String, Object?>> personTransactionEdits;
+
+  /// The monthly budget and each live category's.
+  final BudgetLimits budgets;
 }
 
-/// A readable, printable report of every expense: totals, spending by
-/// category and by month, then each month's expenses. Income is summed up
-/// next to the spending but kept out of every spending figure. Then any
-/// recurring payments, and what is owed between the user and each person,
-/// with the settled history. For reading and sharing only; it cannot be
-/// imported.
+/// A readable, printable report of every transaction: totals, spending by
+/// category and by month, then each month's expenses and each month's
+/// income. Income is summed up next to the spending but kept out of every
+/// spending figure. Then the budgets, any recurring payments, and what is
+/// owed between the user and each person, with the settled history. For
+/// reading and sharing only; it cannot be imported.
 ///
 /// Pure Dart, so it can run on a background isolate.
 Future<Uint8List> buildPdfReport(ReportInput input) async {
@@ -99,6 +113,10 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
     (sum, e) => isIncome(e) ? sum + e.amount : sum,
   );
   final byMonth = <Month, List<_ReportExpense>>{};
+  final incomeByMonth = <Month, List<_ReportExpense>>{};
+  for (final income in transactions.where(isIncome)) {
+    incomeByMonth.putIfAbsent(income.month, () => []).add(income);
+  }
   final byCategory = <String, (int, double)>{};
   for (final expense in expenses) {
     byMonth.putIfAbsent(expense.month, () => []).add(expense);
@@ -129,6 +147,15 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
     // Rare symbols the font lacks.
     fontFallback: [pw.Font.helvetica()],
   );
+  final arabicFonts = switch ((input.arabicFont, input.arabicBoldFont)) {
+    (final regular?, final bold?) => (
+      regular: pw.Font.ttf(regular.buffer.asByteData()),
+      bold: pw.Font.ttf(bold.buffer.asByteData()),
+    ),
+    _ => null,
+  };
+  pw.Text text(String value, {pw.TextStyle? style}) =>
+      _text(value, style: style, arabicFonts: arabicFonts);
   const amountColumn = pw.AlignmentDirectional.centerEnd;
   const cellStyle = pw.TextStyle(fontSize: 9.5);
 
@@ -139,7 +166,7 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
   }) => pw.TableHelper.fromTextArray(
     headers: [
       for (final header in headers)
-        _text(
+        text(
           header,
           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
         ),
@@ -148,7 +175,7 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
     // Columns follow the report's language; each cell's text then takes its
     // own direction, so a note in the other language still reads right.
     tableDirection: direction,
-    cellBuilder: (_, cell, _) => _text('$cell', style: cellStyle),
+    cellBuilder: (_, cell, _) => text('$cell', style: cellStyle),
     border: null,
     headerDecoration: const pw.BoxDecoration(color: PdfColors.grey200),
     rowDecoration: const pw.BoxDecoration(
@@ -164,13 +191,42 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
     },
   );
 
-  pw.Widget heading(String text) => pw.Padding(
+  pw.Widget heading(String value) => pw.Padding(
     padding: const pw.EdgeInsets.only(top: 18, bottom: 8),
-    child: _text(
-      text,
+    child: text(
+      value,
       style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
     ),
   );
+
+  /// Each month's transactions under its total, newest month first.
+  List<pw.Widget> months(Map<Month, List<_ReportExpense>> byMonth) => [
+    for (final MapEntry(key: month, value: items) in byMonth.entries) ...[
+      pw.Padding(
+        padding: const pw.EdgeInsets.only(top: 10, bottom: 4),
+        child: text(
+          '${formats.monthLabel(month)}: '
+          '${formats.money(items.fold(0.0, (sum, e) => sum + e.amount))}',
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+        ),
+      ),
+      table(
+        headers: [texts.date, texts.category, texts.note, texts.amount],
+        rows: [
+          for (final item in items)
+            [
+              formats.fullDate(item.date),
+              categoryName(item.categoryId),
+              item.note ?? '',
+              formats.money(item.amount),
+            ],
+        ],
+        amountColumns: {3},
+      ),
+    ],
+  ];
+
+  final budgets = input.budgets;
 
   final document = pw.Document(theme: theme, title: texts.title);
   document.addPage(
@@ -182,24 +238,24 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
       maxPages: 5000,
       footer: (context) => pw.Align(
         alignment: pw.AlignmentDirectional.centerEnd,
-        child: _text(
+        child: text(
           texts.page(context.pageNumber, context.pagesCount),
           style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
         ),
       ),
       build: (context) => [
-        _text(
+        text(
           texts.title,
           style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
         ),
         pw.SizedBox(height: 4),
-        _text(
+        text(
           texts.generated,
           style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
         ),
         if (transactions.isEmpty) ...[
           pw.SizedBox(height: 24),
-          _text(texts.empty),
+          text(texts.empty),
         ] else ...[
           pw.SizedBox(height: 16),
           table(
@@ -216,13 +272,13 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
           ),
           pw.SizedBox(height: 6),
           if (byMonth.isNotEmpty)
-            _text(
+            text(
               '${texts.monthlyAverage}: '
               '${formats.money(total / byMonth.length)}',
               style: const pw.TextStyle(fontSize: 10),
             ),
           if (income > 0)
-            _text(
+            text(
               '${texts.totalIncome}: ${formats.money(income)}  ·  '
               '${texts.net}: ${formats.money(income - total)}',
               style: const pw.TextStyle(fontSize: 10),
@@ -254,30 +310,28 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
             ],
             amountColumns: {1, 2},
           ),
-          heading(texts.allExpenses),
-          for (final MapEntry(key: month, value: items) in byMonth.entries) ...[
-            pw.Padding(
-              padding: const pw.EdgeInsets.only(top: 10, bottom: 4),
-              child: _text(
-                '${formats.monthLabel(month)}: '
-                '${formats.money(items.fold(0.0, (sum, e) => sum + e.amount))}',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-              ),
-            ),
-            table(
-              headers: [texts.date, texts.category, texts.note, texts.amount],
-              rows: [
-                for (final expense in items)
-                  [
-                    formats.fullDate(expense.date),
-                    categoryName(expense.categoryId),
-                    expense.note ?? '',
-                    formats.money(expense.amount),
-                  ],
-              ],
-              amountColumns: {3},
-            ),
+          if (byMonth.isNotEmpty) ...[
+            heading(texts.allExpenses),
+            ...months(byMonth),
           ],
+          if (incomeByMonth.isNotEmpty) ...[
+            heading(texts.income),
+            ...months(incomeByMonth),
+          ],
+        ],
+        if (!budgets.isEmpty) ...[
+          heading(texts.budgets),
+          table(
+            headers: [texts.category, texts.amount],
+            rows: [
+              if (budgets.monthly case final monthly?)
+                [texts.monthlyBudget, formats.money(monthly)],
+              for (final MapEntry(key: id, value: limit)
+                  in budgets.byCategory.entries)
+                [categoryName(id), formats.money(limit)],
+            ],
+            amountColumns: {1},
+          ),
         ],
         if (recurring.isNotEmpty) ...[
           heading(texts.recurringPayments),
@@ -287,6 +341,7 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
               texts.category,
               texts.repeats,
               texts.mode,
+              texts.paidThrough,
               texts.amount,
             ],
             rows: [
@@ -296,31 +351,36 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
                   categoryName(row['category_id']! as String),
                   input.recurringSchedules[row['id']] ?? '',
                   row['mode'] == 'auto' ? texts.autoDeduct : texts.reminder,
+                  switch (row['paid_through']) {
+                    final String day => formats.fullDate(DateTime.parse(day)),
+                    _ => '',
+                  },
                   formats.money((row['amount']! as num).toDouble()),
                 ],
             ],
-            amountColumns: {4},
+            amountColumns: {5},
           ),
         ],
         if (!debts.isEmpty) ...[
           heading(texts.peopleAndDebts),
-          _text(
+          text(
             '${texts.owedToYou}: ${formats.money(owedToYou)}  ·  '
             '${texts.youOwe}: ${formats.money(youOwe)}',
             style: const pw.TextStyle(fontSize: 10),
           ),
           pw.SizedBox(height: 6),
           table(
-            headers: [texts.person, texts.status, texts.balance],
+            headers: [texts.person, texts.phone, texts.status, texts.balance],
             rows: [
               for (final person in debts.people)
                 [
                   '${person['name']}',
+                  (person['phone'] as String?) ?? '',
                   DebtRows.standing(debts.balanceOf(person['id']), texts),
                   formats.money(debts.balanceOf(person['id']).magnitude),
                 ],
             ],
-            amountColumns: {2},
+            amountColumns: {3},
           ),
           for (final person in debts.people)
             ..._personLedger(
@@ -329,6 +389,7 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
               texts: texts,
               formats: formats,
               table: table,
+              text: text,
             ),
         ],
       ],
@@ -350,6 +411,7 @@ List<pw.Widget> _personLedger(
     required Set<int> amountColumns,
   })
   table,
+  required pw.Text Function(String value, {pw.TextStyle? style}) text,
 }) {
   final transactions = [
     for (final row in debts.transactions)
@@ -363,10 +425,10 @@ List<pw.Widget> _personLedger(
   ];
   final balance = debts.balanceOf(person['id']);
 
-  pw.Widget label(String text, {bool bold = false}) => pw.Padding(
+  pw.Widget label(String value, {bool bold = false}) => pw.Padding(
     padding: const pw.EdgeInsets.only(top: 10, bottom: 4),
-    child: _text(
-      text,
+    child: text(
+      value,
       style: pw.TextStyle(
         fontSize: bold ? 11 : 10,
         fontWeight: bold ? pw.FontWeight.bold : null,
@@ -401,7 +463,7 @@ List<pw.Widget> _personLedger(
         label(
           '${texts.settledOn} '
           '${formats.fullDate(DebtRows.time(settlement['settled_at']))}: '
-          '${_settlementDirection(settlement, texts)} '
+          '${DebtRows.settlementDirection(settlement, texts)} '
           '${formats.money(((settlement['net_amount']! as num).toDouble()).abs())}',
         ),
         rows([
@@ -410,15 +472,6 @@ List<pw.Widget> _personLedger(
         ]),
       ],
   ];
-}
-
-String _settlementDirection(Map<String, Object?> row, ExportTexts texts) {
-  final net = (row['net_amount']! as num).toDouble();
-  return net > 0
-      ? texts.theyPaidYou
-      : net < 0
-      ? texts.youPaidThem
-      : texts.settledUp;
 }
 
 final RegExp _arabicLetters = RegExp(
@@ -433,7 +486,13 @@ final RegExp _arabicLetters = RegExp(
 /// and everything else left to right. The layout applies no kerning, so the
 /// tail of a final ر or ل would run into the next word; wider word gaps keep
 /// Arabic words visibly apart.
-pw.Text _text(String text, {pw.TextStyle? style}) {
+///
+/// [arabicFonts] is set when the report's own font has no Arabic.
+pw.Text _text(
+  String text, {
+  pw.TextStyle? style,
+  ({pw.Font regular, pw.Font bold})? arabicFonts,
+}) {
   final printable = _printable(text);
   final arabic = _arabicLetters.hasMatch(printable);
   return pw.Text(
@@ -441,6 +500,8 @@ pw.Text _text(String text, {pw.TextStyle? style}) {
     textDirection: arabic ? pw.TextDirection.rtl : pw.TextDirection.ltr,
     style: (style ?? const pw.TextStyle()).copyWith(
       wordSpacing: arabic ? 1.5 : 1,
+      fontNormal: arabic ? arabicFonts?.regular : null,
+      fontBold: arabic ? arabicFonts?.bold : null,
     ),
   );
 }
@@ -448,10 +509,12 @@ pw.Text _text(String text, {pw.TextStyle? style}) {
 /// Arabic number and date formats wrap values in invisible direction marks.
 /// The PDF layout already orders right-to-left text itself, and a mark with
 /// no glyph would print as a box, so they are dropped; a narrow no-break
-/// space becomes an ordinary one.
+/// space becomes an ordinary one. So does the zero-width non-joiner Persian
+/// and Urdu write inside words (هزینه‌ها): the font has no glyph for it, and a
+/// plain space keeps the letters on either side apart just the same.
 String _printable(String text) => text
     .replaceAll(RegExp('[\u200E\u200F\u061C\u202A-\u202E\u2066-\u2069]'), '')
-    .replaceAll('\u202F', ' ');
+    .replaceAll(RegExp('[\u202F\u200C]'), ' ');
 
 String _percent(double part, double whole) =>
     whole == 0 ? '0%' : '${(part / whole * 100).round()}%';

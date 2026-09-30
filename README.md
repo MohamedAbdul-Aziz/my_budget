@@ -49,8 +49,15 @@ calls anywhere in the codebase.
   with the cloud backup, backup files (format 4) and the CSV/PDF exports;
   needs the `supabase/migrations/20260930180000_people_and_debts.sql`
   migration for cloud backup.
-- **Settings** — light/dark/system theme, English or Arabic (with full RTL),
-  and the currency symbol.
+- **Settings** — light/dark/system theme, the language, and the currency
+  symbol. The app is translated into 20 languages (English, Arabic, Chinese,
+  Spanish, French, Portuguese, Russian, German, Japanese, Korean, Turkish,
+  Indonesian, Italian, Persian, Urdu, Vietnamese, Polish, Dutch, Ukrainian and
+  Malay), with full right-to-left layout for Arabic, Persian and Urdu. The
+  picker offers the device setting, English and the phone's own language.
+  PDF reports embed their fonts, so Chinese, Japanese and Korean reports are
+  written in English rather than bundling multi-megabyte fonts; the app
+  itself and CSV exports stay in those languages.
 - **Quick Expense widget (Android)** — a home screen widget showing this
   month's total and shortcuts to the categories you use most.
 
@@ -131,8 +138,9 @@ flutter test
 ```
 
 - `test/domain` — month arithmetic, totals and breakdown, validation rules.
-- `test/core` — number and date formatting in both languages.
+- `test/core` — number and date formatting in English and Arabic.
 - `test/data` — the real SQLite schema against an in-memory database.
 - `test/presentation` — the app booted over in-memory repositories, including
-  the add-expense flow, the Arabic/RTL switch, the home screen widget's
-  contents, and the quick-add dialog the widget opens.
+  the add-expense flow, the Arabic/RTL switch, every language on a small
+  phone, the home screen widget's contents, and the quick-add dialog the
+  widget opens.

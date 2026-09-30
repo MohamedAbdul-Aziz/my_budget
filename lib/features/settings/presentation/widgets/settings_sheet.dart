@@ -274,35 +274,44 @@ class _ThemeModeSelector extends StatelessWidget {
   }
 }
 
-/// Language names are always written in their own language, so the option is
-/// readable even when the app is currently in the other one.
+/// Offers the device setting, English and the device's own language — not
+/// every translation. Language names are always written in their own
+/// language, so each option is readable whatever the app is currently in.
 class _LanguageSelector extends StatelessWidget {
   const _LanguageSelector();
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<SettingsCubit, SettingsState, AppLanguage>(
-      selector: (state) => state.settings.language,
-      builder: (context, language) => SegmentedButton<AppLanguage>(
-        segments: [
-          ButtonSegment(
-            value: AppLanguage.system,
-            label: Text(context.strings.languageSystem),
-          ),
-          const ButtonSegment(
-            value: AppLanguage.english,
-            label: Text('English'),
-          ),
-          const ButtonSegment(
-            value: AppLanguage.arabic,
-            label: Text('العربية'),
-          ),
-        ],
-        selected: {language},
-        showSelectedIcon: false,
-        onSelectionChanged: (selection) =>
-            context.read<SettingsCubit>().setLanguage(selection.first),
-      ),
+    // The options depend only on these two, and enums compare by value.
+    return BlocSelector<
+      SettingsCubit,
+      SettingsState,
+      (AppLanguage, AppLanguage?)
+    >(
+      selector: (state) => (state.settings.language, state.deviceLanguage),
+      builder: (context, selection) {
+        final (language, _) = selection;
+        final options = context.read<SettingsCubit>().state.pickerLanguages;
+        return SegmentedButton<AppLanguage>(
+          segments: [
+            for (final option in options)
+              ButtonSegment(
+                value: option,
+                label: Text(
+                  option == AppLanguage.system
+                      ? context.strings.languageSystem
+                      : option.nativeName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+          ],
+          selected: {language},
+          showSelectedIcon: false,
+          onSelectionChanged: (selection) =>
+              context.read<SettingsCubit>().setLanguage(selection.first),
+        );
+      },
     );
   }
 }
