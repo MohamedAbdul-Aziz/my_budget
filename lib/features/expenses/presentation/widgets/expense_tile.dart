@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/app_strings.dart';
+import '../../../../core/theme/transaction_colors.dart';
 import '../../../../core/utils/app_formats.dart';
 import '../../../categories/presentation/category_label.dart';
 import '../../../categories/presentation/widgets/category_avatar.dart';
 import '../../domain/entities/expense.dart';
 
-/// One row in the expense list. Swipe it away to delete.
+/// One row in the month's list. Swipe it away to delete. Income shows its
+/// amount with a plus, in green.
 class ExpenseTile extends StatelessWidget {
   const ExpenseTile({
     super.key,
@@ -51,9 +53,14 @@ class ExpenseTile extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         trailing: Text(
-          formats.money(expense.amount),
+          expense.isIncome
+              ? '+${formats.money(expense.amount)}'
+              : formats.money(expense.amount),
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
+            color: expense.isIncome
+                ? TransactionColors.of(context).income
+                : null,
           ),
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show SynchronousFuture;
 import 'package:flutter/widgets.dart';
 
+import '../../features/recurring/domain/entities/recurrence_frequency.dart';
 import '../error/failures.dart';
 import '../utils/app_formats.dart';
 import '../utils/ui_notice.dart';
@@ -18,8 +19,7 @@ abstract class AppStrings {
       _AppStringsDelegate();
 
   static AppStrings of(BuildContext context) =>
-      Localizations.of<AppStrings>(context, AppStrings) ??
-      const AppStringsEn();
+      Localizations.of<AppStrings>(context, AppStrings) ?? const AppStringsEn();
 
   /// Resolves a language code the same way the delegate does. Anything the app
   /// does not translate falls back to English.
@@ -245,6 +245,8 @@ abstract class AppStrings {
   String notice(UiNotice notice) => switch (notice.code) {
     NoticeCode.expenseDeleted => expenseDeleted,
     NoticeCode.expenseRestored => expenseRestored,
+    NoticeCode.incomeDeleted => incomeDeleted,
+    NoticeCode.incomeRestored => incomeRestored,
     NoticeCode.categoryAdded => categoryAdded(notice.name ?? ''),
     NoticeCode.categoryUpdated => categoryUpdated,
     NoticeCode.categoryDeleted => categoryDeleted(notice.name ?? ''),
@@ -252,9 +254,15 @@ abstract class AppStrings {
       notice.name ?? '',
       notice.count ?? 0,
     ),
-    NoticeCode.failure => failure(
-      notice.failure?.code ?? FailureCode.unknown,
+    NoticeCode.incomeCategoryDeletedWithMoves => incomeCategoryDeletedWithMoves(
+      notice.name ?? '',
+      notice.count ?? 0,
     ),
+    NoticeCode.recurringPaid => recurringPaid(notice.name ?? ''),
+    NoticeCode.recurringPaymentUndone => recurringPaymentUndone,
+    NoticeCode.recurringDeleted => categoryDeleted(notice.name ?? ''),
+    NoticeCode.recurringAutoLogged => recurringAutoLogged(notice.count ?? 0),
+    NoticeCode.failure => failure(notice.failure?.code ?? FailureCode.unknown),
   };
 
   String get expenseDeleted;
@@ -263,6 +271,95 @@ abstract class AppStrings {
   String get categoryUpdated;
   String categoryDeleted(String name);
   String categoryDeletedWithMoves(String name, int count);
+  String incomeCategoryDeletedWithMoves(String name, int count);
+
+  // Income and the month's balance
+  String get expense;
+  String get income;
+  String get transactionType;
+  String get quickIncome;
+  String get newIncome;
+  String get editIncome;
+  String get addIncome;
+  String get incomeNoteHint;
+  String get totalIncome;
+  String get totalExpenses;
+  String get netBalance;
+  String get savingsRate;
+  String get savingsRateNoIncome;
+  String get expenseCategories;
+  String get incomeCategories;
+  String get deleteIncomeCategoryBody;
+  String get incomeDeleted;
+  String get incomeRestored;
+  String get colType;
+  String transactionCount(int count);
+
+  // Recurring payments
+  String get recurringPayments;
+  String get newRecurring;
+  String get editRecurring;
+  String get addRecurring;
+  String get recurringTitle;
+  String get recurringTitleHint;
+  String get amount;
+  String get repeats;
+  String get weekly;
+  String get monthly;
+  String get yearly;
+  String get dueOn;
+  String get dueDayOfMonth;
+  String get dueMonthLabel;
+  String get dueDayLabel;
+  String get shortMonthHint;
+  String get whenDue;
+  String get autoDeduct;
+  String get remindMe;
+  String get autoDeductHint;
+  String get remindMeHint;
+  String get statusPaid;
+  String get statusUpcoming;
+  String get statusOverdue;
+  String get markAsPaid;
+  String get dueToday;
+  String dueOnDate(String date);
+  String nextDueOn(String date);
+  String overdueSince(String date, int count);
+  String everyWeekday(String weekday);
+  String monthlyOnDay(String day);
+  String yearlyOn(String date);
+  String get monthlyAverage;
+  String get monthlyAverageHint;
+  String get noRecurringYet;
+  String get noRecurringHint;
+  String get paymentsToConfirm;
+  String get seeAll;
+  String get deleteRecurringBody;
+  String recurringPaid(String name);
+  String get recurringPaymentUndone;
+  String recurringAutoLogged(int count);
+  String paymentCount(int count);
+  String get colPaidThrough;
+
+  /// "Every Friday", "Monthly on day 15", "Yearly on 10 Mar".
+  String recurringSchedule(
+    RecurrenceFrequency frequency, {
+    required int dueDay,
+    int? dueMonth,
+    required AppFormats formats,
+  }) => switch (frequency) {
+    RecurrenceFrequency.weekly => everyWeekday(formats.weekdayName(dueDay)),
+    RecurrenceFrequency.monthly => monthlyOnDay(formats.number(dueDay)),
+    RecurrenceFrequency.yearly => yearlyOn(
+      formats.dayOfYear(dueMonth ?? 1, dueDay),
+    ),
+  };
+
+  String frequencyName(RecurrenceFrequency frequency) => switch (frequency) {
+    RecurrenceFrequency.weekly => weekly,
+    RecurrenceFrequency.monthly => monthly,
+    RecurrenceFrequency.yearly => yearly,
+  };
 }
 
 class AppStringsEn extends AppStrings {
@@ -288,7 +385,7 @@ class AppStringsEn extends AppStrings {
 
   @override
   String get emptyMonthHint =>
-      'Tap Add to record your first expense for this month.';
+      'Tap Add to record your first expense or income for this month.';
 
   @override
   String get yourMonths => 'Your months';
@@ -749,7 +846,7 @@ class AppStringsEn extends AppStrings {
   String get colId => 'ID';
 
   @override
-  String get colCount => 'Expenses';
+  String get colCount => 'Transactions';
 
   @override
   String get colTotal => 'Total';
@@ -819,6 +916,11 @@ class AppStringsEn extends AppStrings {
     'cat_entertainment' => 'Entertainment',
     'cat_work' => 'Work',
     'cat_other' => 'Other',
+    'cat_salary' => 'Salary',
+    'cat_freelance' => 'Freelance',
+    'cat_investments' => 'Investments',
+    'cat_gifts' => 'Gifts',
+    'cat_income_other' => 'Other income',
     _ => null,
   };
 
@@ -865,6 +967,10 @@ class AppStringsEn extends AppStrings {
     FailureCode.saveFailed => "Couldn't save the file. Try again.",
     FailureCode.tooManyAttempts =>
       'Too many attempts. Wait a moment and try again.',
+    FailureCode.titleRequired => 'Give it a name.',
+    FailureCode.titleTooLong => 'Keep the name under 40 characters.',
+    FailureCode.dueDayInvalid => 'Pick when it is due.',
+    FailureCode.alreadyPaid => 'That payment is already recorded.',
   };
 
   @override
@@ -885,6 +991,215 @@ class AppStringsEn extends AppStrings {
   @override
   String categoryDeletedWithMoves(String name, int count) =>
       '$name deleted — ${expenseCount(count)} moved to Other';
+
+  @override
+  String incomeCategoryDeletedWithMoves(String name, int count) =>
+      '$name deleted — ${transactionCount(count)} moved to Other income';
+
+  @override
+  String get expense => 'Expense';
+
+  @override
+  String get income => 'Income';
+
+  @override
+  String get transactionType => 'Expense or income';
+
+  @override
+  String get quickIncome => 'Quick income';
+
+  @override
+  String get newIncome => 'New income';
+
+  @override
+  String get editIncome => 'Edit income';
+
+  @override
+  String get addIncome => 'Add income';
+
+  @override
+  String get incomeNoteHint => 'Where did it come from?';
+
+  @override
+  String get totalIncome => 'Total income';
+
+  @override
+  String get totalExpenses => 'Total expenses';
+
+  @override
+  String get netBalance => 'Net balance';
+
+  @override
+  String get savingsRate => 'Savings rate';
+
+  @override
+  String get savingsRateNoIncome => 'Add income to see your savings rate';
+
+  @override
+  String get expenseCategories => 'Expense categories';
+
+  @override
+  String get incomeCategories => 'Income categories';
+
+  @override
+  String get deleteIncomeCategoryBody =>
+      'Income in this category will be moved to Other income. Nothing is '
+      'deleted.';
+
+  @override
+  String get incomeDeleted => 'Income deleted';
+
+  @override
+  String get incomeRestored => 'Income restored';
+
+  @override
+  String get colType => 'Type';
+
+  @override
+  String transactionCount(int count) =>
+      count == 1 ? '1 transaction' : '$count transactions';
+
+  @override
+  String get recurringPayments => 'Recurring payments';
+
+  @override
+  String get newRecurring => 'New recurring payment';
+
+  @override
+  String get editRecurring => 'Edit recurring payment';
+
+  @override
+  String get addRecurring => 'Add payment';
+
+  @override
+  String get recurringTitle => 'Name';
+
+  @override
+  String get recurringTitleHint => 'Rent, Netflix, gym…';
+
+  @override
+  String get amount => 'Amount';
+
+  @override
+  String get repeats => 'Repeats';
+
+  @override
+  String get weekly => 'Weekly';
+
+  @override
+  String get monthly => 'Monthly';
+
+  @override
+  String get yearly => 'Yearly';
+
+  @override
+  String get dueOn => 'Due on';
+
+  @override
+  String get dueDayOfMonth => 'Day of the month';
+
+  @override
+  String get dueMonthLabel => 'Month';
+
+  @override
+  String get dueDayLabel => 'Day';
+
+  @override
+  String get shortMonthHint => 'In shorter months, it falls on the last day.';
+
+  @override
+  String get whenDue => "When it's due";
+
+  @override
+  String get autoDeduct => 'Auto-deduct';
+
+  @override
+  String get remindMe => 'Remind me';
+
+  @override
+  String get autoDeductHint =>
+      'Logged as an expense automatically on the due date.';
+
+  @override
+  String get remindMeHint =>
+      "You'll be asked to confirm each payment before it's logged.";
+
+  @override
+  String get statusPaid => 'Paid';
+
+  @override
+  String get statusUpcoming => 'Upcoming';
+
+  @override
+  String get statusOverdue => 'Overdue';
+
+  @override
+  String get markAsPaid => 'Mark as paid';
+
+  @override
+  String get dueToday => 'Due today';
+
+  @override
+  String dueOnDate(String date) => 'Due $date';
+
+  @override
+  String nextDueOn(String date) => 'Next on $date';
+
+  @override
+  String overdueSince(String date, int count) => count <= 1
+      ? 'Was due $date'
+      : '${paymentCount(count)} overdue since $date';
+
+  @override
+  String everyWeekday(String weekday) => 'Every $weekday';
+
+  @override
+  String monthlyOnDay(String day) => 'Monthly on day $day';
+
+  @override
+  String yearlyOn(String date) => 'Yearly on $date';
+
+  @override
+  String get monthlyAverage => 'Each month';
+
+  @override
+  String get monthlyAverageHint => 'All your recurring payments, on average';
+
+  @override
+  String get noRecurringYet => 'No recurring payments yet';
+
+  @override
+  String get noRecurringHint =>
+      "Add rent, bills and subscriptions once. Each month you'll see what's "
+      'paid and what is still due.';
+
+  @override
+  String get paymentsToConfirm => 'Payments to confirm';
+
+  @override
+  String get seeAll => 'See all';
+
+  @override
+  String get deleteRecurringBody =>
+      'It stops repeating. Payments already logged stay in your transactions.';
+
+  @override
+  String recurringPaid(String name) => '$name marked as paid';
+
+  @override
+  String get recurringPaymentUndone => 'Payment removed';
+
+  @override
+  String recurringAutoLogged(int count) => count == 1
+      ? '1 recurring payment was logged automatically'
+      : '$count recurring payments were logged automatically';
+
+  @override
+  String paymentCount(int count) =>
+      count == 1 ? '1 payment' : '$count payments';
+
+  @override
+  String get colPaidThrough => 'Paid through';
 }
 
 class AppStringsAr extends AppStrings {
@@ -909,7 +1224,8 @@ class AppStringsAr extends AppStrings {
   String get nothingRecordedYet => 'لا توجد مصروفات بعد';
 
   @override
-  String get emptyMonthHint => 'اضغط "إضافة" لتسجيل أول مصروف في هذا الشهر.';
+  String get emptyMonthHint =>
+      'اضغط "إضافة" لتسجيل أول مصروف أو دخل في هذا الشهر.';
 
   @override
   String get yourMonths => 'شهورك';
@@ -1373,7 +1689,7 @@ class AppStringsAr extends AppStrings {
   String get colId => 'المعرّف';
 
   @override
-  String get colCount => 'عدد المصروفات';
+  String get colCount => 'عدد المعاملات';
 
   @override
   String get colTotal => 'الإجمالي';
@@ -1448,6 +1764,11 @@ class AppStringsAr extends AppStrings {
     'cat_entertainment' => 'ترفيه',
     'cat_work' => 'عمل',
     'cat_other' => 'أخرى',
+    'cat_salary' => 'الراتب',
+    'cat_freelance' => 'عمل حر',
+    'cat_investments' => 'استثمارات',
+    'cat_gifts' => 'هدايا',
+    'cat_income_other' => 'دخل آخر',
     _ => null,
   };
 
@@ -1489,6 +1810,10 @@ class AppStringsAr extends AppStrings {
     FailureCode.saveFailed => 'تعذّر حفظ الملف. حاول مرة أخرى.',
     FailureCode.tooManyAttempts =>
       'محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.',
+    FailureCode.titleRequired => 'أدخل اسمًا.',
+    FailureCode.titleTooLong => 'اجعل الاسم أقل من ٤٠ حرفًا.',
+    FailureCode.dueDayInvalid => 'اختر موعد الاستحقاق.',
+    FailureCode.alreadyPaid => 'هذه الدفعة مسجّلة بالفعل.',
   };
 
   @override
@@ -1509,16 +1834,233 @@ class AppStringsAr extends AppStrings {
   @override
   String categoryDeletedWithMoves(String name, int count) =>
       'تم حذف $name — نُقل ${expenseCount(count)} إلى "أخرى"';
+
+  @override
+  String incomeCategoryDeletedWithMoves(String name, int count) =>
+      'تم حذف $name — نُقلت ${transactionCount(count)} إلى "دخل آخر"';
+
+  @override
+  String get expense => 'مصروف';
+
+  @override
+  String get income => 'دخل';
+
+  @override
+  String get transactionType => 'مصروف أو دخل';
+
+  @override
+  String get quickIncome => 'دخل سريع';
+
+  @override
+  String get newIncome => 'دخل جديد';
+
+  @override
+  String get editIncome => 'تعديل الدخل';
+
+  @override
+  String get addIncome => 'إضافة دخل';
+
+  @override
+  String get incomeNoteHint => 'من أين جاء؟';
+
+  @override
+  String get totalIncome => 'إجمالي الدخل';
+
+  @override
+  String get totalExpenses => 'إجمالي المصروفات';
+
+  @override
+  String get netBalance => 'صافي الرصيد';
+
+  @override
+  String get savingsRate => 'معدل الادخار';
+
+  @override
+  String get savingsRateNoIncome => 'أضف دخلك لمعرفة معدل الادخار';
+
+  @override
+  String get expenseCategories => 'فئات المصروفات';
+
+  @override
+  String get incomeCategories => 'فئات الدخل';
+
+  @override
+  String get deleteIncomeCategoryBody =>
+      'سيُنقل الدخل في هذه الفئة إلى "دخل آخر". لن يُحذف أي شيء.';
+
+  @override
+  String get incomeDeleted => 'تم حذف الدخل';
+
+  @override
+  String get incomeRestored => 'تمت استعادة الدخل';
+
+  @override
+  String get colType => 'النوع';
+
+  /// Arabic counts differently for 1, 2, 3-10 and 11 or more.
+  @override
+  String transactionCount(int count) => switch (count) {
+    0 => 'لا معاملات',
+    1 => 'معاملة واحدة',
+    2 => 'معاملتان',
+    >= 3 && <= 10 => '$count معاملات',
+    _ => '$count معاملة',
+  };
+
+  @override
+  String get recurringPayments => 'المدفوعات المتكررة';
+
+  @override
+  String get newRecurring => 'دفعة متكررة جديدة';
+
+  @override
+  String get editRecurring => 'تعديل الدفعة المتكررة';
+
+  @override
+  String get addRecurring => 'إضافة الدفعة';
+
+  @override
+  String get recurringTitle => 'الاسم';
+
+  @override
+  String get recurringTitleHint => 'الإيجار، نتفليكس، النادي…';
+
+  @override
+  String get amount => 'المبلغ';
+
+  @override
+  String get repeats => 'التكرار';
+
+  @override
+  String get weekly => 'أسبوعيًا';
+
+  @override
+  String get monthly => 'شهريًا';
+
+  @override
+  String get yearly => 'سنويًا';
+
+  @override
+  String get dueOn => 'موعد الاستحقاق';
+
+  @override
+  String get dueDayOfMonth => 'يوم الشهر';
+
+  @override
+  String get dueMonthLabel => 'الشهر';
+
+  @override
+  String get dueDayLabel => 'اليوم';
+
+  @override
+  String get shortMonthHint => 'في الأشهر الأقصر تُستحق في آخر يوم منها.';
+
+  @override
+  String get whenDue => 'عند الاستحقاق';
+
+  @override
+  String get autoDeduct => 'خصم تلقائي';
+
+  @override
+  String get remindMe => 'ذكّرني';
+
+  @override
+  String get autoDeductHint => 'تُسجَّل كمصروف تلقائيًا في موعد استحقاقها.';
+
+  @override
+  String get remindMeHint => 'سيُطلب منك تأكيد كل دفعة قبل تسجيلها.';
+
+  @override
+  String get statusPaid => 'مدفوعة';
+
+  @override
+  String get statusUpcoming => 'قادمة';
+
+  @override
+  String get statusOverdue => 'متأخرة';
+
+  @override
+  String get markAsPaid => 'تأكيد الدفع';
+
+  @override
+  String get dueToday => 'مستحقة اليوم';
+
+  @override
+  String dueOnDate(String date) => 'تُستحق في $date';
+
+  @override
+  String nextDueOn(String date) => 'القادمة في $date';
+
+  @override
+  String overdueSince(String date, int count) => count <= 1
+      ? 'كانت مستحقة في $date'
+      : '${paymentCount(count)} متأخرة منذ $date';
+
+  @override
+  String everyWeekday(String weekday) => 'كل $weekday';
+
+  @override
+  String monthlyOnDay(String day) => 'شهريًا في يوم $day';
+
+  @override
+  String yearlyOn(String date) => 'سنويًا في $date';
+
+  @override
+  String get monthlyAverage => 'كل شهر';
+
+  @override
+  String get monthlyAverageHint => 'متوسط كل مدفوعاتك المتكررة';
+
+  @override
+  String get noRecurringYet => 'لا توجد مدفوعات متكررة بعد';
+
+  @override
+  String get noRecurringHint =>
+      'أضف الإيجار والفواتير والاشتراكات مرة واحدة، وسترى كل شهر ما دُفع '
+      'وما زال مستحقًا.';
+
+  @override
+  String get paymentsToConfirm => 'مدفوعات بانتظار التأكيد';
+
+  @override
+  String get seeAll => 'عرض الكل';
+
+  @override
+  String get deleteRecurringBody =>
+      'سيتوقف تكرارها، وتبقى الدفعات المسجّلة سابقًا ضمن معاملاتك.';
+
+  @override
+  String recurringPaid(String name) => 'تم تسجيل دفع $name';
+
+  @override
+  String get recurringPaymentUndone => 'أُلغيت الدفعة';
+
+  @override
+  String recurringAutoLogged(int count) => count == 1
+      ? 'سُجّلت دفعة متكررة تلقائيًا'
+      : 'سُجّلت ${paymentCount(count)} متكررة تلقائيًا';
+
+  /// Arabic counts differently for 1, 2, 3-10 and 11 or more.
+  @override
+  String paymentCount(int count) => switch (count) {
+    0 => 'لا دفعات',
+    1 => 'دفعة واحدة',
+    2 => 'دفعتان',
+    >= 3 && <= 10 => '$count دفعات',
+    _ => '$count دفعة',
+  };
+
+  @override
+  String get colPaidThrough => 'مدفوعة حتى';
 }
 
 class _AppStringsDelegate extends LocalizationsDelegate<AppStrings> {
   const _AppStringsDelegate();
 
   @override
-  bool isSupported(Locale locale) =>
-      AppStrings.supportedLocales.any(
-        (supported) => supported.languageCode == locale.languageCode,
-      );
+  bool isSupported(Locale locale) => AppStrings.supportedLocales.any(
+    (supported) => supported.languageCode == locale.languageCode,
+  );
 
   @override
   Future<AppStrings> load(Locale locale) =>

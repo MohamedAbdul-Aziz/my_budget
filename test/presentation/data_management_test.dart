@@ -114,7 +114,7 @@ void main() {
     expect(find.text('Import complete'), findsOneWidget);
 
     await closeSettings(tester);
-    expect(find.text('1 expense'), findsOneWidget);
+    expect(find.text('1 transaction'), findsOneWidget);
   });
 
   testWidgets('replacing needs a second, explicit confirmation', (

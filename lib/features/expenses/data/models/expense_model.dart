@@ -2,7 +2,8 @@ import '../../../categories/data/models/category_model.dart';
 import '../../domain/entities/expense.dart';
 import '../../domain/entities/month.dart';
 
-/// Maps an `expenses` row — joined with its category — to the domain entity.
+/// Maps an `expenses` row — joined with its category, which decides whether
+/// it is spending or income — to the domain entity.
 class ExpenseModel extends Expense {
   const ExpenseModel({
     required super.id,
@@ -29,6 +30,7 @@ class ExpenseModel extends Expense {
       'color_value': map['category_color_value'],
       'is_default': map['category_is_default'],
       'sort_order': map['category_sort_order'],
+      'type': map['category_type'],
     }),
   );
 
@@ -45,7 +47,8 @@ class ExpenseModel extends Expense {
       c.icon_name     AS category_icon_name,
       c.color_value   AS category_color_value,
       c.is_default    AS category_is_default,
-      c.sort_order    AS category_sort_order
+      c.sort_order    AS category_sort_order,
+      c.type          AS category_type
     FROM expenses e
     INNER JOIN categories c ON c.id = e.category_id
   ''';

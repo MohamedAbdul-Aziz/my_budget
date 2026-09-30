@@ -1,6 +1,7 @@
 import '../../../../core/error/api_result.dart';
 import '../../../../core/error/failures.dart';
 import '../entities/expense_category.dart';
+import '../entities/transaction_type.dart';
 import '../repositories/category_repository.dart';
 
 class CreateCategory {
@@ -15,6 +16,7 @@ class CreateCategory {
     required String name,
     required String iconName,
     required int colorValue,
+    TransactionType type = TransactionType.expense,
   }) async {
     final trimmed = name.trim();
     final failure = validateName(trimmed);
@@ -24,6 +26,7 @@ class CreateCategory {
       name: trimmed,
       iconName: iconName,
       colorValue: colorValue,
+      type: type,
     );
   }
 

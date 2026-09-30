@@ -24,6 +24,10 @@ class LocalRecords {
       categories: await db.query('categories', orderBy: 'sort_order, id'),
       expenses: await db.query('expenses', orderBy: 'date, created_at, id'),
       settings: await db.query('settings', orderBy: 'key'),
+      recurring: await db.query(
+        'recurring_expenses',
+        orderBy: 'created_at, id',
+      ),
     );
   });
 
@@ -34,6 +38,7 @@ class LocalRecords {
       categories: await db.query('categories', where: 'dirty = 1'),
       expenses: await db.query('expenses', where: 'dirty = 1'),
       settings: await db.query('settings', where: 'dirty = 1'),
+      recurring: await db.query('recurring_expenses', where: 'dirty = 1'),
     );
   });
 
@@ -58,6 +63,7 @@ class LocalRecords {
         clear('categories', 'id', uploaded.categories);
         clear('expenses', 'id', uploaded.expenses);
         clear('settings', 'key', uploaded.settings);
+        clear('recurring_expenses', 'id', uploaded.recurring);
         await batch.commit(noResult: true);
       });
 
@@ -78,8 +84,8 @@ class LocalRecords {
         return db.transaction((txn) async {
           var applied = 0;
 
-          // Categories first: an incoming expense may belong to a category
-          // that only now arrives.
+          // Categories first: an incoming expense or recurring payment may
+          // belong to a category that only now arrives.
           for (final row in incoming.categories) {
             if (await _applyIfNewer(txn, 'categories', 'id', row, dirty)) {
               applied++;
@@ -94,6 +100,18 @@ class LocalRecords {
           }
           for (final row in incoming.settings) {
             if (await _applyIfNewer(txn, 'settings', 'key', row, dirty)) {
+              applied++;
+            }
+          }
+          for (final row in incoming.recurring) {
+            final safe = _withKnownCategory(row, known);
+            if (await _applyIfNewer(
+              txn,
+              'recurring_expenses',
+              'id',
+              safe,
+              dirty,
+            )) {
               applied++;
             }
           }
@@ -121,7 +139,7 @@ class LocalRecords {
 
         // Delete everything that is live, then write the incoming records
         // back over it: whatever the file does not contain stays deleted.
-        // The fallback category is never deleted.
+        // The two fallback categories are never deleted.
         final removedExpenses = await _liveIdsMissingFrom(
           txn,
           'expenses',
@@ -132,13 +150,28 @@ class LocalRecords {
           'categories',
           incoming.categories,
         );
-        removedCategories.remove(ExpenseCategory.fallbackId);
+        final removedRecurring = await _liveIdsMissingFrom(
+          txn,
+          'recurring_expenses',
+          incoming.recurring,
+        );
+        removedCategories
+          ..remove(ExpenseCategory.fallbackId)
+          ..remove(ExpenseCategory.incomeFallbackId);
         await txn.update('expenses', deleted, where: 'deleted_at IS NULL');
+        await txn.update(
+          'recurring_expenses',
+          deleted,
+          where: 'deleted_at IS NULL',
+        );
         await txn.update(
           'categories',
           deleted,
-          where: 'deleted_at IS NULL AND id != ?',
-          whereArgs: [ExpenseCategory.fallbackId],
+          where: 'deleted_at IS NULL AND id NOT IN (?, ?)',
+          whereArgs: [
+            ExpenseCategory.fallbackId,
+            ExpenseCategory.incomeFallbackId,
+          ],
         );
         // Settings have no deleted marker: one the file never changed goes
         // back to its default.
@@ -169,12 +202,21 @@ class LocalRecords {
         for (final row in incoming.settings) {
           await txn.insert('settings', stamped(row));
         }
+        for (final row in incoming.recurring) {
+          await _upsert(
+            txn,
+            'recurring_expenses',
+            'id',
+            stamped(_withKnownCategory(row, known)),
+          );
+        }
 
         await _rehomeOrphans(txn);
         return incoming.length +
             removedExpenses.length +
             removedCategories.length +
-            removedSettings.length;
+            removedSettings.length +
+            removedRecurring.length;
       });
     },
   );
@@ -248,9 +290,9 @@ class LocalRecords {
     };
   }
 
-  /// An expense naming a category that exists nowhere could only come from a
-  /// damaged copy. Other keeps the expense rather than failing the whole
-  /// operation.
+  /// An expense or recurring payment naming a category that exists nowhere
+  /// could only come from a damaged copy. Other keeps the expense rather than failing the whole
+  /// operation; with the category gone, whether it was income is unknown.
   static Map<String, Object?> _withKnownCategory(
     Map<String, Object?> row,
     Set<String> known,
@@ -258,20 +300,36 @@ class LocalRecords {
       ? row
       : {...row, 'category_id': ExpenseCategory.fallbackId};
 
-  /// A category deleted elsewhere may still hold expenses that were only
-  /// ever recorded here. They move to Other, just as a delete made on this
-  /// phone would move them, and are marked for the next upload.
-  Future<int> _rehomeOrphans(Transaction txn) => txn.rawUpdate(
-    '''
-    UPDATE expenses
-    SET category_id = ?, updated_at = ?, dirty = 1
-    WHERE deleted_at IS NULL
-      AND category_id IN (
-        SELECT id FROM categories WHERE deleted_at IS NOT NULL
-      )
-    ''',
-    [ExpenseCategory.fallbackId, AppDatabase.nowMillis()],
-  );
+  /// A category deleted elsewhere may still hold transactions or recurring
+  /// payments that were only ever recorded here. They move to Other, or
+  /// Other income, just as a delete made on this phone would move them, and
+  /// are marked for the next upload.
+  Future<int> _rehomeOrphans(Transaction txn) async {
+    var moved = 0;
+    for (final table in ['expenses', 'recurring_expenses']) {
+      moved += await txn.rawUpdate(
+        '''
+        UPDATE $table
+        SET
+          category_id = CASE (
+            SELECT type FROM categories WHERE id = $table.category_id
+          ) WHEN 'income' THEN ? ELSE ? END,
+          updated_at = ?,
+          dirty = 1
+        WHERE deleted_at IS NULL
+          AND category_id IN (
+            SELECT id FROM categories WHERE deleted_at IS NOT NULL
+          )
+        ''',
+        [
+          ExpenseCategory.incomeFallbackId,
+          ExpenseCategory.fallbackId,
+          AppDatabase.nowMillis(),
+        ],
+      );
+    }
+    return moved;
+  }
 
   static Future<T> _guard<T>(String action, Future<T> Function() body) async {
     try {

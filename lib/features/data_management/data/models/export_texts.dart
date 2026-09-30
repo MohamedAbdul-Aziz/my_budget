@@ -7,6 +7,9 @@ class ExportTexts {
     required this.date,
     required this.month,
     required this.category,
+    required this.type,
+    required this.expense,
+    required this.income,
     required this.amount,
     required this.currency,
     required this.note,
@@ -22,18 +25,27 @@ class ExportTexts {
     required this.generated,
     required this.period,
     required this.totalSpent,
+    required this.totalIncome,
+    required this.net,
     required this.monthlyAverage,
     required this.byCategory,
     required this.byMonth,
     required this.allExpenses,
     required this.empty,
     required this.pageTemplate,
+    required this.recurringPayments,
+    required this.repeats,
+    required this.mode,
+    required this.autoDeduct,
+    required this.reminder,
+    required this.paidThrough,
   });
 
   // Column headings.
   final String date;
   final String month;
   final String category;
+  final String type;
   final String amount;
   final String currency;
   final String note;
@@ -46,6 +58,10 @@ class ExportTexts {
   final String yes;
   final String no;
 
+  // Values of the type column.
+  final String expense;
+  final String income;
+
   // Report.
   final String title;
 
@@ -53,6 +69,8 @@ class ExportTexts {
   final String generated;
   final String period;
   final String totalSpent;
+  final String totalIncome;
+  final String net;
   final String monthlyAverage;
   final String byCategory;
   final String byMonth;
@@ -61,6 +79,14 @@ class ExportTexts {
 
   /// With `{page}` and `{pages}` placeholders.
   final String pageTemplate;
+
+  // Recurring payments: the report section heading and its own CSV.
+  final String recurringPayments;
+  final String repeats;
+  final String mode;
+  final String autoDeduct;
+  final String reminder;
+  final String paidThrough;
 
   String page(int page, int pages) => pageTemplate
       .replaceAll('{page}', '$page')

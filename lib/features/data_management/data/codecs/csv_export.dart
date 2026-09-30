@@ -13,9 +13,11 @@ import '../models/export_texts.dart';
 abstract final class CsvExport {
   static const String byteOrderMark = '﻿';
 
+  /// Every transaction, spending and income, with a column saying which.
   static String expenses({
     required List<Map<String, Object?>> expenses,
     required Map<String, String> categoryNames,
+    required Set<String> incomeCategoryIds,
     required String currency,
     required ExportTexts texts,
   }) {
@@ -32,6 +34,7 @@ abstract final class CsvExport {
         texts.date,
         texts.month,
         texts.category,
+        texts.type,
         texts.amount,
         texts.currency,
         texts.note,
@@ -42,6 +45,9 @@ abstract final class CsvExport {
           isoDate(_int(expense['date'])),
           '${expense['month_key']}',
           categoryNames[expense['category_id']] ?? '${expense['category_id']}',
+          incomeCategoryIds.contains(expense['category_id'])
+              ? texts.income
+              : texts.expense,
           amount(expense['amount']! as num),
           currency,
           (expense['description'] as String?) ?? '',
@@ -67,10 +73,18 @@ abstract final class CsvExport {
       ..sort((a, b) => _int(a['sort_order']).compareTo(_int(b['sort_order'])));
 
     return _document([
-      [texts.name, texts.builtIn, texts.count, texts.total, texts.id],
+      [
+        texts.name,
+        texts.type,
+        texts.builtIn,
+        texts.count,
+        texts.total,
+        texts.id,
+      ],
       for (final category in live)
         [
           categoryNames[category['id']] ?? '${category['name']}',
+          category['type'] == 'income' ? texts.income : texts.expense,
           category['is_default'] == 1 ? texts.yes : texts.no,
           '${counts[category['id']] ?? 0}',
           amount(totals[category['id']] ?? 0),
@@ -78,6 +92,39 @@ abstract final class CsvExport {
         ],
     ]);
   }
+
+  /// Recurring payments with their schedule, already worded in the app's
+  /// language in [schedules] (by id).
+  static String recurring({
+    required List<Map<String, Object?>> recurring,
+    required Map<String, String> categoryNames,
+    required Map<String, String> schedules,
+    required String currency,
+    required ExportTexts texts,
+  }) => _document([
+    [
+      texts.name,
+      texts.category,
+      texts.amount,
+      texts.currency,
+      texts.repeats,
+      texts.mode,
+      texts.paidThrough,
+      texts.id,
+    ],
+    for (final row in _live(recurring))
+      [
+        '${row['title']}',
+        categoryNames[row['category_id']] ?? '${row['category_id']}',
+        amount(row['amount']! as num),
+        currency,
+        schedules[row['id']] ?? '',
+        row['mode'] == 'auto' ? texts.autoDeduct : texts.reminder,
+        // Already ISO: 2026-09-30.
+        (row['paid_through'] as String?) ?? '',
+        '${row['id']}',
+      ],
+  ]);
 
   static String isoDate(int millis) {
     final date = DateTime.fromMillisecondsSinceEpoch(millis);

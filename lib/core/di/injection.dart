@@ -57,6 +57,17 @@ import '../../features/quick_expense/domain/repositories/quick_expense_widget_re
 import '../../features/quick_expense/domain/usecases/get_quick_expense_data.dart';
 import '../../features/quick_expense/domain/usecases/publish_quick_expense_widget.dart';
 import '../../features/quick_expense/presentation/quick_expense_widget_sync.dart';
+import '../../features/recurring/data/datasources/recurring_local_data_source.dart';
+import '../../features/recurring/data/repositories/recurring_repository_impl.dart';
+import '../../features/recurring/domain/repositories/recurring_repository.dart';
+import '../../features/recurring/domain/usecases/delete_recurring_expense.dart';
+import '../../features/recurring/domain/usecases/get_recurring_overview.dart';
+import '../../features/recurring/domain/usecases/log_due_recurring.dart';
+import '../../features/recurring/domain/usecases/mark_recurring_paid.dart';
+import '../../features/recurring/domain/usecases/save_recurring_expense.dart';
+import '../../features/recurring/domain/usecases/undo_recurring_payment.dart';
+import '../../features/recurring/presentation/cubit/recurring_cubit.dart';
+import '../../features/recurring/presentation/cubit/recurring_form_cubit.dart';
 import '../../features/settings/data/datasources/settings_local_data_source.dart';
 import '../../features/settings/data/repositories/settings_repository_impl.dart';
 import '../../features/settings/domain/repositories/settings_repository.dart';
@@ -90,6 +101,7 @@ void configureDependencies({AppDatabase? database}) {
   _registerCategories();
   _registerExpenses();
   _registerBudgets();
+  _registerRecurring();
   _registerSettings();
   _registerQuickExpense();
   _registerSync();
@@ -220,6 +232,33 @@ void _registerBudgets() {
         setCategoryBudget: sl(),
       ),
     );
+}
+
+void _registerRecurring() {
+  _registerRepository<RecurringRepository>(() => RecurringRepositoryImpl(sl()));
+  sl
+    ..registerLazySingleton<RecurringLocalDataSource>(
+      () => RecurringLocalDataSourceImpl(sl()),
+    )
+    ..registerLazySingleton(() => GetRecurringOverview(sl()))
+    ..registerLazySingleton(() => SaveRecurringExpense(sl()))
+    ..registerLazySingleton(() => DeleteRecurringExpense(sl()))
+    ..registerLazySingleton(() => MarkRecurringPaid(sl()))
+    ..registerLazySingleton(() => UndoRecurringPayment(sl()))
+    ..registerLazySingleton(() => LogDueRecurring(sl()))
+    // Shared: the recurring payments page and the home screen's prompt show
+    // the same payments, and marking one paid in either updates both.
+    ..registerLazySingleton(
+      () => RecurringCubit(
+        getOverview: sl(),
+        logDue: sl(),
+        markPaid: sl(),
+        undoPayment: sl(),
+        deleteRecurring: sl(),
+      ),
+    )
+    // One per add/edit screen: each form owns its own draft state.
+    ..registerFactory(() => RecurringFormCubit(saveRecurring: sl()));
 }
 
 void _registerQuickExpense() {

@@ -13,6 +13,7 @@ import 'features/expenses/domain/entities/month.dart';
 import 'features/expenses/presentation/cubit/home_cubit.dart';
 import 'features/quick_expense/presentation/quick_add_app.dart';
 import 'features/quick_expense/presentation/quick_add_launch.dart';
+import 'features/recurring/presentation/cubit/recurring_cubit.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 
 Future<void> main() async {
@@ -44,6 +45,10 @@ Future<void> main() async {
     runApp(QuickAddApp(categoryId: launch.categoryId));
     return;
   }
+
+  // Automatic recurring payments that fell due while the app was closed are
+  // logged first, so the month below already has them.
+  await sl<RecurringCubit>().load();
 
   // The budget card is read up front too, so it does not pop in under the
   // month total a moment after the first frame.

@@ -11,6 +11,7 @@ import 'package:my_budget/core/error/failures.dart';
 import 'package:my_budget/features/categories/data/datasources/category_local_data_source.dart';
 import 'package:my_budget/features/categories/data/repositories/category_repository_impl.dart';
 import 'package:my_budget/features/categories/domain/entities/expense_category.dart';
+import 'package:my_budget/features/categories/domain/entities/transaction_type.dart';
 import 'package:my_budget/features/data_management/data/codecs/backup_codec.dart';
 import 'package:my_budget/features/data_management/data/codecs/csv_export.dart';
 import 'package:my_budget/features/data_management/data/datasources/device_files_data_source.dart';
@@ -26,6 +27,11 @@ import 'package:my_budget/features/expenses/data/datasources/expense_local_data_
 import 'package:my_budget/features/expenses/data/repositories/expense_repository_impl.dart';
 import 'package:my_budget/features/expenses/domain/entities/expense.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
+import 'package:my_budget/features/recurring/data/datasources/recurring_local_data_source.dart';
+import 'package:my_budget/features/recurring/data/repositories/recurring_repository_impl.dart';
+import 'package:my_budget/features/recurring/domain/entities/recurrence_frequency.dart';
+import 'package:my_budget/features/recurring/domain/entities/recurring_expense.dart';
+import 'package:my_budget/features/recurring/domain/entities/recurring_mode.dart';
 import 'package:my_budget/features/settings/data/datasources/settings_local_data_source.dart';
 import 'package:my_budget/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:path/path.dart' as p;
@@ -94,6 +100,7 @@ void main() {
         'categories',
         'expenses',
         'settings',
+        'recurring_expenses',
       });
       final expenses = json['expenses'] as List;
       final stored = (await phoneA.records.readAll()).expenses;
@@ -112,6 +119,94 @@ void main() {
       expect(text, isNot(contains('dirty')));
       expect(text, isNot(contains('user_id')));
       expect(text, isNot(contains('owner')));
+    });
+
+    test('income travels with the file and stays income', () async {
+      final salary = await phoneA.addExpense(2000, categoryId: 'cat_salary');
+      final backup = await phoneA.export(ExportFormat.backup, english);
+
+      await phoneB.importFile(backup, ImportMode.merge);
+
+      final month = await phoneB.monthOf(august);
+      final imported = month.singleWhere((e) => e.id == salary.id);
+      expect(imported.isIncome, isTrue);
+      expect(imported.category.id, 'cat_salary');
+    });
+
+    test('recurring payments travel with the file', () async {
+      final rent = await phoneA.addRecurring('Rent');
+      await phoneA.recurring.recordPayment(
+        rent,
+        due: DateTime(2026, 8, 1),
+        paidAt: august,
+      );
+      final backup = await phoneA.export(ExportFormat.backup, english);
+
+      await phoneB.importFile(backup, ImportMode.merge);
+
+      final imported = (await phoneB.recurring.getRecurring()).dataOrNull!;
+      expect(imported.single.id, rent.id);
+      expect(imported.single.frequency, RecurrenceFrequency.yearly);
+      expect(imported.single.dueMonth, 2);
+      expect(imported.single.isAutomatic, isTrue);
+      expect(imported.single.paidThrough, DateTime(2026, 8, 1));
+      expect((await phoneB.monthOf(august)).single.description, 'Rent');
+    });
+
+    test('a backup from before recurring payments existed imports', () async {
+      await phoneA.addExpense(12.5, note: 'Lunch');
+      final backup = await phoneA.export(ExportFormat.backup, english);
+      final json =
+          jsonDecode(await File(backup.path).readAsString())
+              as Map<String, dynamic>;
+      json['schema_version'] = 2;
+      json.remove('recurring_expenses');
+      await File(backup.path).writeAsString(jsonEncode(json));
+      await phoneB.addRecurring('Only on this phone');
+
+      await phoneB.importFile(backup, ImportMode.merge);
+
+      expect((await phoneB.monthOf(august)).single.description, 'Lunch');
+      final kept = (await phoneB.recurring.getRecurring()).dataOrNull!;
+      expect(kept.single.title, 'Only on this phone');
+    });
+
+    test('replacing removes recurring payments the file lacks', () async {
+      final kept = await phoneA.addRecurring('Rent');
+      final backup = await phoneA.export(ExportFormat.backup, english);
+      await phoneB.addRecurring('Gym');
+
+      await phoneB.importFile(backup, ImportMode.replace);
+
+      final left = (await phoneB.recurring.getRecurring()).dataOrNull!;
+      expect(left.map((r) => r.id), [kept.id]);
+    });
+
+    test('a backup from before income existed imports as spending', () async {
+      final pets = await phoneA.addCategory('Pets');
+      final vet = await phoneA.addExpense(8, categoryId: pets.id);
+      final backup = await phoneA.export(ExportFormat.backup, english);
+
+      // Exactly what version 1 of the file looked like: no types, and no
+      // income categories.
+      final json =
+          jsonDecode(await File(backup.path).readAsString())
+              as Map<String, dynamic>;
+      json['schema_version'] = 1;
+      final categories = json['categories'] as List;
+      categories.removeWhere((row) => (row as Map)['type'] == 'income');
+      for (final row in categories) {
+        (row as Map).remove('type');
+      }
+      await File(backup.path).writeAsString(jsonEncode(json));
+
+      await phoneB.importFile(backup, ImportMode.merge);
+
+      final imported = (await phoneB.monthOf(
+        august,
+      )).singleWhere((e) => e.id == vet.id);
+      expect(imported.category.name, 'Pets');
+      expect(imported.isIncome, isFalse);
     });
 
     test('importing into an empty phone restores everything', () async {
@@ -298,6 +393,26 @@ void main() {
       await expectUnchanged();
     });
 
+    test('a category that is neither spending nor income', () async {
+      final json = jsonDecode(valid) as Map<String, dynamic>;
+      ((json['categories'] as List).first as Map)['type'] = 'transfer';
+      expect(await importText(jsonEncode(json)), FailureCode.backupDamaged);
+      await expectUnchanged();
+    });
+
+    test('a recurring payment with an unknown schedule', () async {
+      await phoneA.addRecurring('Rent');
+      valid = await File(
+        (await phoneA.export(ExportFormat.backup, english)).path,
+      ).readAsString();
+      final json = jsonDecode(valid) as Map<String, dynamic>;
+      ((json['recurring_expenses'] as List).single as Map)['frequency'] =
+          'daily';
+      expect(await importText(jsonEncode(json)), FailureCode.backupDamaged);
+      await expectUnchanged();
+      expect((await phoneB.recurring.getRecurring()).dataOrNull, isEmpty);
+    });
+
     test('the same id twice', () async {
       final json = jsonDecode(valid) as Map<String, dynamic>;
       final expenses = json['expenses'] as List;
@@ -379,7 +494,10 @@ void main() {
           .replaceFirst(CsvExport.byteOrderMark, '')
           .split('\r\n');
 
-      expect(lines.first, 'التاريخ,الشهر,الفئة,المبلغ,العملة,ملاحظة,المعرّف');
+      expect(
+        lines.first,
+        'التاريخ,الشهر,الفئة,النوع,المبلغ,العملة,ملاحظة,المعرّف',
+      );
       expect(text, contains('حيوانات أليفة'));
       // A comma inside a note is quoted, not a new column.
       expect(text, contains('"طعام, ولعبة"'));
@@ -391,7 +509,36 @@ void main() {
       expect(lines.where((line) => line.isNotEmpty), hasLength(3));
 
       final categories = utf8.decode(await File(files.last.path).readAsBytes());
-      expect(categories, contains('حيوانات أليفة,لا,1,12.50,'));
+      expect(categories, contains('حيوانات أليفة,مصروف,لا,1,12.50,'));
+    });
+
+    test('recurring payments get a sheet of their own', () async {
+      final rent = await phoneA.addRecurring('Rent, flat 4');
+      await phoneA.recurring.recordPayment(
+        rent,
+        due: DateTime(2027, 2, 28),
+        paidAt: august,
+      );
+
+      final files = await phoneA.exportAll(ExportFormat.spreadsheet, english);
+      expect(files.map((f) => f.name), [
+        startsWith('my_budget_expenses_'),
+        startsWith('my_budget_categories_'),
+        startsWith('my_budget_recurring_'),
+      ]);
+      final lines = utf8
+          .decode(await File(files.last.path).readAsBytes())
+          .replaceFirst(CsvExport.byteOrderMark, '')
+          .split('\r\n');
+      expect(
+        lines.first,
+        'Name,Category,Amount,Currency,Repeats,When it\'s due,Paid through,ID',
+      );
+      expect(
+        lines[1],
+        '"Rent, flat 4",Bills,900.00,\$,Yearly on Feb 29,Auto-deduct,'
+        '2027-02-28,${rent.id}',
+      );
     });
 
     test('quotes fields that need it', () {
@@ -416,6 +563,17 @@ void main() {
       final bytes = await File(file.path).readAsBytes();
       expect(ascii.decode(bytes.sublist(0, 5)), '%PDF-');
       expect(bytes.length, greaterThan(1000));
+    });
+
+    test('lists recurring payments, in Arabic too', () async {
+      await phoneA.addRecurring('الإيجار');
+      await phoneA.addExpense(40, note: 'Groceries');
+
+      for (final locale in [english, arabic]) {
+        final file = await phoneA.export(ExportFormat.report, locale);
+        final bytes = await File(file.path).readAsBytes();
+        expect(ascii.decode(bytes.sublist(0, 5)), '%PDF-');
+      }
     });
 
     test('still works with nothing recorded', () async {
@@ -535,6 +693,7 @@ class Phone {
     settingsRepo = SettingsRepositoryImpl(
       SettingsLocalDataSourceImpl(database),
     );
+    recurring = RecurringRepositoryImpl(RecurringLocalDataSourceImpl(database));
     repository = DataManagementRepositoryImpl(
       records: records,
       files: files,
@@ -549,7 +708,21 @@ class Phone {
   late final ExpenseRepositoryImpl expenses;
   late final CategoryRepositoryImpl categories;
   late final SettingsRepositoryImpl settingsRepo;
+  late final RecurringRepositoryImpl recurring;
   late final DataManagementRepositoryImpl repository;
+
+  /// Yearly on 29 February, logged automatically.
+  Future<RecurringExpense> addRecurring(String title) async =>
+      (await recurring.createRecurring(
+        title: title,
+        amount: 900,
+        categoryId: 'cat_bills',
+        frequency: RecurrenceFrequency.yearly,
+        dueDay: 29,
+        dueMonth: 2,
+        mode: RecurringMode.autoDeduct,
+        startsOn: DateTime(2026, 8, 1),
+      )).dataOrNull!;
 
   Future<Expense> addExpense(
     double amount, {
@@ -567,6 +740,7 @@ class Phone {
         name: name,
         iconName: 'pets',
         colorValue: 0xFF123456,
+        type: TransactionType.expense,
       )).dataOrNull!;
 
   Future<void> setAmount(String id, double amount) async {
@@ -580,7 +754,9 @@ class Phone {
   }
 
   Future<List<Expense>> monthOf(DateTime date) async =>
-      (await expenses.getExpensesForMonth(Month.fromDate(date))).dataOrNull!;
+      (await expenses.getTransactionsForMonth(
+        Month.fromDate(date),
+      )).dataOrNull!;
 
   Future<List<ExportedFile>> exportAll(
     ExportFormat format,

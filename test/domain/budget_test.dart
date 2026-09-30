@@ -11,6 +11,7 @@ import 'package:my_budget/features/budgets/domain/usecases/get_budget_status.dar
 import 'package:my_budget/features/budgets/domain/usecases/set_category_budget.dart';
 import 'package:my_budget/features/budgets/domain/usecases/set_monthly_budget.dart';
 import 'package:my_budget/features/categories/domain/entities/expense_category.dart';
+import 'package:my_budget/features/categories/domain/entities/transaction_type.dart';
 import 'package:my_budget/features/expenses/domain/entities/expense.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
 
@@ -26,6 +27,13 @@ const _bills = ExpenseCategory(
   iconName: 'receipt_long',
   colorValue: 0xFF6D4C41,
   sortOrder: 1,
+);
+const _salary = ExpenseCategory(
+  id: 'cat_salary',
+  name: 'Salary',
+  iconName: 'payments',
+  colorValue: 0xFF2E7D32,
+  type: TransactionType.income,
 );
 const _august = Month(2026, 8);
 
@@ -147,6 +155,21 @@ void main() {
       ]);
     });
 
+    test('never budgets income', () {
+      final status = GetBudgetStatus.statusOf(
+        month: _august,
+        limits: const BudgetLimits(monthly: 100),
+        expenses: [_expense(40), _expense(5000, _salary)],
+        categories: const [_food, _bills, _salary],
+      );
+
+      expect(status.spent, 40);
+      expect(status.categories.map((entry) => entry.category.id), [
+        'cat_food',
+        'cat_bills',
+      ]);
+    });
+
     test('watches categories from 70% up, the furthest through first', () {
       final status = _after([
         _expense(75),
@@ -166,6 +189,34 @@ void main() {
 
   group('CheckBudgetAlerts', () {
     const monthly100 = BudgetLimits(monthly: 100);
+
+    test('saving income never warns', () {
+      final saved = _expense(500, _salary);
+      final alerts = CheckBudgetAlerts.crossed(
+        _after([_expense(90), saved], monthly100),
+        saved: saved,
+      );
+      expect(alerts, isEmpty);
+    });
+
+    test('turning income into an expense counts as new spending', () {
+      final before = _expense(85, _salary);
+      final saved = Expense(
+        id: before.id,
+        amount: 85,
+        category: _food,
+        date: before.date,
+        createdAt: before.createdAt,
+      );
+
+      final alerts = CheckBudgetAlerts.crossed(
+        _after([saved], monthly100),
+        saved: saved,
+        replaced: before,
+      );
+
+      expect(alerts.single.threshold, BudgetThreshold.nearing);
+    });
 
     test('warns when a new expense passes 80% of the monthly budget', () {
       final earlier = _expense(50);

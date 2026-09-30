@@ -15,6 +15,8 @@ import 'features/categories/presentation/cubit/categories_state.dart';
 import 'features/expenses/presentation/cubit/home_cubit.dart';
 import 'features/expenses/presentation/cubit/home_state.dart';
 import 'features/quick_expense/presentation/widgets/quick_expense_bridge.dart';
+import 'features/recurring/presentation/cubit/recurring_cubit.dart';
+import 'features/recurring/presentation/cubit/recurring_state.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 import 'features/settings/presentation/cubit/settings_state.dart';
 import 'features/shell/presentation/app_shell.dart';
@@ -38,6 +40,7 @@ class MyBudgetApp extends StatelessWidget {
         BlocProvider.value(value: sl<AnalysesCubit>()),
         BlocProvider.value(value: sl<BudgetCubit>()),
         BlocProvider.value(value: sl<DataManagementCubit>()),
+        BlocProvider.value(value: sl<RecurringCubit>()),
       ],
       child: MultiBlocListener(
         listeners: [
@@ -69,13 +72,30 @@ class MyBudgetApp extends StatelessWidget {
             },
           ),
           // The budgets page lists every category, so it follows a category
-          // being added, renamed or deleted.
+          // being added, renamed or deleted. Recurring payments show theirs,
+          // and a deleted one moves them to Other.
           BlocListener<CategoriesCubit, CategoriesState>(
             listenWhen: (previous, current) =>
                 current is CategoriesReady &&
                 (previous is! CategoriesReady ||
                     previous.categories != current.categories),
-            listener: (context, _) => context.read<BudgetCubit>().refresh(),
+            listener: (context, _) {
+              context.read<BudgetCubit>().refresh();
+              context.read<RecurringCubit>().refresh();
+            },
+          ),
+          // A recurring payment marked paid, taken back, or logged on its
+          // own is a transaction, so the month reads its transactions
+          // again. Analyses, budgets and the home screen widget follow.
+          BlocListener<RecurringCubit, RecurringState>(
+            listenWhen: (previous, current) =>
+                current is RecurringReady &&
+                current.ledgerVersion !=
+                    switch (previous) {
+                      RecurringReady(:final ledgerVersion) => ledgerVersion,
+                      _ => 0,
+                    },
+            listener: (context, _) => context.read<HomeCubit>().refresh(),
           ),
         ],
         // Only theme and language rebuild MaterialApp — the currency format
@@ -115,5 +135,7 @@ class MyBudgetApp extends StatelessWidget {
     context.read<SettingsCubit>().load();
     // Limits can change without any expense changing.
     context.read<BudgetCubit>().refresh();
+    // Recurring payments came along too, and any now due are logged.
+    context.read<RecurringCubit>().refresh();
   }
 }

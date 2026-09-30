@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_budget/core/di/injection.dart';
+import 'package:my_budget/core/theme/transaction_colors.dart';
 import 'package:my_budget/core/utils/app_formats.dart';
 import 'package:my_budget/features/quick_expense/presentation/quick_add_launch.dart';
 import 'package:my_budget/features/settings/domain/entities/app_settings.dart';
@@ -18,7 +19,9 @@ void main() {
         'cat_food',
       );
       expect(
-        QuickAddLaunch.tryParse('/quick-add?category=cat_transport')?.categoryId,
+        QuickAddLaunch.tryParse(
+          '/quick-add?category=cat_transport',
+        )?.categoryId,
         'cat_transport',
       );
     });
@@ -45,7 +48,9 @@ void main() {
       // The category the user pressed is already chosen.
       expect(find.text('Quick expense'), findsOneWidget);
       expect(
-        tester.widget<ChoiceChip>(find.widgetWithText(ChoiceChip, 'Bills')).selected,
+        tester
+            .widget<ChoiceChip>(find.widgetWithText(ChoiceChip, 'Bills'))
+            .selected,
         isTrue,
       );
 
@@ -80,7 +85,9 @@ void main() {
       await bootQuickAdd(tester);
 
       expect(
-        tester.widget<ChoiceChip>(find.widgetWithText(ChoiceChip, 'Food')).selected,
+        tester
+            .widget<ChoiceChip>(find.widgetWithText(ChoiceChip, 'Food'))
+            .selected,
         isTrue,
       );
     });
@@ -95,6 +102,42 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(harness.expenses.expenses.single.category.id, 'cat_bills');
+    });
+
+    testWidgets('the toggle records income, in green, left off the total', (
+      tester,
+    ) async {
+      final harness = await bootQuickAdd(tester, categoryId: 'cat_food');
+      final context = tester.element(find.text('Quick expense'));
+      final colors = TransactionColors.of(context);
+
+      await tester.tap(find.text('Income'));
+      await tester.pumpAndSettle();
+
+      // Income categories only, the first one picked, and the sheet's
+      // accent turned green.
+      expect(find.text('Quick income'), findsOneWidget);
+      expect(find.widgetWithText(ChoiceChip, 'Food'), findsNothing);
+      expect(
+        tester
+            .widget<ChoiceChip>(find.widgetWithText(ChoiceChip, 'Salary'))
+            .selected,
+        isTrue,
+      );
+      expect(
+        Theme.of(tester.element(find.text('Add income'))).colorScheme.primary,
+        colors.income,
+      );
+
+      await tester.enterText(find.byType(TextField), '1200');
+      await tester.tap(find.text('Add income'));
+      await tester.pumpAndSettle();
+
+      final saved = harness.expenses.expenses.single;
+      expect(saved.amount, 1200);
+      expect(saved.isIncome, isTrue);
+      // The widget shows spending, which income does not add to.
+      expect(harness.widget.latest!.total, r'$0');
     });
 
     testWidgets('rejects an empty amount instead of saving', (tester) async {

@@ -85,7 +85,7 @@ void main() {
     // Close the sheet: the home screen already shows the restored expense.
     await tester.tapAt(const Offset(20, 20));
     await tester.pumpAndSettle();
-    expect(find.text('1 expense'), findsOneWidget);
+    expect(find.text('1 transaction'), findsOneWidget);
   });
 
   testWidgets('signing out hides the backup controls', (tester) async {

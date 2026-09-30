@@ -16,8 +16,8 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   final Random _random = Random();
 
   @override
-  Future<ApiResult<List<Expense>>> getExpensesForMonth(Month month) =>
-      ApiResult.guard(() async => await _localDataSource.getExpensesForMonth(month));
+  Future<ApiResult<List<Expense>>> getTransactionsForMonth(Month month) =>
+      ApiResult.guard(() async => await _localDataSource.getTransactionsForMonth(month));
 
   @override
   Future<ApiResult<List<MonthlySummary>>> getMonthlySummaries() =>

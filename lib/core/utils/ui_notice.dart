@@ -6,10 +6,17 @@ import '../error/failures.dart';
 enum NoticeCode {
   expenseDeleted,
   expenseRestored,
+  incomeDeleted,
+  incomeRestored,
   categoryAdded,
   categoryUpdated,
   categoryDeleted,
   categoryDeletedWithMoves,
+  incomeCategoryDeletedWithMoves,
+  recurringPaid,
+  recurringPaymentUndone,
+  recurringDeleted,
+  recurringAutoLogged,
   failure,
 }
 
@@ -21,8 +28,7 @@ enum NoticeCode {
 class UiNotice extends Equatable {
   UiNotice(this.code, {this.name, this.count, this.failure}) : id = _next();
 
-  UiNotice.from(Failure failure)
-    : this(NoticeCode.failure, failure: failure);
+  UiNotice.from(Failure failure) : this(NoticeCode.failure, failure: failure);
 
   static int _counter = 0;
 
@@ -30,10 +36,11 @@ class UiNotice extends Equatable {
 
   final NoticeCode code;
 
-  /// Category name, for the notices that mention one.
+  /// Category or recurring payment name, for the notices that mention one.
   final String? name;
 
-  /// How many expenses were moved by a category deletion.
+  /// How many transactions were moved by a category deletion, or logged
+  /// automatically for recurring payments.
   final int? count;
 
   /// Set when [code] is [NoticeCode.failure].

@@ -6,6 +6,7 @@ import '../../../../core/utils/amount_input.dart';
 import '../../../budgets/domain/entities/budget_alert.dart';
 import '../../../budgets/domain/usecases/check_budget_alerts.dart';
 import '../../../categories/domain/entities/expense_category.dart';
+import '../../../categories/domain/entities/transaction_type.dart';
 import '../../domain/entities/expense.dart';
 import '../../domain/usecases/add_expense.dart';
 import '../../domain/usecases/update_expense.dart';
@@ -30,22 +31,53 @@ class ExpenseFormCubit extends Cubit<ExpenseFormState> {
   /// the change added to each budget.
   Expense? _existing;
 
+  /// The last category picked for each type, so switching to income and
+  /// back again keeps the user's choice.
+  final Map<TransactionType, ExpenseCategory> _chosen = {};
+
   /// Seeds the form. [existing] switches it to edit mode; otherwise the date
-  /// defaults to today and [suggestedCategory] preselects a category so a new
-  /// expense can be saved with nothing but an amount.
+  /// defaults to today and [suggestedCategory] preselects a category, and
+  /// with it expense or income, so a new transaction can be saved with
+  /// nothing but an amount.
   void start({Expense? existing, ExpenseCategory? suggestedCategory}) {
     _existing = existing;
+    _chosen.clear();
+    final category = existing?.category ?? suggestedCategory;
+    if (category != null) _chosen[category.type] = category;
     emit(
       ExpenseFormState(
         expenseId: existing?.id,
-        category: existing?.category ?? suggestedCategory,
+        type: category?.type ?? TransactionType.expense,
+        category: category,
         date: existing?.date ?? DateTime.now(),
       ),
     );
   }
 
-  void selectCategory(ExpenseCategory category) =>
-      emit(state.copyWith(category: category, status: ExpenseFormStatus.editing));
+  /// Switches between expense and income. The category becomes the one last
+  /// picked for [type], or else [suggestedCategory], which the caller takes
+  /// from the categories of that type.
+  void selectType(TransactionType type, {ExpenseCategory? suggestedCategory}) {
+    if (type == state.type) return;
+    final remembered = _chosen[type];
+    final category =
+        remembered ??
+        (suggestedCategory?.type == type ? suggestedCategory : null);
+    emit(
+      ExpenseFormState(
+        expenseId: state.expenseId,
+        type: type,
+        category: category,
+        date: state.date,
+      ),
+    );
+  }
+
+  /// Picking a category of the other type switches the type along with it.
+  void selectCategory(ExpenseCategory category) {
+    _chosen[category.type] = category;
+    emit(state.copyWith(category: category, status: ExpenseFormStatus.editing));
+  }
 
   void selectDate(DateTime date) => emit(state.copyWith(date: date));
 

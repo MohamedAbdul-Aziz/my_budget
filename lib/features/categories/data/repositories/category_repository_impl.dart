@@ -2,6 +2,7 @@ import 'dart:math';
 
 import '../../../../core/error/api_result.dart';
 import '../../domain/entities/expense_category.dart';
+import '../../domain/entities/transaction_type.dart';
 import '../../domain/repositories/category_repository.dart';
 import '../datasources/category_local_data_source.dart';
 import '../models/category_model.dart';
@@ -21,6 +22,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
     required String name,
     required String iconName,
     required int colorValue,
+    required TransactionType type,
   }) => ApiResult.guard(() async {
     final existing = await _localDataSource.getCategories();
     final model = CategoryModel(
@@ -28,6 +30,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
       name: name,
       iconName: iconName,
       colorValue: colorValue,
+      type: type,
       // New categories sort after everything already there.
       sortOrder: existing.isEmpty
           ? 0
@@ -45,8 +48,9 @@ class CategoryRepositoryImpl implements CategoryRepository {
       );
 
   @override
-  Future<ApiResult<int>> deleteCategory(String categoryId) =>
-      ApiResult.guard(() async => await _localDataSource.deleteCategory(categoryId));
+  Future<ApiResult<int>> deleteCategory(String categoryId) => ApiResult.guard(
+    () async => await _localDataSource.deleteCategory(categoryId),
+  );
 
   String _newId() =>
       'cat_${DateTime.now().microsecondsSinceEpoch}_${_random.nextInt(0xFFFF)}';

@@ -7,6 +7,7 @@ import 'package:my_budget/features/auth/domain/repositories/auth_repository.dart
 import 'package:my_budget/features/budgets/domain/entities/budget_limits.dart';
 import 'package:my_budget/features/budgets/domain/repositories/budget_repository.dart';
 import 'package:my_budget/features/categories/domain/entities/expense_category.dart';
+import 'package:my_budget/features/categories/domain/entities/transaction_type.dart';
 import 'package:my_budget/features/data_management/domain/entities/backup_preview.dart';
 import 'package:my_budget/features/data_management/domain/entities/export_format.dart';
 import 'package:my_budget/features/data_management/domain/entities/export_locale.dart';
@@ -22,6 +23,11 @@ import 'package:my_budget/features/expenses/domain/entities/monthly_summary.dart
 import 'package:my_budget/features/expenses/domain/repositories/expense_repository.dart';
 import 'package:my_budget/features/quick_expense/domain/entities/quick_expense_snapshot.dart';
 import 'package:my_budget/features/quick_expense/domain/repositories/quick_expense_widget_repository.dart';
+import 'package:my_budget/features/recurring/domain/entities/recurrence_frequency.dart';
+import 'package:my_budget/features/recurring/domain/entities/recurring_expense.dart';
+import 'package:my_budget/features/recurring/domain/entities/recurring_mode.dart';
+import 'package:my_budget/features/recurring/domain/entities/recurring_payment.dart';
+import 'package:my_budget/features/recurring/domain/repositories/recurring_repository.dart';
 import 'package:my_budget/features/settings/domain/entities/app_settings.dart';
 import 'package:my_budget/features/settings/domain/repositories/settings_repository.dart';
 import 'package:my_budget/features/sync/domain/entities/sync_report.dart';
@@ -58,6 +64,23 @@ class FakeCategoryRepository implements CategoryRepository {
       isDefault: true,
       sortOrder: 2,
     ),
+    const ExpenseCategory(
+      id: 'cat_salary',
+      name: 'Salary',
+      iconName: 'payments',
+      colorValue: 0xFF2E7D32,
+      type: TransactionType.income,
+      isDefault: true,
+    ),
+    const ExpenseCategory(
+      id: ExpenseCategory.incomeFallbackId,
+      name: 'Other income',
+      iconName: 'savings',
+      colorValue: 0xFF607D8B,
+      type: TransactionType.income,
+      isDefault: true,
+      sortOrder: 1,
+    ),
   ];
 
   int _nextId = 0;
@@ -71,12 +94,14 @@ class FakeCategoryRepository implements CategoryRepository {
     required String name,
     required String iconName,
     required int colorValue,
+    required TransactionType type,
   }) async {
     final created = ExpenseCategory(
       id: 'cat_new_${_nextId++}',
       name: name,
       iconName: iconName,
       colorValue: colorValue,
+      type: type,
       sortOrder: categories.length,
     );
     categories.add(created);
@@ -111,7 +136,7 @@ class FakeExpenseRepository implements ExpenseRepository {
   int _nextId = 0;
 
   @override
-  Future<ApiResult<List<Expense>>> getExpensesForMonth(Month month) async {
+  Future<ApiResult<List<Expense>>> getTransactionsForMonth(Month month) async {
     final matching =
         expenses.where((expense) => expense.month == month).toList()
           ..sort((a, b) => b.date.compareTo(a.date));
@@ -120,13 +145,13 @@ class FakeExpenseRepository implements ExpenseRepository {
 
   @override
   Future<ApiResult<List<MonthlySummary>>> getMonthlySummaries() async {
+    // Spending only, as the real query counts it.
     final totals = <Month, (double, int)>{};
     for (final expense in expenses) {
       final current = totals[expense.month] ?? (0.0, 0);
-      totals[expense.month] = (
-        current.$1 + expense.amount,
-        current.$2 + 1,
-      );
+      totals[expense.month] = expense.isIncome
+          ? current
+          : (current.$1 + expense.amount, current.$2 + 1);
     }
     final summaries =
         totals.entries
@@ -265,13 +290,164 @@ class FakeBudgetRepository implements BudgetRepository {
   }
 }
 
+/// Recurring payments in memory. A payment lands in [FakeExpenseRepository]
+/// under the same predictable id the real data layer gives it, and a
+/// payment already settled is refused the same way; the SQL itself is
+/// covered by `test/data/recurring_storage_test.dart`.
+class FakeRecurringRepository implements RecurringRepository {
+  FakeRecurringRepository(this._categories, this._expenses);
+
+  final FakeCategoryRepository _categories;
+  final FakeExpenseRepository _expenses;
+  final List<RecurringExpense> recurring = [];
+
+  int _nextId = 0;
+
+  /// A payment set up as if it had been added on [startsOn].
+  RecurringExpense seed({
+    required String title,
+    required double amount,
+    String categoryId = 'cat_bills',
+    RecurrenceFrequency frequency = RecurrenceFrequency.monthly,
+    required int dueDay,
+    int? dueMonth,
+    RecurringMode mode = RecurringMode.reminder,
+    required DateTime startsOn,
+    DateTime? paidThrough,
+  }) {
+    final item = RecurringExpense(
+      id: 'rec_${_nextId++}',
+      title: title,
+      amount: amount,
+      category: _category(categoryId),
+      frequency: frequency,
+      dueDay: dueDay,
+      dueMonth: dueMonth,
+      mode: mode,
+      startsOn: RecurringExpense.dayOf(startsOn),
+      paidThrough: paidThrough,
+      createdAt: startsOn,
+    );
+    recurring.add(item);
+    return item;
+  }
+
+  @override
+  Future<ApiResult<List<RecurringExpense>>> getRecurring() async => Success([
+    // Joined with the category as it is now, as the real query does.
+    for (final item in recurring)
+      item.copyWith(category: _category(item.category.id)),
+  ]);
+
+  @override
+  Future<ApiResult<RecurringExpense>> createRecurring({
+    required String title,
+    required double amount,
+    required String categoryId,
+    required RecurrenceFrequency frequency,
+    required int dueDay,
+    int? dueMonth,
+    required RecurringMode mode,
+    required DateTime startsOn,
+  }) async => Success(
+    seed(
+      title: title,
+      amount: amount,
+      categoryId: categoryId,
+      frequency: frequency,
+      dueDay: dueDay,
+      dueMonth: dueMonth,
+      mode: mode,
+      startsOn: startsOn,
+    ),
+  );
+
+  @override
+  Future<ApiResult<RecurringExpense>> updateRecurring(
+    RecurringExpense item,
+  ) async {
+    final index = recurring.indexWhere((r) => r.id == item.id);
+    if (index == -1) {
+      return const ResultFailure(NotFoundFailure('missing recurring'));
+    }
+    recurring[index] = item;
+    return Success(item);
+  }
+
+  @override
+  Future<ApiResult<void>> deleteRecurring(String id) async {
+    recurring.removeWhere((item) => item.id == id);
+    return const Success(null);
+  }
+
+  @override
+  Future<ApiResult<RecurringPayment>> recordPayment(
+    RecurringExpense item, {
+    required DateTime due,
+    required DateTime paidAt,
+  }) async {
+    final index = recurring.indexWhere((r) => r.id == item.id);
+    if (index == -1) {
+      return const ResultFailure(NotFoundFailure('missing recurring'));
+    }
+    final current = recurring[index];
+    if (current.isSettled(due)) {
+      return const ResultFailure(ValidationFailure(FailureCode.alreadyPaid));
+    }
+    final day = RecurringExpense.dayOf(due);
+    final expenseId =
+        '${item.id}_${day.year}'
+        '${day.month.toString().padLeft(2, '0')}'
+        '${day.day.toString().padLeft(2, '0')}';
+    _expenses.expenses
+      ..removeWhere((expense) => expense.id == expenseId)
+      ..add(
+        Expense(
+          id: expenseId,
+          amount: current.amount,
+          category: _category(current.category.id),
+          date: paidAt,
+          description: current.title,
+          createdAt: DateTime.now(),
+        ),
+      );
+    recurring[index] = current.copyWith(paidThrough: () => day);
+    return Success(
+      RecurringPayment(
+        recurringId: item.id,
+        expenseId: expenseId,
+        due: day,
+        previousPaidThrough: current.paidThrough,
+      ),
+    );
+  }
+
+  @override
+  Future<ApiResult<void>> undoPayment(RecurringPayment payment) async {
+    _expenses.expenses.removeWhere((e) => e.id == payment.expenseId);
+    final index = recurring.indexWhere((r) => r.id == payment.recurringId);
+    if (index != -1 && recurring[index].paidThrough == payment.due) {
+      recurring[index] = recurring[index].copyWith(
+        paidThrough: () => payment.previousPaidThrough,
+      );
+    }
+    return const Success(null);
+  }
+
+  ExpenseCategory _category(String id) => _categories.categories.firstWhere(
+    (category) => category.id == id,
+    orElse: () => _categories.categories.firstWhere(
+      (category) => category.id == ExpenseCategory.fallbackId,
+    ),
+  );
+}
+
 /// Stands in for the Android home screen widget: records what the app would
 /// have drawn on it.
 class FakeQuickExpenseWidgetRepository implements QuickExpenseWidgetRepository {
   final List<QuickExpenseSnapshot> published = [];
 
-  QuickExpenseSnapshot? get latest =>
-      published.isEmpty ? null : published.last;
+  QuickExpenseSnapshot? get latest => published.isEmpty ? null : published.last;
 
   @override
   Future<ApiResult<void>> publish(QuickExpenseSnapshot snapshot) async {

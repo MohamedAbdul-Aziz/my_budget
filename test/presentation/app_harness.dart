@@ -15,6 +15,8 @@ import 'package:my_budget/features/expenses/domain/repositories/expense_reposito
 import 'package:my_budget/features/expenses/presentation/cubit/home_cubit.dart';
 import 'package:my_budget/features/quick_expense/domain/repositories/quick_expense_widget_repository.dart';
 import 'package:my_budget/features/quick_expense/presentation/quick_add_app.dart';
+import 'package:my_budget/features/recurring/domain/repositories/recurring_repository.dart';
+import 'package:my_budget/features/recurring/presentation/cubit/recurring_cubit.dart';
 import 'package:my_budget/features/settings/domain/repositories/settings_repository.dart';
 import 'package:my_budget/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:my_budget/features/sync/domain/repositories/sync_repository.dart';
@@ -33,6 +35,7 @@ class AppHarness {
     required this.sync,
     required this.files,
     required this.budgets,
+    required this.recurring,
   });
 
   final FakeCategoryRepository categories;
@@ -43,6 +46,7 @@ class AppHarness {
   final FakeSyncRepository sync;
   final FakeDataManagementRepository files;
   final FakeBudgetRepository budgets;
+  final FakeRecurringRepository recurring;
 }
 
 /// Boots the real widget tree and cubits over in-memory repositories.
@@ -50,11 +54,19 @@ class AppHarness {
 /// Widget tests run inside a fake-async zone where the real database's
 /// background isolate never completes; the SQL itself is covered by the
 /// integration tests in `test/data`.
+///
+/// [before] runs once the fakes exist but before anything loads, so a test
+/// can set up what the phone already held when the app opened.
 Future<AppHarness> bootApp(
   WidgetTester tester, {
   String localeName = 'en_US',
+  void Function(AppHarness harness)? before,
 }) async {
-  final harness = await _bootDependencies(tester, localeName: localeName);
+  final harness = await _bootDependencies(
+    tester,
+    localeName: localeName,
+    before: before,
+  );
 
   await tester.pumpWidget(const MyBudgetApp());
   await tester.pumpAndSettle();
@@ -67,6 +79,7 @@ Future<AppHarness> bootApp(
 Future<AppHarness> _bootDependencies(
   WidgetTester tester, {
   required String localeName,
+  void Function(AppHarness harness)? before,
 }) async {
   await initializeDateFormatting();
   await sl.reset();
@@ -87,6 +100,19 @@ Future<AppHarness> _bootDependencies(
   final sync = FakeSyncRepository();
   final files = FakeDataManagementRepository();
   final budgets = FakeBudgetRepository();
+  final recurring = FakeRecurringRepository(categories, expenses);
+  final harness = AppHarness(
+    categories: categories,
+    expenses: expenses,
+    settings: settings,
+    widget: widget,
+    auth: auth,
+    sync: sync,
+    files: files,
+    budgets: budgets,
+    recurring: recurring,
+  );
+  before?.call(harness);
 
   sl
     ..registerLazySingleton<CategoryRepository>(() => categories)
@@ -96,26 +122,20 @@ Future<AppHarness> _bootDependencies(
     ..registerLazySingleton<AuthRepository>(() => auth)
     ..registerLazySingleton<SyncRepository>(() => sync)
     ..registerLazySingleton<DataManagementRepository>(() => files)
-    ..registerLazySingleton<BudgetRepository>(() => budgets);
+    ..registerLazySingleton<BudgetRepository>(() => budgets)
+    ..registerLazySingleton<RecurringRepository>(() => recurring);
   configureDependencies();
 
+  // The same order as main.dart: due automatic payments first.
   await sl<SettingsCubit>().load(localeName: localeName);
+  await sl<RecurringCubit>().load();
   await Future.wait([
     sl<CategoriesCubit>().load(),
     sl<HomeCubit>().load(),
     sl<BudgetCubit>().load(Month.current()),
   ]);
 
-  return AppHarness(
-    categories: categories,
-    expenses: expenses,
-    settings: settings,
-    widget: widget,
-    auth: auth,
-    sync: sync,
-    files: files,
-    budgets: budgets,
-  );
+  return harness;
 }
 
 /// Boots what the home screen widget opens: the quick-add dialog on its own,

@@ -34,7 +34,7 @@ class GetBudgetStatus {
     }
 
     final List<Expense> expenses;
-    switch (await _expenses.getExpensesForMonth(month)) {
+    switch (await _expenses.getTransactionsForMonth(month)) {
       case Success(:final data):
         expenses = data;
       case ResultFailure(:final failure):
@@ -63,6 +63,8 @@ class GetBudgetStatus {
   ///
   /// A limit on a category that no longer exists is ignored: its expenses
   /// have already moved to Other, which is measured against its own limit.
+  /// Income is never budgeted: its categories get no line, and it adds
+  /// nothing to what was spent.
   static BudgetStatus statusOf({
     required Month month,
     required BudgetLimits limits,
@@ -77,11 +79,12 @@ class GetBudgetStatus {
 
     final lines = [
       for (final category in categories)
-        CategoryBudget(
-          category: category,
-          spent: spentById[category.id] ?? 0,
-          limit: limits.byCategory[category.id],
-        ),
+        if (!category.isIncome)
+          CategoryBudget(
+            category: category,
+            spent: spentById[category.id] ?? 0,
+            limit: limits.byCategory[category.id],
+          ),
     ];
     final watchList = [
       for (final entry in lines)

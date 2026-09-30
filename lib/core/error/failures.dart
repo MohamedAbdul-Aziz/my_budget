@@ -34,6 +34,10 @@ enum FailureCode {
   exportFailed,
   shareUnavailable,
   saveFailed,
+  titleRequired,
+  titleTooLong,
+  dueDayInvalid,
+  alreadyPaid,
 }
 
 /// Typed failures produced by the data layer and surfaced through `ApiResult`.

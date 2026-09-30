@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/error/api_result.dart';
 import '../../../../core/utils/ui_notice.dart';
 import '../../domain/entities/expense_category.dart';
+import '../../domain/entities/transaction_type.dart';
 import '../../domain/usecases/create_category.dart';
 import '../../domain/usecases/delete_category.dart';
 import '../../domain/usecases/get_categories.dart';
@@ -43,11 +44,13 @@ class CategoriesCubit extends Cubit<CategoriesState> {
     required String name,
     required String iconName,
     required int colorValue,
+    TransactionType type = TransactionType.expense,
   }) async {
     final result = await _createCategory(
       name: name,
       iconName: iconName,
       colorValue: colorValue,
+      type: type,
     );
     await _afterMutation(
       result,
@@ -63,13 +66,16 @@ class CategoriesCubit extends Cubit<CategoriesState> {
 
   Future<void> remove(ExpenseCategory category) async {
     final result = await _deleteCategory(category);
-    // How many expenses were re-homed decides which sentence the UI shows.
+    // How many transactions were re-homed decides which sentence the UI
+    // shows.
     final moved = result.dataOrNull ?? 0;
     await _afterMutation(
       result,
       success: moved > 0
           ? UiNotice(
-              NoticeCode.categoryDeletedWithMoves,
+              category.isIncome
+                  ? NoticeCode.incomeCategoryDeletedWithMoves
+                  : NoticeCode.categoryDeletedWithMoves,
               name: category.name,
               count: moved,
             )

@@ -64,25 +64,31 @@ class SyncRemoteDataSourceImpl implements SyncRemoteDataSource {
       for (final row in batch.settings)
         {'user_id': userId, ...PortableRecords.settingToPortable(row)},
     ], onUploaded);
+    await _upsert('recurring_expenses', 'user_id,id', [
+      for (final row in batch.recurring)
+        {'user_id': userId, ...PortableRecords.recurringToPortable(row)},
+    ], onUploaded);
   });
 
   @override
-  Future<RecordBatch> download({void Function(double fraction)? onProgress}) =>
-      _guard(() async {
-        final categories = await _readAll('categories', 'id');
-        onProgress?.call(1 / 3);
-        final expenses = await _readAll('expenses', 'id');
-        onProgress?.call(2 / 3);
-        final settings = await _readAll('user_settings', 'key');
-        onProgress?.call(1);
-        return RecordBatch(
-          categories: categories
-              .map(PortableRecords.categoryFromPortable)
-              .toList(),
-          expenses: expenses.map(PortableRecords.expenseFromPortable).toList(),
-          settings: settings.map(PortableRecords.settingFromPortable).toList(),
-        );
-      });
+  Future<RecordBatch> download({
+    void Function(double fraction)? onProgress,
+  }) => _guard(() async {
+    final categories = await _readAll('categories', 'id');
+    onProgress?.call(1 / 4);
+    final expenses = await _readAll('expenses', 'id');
+    onProgress?.call(2 / 4);
+    final settings = await _readAll('user_settings', 'key');
+    onProgress?.call(3 / 4);
+    final recurring = await _readAll('recurring_expenses', 'id');
+    onProgress?.call(1);
+    return RecordBatch(
+      categories: categories.map(PortableRecords.categoryFromPortable).toList(),
+      expenses: expenses.map(PortableRecords.expenseFromPortable).toList(),
+      settings: settings.map(PortableRecords.settingFromPortable).toList(),
+      recurring: recurring.map(PortableRecords.recurringFromPortable).toList(),
+    );
+  });
 
   Future<void> _upsert(
     String table,

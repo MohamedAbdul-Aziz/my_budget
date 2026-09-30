@@ -8,10 +8,17 @@ import 'package:my_budget/core/error/failures.dart';
 import 'package:my_budget/features/categories/data/datasources/category_local_data_source.dart';
 import 'package:my_budget/features/categories/data/repositories/category_repository_impl.dart';
 import 'package:my_budget/features/categories/domain/entities/expense_category.dart';
+import 'package:my_budget/features/categories/domain/entities/transaction_type.dart';
 import 'package:my_budget/features/expenses/data/datasources/expense_local_data_source.dart';
 import 'package:my_budget/features/expenses/data/repositories/expense_repository_impl.dart';
 import 'package:my_budget/features/expenses/domain/entities/expense.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
+import 'package:my_budget/features/recurring/data/datasources/recurring_local_data_source.dart';
+import 'package:my_budget/features/recurring/data/repositories/recurring_repository_impl.dart';
+import 'package:my_budget/features/recurring/domain/entities/recurrence_frequency.dart';
+import 'package:my_budget/features/recurring/domain/entities/recurring_expense.dart';
+import 'package:my_budget/features/recurring/domain/entities/recurring_mode.dart';
+import 'package:my_budget/features/recurring/domain/usecases/log_due_recurring.dart';
 import 'package:my_budget/features/settings/data/datasources/settings_local_data_source.dart';
 import 'package:my_budget/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:my_budget/features/sync/data/datasources/sync_local_data_source.dart';
@@ -52,14 +59,15 @@ void main() {
       name: 'Pets',
       iconName: 'pets',
       colorValue: 0xFF123456,
+      type: TransactionType.expense,
     );
     await phoneA.settingsRepo.saveCurrencySymbol('€');
 
     final report = (await phoneA.sync.backUp()).dataOrNull!;
 
-    // 8 built-in categories, the new one, the expense and the setting.
-    expect(report.changes, 11);
-    expect(cloud.rows('categories'), hasLength(9));
+    // 13 built-in categories, the new one, the expense and the setting.
+    expect(report.changes, 16);
+    expect(cloud.rows('categories'), hasLength(14));
     expect(cloud.rows('expenses'), hasLength(1));
     expect(cloud.rows('user_settings'), hasLength(1));
   });
@@ -90,6 +98,7 @@ void main() {
       name: 'Pets',
       iconName: 'pets',
       colorValue: 0xFF123456,
+      type: TransactionType.expense,
     );
     await phoneA.settingsRepo.saveCurrencySymbol('€');
     await phoneA.sync.backUp();
@@ -185,6 +194,7 @@ void main() {
         name: 'Pets',
         iconName: 'pets',
         colorValue: 0xFF123456,
+        type: TransactionType.expense,
       )).dataOrNull!;
       await phoneA.sync.backUp();
       await phoneB.sync.restore();
@@ -231,9 +241,9 @@ void main() {
       phoneA.remote.userId = 'user-2';
       final report = (await phoneA.sync.backUp()).dataOrNull!;
 
-      // The 8 built-in categories and the one expense left. The deleted
+      // The 13 built-in categories and the one expense left. The deleted
       // expense only existed to reach user-1's backup, so it is gone.
-      expect(report.changes, 9);
+      expect(report.changes, 14);
       expect(cloud.rows('expenses', userId: 'user-2').single['id'], lunch.id);
       expect((await phoneA.sync.lastSyncedAt()).dataOrNull, report.finishedAt);
     },
@@ -255,12 +265,92 @@ void main() {
     expect((await phoneA.sync.lastSyncedAt()).dataOrNull, report.finishedAt);
   });
 
+  test(
+    'a recurring payment and what it logged reach the other phone',
+    () async {
+      final rent = await phoneA.addRecurring();
+      await phoneA.recurring.recordPayment(
+        rent,
+        due: DateTime(2026, 8, 1),
+        paidAt: august,
+      );
+      await phoneA.sync.backUp();
+      expect(cloud.rows('recurring_expenses'), hasLength(1));
+
+      await phoneB.sync.restore();
+
+      final restored =
+          (await phoneB.recurring.getRecurring()).dataOrNull!.single;
+      expect(restored.title, 'Rent');
+      expect(restored.frequency, RecurrenceFrequency.monthly);
+      expect(restored.paidThrough, DateTime(2026, 8, 1));
+      expect((await phoneB.monthOf(august)).single.description, 'Rent');
+
+      // Deleting it on B reaches A too.
+      await phoneB.recurring.deleteRecurring(rent.id);
+      await phoneB.sync.backUp();
+      await phoneA.sync.restore();
+      expect((await phoneA.recurring.getRecurring()).dataOrNull, isEmpty);
+    },
+  );
+
+  test(
+    'forgetting a deleted account clears deleted recurring payments',
+    () async {
+      final gym = (await phoneA.categories.createCategory(
+        name: 'Gym',
+        iconName: 'fitness_center',
+        colorValue: 0xFF123456,
+        type: TransactionType.expense,
+      )).dataOrNull!;
+      final membership = (await phoneA.recurring.createRecurring(
+        title: 'Membership',
+        amount: 30,
+        categoryId: gym.id,
+        frequency: RecurrenceFrequency.monthly,
+        dueDay: 1,
+        mode: RecurringMode.reminder,
+        startsOn: august,
+      )).dataOrNull!;
+      final rent = await phoneA.addRecurring();
+      // The deleted payment still points at the category deleted after it.
+      await phoneA.recurring.deleteRecurring(membership.id);
+      await phoneA.categories.deleteCategory(gym.id);
+      await phoneA.sync.backUp();
+
+      final forgotten = await phoneA.sync.forgetAccount('user-1');
+
+      expect(forgotten.isSuccess, isTrue);
+      phoneA.remote.userId = 'user-2';
+      await phoneA.sync.backUp();
+      final uploaded = cloud.rows('recurring_expenses', userId: 'user-2');
+      expect(uploaded.single['id'], rent.id);
+    },
+  );
+
+  test('two phones deducting the same payment log it once', () async {
+    await phoneA.addRecurring(mode: RecurringMode.autoDeduct);
+    await phoneA.sync.backUp();
+    await phoneB.sync.restore();
+
+    // Both open the app after the due date, before either backs up.
+    await LogDueRecurring(phoneA.recurring)(today: DateTime(2026, 8, 20));
+    await LogDueRecurring(phoneB.recurring)(today: DateTime(2026, 8, 20));
+    await phoneA.sync.backUp();
+    await phoneB.sync.backUp();
+    await phoneA.sync.restore();
+
+    expect(cloud.rows('expenses'), hasLength(1));
+    expect(await phoneA.monthOf(august), hasLength(1));
+  });
+
   test('rows survive the trip off the phone and back unchanged', () {
     const category = {
       'id': 'cat_1',
       'name': 'Pets',
       'icon_name': 'pets',
       'color_value': 0xFFEF6C00,
+      'type': 'income',
       'is_default': 1,
       'sort_order': 3,
       'updated_at': 1000,
@@ -294,6 +384,27 @@ void main() {
       ),
       setting,
     );
+    const recurring = {
+      'id': 'rec_1',
+      'title': 'Rent',
+      'amount': 900.0,
+      'category_id': 'cat_bills',
+      'frequency': 'yearly',
+      'due_day': 29,
+      'due_month': 2,
+      'mode': 'auto',
+      'starts_on': '2026-08-01',
+      'paid_through': '2026-02-28',
+      'created_at': 1785000000000,
+      'updated_at': 1785000000001,
+      'deleted_at': null,
+    };
+    expect(
+      PortableRecords.recurringFromPortable(
+        PortableRecords.recurringToPortable(recurring),
+      ),
+      recurring,
+    );
   });
 }
 
@@ -310,6 +421,7 @@ class Phone {
     settingsRepo = SettingsRepositoryImpl(
       SettingsLocalDataSourceImpl(database),
     );
+    recurring = RecurringRepositoryImpl(RecurringLocalDataSourceImpl(database));
     sync = SyncRepositoryImpl(
       local: SyncLocalDataSourceImpl(database, LocalRecords(database)),
       remote: remote,
@@ -322,7 +434,20 @@ class Phone {
   late final ExpenseRepositoryImpl expenses;
   late final CategoryRepositoryImpl categories;
   late final SettingsRepositoryImpl settingsRepo;
+  late final RecurringRepositoryImpl recurring;
   late final SyncRepositoryImpl sync;
+
+  Future<RecurringExpense> addRecurring({
+    RecurringMode mode = RecurringMode.reminder,
+  }) async => (await recurring.createRecurring(
+    title: 'Rent',
+    amount: 900,
+    categoryId: 'cat_bills',
+    frequency: RecurrenceFrequency.monthly,
+    dueDay: 1,
+    mode: mode,
+    startsOn: DateTime(2026, 8, 1),
+  )).dataOrNull!;
 
   Future<Expense> addExpense(
     double amount, {
@@ -346,7 +471,9 @@ class Phone {
   }
 
   Future<List<Expense>> monthOf(DateTime date) async =>
-      (await expenses.getExpensesForMonth(Month.fromDate(date))).dataOrNull!;
+      (await expenses.getTransactionsForMonth(
+        Month.fromDate(date),
+      )).dataOrNull!;
 
   Future<void> dispose() async {
     await database.close();
@@ -362,6 +489,7 @@ class FakeCloud {
     'categories': {},
     'expenses': {},
     'user_settings': {},
+    'recurring_expenses': {},
   };
 
   List<Map<String, Object?>> rows(String table, {String userId = 'user-1'}) =>
@@ -414,6 +542,9 @@ class FakeRemote implements SyncRemoteDataSource {
     for (final row in batch.settings) {
       cloud.upsert('user_settings', userId, row['key']! as String, row);
     }
+    for (final row in batch.recurring) {
+      cloud.upsert('recurring_expenses', userId, row['id']! as String, row);
+    }
     onUploaded?.call(batch.length);
   }
 
@@ -427,6 +558,7 @@ class FakeRemote implements SyncRemoteDataSource {
       categories: cloud.rows('categories', userId: user),
       expenses: cloud.rows('expenses', userId: user),
       settings: cloud.rows('user_settings', userId: user),
+      recurring: cloud.rows('recurring_expenses', userId: user),
     );
   }
 }

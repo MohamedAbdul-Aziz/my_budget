@@ -8,6 +8,7 @@ import '../../../../core/l10n/app_strings.dart';
 import '../../../budgets/domain/entities/budget_alert.dart';
 import '../../../budgets/presentation/widgets/budget_alert_messages.dart';
 import '../../../categories/domain/entities/expense_category.dart';
+import '../../../categories/domain/entities/transaction_type.dart';
 import '../../../categories/presentation/category_label.dart';
 import '../../../categories/presentation/cubit/categories_cubit.dart';
 import '../../../categories/presentation/cubit/categories_state.dart';
@@ -15,16 +16,18 @@ import '../../../categories/presentation/widgets/category_avatar.dart';
 import '../../../categories/presentation/widgets/category_picker.dart';
 import '../../../expenses/presentation/cubit/expense_form_cubit.dart';
 import '../../../expenses/presentation/cubit/expense_form_state.dart';
+import '../../../expenses/presentation/widgets/transaction_type_toggle.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../publish_widget.dart';
 
-/// The entire UI behind a home screen widget tap: amount, category, save.
+/// The entire UI behind a home screen widget tap: expense or income, amount,
+/// category, save.
 ///
 /// It is the only thing the quick-add activity shows — the app's home screen
 /// is never built. The category arrives already chosen from the widget, the
 /// date is today and the note is skipped, so recording an expense is one
-/// number and one tap. Saving redraws the widget and closes the dialog,
-/// returning the user to the launcher.
+/// number and one tap; income is one more tap on the toggle. Saving redraws
+/// the widget and closes the dialog, returning the user to the launcher.
 class QuickAddScreen extends StatelessWidget {
   const QuickAddScreen({super.key, this.categoryId});
 
@@ -33,7 +36,8 @@ class QuickAddScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final categories = switch (sl<CategoriesCubit>().state) {
+    final categoriesState = sl<CategoriesCubit>().state;
+    final categories = switch (categoriesState) {
       CategoriesReady(:final categories) => categories,
       _ => const <ExpenseCategory>[],
     };
@@ -41,9 +45,16 @@ class QuickAddScreen extends StatelessWidget {
 
     return BlocProvider(
       create: (_) => sl<ExpenseFormCubit>()
-        // Falls back to the first shortcut, so there is always a category and
-        // the amount really is the only required input.
-        ..start(suggestedCategory: tapped ?? categories.firstOrNull),
+        // Falls back to the first spending category, so there is always a
+        // category and the amount really is the only required input.
+        ..start(
+          suggestedCategory:
+              tapped ??
+              categoriesOfType(
+                categoriesState,
+                TransactionType.expense,
+              ).firstOrNull,
+        ),
       child: const _QuickAddView(),
     );
   }
@@ -108,9 +119,7 @@ class _QuickAddViewState extends State<_QuickAddView> {
               ..showSnackBar(
                 SnackBar(
                   content: Text(
-                    context.strings.failure(
-                      state.error ?? FailureCode.unknown,
-                    ),
+                    context.strings.failure(state.error ?? FailureCode.unknown),
                   ),
                 ),
               );
@@ -131,38 +140,45 @@ class _QuickAddViewState extends State<_QuickAddView> {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: Material(
-                color: theme.colorScheme.surface,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: SafeArea(
-                  top: false,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: 20,
-                      right: 20,
-                      top: 20,
-                      bottom: MediaQuery.viewInsetsOf(context).bottom + 20,
+              // Warm while recording an expense, green for income.
+              child: ExpenseFormAccent(
+                child: Material(
+                  color: theme.colorScheme.surface,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(28),
                     ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const _Header(),
-                          const SizedBox(height: 16),
-                          _AmountField(
-                            controller: _amountController,
-                            focusNode: _amountFocus,
-                            onSubmitted: _submit,
-                          ),
-                          const SizedBox(height: 20),
-                          const _QuickCategoryPicker(),
-                          const SizedBox(height: 20),
-                          _SaveButton(onSubmit: _submit),
-                        ],
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: SafeArea(
+                    top: false,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: 20,
+                        right: 20,
+                        top: 20,
+                        bottom: MediaQuery.viewInsetsOf(context).bottom + 20,
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const _Header(),
+                            const SizedBox(height: 16),
+                            const ExpenseFormTypeToggle(),
+                            const SizedBox(height: 16),
+                            _AmountField(
+                              controller: _amountController,
+                              focusNode: _amountFocus,
+                              onSubmitted: _submit,
+                            ),
+                            const SizedBox(height: 20),
+                            const _QuickCategoryPicker(),
+                            const SizedBox(height: 20),
+                            _SaveButton(onSubmit: _submit),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -186,41 +202,51 @@ class _Header extends StatelessWidget {
     final theme = Theme.of(context);
     final strings = context.strings;
 
-    return BlocSelector<ExpenseFormCubit, ExpenseFormState, ExpenseCategory?>(
-      selector: (state) => state.category,
-      builder: (context, category) => Row(
-        children: [
-          if (category != null) ...[
-            CategoryAvatar(category: category, size: 36),
-            const SizedBox(width: 12),
-          ],
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  strings.quickExpense,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                if (category != null)
+    return BlocSelector<
+      ExpenseFormCubit,
+      ExpenseFormState,
+      (TransactionType, ExpenseCategory?)
+    >(
+      selector: (state) => (state.type, state.category),
+      builder: (context, selection) {
+        final (type, category) = selection;
+        return Row(
+          children: [
+            if (category != null) ...[
+              CategoryAvatar(category: category, size: 36),
+              const SizedBox(width: 12),
+            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
                   Text(
-                    categoryLabel(strings, category),
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
+                    type == TransactionType.income
+                        ? strings.quickIncome
+                        : strings.quickExpense,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-              ],
+                  if (category != null)
+                    Text(
+                      categoryLabel(strings, category),
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.close_rounded),
-            onPressed: SystemNavigator.pop,
-          ),
-        ],
-      ),
+            IconButton(
+              icon: const Icon(Icons.close_rounded),
+              onPressed: SystemNavigator.pop,
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -248,7 +274,7 @@ class _AmountField extends StatelessWidget {
         Text(
           symbol,
           style: theme.textTheme.headlineSmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+            color: theme.colorScheme.primary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -267,6 +293,7 @@ class _AmountField extends StatelessWidget {
             onSubmitted: (_) => onSubmitted(),
             style: theme.textTheme.displaySmall?.copyWith(
               fontWeight: FontWeight.w700,
+              color: theme.colorScheme.primary,
             ),
             decoration: InputDecoration(
               hintText: context.strings.amountHint,
@@ -295,21 +322,23 @@ class _QuickCategoryPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CategoriesCubit, CategoriesState>(
-      builder: (context, categoriesState) {
-        final categories = switch (categoriesState) {
-          CategoriesReady(:final categories) => categories,
-          _ => const <ExpenseCategory>[],
-        };
-
-        return BlocSelector<ExpenseFormCubit, ExpenseFormState, String?>(
-          selector: (state) => state.category?.id,
-          builder: (context, selectedId) => CategoryPicker(
-            categories: categories,
-            selectedId: selectedId,
-            onSelected: context.read<ExpenseFormCubit>().selectCategory,
+      builder: (context, categoriesState) =>
+          BlocSelector<
+            ExpenseFormCubit,
+            ExpenseFormState,
+            (TransactionType, String?)
+          >(
+            selector: (state) => (state.type, state.category?.id),
+            builder: (context, selection) {
+              final (type, selectedId) = selection;
+              return CategoryPicker(
+                // Only the categories of the type being recorded.
+                categories: categoriesOfType(categoriesState, type),
+                selectedId: selectedId,
+                onSelected: context.read<ExpenseFormCubit>().selectCategory,
+              );
+            },
           ),
-        );
-      },
     );
   }
 }
@@ -321,18 +350,23 @@ class _SaveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<ExpenseFormCubit, ExpenseFormState, bool>(
-      selector: (state) => state.isSubmitting,
-      builder: (context, isSubmitting) => FilledButton.icon(
-        onPressed: isSubmitting ? null : onSubmit,
-        icon: isSubmitting
-            ? const SizedBox.square(
-                dimension: 18,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            : const Icon(Icons.check_rounded),
-        label: Text(context.strings.addExpense),
-      ),
+    return BlocSelector<ExpenseFormCubit, ExpenseFormState, (bool, bool)>(
+      selector: (state) => (state.isSubmitting, state.isIncome),
+      builder: (context, flags) {
+        final (isSubmitting, isIncome) = flags;
+        return FilledButton.icon(
+          onPressed: isSubmitting ? null : onSubmit,
+          icon: isSubmitting
+              ? const SizedBox.square(
+                  dimension: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.check_rounded),
+          label: Text(
+            isIncome ? context.strings.addIncome : context.strings.addExpense,
+          ),
+        );
+      },
     );
   }
 }

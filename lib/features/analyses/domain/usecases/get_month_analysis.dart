@@ -6,9 +6,9 @@ import '../../../expenses/domain/repositories/expense_repository.dart';
 import '../../../expenses/domain/usecases/get_month_overview.dart';
 import '../entities/month_analysis.dart';
 
-/// Builds the analyses for one month from the expenses already stored. The
-/// feature has no storage of its own, so it reads through [ExpenseRepository]
-/// and needs no data layer.
+/// Builds the spending analyses for one month from the transactions already
+/// stored; income is left out of every figure. The feature has no storage of
+/// its own, so it reads through [ExpenseRepository] and needs no data layer.
 class GetMonthAnalysis {
   const GetMonthAnalysis(this._repository);
 
@@ -18,8 +18,8 @@ class GetMonthAnalysis {
   final ExpenseRepository _repository;
 
   Future<ApiResult<MonthAnalysis>> call(Month month, {DateTime? now}) async {
-    final current = await _repository.getExpensesForMonth(month);
-    final previous = await _repository.getExpensesForMonth(month.previous);
+    final current = await _repository.getTransactionsForMonth(month);
+    final previous = await _repository.getTransactionsForMonth(month.previous);
     final summaries = await _repository.getMonthlySummaries();
 
     for (final result in [current, previous]) {
@@ -35,7 +35,7 @@ class GetMonthAnalysis {
     final (total, breakdown) = GetMonthOverview.breakdownOf(expenses);
     final previousTotal = previous.dataOrNull!.fold<double>(
       0,
-      (sum, expense) => sum + expense.amount,
+      (sum, expense) => sum + expense.spending,
     );
 
     return Success(
@@ -64,6 +64,7 @@ class GetMonthAnalysis {
   static TopDay? topDayOf(List<Expense> expenses) {
     final byDay = <DateTime, double>{};
     for (final expense in expenses) {
+      if (expense.isIncome) continue;
       final day = DateTime(
         expense.date.year,
         expense.date.month,

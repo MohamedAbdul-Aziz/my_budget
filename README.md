@@ -22,6 +22,19 @@ calls anywhere in the codebase.
   that passes 80% or 100% of a limit shows a warning right away. Limits are
   stored as `budget.*` rows in the `settings` table, so they travel with the
   cloud backup and backup files without any schema change.
+- **Recurring payments** — rent, bills and subscriptions, each with an
+  amount, a category and a schedule: weekly on a weekday, monthly on a day
+  (the 31st falls on the last day of shorter months), or yearly on a date.
+  Each one either **auto-deducts** (the app logs it as an expense on its due
+  date, catching up on any missed while the app was closed) or **reminds**
+  (the home screen asks you to confirm it once it is due). The recurring page
+  (the repeat icon on the home screen) shows each one as *Paid*, *Upcoming*
+  or *Overdue* for the current period, what they cost in an average month,
+  and a **Mark as paid** button that logs the payment into this month's
+  transactions, with undo. A payment gets the same transaction id on every
+  phone, so syncing never counts it twice. Needs the
+  `supabase/migrations/20260930150000_recurring_expenses.sql` migration for
+  cloud backup.
 - **Settings** — light/dark/system theme, English or Arabic (with full RTL),
   and the currency symbol.
 - **Quick Expense widget (Android)** — a home screen widget showing this
@@ -73,6 +86,7 @@ lib/
     expenses/      data · domain · presentation
     categories/    data · domain · presentation
     budgets/       data · domain · presentation
+    recurring/     data · domain · presentation
     settings/      data · domain · presentation
     quick_expense/ data · domain · presentation
 ```

@@ -7,11 +7,16 @@ class RecordBatch {
     this.categories = const [],
     this.expenses = const [],
     this.settings = const [],
+    this.recurring = const [],
   });
 
   final List<Map<String, Object?>> categories;
   final List<Map<String, Object?>> expenses;
   final List<Map<String, Object?>> settings;
 
-  int get length => categories.length + expenses.length + settings.length;
+  /// `recurring_expenses` rows.
+  final List<Map<String, Object?>> recurring;
+
+  int get length =>
+      categories.length + expenses.length + settings.length + recurring.length;
 }

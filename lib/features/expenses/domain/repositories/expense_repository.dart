@@ -5,10 +5,11 @@ import '../entities/month.dart';
 import '../entities/monthly_summary.dart';
 
 abstract interface class ExpenseRepository {
-  /// All expenses recorded in [month], newest first.
-  Future<ApiResult<List<Expense>>> getExpensesForMonth(Month month);
+  /// Everything recorded in [month], spending and income, newest first.
+  Future<ApiResult<List<Expense>>> getTransactionsForMonth(Month month);
 
-  /// One row per month that has at least one expense, newest month first.
+  /// One row per month that has anything recorded, newest month first. The
+  /// totals are spending only.
   Future<ApiResult<List<MonthlySummary>>> getMonthlySummaries();
 
   /// Categories that have been used at least once, most used first.

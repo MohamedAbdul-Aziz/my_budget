@@ -9,7 +9,7 @@ import '../cubit/categories_state.dart';
 import '../widgets/category_avatar.dart';
 import '../widgets/category_editor_sheet.dart';
 
-/// Manage the categories used when adding expenses.
+/// Manage the categories used when adding expenses and income.
 class CategoriesPage extends StatelessWidget {
   const CategoriesPage({super.key});
 
@@ -61,10 +61,12 @@ class CategoriesPage extends StatelessWidget {
       name: draft.name,
       iconName: draft.iconName,
       colorValue: draft.colorValue,
+      type: draft.type,
     );
   }
 }
 
+/// Spending categories, then income categories, each under a heading.
 class _CategoryList extends StatelessWidget {
   const _CategoryList({required this.categories});
 
@@ -72,12 +74,61 @@ class _CategoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 96),
-      itemCount: categories.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 4),
-      itemBuilder: (context, index) =>
-          _CategoryRow(category: categories[index]),
+    final strings = context.strings;
+    final spending = [
+      for (final category in categories)
+        if (!category.isIncome) category,
+    ];
+    final income = [
+      for (final category in categories)
+        if (category.isIncome) category,
+    ];
+
+    return CustomScrollView(
+      slivers: [
+        for (final (title, group) in [
+          (strings.expenseCategories, spending),
+          (strings.incomeCategories, income),
+        ])
+          if (group.isNotEmpty) ...[
+            SliverToBoxAdapter(child: _SectionHeader(title)),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              sliver: SliverList.separated(
+                itemCount: group.length,
+                separatorBuilder: (_, _) => const SizedBox(height: 4),
+                itemBuilder: (context, index) =>
+                    _CategoryRow(category: group[index]),
+              ),
+            ),
+          ],
+        // Clear of the floating button.
+        const SliverToBoxAdapter(child: SizedBox(height: 96)),
+      ],
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader(this.title);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+      child: Semantics(
+        header: true,
+        child: Text(
+          title,
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -156,7 +207,11 @@ class _CategoryRow extends StatelessWidget {
         title: Text(
           strings.deleteCategoryTitle(categoryLabel(strings, category)),
         ),
-        content: Text(strings.deleteCategoryBody),
+        content: Text(
+          category.isIncome
+              ? strings.deleteIncomeCategoryBody
+              : strings.deleteCategoryBody,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),

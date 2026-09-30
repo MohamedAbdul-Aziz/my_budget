@@ -57,7 +57,13 @@ class HomeCubit extends Cubit<HomeState> {
     switch (result) {
       case Success():
         _lastDeleted = expense;
-        await _fetch(notice: UiNotice(NoticeCode.expenseDeleted));
+        await _fetch(
+          notice: UiNotice(
+            expense.isIncome
+                ? NoticeCode.incomeDeleted
+                : NoticeCode.expenseDeleted,
+          ),
+        );
       case ResultFailure(:final failure):
         _emitNotice(UiNotice.from(failure));
     }
@@ -78,7 +84,13 @@ class HomeCubit extends Cubit<HomeState> {
     );
     switch (result) {
       case Success():
-        await _fetch(notice: UiNotice(NoticeCode.expenseRestored));
+        await _fetch(
+          notice: UiNotice(
+            expense.isIncome
+                ? NoticeCode.incomeRestored
+                : NoticeCode.expenseRestored,
+          ),
+        );
       case ResultFailure(:final failure):
         _emitNotice(UiNotice.from(failure));
     }

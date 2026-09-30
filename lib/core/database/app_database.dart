@@ -17,10 +17,20 @@ import '../../features/categories/domain/entities/expense_category.dart';
 /// * `deleted_at`: set instead of deleting, so a delete can reach the cloud.
 ///   Every read skips these rows.
 /// * `dirty`: 1 while the row has changes the cloud has not seen yet.
+///
+/// Income, added in schema version 3: every category has a `type`, `expense`
+/// or `income`, and a transaction in the `expenses` table is whichever type
+/// its category is. The table keeps its name so older backups and the cloud
+/// copy still line up with it.
+///
+/// Recurring payments, added in schema version 4: `recurring_expenses` holds
+/// the schedules (rent, bills, subscriptions). Due dates are calendar days
+/// stored as `yyyy-MM-dd` text, so a payment falls on the same day whatever
+/// the phone's timezone. A payment it logs is an ordinary row in `expenses`.
 class AppDatabase {
   AppDatabase({this.fileName = 'my_budget.db', this.inMemory = false});
 
-  static const int _schemaVersion = 2;
+  static const int _schemaVersion = 4;
 
   /// Now, in the form stored in `updated_at` and `deleted_at`.
   static int nowMillis() => DateTime.now().millisecondsSinceEpoch;
@@ -125,6 +135,8 @@ class AppDatabase {
     // A fresh install takes the same upgrade path as an existing one, so both
     // end up with exactly the same schema.
     _addSyncColumns(batch);
+    _addIncome(batch);
+    _addRecurring(batch);
 
     await batch.commit(noResult: true);
   }
@@ -132,7 +144,57 @@ class AppDatabase {
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     final batch = db.batch();
     if (oldVersion < 2) _addSyncColumns(batch);
+    if (oldVersion < 3) _addIncome(batch);
+    if (oldVersion < 4) _addRecurring(batch);
     await batch.commit(noResult: true);
+  }
+
+  /// Schema version 4. Born with the sync columns every table has had since
+  /// version 2.
+  void _addRecurring(Batch batch) {
+    batch
+      ..execute('''
+        CREATE TABLE recurring_expenses (
+          id TEXT PRIMARY KEY,
+          title TEXT NOT NULL,
+          amount REAL NOT NULL,
+          category_id TEXT NOT NULL,
+          frequency TEXT NOT NULL DEFAULT 'monthly',
+          due_day INTEGER NOT NULL,
+          due_month INTEGER,
+          mode TEXT NOT NULL DEFAULT 'reminder',
+          starts_on TEXT NOT NULL,
+          paid_through TEXT,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL DEFAULT 0,
+          deleted_at INTEGER,
+          dirty INTEGER NOT NULL DEFAULT 1,
+          FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE RESTRICT
+        )
+      ''')
+      ..execute(
+        'CREATE INDEX idx_recurring_expenses_dirty '
+        'ON recurring_expenses (dirty) WHERE dirty = 1',
+      );
+  }
+
+  /// Schema version 3. Everything already recorded is spending, which is what
+  /// the column's default says. The income categories are built-ins nobody
+  /// has edited yet, so like the others they start at `updated_at` 0; they
+  /// are skipped if a sync already brought them in.
+  void _addIncome(Batch batch) {
+    batch.execute(
+      "ALTER TABLE categories ADD COLUMN type TEXT NOT NULL DEFAULT 'expense'",
+    );
+    for (final (index, category) in defaultIncomeCategories.indexed) {
+      batch.insert('categories', {
+        ...category,
+        'type': 'income',
+        'is_default': 1,
+        'sort_order': index,
+        'updated_at': 0,
+      }, conflictAlgorithm: ConflictAlgorithm.ignore);
+    }
   }
 
   /// Schema version 2. Everything already on the phone starts out dirty, so
@@ -239,6 +301,40 @@ class AppDatabase {
       'name': 'Other',
       'icon_name': 'category',
       'color_value': 0xFF546E7A,
+    },
+  ];
+
+  /// Seeded by schema version 3, on a fresh install and an upgrade alike.
+  static const List<Map<String, Object>> defaultIncomeCategories = [
+    {
+      'id': 'cat_salary',
+      'name': 'Salary',
+      'icon_name': 'payments',
+      'color_value': 0xFF2E7D32,
+    },
+    {
+      'id': 'cat_freelance',
+      'name': 'Freelance',
+      'icon_name': 'laptop',
+      'color_value': 0xFF00897B,
+    },
+    {
+      'id': 'cat_investments',
+      'name': 'Investments',
+      'icon_name': 'trending_up',
+      'color_value': 0xFF558B2F,
+    },
+    {
+      'id': 'cat_gifts',
+      'name': 'Gifts',
+      'icon_name': 'card_giftcard',
+      'color_value': 0xFF00838F,
+    },
+    {
+      'id': ExpenseCategory.incomeFallbackId,
+      'name': 'Other income',
+      'icon_name': 'savings',
+      'color_value': 0xFF607D8B,
     },
   ];
 }

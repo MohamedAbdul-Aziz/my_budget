@@ -41,11 +41,12 @@ class CheckBudgetAlerts {
         ? replaced
         : null;
 
-    final addedToTotal = saved.amount - (removed?.amount ?? 0);
+    // Income spends nothing, so saving it can only ever lower a budget.
+    final addedToTotal = saved.spending - (removed?.spending ?? 0);
     double addedTo(String categoryId) =>
-        (saved.category.id == categoryId ? saved.amount : 0.0) -
+        (saved.category.id == categoryId ? saved.spending : 0.0) -
         (removed != null && removed.category.id == categoryId
-            ? removed.amount
+            ? removed.spending
             : 0.0);
 
     return [

@@ -4,27 +4,42 @@ import '../../../../core/error/failures.dart';
 
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/category_icons.dart';
+import '../../../expenses/presentation/widgets/transaction_type_toggle.dart';
+import '../../domain/entities/transaction_type.dart';
 import '../../domain/usecases/create_category.dart';
 import '../category_label.dart';
 import '../../domain/entities/expense_category.dart';
 
 /// What the sheet hands back to its caller.
-typedef CategoryDraft = ({String name, String iconName, int colorValue});
+typedef CategoryDraft = ({
+  String name,
+  String iconName,
+  int colorValue,
+  TransactionType type,
+});
 
 /// Create or rename a category, pick its icon and color.
+///
+/// A new category is for spending or for income. The type can be chosen only
+/// while creating one, and not even then when [type] already says which;
+/// an existing category keeps the type it has.
 class CategoryEditorSheet extends StatefulWidget {
-  const CategoryEditorSheet({super.key, this.existing});
+  const CategoryEditorSheet({super.key, this.existing, this.type});
 
   final ExpenseCategory? existing;
+
+  /// Fixes the type of a new category.
+  final TransactionType? type;
 
   /// Returns the draft, or null when dismissed.
   static Future<CategoryDraft?> show(
     BuildContext context, {
     ExpenseCategory? existing,
+    TransactionType? type,
   }) => showModalBottomSheet<CategoryDraft>(
     context: context,
     isScrollControlled: true,
-    builder: (_) => CategoryEditorSheet(existing: existing),
+    builder: (_) => CategoryEditorSheet(existing: existing, type: type),
   );
 
   @override
@@ -37,13 +52,17 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
   late final FocusNode _nameFocus;
   late String _iconName;
   late int _colorValue;
+  late TransactionType _type;
   String? _error;
+
+  bool get _canChooseType => widget.existing == null && widget.type == null;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController();
     _nameFocus = FocusNode();
+    _type = widget.existing?.type ?? widget.type ?? TransactionType.expense;
     _iconName = widget.existing?.iconName ?? CategoryIcons.fallbackName;
     _colorValue = widget.existing?.colorValue ?? CategoryColors.defaultColor;
   }
@@ -70,9 +89,8 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
       setState(
-        () => _error = context.strings.failure(
-          FailureCode.categoryNameRequired,
-        ),
+        () =>
+            _error = context.strings.failure(FailureCode.categoryNameRequired),
       );
       _nameFocus.requestFocus();
       return;
@@ -81,6 +99,7 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
       name: name,
       iconName: _iconName,
       colorValue: _colorValue,
+      type: _type,
     ));
   }
 
@@ -108,6 +127,13 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
               ),
             ),
             const SizedBox(height: 20),
+            if (_canChooseType) ...[
+              TransactionTypeToggle(
+                selected: _type,
+                onChanged: (type) => setState(() => _type = type),
+              ),
+              const SizedBox(height: 16),
+            ],
             TextField(
               controller: _nameController,
               focusNode: _nameFocus,
@@ -203,7 +229,11 @@ class _ColorRow extends StatelessWidget {
                     : null,
               ),
               child: isSelected
-                  ? const Icon(Icons.check_rounded, color: Colors.white, size: 20)
+                  ? const Icon(
+                      Icons.check_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    )
                   : null,
             ),
           );
@@ -247,9 +277,8 @@ class _IconGrid extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isSelected
                     ? color.withValues(alpha: 0.18)
-                    : Theme.of(
-                        context,
-                      ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                    : Theme.of(context).colorScheme.surfaceContainerHighest
+                          .withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(14),
                 border: isSelected ? Border.all(color: color, width: 2) : null,
               ),

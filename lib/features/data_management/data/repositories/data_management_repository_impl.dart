@@ -7,6 +7,7 @@ import '../../../../core/database/record_batch.dart';
 import '../../../../core/error/api_result.dart';
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/app_formats.dart';
+import '../../../recurring/domain/entities/recurrence_frequency.dart';
 import '../../domain/entities/backup_preview.dart';
 import '../../domain/entities/export_format.dart';
 import '../../domain/entities/export_locale.dart';
@@ -147,15 +148,20 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
     String stamp,
   ) async {
     final strings = AppStrings.forLanguageCode(locale.languageCode);
-    final (expenses, categories) = await _spreadsheetsInBackground(
+    final (expenses, categories, recurring) = await _spreadsheetsInBackground(
       records,
       _categoryNames(records, strings),
+      _recurringSchedules(records, strings, locale),
       locale.currencySymbol,
       _texts(strings, locale, now),
     );
     return [
       await _writeText('my_budget_expenses_$stamp.csv', expenses),
       await _writeText('my_budget_categories_$stamp.csv', categories),
+      // Only for someone who has recurring payments: an empty sheet would
+      // just be one more file to wonder about.
+      if (recurring != null)
+        await _writeText('my_budget_recurring_$stamp.csv', recurring),
     ];
   }
 
@@ -171,12 +177,15 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
       ReportInput(
         expenses: records.expenses,
         categoryNames: _categoryNames(records, strings),
+        incomeCategoryIds: _incomeCategoryIds(records),
         texts: _texts(strings, locale, now),
         formatsLocale: locale.formatsLocale,
         currencySymbol: locale.currencySymbol,
         rightToLeft: locale.isRightToLeft,
         font: fonts.regular,
         boldFont: fonts.bold,
+        recurring: records.recurring,
+        recurringSchedules: _recurringSchedules(records, strings, locale),
       ),
     );
     final name = 'my_budget_report_$stamp.pdf';
@@ -207,9 +216,10 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
   static Future<DecodedBackup> _decodeInBackground(String text) =>
       Isolate.run(() => BackupCodec.decode(text));
 
-  static Future<(String, String)> _spreadsheetsInBackground(
+  static Future<(String, String, String?)> _spreadsheetsInBackground(
     RecordBatch records,
     Map<String, String> categoryNames,
+    Map<String, String> recurringSchedules,
     String currency,
     ExportTexts texts,
   ) => Isolate.run(
@@ -217,6 +227,7 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
       CsvExport.expenses(
         expenses: records.expenses,
         categoryNames: categoryNames,
+        incomeCategoryIds: _incomeCategoryIds(records),
         currency: currency,
         texts: texts,
       ),
@@ -226,6 +237,15 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
         categoryNames: categoryNames,
         texts: texts,
       ),
+      _liveCount(records.recurring) == 0
+          ? null
+          : CsvExport.recurring(
+              recurring: records.recurring,
+              categoryNames: categoryNames,
+              schedules: recurringSchedules,
+              currency: currency,
+              texts: texts,
+            ),
     ),
   );
 
@@ -246,6 +266,32 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
           : row['name']! as String,
   };
 
+  /// "Monthly on day 15" and the like, worded as the app words it.
+  static Map<String, String> _recurringSchedules(
+    RecordBatch records,
+    AppStrings strings,
+    ExportLocale locale,
+  ) {
+    final formats = AppFormats(
+      localeName: locale.formatsLocale,
+      currencySymbol: locale.currencySymbol,
+    );
+    return {
+      for (final row in records.recurring)
+        row['id']! as String: strings.recurringSchedule(
+          RecurrenceFrequency.fromStorageKey(row['frequency']),
+          dueDay: (row['due_day']! as num).toInt(),
+          dueMonth: (row['due_month'] as num?)?.toInt(),
+          formats: formats,
+        ),
+    };
+  }
+
+  static Set<String> _incomeCategoryIds(RecordBatch records) => {
+    for (final row in records.categories)
+      if (row['type'] == 'income') row['id']! as String,
+  };
+
   static ExportTexts _texts(
     AppStrings strings,
     ExportLocale locale,
@@ -259,6 +305,9 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
       date: strings.colDate,
       month: strings.colMonth,
       category: strings.category,
+      type: strings.colType,
+      expense: strings.expense,
+      income: strings.income,
       amount: strings.colAmount,
       currency: strings.currency,
       note: strings.colNote,
@@ -276,12 +325,20 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
       ),
       period: strings.reportPeriod,
       totalSpent: strings.reportTotal,
+      totalIncome: strings.totalIncome,
+      net: strings.netBalance,
       monthlyAverage: strings.reportMonthlyAverage,
       byCategory: strings.byCategory,
       byMonth: strings.reportByMonth,
       allExpenses: strings.reportAllExpenses,
       empty: strings.reportEmpty,
       pageTemplate: strings.reportPageTemplate,
+      recurringPayments: strings.recurringPayments,
+      repeats: strings.repeats,
+      mode: strings.whenDue,
+      autoDeduct: strings.autoDeduct,
+      reminder: strings.remindMe,
+      paidThrough: strings.colPaidThrough,
     );
   }
 

@@ -14,12 +14,15 @@ class ReportInput {
   const ReportInput({
     required this.expenses,
     required this.categoryNames,
+    this.incomeCategoryIds = const {},
     required this.texts,
     required this.formatsLocale,
     required this.currencySymbol,
     required this.rightToLeft,
     required this.font,
     required this.boldFont,
+    this.recurring = const [],
+    this.recurringSchedules = const {},
   });
 
   /// Rows in the phone's format; deleted ones are skipped.
@@ -27,6 +30,9 @@ class ReportInput {
 
   /// Category id to the name shown in the app.
   final Map<String, String> categoryNames;
+
+  /// Transactions in these categories are income, not spending.
+  final Set<String> incomeCategoryIds;
   final ExportTexts texts;
   final String formatsLocale;
   final String currencySymbol;
@@ -37,11 +43,18 @@ class ReportInput {
   /// whatever the app's language is.
   final Uint8List font;
   final Uint8List boldFont;
+
+  /// `recurring_expenses` rows; deleted ones are skipped.
+  final List<Map<String, Object?>> recurring;
+
+  /// Recurring payment id to its schedule, worded in the report's language.
+  final Map<String, String> recurringSchedules;
 }
 
 /// A readable, printable report of every expense: totals, spending by
-/// category and by month, then each month's expenses. For reading and
-/// sharing only; it cannot be imported.
+/// category and by month, then each month's expenses. Income is summed up
+/// next to the spending but kept out of every spending figure. For reading
+/// and sharing only; it cannot be imported.
 ///
 /// Pure Dart, so it can run on a background isolate.
 Future<Uint8List> buildPdfReport(ReportInput input) async {
@@ -56,12 +69,22 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
       ? pw.TextDirection.rtl
       : pw.TextDirection.ltr;
 
-  final expenses = [
+  final transactions = [
     for (final row in input.expenses)
       if (row['deleted_at'] == null) _ReportExpense.from(row),
   ]..sort((a, b) => b.date.compareTo(a.date));
+  bool isIncome(_ReportExpense e) =>
+      input.incomeCategoryIds.contains(e.categoryId);
+  final expenses = [
+    for (final e in transactions)
+      if (!isIncome(e)) e,
+  ];
 
   final total = expenses.fold<double>(0, (sum, e) => sum + e.amount);
+  final income = transactions.fold<double>(
+    0,
+    (sum, e) => isIncome(e) ? sum + e.amount : sum,
+  );
   final byMonth = <Month, List<_ReportExpense>>{};
   final byCategory = <String, (int, double)>{};
   for (final expense in expenses) {
@@ -73,6 +96,11 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
     ..sort((a, b) => b.value.$2.compareTo(a.value.$2));
 
   String categoryName(String id) => input.categoryNames[id] ?? id;
+
+  final recurring = [
+    for (final row in input.recurring)
+      if (row['deleted_at'] == null) row,
+  ];
 
   final theme = pw.ThemeData.withFont(
     base: pw.Font.ttf(input.font.buffer.asByteData()),
@@ -148,7 +176,7 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
           texts.generated,
           style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
         ),
-        if (expenses.isEmpty) ...[
+        if (transactions.isEmpty) ...[
           pw.SizedBox(height: 24),
           _text(texts.empty),
         ] else ...[
@@ -157,8 +185,8 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
             headers: [texts.period, texts.totalSpent, texts.count],
             rows: [
               [
-                '${formats.fullDate(expenses.last.date)} - '
-                    '${formats.fullDate(expenses.first.date)}',
+                '${formats.fullDate(transactions.last.date)} - '
+                    '${formats.fullDate(transactions.first.date)}',
                 formats.money(total),
                 '${expenses.length}',
               ],
@@ -166,11 +194,18 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
             amountColumns: {1, 2},
           ),
           pw.SizedBox(height: 6),
-          _text(
-            '${texts.monthlyAverage}: '
-            '${formats.money(total / byMonth.length)}',
-            style: const pw.TextStyle(fontSize: 10),
-          ),
+          if (byMonth.isNotEmpty)
+            _text(
+              '${texts.monthlyAverage}: '
+              '${formats.money(total / byMonth.length)}',
+              style: const pw.TextStyle(fontSize: 10),
+            ),
+          if (income > 0)
+            _text(
+              '${texts.totalIncome}: ${formats.money(income)}  ·  '
+              '${texts.net}: ${formats.money(income - total)}',
+              style: const pw.TextStyle(fontSize: 10),
+            ),
           heading(texts.byCategory),
           table(
             headers: [texts.category, texts.count, texts.total, texts.share],
@@ -222,6 +257,29 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
               amountColumns: {3},
             ),
           ],
+        ],
+        if (recurring.isNotEmpty) ...[
+          heading(texts.recurringPayments),
+          table(
+            headers: [
+              texts.name,
+              texts.category,
+              texts.repeats,
+              texts.mode,
+              texts.amount,
+            ],
+            rows: [
+              for (final row in recurring)
+                [
+                  '${row['title']}',
+                  categoryName(row['category_id']! as String),
+                  input.recurringSchedules[row['id']] ?? '',
+                  row['mode'] == 'auto' ? texts.autoDeduct : texts.reminder,
+                  formats.money((row['amount']! as num).toDouble()),
+                ],
+            ],
+            amountColumns: {4},
+          ),
         ],
       ],
     ),

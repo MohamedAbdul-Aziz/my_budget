@@ -3,6 +3,7 @@ import 'package:sqflite/sqflite.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/expense_category.dart';
+import '../../domain/entities/transaction_type.dart';
 import '../models/category_model.dart';
 
 abstract interface class CategoryLocalDataSource {
@@ -12,7 +13,8 @@ abstract interface class CategoryLocalDataSource {
 
   Future<CategoryModel> updateCategory(CategoryModel category);
 
-  /// Returns how many expenses were moved to the fallback category.
+  /// Returns how many transactions were moved to the fallback category of
+  /// the same type.
   Future<int> deleteCategory(String id);
 }
 
@@ -28,7 +30,9 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
       final rows = await db.query(
         'categories',
         where: 'deleted_at IS NULL',
-        orderBy: 'sort_order ASC, name COLLATE NOCASE ASC',
+        // Spending categories first ('expense' sorts before 'income'), each
+        // type in the user's order.
+        orderBy: 'type ASC, sort_order ASC, name COLLATE NOCASE ASC',
       );
       return rows.map(CategoryModel.fromMap).toList();
     } on DatabaseException catch (error) {
@@ -75,12 +79,35 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
     try {
       final db = await _appDatabase.database;
       return db.transaction((txn) async {
-        // Re-home the expenses first, so nothing is ever silently dropped
-        // along with the category. Each move is a change of its own that the
-        // next backup carries to the cloud.
+        final rows = await txn.query(
+          'categories',
+          columns: ['type'],
+          where: 'id = ? AND deleted_at IS NULL',
+          whereArgs: [id],
+          limit: 1,
+        );
+        if (rows.isEmpty) {
+          throw const NotFoundFailure('category missing');
+        }
+        // Spending moves to Other and income to Other income, so a delete
+        // never turns one into the other.
+        final fallbackId = ExpenseCategory.fallbackIdFor(
+          TransactionType.fromStorageKey(rows.first['type']),
+        );
+
+        // Re-home the transactions first, so nothing is ever silently
+        // dropped along with the category. Each move is a change of its own
+        // that the next backup carries to the cloud.
         final moved = await txn.update(
           'expenses',
-          AppDatabase.changed({'category_id': ExpenseCategory.fallbackId}),
+          AppDatabase.changed({'category_id': fallbackId}),
+          where: 'category_id = ? AND deleted_at IS NULL',
+          whereArgs: [id],
+        );
+        // Recurring payments follow, so the ones they log land there too.
+        await txn.update(
+          'recurring_expenses',
+          AppDatabase.changed({'category_id': fallbackId}),
           where: 'category_id = ? AND deleted_at IS NULL',
           whereArgs: [id],
         );

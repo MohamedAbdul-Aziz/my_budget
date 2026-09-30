@@ -8,7 +8,7 @@ import '../../domain/entities/monthly_summary.dart';
 import '../models/expense_model.dart';
 
 abstract interface class ExpenseLocalDataSource {
-  Future<List<ExpenseModel>> getExpensesForMonth(Month month);
+  Future<List<ExpenseModel>> getTransactionsForMonth(Month month);
 
   Future<List<MonthlySummary>> getMonthlySummaries();
 
@@ -29,7 +29,7 @@ class ExpenseLocalDataSourceImpl implements ExpenseLocalDataSource {
   final AppDatabase _appDatabase;
 
   @override
-  Future<List<ExpenseModel>> getExpensesForMonth(Month month) async {
+  Future<List<ExpenseModel>> getTransactionsForMonth(Month month) async {
     try {
       final db = await _appDatabase.database;
       final rows = await db.rawQuery(
@@ -48,12 +48,18 @@ class ExpenseLocalDataSourceImpl implements ExpenseLocalDataSource {
   Future<List<MonthlySummary>> getMonthlySummaries() async {
     try {
       final db = await _appDatabase.database;
+      // Spending only, but a month that so far has only income is still
+      // listed, with nothing spent.
       final rows = await db.rawQuery('''
-        SELECT month_key, SUM(amount) AS total, COUNT(*) AS entries
-        FROM expenses
-        WHERE deleted_at IS NULL
-        GROUP BY month_key
-        ORDER BY month_key DESC
+        SELECT
+          e.month_key AS month_key,
+          SUM(CASE WHEN c.type = 'income' THEN 0 ELSE e.amount END) AS total,
+          SUM(CASE WHEN c.type = 'income' THEN 0 ELSE 1 END) AS entries
+        FROM expenses e
+        INNER JOIN categories c ON c.id = e.category_id
+        WHERE e.deleted_at IS NULL
+        GROUP BY e.month_key
+        ORDER BY e.month_key DESC
       ''');
       return rows
           .map(

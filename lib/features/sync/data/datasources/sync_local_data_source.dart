@@ -77,31 +77,41 @@ class SyncLocalDataSourceImpl implements SyncLocalDataSource {
       _records.mergeNewest(cloud, fromCloud: true);
 
   @override
-  Future<void> forgetAccount(String userId) =>
-      _guard('forget deleted account', () async {
-        final db = await _appDatabase.database;
-        await db.transaction((txn) async {
-          await txn.delete(
-            'sync_meta',
-            where: 'key = ? OR (key = ? AND value = ?)',
-            whereArgs: [_lastSyncedKey(userId), _ownerKey, userId],
-          );
-          // Deleted rows only existed to carry the delete to that account's
-          // cloud copy, which is gone now. Expenses first: a deleted category
-          // row cannot go while a deleted expense still points at it.
-          await txn.delete('expenses', where: 'deleted_at IS NOT NULL');
-          await txn.delete(
-            'categories',
-            where:
-                'deleted_at IS NOT NULL '
-                'AND id NOT IN (SELECT category_id FROM expenses)',
-          );
-          // Everything left is news to whichever account backs up next.
-          for (final table in ['categories', 'expenses', 'settings']) {
-            await txn.update(table, {'dirty': 1});
-          }
-        });
+  Future<void> forgetAccount(String userId) => _guard(
+    'forget deleted account',
+    () async {
+      final db = await _appDatabase.database;
+      await db.transaction((txn) async {
+        await txn.delete(
+          'sync_meta',
+          where: 'key = ? OR (key = ? AND value = ?)',
+          whereArgs: [_lastSyncedKey(userId), _ownerKey, userId],
+        );
+        // Deleted rows only existed to carry the delete to that account's
+        // cloud copy, which is gone now. Expenses and recurring payments
+        // first: a deleted category row cannot go while anything still
+        // points at it.
+        await txn.delete('expenses', where: 'deleted_at IS NOT NULL');
+        await txn.delete('recurring_expenses', where: 'deleted_at IS NOT NULL');
+        await txn.delete(
+          'categories',
+          where:
+              'deleted_at IS NOT NULL '
+              'AND id NOT IN (SELECT category_id FROM expenses) '
+              'AND id NOT IN (SELECT category_id FROM recurring_expenses)',
+        );
+        // Everything left is news to whichever account backs up next.
+        for (final table in [
+          'categories',
+          'expenses',
+          'settings',
+          'recurring_expenses',
+        ]) {
+          await txn.update(table, {'dirty': 1});
+        }
       });
+    },
+  );
 
   static String _lastSyncedKey(String userId) => 'last_synced_at:$userId';
 

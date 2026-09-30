@@ -35,7 +35,7 @@ void main() {
       addTearDown(database.close);
       final db = await database.database;
 
-      expect(await db.getVersion(), 2);
+      expect(await db.getVersion(), 4);
 
       final expense = (await db.query('expenses')).single;
       expect(expense['updated_at'], expense['created_at']);
@@ -52,11 +52,24 @@ void main() {
       expect(categories['cat_pets']!['updated_at'] as int, greaterThan(0));
       expect(categories.values.every((row) => row['dirty'] == 1), isTrue);
 
+      // Everything recorded before income existed is spending, and the
+      // income built-ins arrive untouched.
+      expect(categories['cat_pets']!['type'], 'expense');
+      expect(categories['cat_bills']!['type'], 'expense');
+      for (final seeded in AppDatabase.defaultIncomeCategories) {
+        final row = categories[seeded['id']]!;
+        expect(row['type'], 'income');
+        expect(row['updated_at'], 0);
+      }
+
       final setting = (await db.query('settings')).single;
       expect(setting['updated_at'] as int, greaterThan(0));
       expect(setting['dirty'], 1);
 
       expect(await db.query('sync_meta'), isEmpty);
+
+      // Recurring payments arrive empty, ready to be set up.
+      expect(await db.query('recurring_expenses'), isEmpty);
     },
   );
 
@@ -70,7 +83,7 @@ void main() {
       CategoryLocalDataSourceImpl(database),
     );
 
-    final month = (await expenses.getExpensesForMonth(
+    final month = (await expenses.getTransactionsForMonth(
       const Month(2026, 8),
     )).dataOrNull!;
     expect(month.single.amount, 12.5);
