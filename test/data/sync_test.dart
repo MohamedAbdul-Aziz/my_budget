@@ -13,6 +13,11 @@ import 'package:my_budget/features/expenses/data/datasources/expense_local_data_
 import 'package:my_budget/features/expenses/data/repositories/expense_repository_impl.dart';
 import 'package:my_budget/features/expenses/domain/entities/expense.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
+import 'package:my_budget/features/people/data/datasources/people_local_data_source.dart';
+import 'package:my_budget/features/people/data/repositories/people_repository_impl.dart';
+import 'package:my_budget/features/people/domain/entities/person.dart';
+import 'package:my_budget/features/people/domain/entities/person_transaction.dart';
+import 'package:my_budget/features/people/domain/entities/person_transaction_type.dart';
 import 'package:my_budget/features/recurring/data/datasources/recurring_local_data_source.dart';
 import 'package:my_budget/features/recurring/data/repositories/recurring_repository_impl.dart';
 import 'package:my_budget/features/recurring/domain/entities/recurrence_frequency.dart';
@@ -344,6 +349,77 @@ void main() {
     expect(await phoneA.monthOf(august), hasLength(1));
   });
 
+  test('people, their transactions, change logs and settlements reach '
+      'another phone', () async {
+    final sara = await phoneA.addPerson('Sara');
+    final lunch = await phoneA.addDebt(sara, 20);
+    await phoneA.people.updateTransaction(
+      id: lunch.id,
+      amount: 24,
+      type: PersonTransactionType.iPaidForThem,
+      date: august,
+    );
+    await phoneA.people.settleUp(sara.id);
+    await phoneA.addDebt(sara, 10, type: PersonTransactionType.theyPaidForMe);
+
+    final report = (await phoneA.sync.backUp()).dataOrNull!;
+    expect(cloud.rows('people'), hasLength(1));
+    expect(cloud.rows('person_transactions'), hasLength(2));
+    expect(cloud.rows('person_transaction_edits'), hasLength(1));
+    expect(cloud.rows('settlements'), hasLength(1));
+    expect(report.changes, greaterThanOrEqualTo(5));
+
+    await phoneB.sync.restore();
+
+    final ledger = (await phoneB.people.getLedger(sara.id)).dataOrNull!;
+    expect(ledger.person.name, 'Sara');
+    expect(ledger.balance.cents, -1000);
+    final settled = ledger.history.single;
+    expect(settled.settlement.balance.cents, 2400);
+    expect(settled.transactions.single.edits.single.amount, 20);
+    // Restored rows are already in the cloud, so none waits for upload.
+    final db = await phoneB.database.database;
+    for (final table in AppDatabase.peopleTables) {
+      expect(await db.query(table, where: 'dirty = 1'), isEmpty);
+    }
+  });
+
+  test('a person deleted on another phone takes along what this phone '
+      'recorded with them', () async {
+    final sara = await phoneA.addPerson('Sara');
+    await phoneA.sync.backUp();
+    await phoneB.sync.restore();
+
+    // Phone B records something for Sara, phone A deletes her.
+    await phoneB.addDebt(sara, 15);
+    await phoneA.people.deletePerson(sara.id);
+    await phoneA.sync.backUp();
+    await phoneB.sync.restore();
+
+    expect((await phoneB.people.getPeople()).dataOrNull, isEmpty);
+    // The delete goes back up with phone B's next backup, so the cloud
+    // does not keep a transaction for someone who is gone.
+    await phoneB.sync.backUp();
+    expect(cloud.rows('person_transactions').single['deleted_at'], isNotNull);
+  });
+
+  test('forgetting a deleted account clears deleted people rows', () async {
+    final sara = await phoneA.addPerson('Sara');
+    await phoneA.addDebt(sara, 15);
+    final omar = await phoneA.addPerson('Omar');
+    await phoneA.people.deletePerson(sara.id);
+    await phoneA.sync.backUp();
+
+    final forgotten = await phoneA.sync.forgetAccount('user-1');
+
+    expect(forgotten.isSuccess, isTrue);
+    final db = await phoneA.database.database;
+    expect(await db.query('person_transactions'), isEmpty);
+    phoneA.remote.userId = 'user-2';
+    await phoneA.sync.backUp();
+    expect(cloud.rows('people', userId: 'user-2').single['id'], omar.id);
+  });
+
   test('rows survive the trip off the phone and back unchanged', () {
     const category = {
       'id': 'cat_1',
@@ -405,6 +481,56 @@ void main() {
       ),
       recurring,
     );
+    const people = <String, Map<String, Object?>>{
+      'people': {
+        'id': 'per_1',
+        'name': 'سارة',
+        'phone': '+20 100 000',
+        'color_value': 0xFF1E88E5,
+        'created_at': 1785000000000,
+        'updated_at': 1785000000001,
+        'deleted_at': null,
+      },
+      'settlements': {
+        'id': 'set_1',
+        'person_id': 'per_1',
+        'net_amount': -12.5,
+        'settled_at': 1785000000000,
+        'expense_id': 'exp_1',
+        'created_at': 1785000000000,
+        'updated_at': 1785000000001,
+        'deleted_at': null,
+      },
+      'person_transactions': {
+        'id': 'ptx_1',
+        'person_id': 'per_1',
+        'amount': 12.5,
+        'type': 'they_paid_for_me',
+        'note': 'Taxi',
+        'date': 1785000000000,
+        'settled_at': 1785000000000,
+        'settlement_id': 'set_1',
+        'created_at': 1785000000000,
+        'updated_at': 1785000000001,
+        'deleted_at': 1785000000002,
+      },
+      'person_transaction_edits': {
+        'id': 'pte_1',
+        'transaction_id': 'ptx_1',
+        'amount': 10.0,
+        'type': 'i_paid_for_them',
+        'note': null,
+        'date': 1785000000000,
+        'edited_at': 1785000000001,
+        'updated_at': 1785000000001,
+        'deleted_at': null,
+      },
+    };
+    for (final MapEntry(key: table, value: row) in people.entries) {
+      final portable = PortableRecords.toPortable(table, {...row, 'dirty': 1});
+      expect(portable.containsKey('dirty'), isFalse, reason: table);
+      expect(PortableRecords.fromPortable(table, portable), row);
+    }
   });
 }
 
@@ -422,6 +548,7 @@ class Phone {
       SettingsLocalDataSourceImpl(database),
     );
     recurring = RecurringRepositoryImpl(RecurringLocalDataSourceImpl(database));
+    people = PeopleRepositoryImpl(PeopleLocalDataSourceImpl(database));
     sync = SyncRepositoryImpl(
       local: SyncLocalDataSourceImpl(database, LocalRecords(database)),
       remote: remote,
@@ -435,7 +562,22 @@ class Phone {
   late final CategoryRepositoryImpl categories;
   late final SettingsRepositoryImpl settingsRepo;
   late final RecurringRepositoryImpl recurring;
+  late final PeopleRepositoryImpl people;
   late final SyncRepositoryImpl sync;
+
+  Future<Person> addPerson(String name) async =>
+      (await people.addPerson(name: name, colorValue: 0xFF1E88E5)).dataOrNull!;
+
+  Future<PersonTransaction> addDebt(
+    Person person,
+    double amount, {
+    PersonTransactionType type = PersonTransactionType.iPaidForThem,
+  }) async => (await people.addTransaction(
+    personId: person.id,
+    amount: amount,
+    type: type,
+    date: DateTime(2026, 8, 4),
+  )).dataOrNull!;
 
   Future<RecurringExpense> addRecurring({
     RecurringMode mode = RecurringMode.reminder,
@@ -490,6 +632,7 @@ class FakeCloud {
     'expenses': {},
     'user_settings': {},
     'recurring_expenses': {},
+    for (final table in AppDatabase.peopleTables) table: {},
   };
 
   List<Map<String, Object?>> rows(String table, {String userId = 'user-1'}) =>
@@ -545,6 +688,18 @@ class FakeRemote implements SyncRemoteDataSource {
     for (final row in batch.recurring) {
       cloud.upsert('recurring_expenses', userId, row['id']! as String, row);
     }
+    // Through the portable form, as the real upload sends them.
+    for (final MapEntry(key: table, value: rows)
+        in batch.peopleTables.entries) {
+      for (final row in rows) {
+        cloud.upsert(
+          table,
+          userId,
+          row['id']! as String,
+          PortableRecords.toPortable(table, row),
+        );
+      }
+    }
     onUploaded?.call(batch.length);
   }
 
@@ -559,6 +714,15 @@ class FakeRemote implements SyncRemoteDataSource {
       expenses: cloud.rows('expenses', userId: user),
       settings: cloud.rows('user_settings', userId: user),
       recurring: cloud.rows('recurring_expenses', userId: user),
+      people: _people('people', user),
+      settlements: _people('settlements', user),
+      personTransactions: _people('person_transactions', user),
+      personTransactionEdits: _people('person_transaction_edits', user),
     );
   }
+
+  List<Map<String, Object?>> _people(String table, String user) => [
+    for (final row in cloud.rows(table, userId: user))
+      PortableRecords.fromPortable(table, row),
+  ];
 }

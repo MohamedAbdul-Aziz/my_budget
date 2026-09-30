@@ -342,6 +342,7 @@ class _ImportDialog extends StatelessWidget {
               exportedAt == null ? null : formats.fullDate(exportedAt),
               backup.expenses,
               backup.categories,
+              people: backup.people,
             ),
           ),
           const SizedBox(height: 12),

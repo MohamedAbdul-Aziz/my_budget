@@ -8,6 +8,10 @@ class RecordBatch {
     this.expenses = const [],
     this.settings = const [],
     this.recurring = const [],
+    this.people = const [],
+    this.settlements = const [],
+    this.personTransactions = const [],
+    this.personTransactionEdits = const [],
   });
 
   final List<Map<String, Object?>> categories;
@@ -17,6 +21,27 @@ class RecordBatch {
   /// `recurring_expenses` rows.
   final List<Map<String, Object?>> recurring;
 
+  // People and debts, in the order the tables depend on each other.
+  final List<Map<String, Object?>> people;
+  final List<Map<String, Object?>> settlements;
+  final List<Map<String, Object?>> personTransactions;
+  final List<Map<String, Object?>> personTransactionEdits;
+
+  /// The people and debts rows by table name, parents first.
+  Map<String, List<Map<String, Object?>>> get peopleTables => {
+    'people': people,
+    'settlements': settlements,
+    'person_transactions': personTransactions,
+    'person_transaction_edits': personTransactionEdits,
+  };
+
   int get length =>
-      categories.length + expenses.length + settings.length + recurring.length;
+      categories.length +
+      expenses.length +
+      settings.length +
+      recurring.length +
+      people.length +
+      settlements.length +
+      personTransactions.length +
+      personTransactionEdits.length;
 }

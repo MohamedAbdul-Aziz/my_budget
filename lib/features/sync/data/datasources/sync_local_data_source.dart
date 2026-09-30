@@ -100,12 +100,33 @@ class SyncLocalDataSourceImpl implements SyncLocalDataSource {
               'AND id NOT IN (SELECT category_id FROM expenses) '
               'AND id NOT IN (SELECT category_id FROM recurring_expenses)',
         );
+        // People and debts children first, for the same reason: a deleted
+        // row goes only once nothing points at it any more.
+        await txn.delete(
+          'person_transaction_edits',
+          where: 'deleted_at IS NOT NULL',
+        );
+        await txn.delete(
+          'person_transactions',
+          where:
+              'deleted_at IS NOT NULL AND id NOT IN '
+              '(SELECT transaction_id FROM person_transaction_edits)',
+        );
+        await txn.delete('settlements', where: 'deleted_at IS NOT NULL');
+        await txn.delete(
+          'people',
+          where:
+              'deleted_at IS NOT NULL '
+              'AND id NOT IN (SELECT person_id FROM person_transactions) '
+              'AND id NOT IN (SELECT person_id FROM settlements)',
+        );
         // Everything left is news to whichever account backs up next.
         for (final table in [
           'categories',
           'expenses',
           'settings',
           'recurring_expenses',
+          ...AppDatabase.peopleTables,
         ]) {
           await txn.update(table, {'dirty': 1});
         }

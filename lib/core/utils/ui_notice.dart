@@ -17,6 +17,12 @@ enum NoticeCode {
   recurringPaymentUndone,
   recurringDeleted,
   recurringAutoLogged,
+  personAdded,
+  personUpdated,
+  personDeleted,
+  debtDeleted,
+  settledUp,
+  settlementLogged,
   failure,
 }
 
@@ -36,7 +42,8 @@ class UiNotice extends Equatable {
 
   final NoticeCode code;
 
-  /// Category or recurring payment name, for the notices that mention one.
+  /// Category, recurring payment or person name, for the notices that
+  /// mention one.
   final String? name;
 
   /// How many transactions were moved by a category deletion, or logged

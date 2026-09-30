@@ -14,6 +14,7 @@ import 'features/categories/presentation/cubit/categories_cubit.dart';
 import 'features/categories/presentation/cubit/categories_state.dart';
 import 'features/expenses/presentation/cubit/home_cubit.dart';
 import 'features/expenses/presentation/cubit/home_state.dart';
+import 'features/people/presentation/cubit/people_cubit.dart';
 import 'features/quick_expense/presentation/widgets/quick_expense_bridge.dart';
 import 'features/recurring/presentation/cubit/recurring_cubit.dart';
 import 'features/recurring/presentation/cubit/recurring_state.dart';
@@ -41,6 +42,7 @@ class MyBudgetApp extends StatelessWidget {
         BlocProvider.value(value: sl<BudgetCubit>()),
         BlocProvider.value(value: sl<DataManagementCubit>()),
         BlocProvider.value(value: sl<RecurringCubit>()),
+        BlocProvider.value(value: sl<PeopleCubit>()),
       ],
       child: MultiBlocListener(
         listeners: [
@@ -137,5 +139,7 @@ class MyBudgetApp extends StatelessWidget {
     context.read<BudgetCubit>().refresh();
     // Recurring payments came along too, and any now due are logged.
     context.read<RecurringCubit>().refresh();
+    // People, their transactions and settlements came along as well.
+    context.read<PeopleCubit>().refresh();
   }
 }

@@ -39,6 +39,27 @@ class ExportTexts {
     required this.autoDeduct,
     required this.reminder,
     required this.paidThrough,
+    required this.peopleAndDebts,
+    required this.person,
+    required this.phone,
+    required this.balance,
+    required this.status,
+    required this.owesYou,
+    required this.youOwe,
+    required this.settledUp,
+    required this.iPaidForThem,
+    required this.theyPaidForMe,
+    required this.open,
+    required this.settled,
+    required this.settledOn,
+    required this.created,
+    required this.lastEdited,
+    required this.edits,
+    required this.activeTransactions,
+    required this.settledHistory,
+    required this.owedToYou,
+    required this.theyPaidYou,
+    required this.youPaidThem,
   });
 
   // Column headings.
@@ -87,6 +108,40 @@ class ExportTexts {
   final String autoDeduct;
   final String reminder;
   final String paidThrough;
+
+  // People and debts: the report section and its two CSVs.
+  final String peopleAndDebts;
+  final String person;
+  final String phone;
+  final String balance;
+  final String status;
+
+  // Where the user stands with a person.
+  final String owesYou;
+  final String youOwe;
+  final String settledUp;
+
+  // Values of the type and status columns.
+  final String iPaidForThem;
+  final String theyPaidForMe;
+  final String open;
+  final String settled;
+
+  // The audit trail.
+  final String settledOn;
+  final String created;
+  final String lastEdited;
+  final String edits;
+
+  final String activeTransactions;
+  final String settledHistory;
+
+  /// The total everyone owes the user.
+  final String owedToYou;
+
+  // Which way a past settlement went.
+  final String theyPaidYou;
+  final String youPaidThem;
 
   String page(int page, int pages) => pageTemplate
       .replaceAll('{page}', '$page')

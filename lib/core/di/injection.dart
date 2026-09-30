@@ -51,6 +51,21 @@ import '../../features/expenses/domain/usecases/get_monthly_summaries.dart';
 import '../../features/expenses/domain/usecases/update_expense.dart';
 import '../../features/expenses/presentation/cubit/expense_form_cubit.dart';
 import '../../features/expenses/presentation/cubit/home_cubit.dart';
+import '../../features/people/data/datasources/people_local_data_source.dart';
+import '../../features/people/data/repositories/people_repository_impl.dart';
+import '../../features/people/domain/repositories/people_repository.dart';
+import '../../features/people/domain/usecases/add_person.dart';
+import '../../features/people/domain/usecases/add_person_transaction.dart';
+import '../../features/people/domain/usecases/delete_person.dart';
+import '../../features/people/domain/usecases/delete_person_transaction.dart';
+import '../../features/people/domain/usecases/get_people.dart';
+import '../../features/people/domain/usecases/get_person_ledger.dart';
+import '../../features/people/domain/usecases/log_settlement_to_budget.dart';
+import '../../features/people/domain/usecases/settle_up.dart';
+import '../../features/people/domain/usecases/update_person.dart';
+import '../../features/people/domain/usecases/update_person_transaction.dart';
+import '../../features/people/presentation/cubit/people_cubit.dart';
+import '../../features/people/presentation/cubit/person_ledger_cubit.dart';
 import '../../features/quick_expense/data/datasources/quick_expense_widget_channel.dart';
 import '../../features/quick_expense/data/repositories/quick_expense_widget_repository_impl.dart';
 import '../../features/quick_expense/domain/repositories/quick_expense_widget_repository.dart';
@@ -102,6 +117,7 @@ void configureDependencies({AppDatabase? database}) {
   _registerExpenses();
   _registerBudgets();
   _registerRecurring();
+  _registerPeople();
   _registerSettings();
   _registerQuickExpense();
   _registerSync();
@@ -278,6 +294,50 @@ void _registerQuickExpense() {
     ..registerLazySingleton(() => PublishQuickExpenseWidget(sl()))
     ..registerLazySingleton(
       () => QuickExpenseWidgetSync(getData: sl(), publish: sl()),
+    );
+}
+
+void _registerPeople() {
+  _registerRepository<PeopleRepository>(() => PeopleRepositoryImpl(sl()));
+  sl
+    ..registerLazySingleton<PeopleLocalDataSource>(
+      () => PeopleLocalDataSourceImpl(sl()),
+    )
+    ..registerLazySingleton(() => GetPeople(sl()))
+    ..registerLazySingleton(() => GetPersonLedger(sl()))
+    ..registerLazySingleton(() => AddPerson(sl()))
+    ..registerLazySingleton(() => UpdatePerson(sl()))
+    ..registerLazySingleton(() => DeletePerson(sl()))
+    ..registerLazySingleton(() => AddPersonTransaction(sl()))
+    ..registerLazySingleton(() => UpdatePersonTransaction(sl()))
+    ..registerLazySingleton(() => DeletePersonTransaction(sl()))
+    ..registerLazySingleton(() => SettleUp(sl()))
+    ..registerLazySingleton(
+      () => LogSettlementToBudget(
+        peopleRepository: sl(),
+        expenseRepository: sl(),
+      ),
+    )
+    // Shared: the People tab and every ledger screen change the same list.
+    ..registerLazySingleton(
+      () => PeopleCubit(
+        getPeople: sl(),
+        addPerson: sl(),
+        addPersonTransaction: sl(),
+        deletePerson: sl(),
+      ),
+    )
+    // One per ledger screen: each shows one person.
+    ..registerFactory(
+      () => PersonLedgerCubit(
+        getPersonLedger: sl(),
+        updatePerson: sl(),
+        addPersonTransaction: sl(),
+        updatePersonTransaction: sl(),
+        deletePersonTransaction: sl(),
+        settleUp: sl(),
+        logSettlementToBudget: sl(),
+      ),
     );
 }
 

@@ -41,6 +41,8 @@ lib/
     budgets/         monthly + per-category limits and alerts (BudgetCubit)
     recurring/       recurring payments: schedules, Paid/Upcoming/Overdue, auto-deduct,
                      mark as paid (RecurringCubit app-wide, RecurringFormCubit per screen)
+    people/          People tab, per-person ledger, settle up, audit trail
+                     (PeopleCubit app-wide, PersonLedgerCubit per screen)
     analyses/        Analyses tab and charts (AnalysesCubit, domain + presentation only)
     settings/        theme, language, currency (SettingsCubit)
     auth/            Supabase email sign-up/sign-in, OTP confirm, delete account (AccountCubit)
@@ -55,10 +57,11 @@ test/{core,data,domain,presentation}/
 ```
 
 ## 3) Data Model Essentials
-- Tables: `categories`, `expenses`, `settings` (key/value), `recurring_expenses`. `_schemaVersion` is in `app_database.dart` (currently **4**).
+- Tables: `categories`, `expenses`, `settings` (key/value), `recurring_expenses`, and the people tables (`AppDatabase.peopleTables`). `_schemaVersion` is in `app_database.dart` (currently **5**).
 - v2 added sync columns: `updated_at` (ms), `deleted_at` (soft delete; every read must skip these rows), `dirty` (1 = not yet synced). Stamp local writes with `AppDatabase.changed(row)`.
 - v3 added `categories.type` (`expense` | `income`). A transaction's type is its category's type. The table stays named `expenses` for backup and cloud compatibility (`TransactionType.fromStorageKey`).
 - v4 added `recurring_expenses`: a schedule (`frequency` weekly|monthly|yearly, `due_day`, `due_month` for yearly), `mode` (`auto` | `reminder`), and `starts_on` / `paid_through` as `yyyy-MM-dd` text (calendar days, timezone-free). A payment it logs is an ordinary `expenses` row whose id is `<recurringId>_<yyyymmdd>`, so two phones logging the same payment merge into one row. Paying settles the oldest unpaid due date (`paid_through`) in the same SQLite transaction as the expense insert.
+- v5 added `people`, `settlements`, `person_transactions` and `person_transaction_edits` (the change log: values *before* each edit). A transaction is open until `settled_at` + `settlement_id` are set; the balance is summed in whole cents over open ones (`DebtBalance`). Settled transactions are locked. Deleting a person soft-deletes everything recorded with them; `LocalRecords` writes these tables parents first, skips orphans, and cascades a person deleted elsewhere. A settlement logged in the budget is an ordinary `expenses` row in Other / Other income, linked by `settlements.expense_id`.
 - `expenses.month_key` drives monthly queries. Deleting a category moves its transactions and recurring payments to *Other*.
 - Budgets are stored as `budget.*` rows in `settings`, so they travel with backups without a schema change.
 - For any schema change, follow the **Data Parity Rule** below.

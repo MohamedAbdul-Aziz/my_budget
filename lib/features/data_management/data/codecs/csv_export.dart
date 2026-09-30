@@ -1,4 +1,5 @@
 import '../models/export_texts.dart';
+import 'debt_rows.dart';
 
 /// Spreadsheet exports for Excel, Google Sheets, Numbers and the like.
 ///
@@ -125,6 +126,91 @@ abstract final class CsvExport {
         '${row['id']}',
       ],
   ]);
+
+  /// One row per person: where the user stands with them now.
+  static String people({required DebtRows debts, required ExportTexts texts}) =>
+      _document([
+        [
+          texts.person,
+          texts.phone,
+          texts.status,
+          texts.balance,
+          texts.open,
+          texts.created,
+          texts.id,
+        ],
+        for (final person in debts.people) _personRow(person, debts, texts),
+      ]);
+
+  /// Every transaction with every person, open and settled, with its audit
+  /// trail: when it was recorded, last edited and settled.
+  static String debts({
+    required DebtRows debts,
+    required String currency,
+    required ExportTexts texts,
+  }) => _document([
+    [
+      texts.person,
+      texts.date,
+      texts.type,
+      texts.amount,
+      texts.currency,
+      texts.note,
+      texts.status,
+      texts.settledOn,
+      texts.created,
+      texts.lastEdited,
+      texts.edits,
+      texts.id,
+    ],
+    for (final row in debts.transactions) _debtRow(row, debts, currency, texts),
+  ]);
+
+  static List<String> _personRow(
+    Map<String, Object?> person,
+    DebtRows debts,
+    ExportTexts texts,
+  ) {
+    final balance = debts.balanceOf(person['id']);
+    final open = debts.transactions.where(
+      (t) => t['person_id'] == person['id'] && t['settled_at'] == null,
+    );
+    return [
+      '${person['name']}',
+      (person['phone'] as String?) ?? '',
+      DebtRows.standing(balance, texts),
+      // Unsigned, with the status column saying which way it is owed: a
+      // leading minus would trip the formula guard and stop being a number.
+      amount(balance.magnitude),
+      '${open.length}',
+      isoDate(_int(person['created_at'])),
+      '${person['id']}',
+    ];
+  }
+
+  static List<String> _debtRow(
+    Map<String, Object?> row,
+    DebtRows debts,
+    String currency,
+    ExportTexts texts,
+  ) {
+    final (edits, lastEdited) = debts.editsOf(row['id']);
+    final settledAt = row['settled_at'];
+    return [
+      debts.personName(row['person_id']),
+      isoDate(_int(row['date'])),
+      DebtRows.typeLabel(row, texts),
+      amount(row['amount']! as num),
+      currency,
+      (row['note'] as String?) ?? '',
+      settledAt == null ? texts.open : texts.settled,
+      settledAt == null ? '' : isoDate(_int(settledAt)),
+      isoDate(_int(row['created_at'])),
+      lastEdited == null ? '' : isoDate(lastEdited.millisecondsSinceEpoch),
+      '$edits',
+      '${row['id']}',
+    ];
+  }
 
   static String isoDate(int millis) {
     final date = DateTime.fromMillisecondsSinceEpoch(millis);

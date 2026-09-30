@@ -17,6 +17,7 @@ import '../../domain/entities/share_anchor.dart';
 import '../../domain/repositories/data_management_repository.dart';
 import '../codecs/backup_codec.dart';
 import '../codecs/csv_export.dart';
+import '../codecs/debt_rows.dart';
 import '../codecs/pdf_report.dart';
 import '../datasources/device_files_data_source.dart';
 import '../datasources/report_fonts_data_source.dart';
@@ -99,6 +100,7 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
           exportedAt: backup.exportedAt,
           expenses: _liveCount(backup.records.expenses),
           categories: _liveCount(backup.records.categories),
+          people: _liveCount(backup.records.people),
         );
       });
 
@@ -148,7 +150,13 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
     String stamp,
   ) async {
     final strings = AppStrings.forLanguageCode(locale.languageCode);
-    final (expenses, categories, recurring) = await _spreadsheetsInBackground(
+    final (
+      expenses,
+      categories,
+      recurring,
+      people,
+      debts,
+    ) = await _spreadsheetsInBackground(
       records,
       _categoryNames(records, strings),
       _recurringSchedules(records, strings, locale),
@@ -162,6 +170,11 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
       // just be one more file to wonder about.
       if (recurring != null)
         await _writeText('my_budget_recurring_$stamp.csv', recurring),
+      // Likewise only for someone who keeps track of people.
+      if (people != null) ...[
+        await _writeText('my_budget_people_$stamp.csv', people),
+        await _writeText('my_budget_debts_$stamp.csv', debts!),
+      ],
     ];
   }
 
@@ -186,6 +199,10 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
         boldFont: fonts.bold,
         recurring: records.recurring,
         recurringSchedules: _recurringSchedules(records, strings, locale),
+        people: records.people,
+        settlements: records.settlements,
+        personTransactions: records.personTransactions,
+        personTransactionEdits: records.personTransactionEdits,
       ),
     );
     final name = 'my_budget_report_$stamp.pdf';
@@ -216,14 +233,16 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
   static Future<DecodedBackup> _decodeInBackground(String text) =>
       Isolate.run(() => BackupCodec.decode(text));
 
-  static Future<(String, String, String?)> _spreadsheetsInBackground(
+  static Future<(String, String, String?, String?, String?)>
+  _spreadsheetsInBackground(
     RecordBatch records,
     Map<String, String> categoryNames,
     Map<String, String> recurringSchedules,
     String currency,
     ExportTexts texts,
-  ) => Isolate.run(
-    () => (
+  ) => Isolate.run(() {
+    final (people, debts) = _peopleSpreadsheets(records, currency, texts);
+    return (
       CsvExport.expenses(
         expenses: records.expenses,
         categoryNames: categoryNames,
@@ -246,8 +265,29 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
               currency: currency,
               texts: texts,
             ),
-    ),
-  );
+      people,
+      debts,
+    );
+  });
+
+  /// The people and debts CSVs, or nulls for someone with no people.
+  static (String?, String?) _peopleSpreadsheets(
+    RecordBatch records,
+    String currency,
+    ExportTexts texts,
+  ) {
+    final debts = DebtRows(
+      people: records.people,
+      settlements: records.settlements,
+      transactions: records.personTransactions,
+      edits: records.personTransactionEdits,
+    );
+    if (debts.isEmpty) return (null, null);
+    return (
+      CsvExport.people(debts: debts, texts: texts),
+      CsvExport.debts(debts: debts, currency: currency, texts: texts),
+    );
+  }
 
   static Future<Uint8List> _reportInBackground(ReportInput input) =>
       Isolate.run(() => buildPdfReport(input));
@@ -339,6 +379,27 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
       autoDeduct: strings.autoDeduct,
       reminder: strings.remindMe,
       paidThrough: strings.colPaidThrough,
+      peopleAndDebts: strings.peopleAndDebts,
+      person: strings.person,
+      phone: strings.phone,
+      balance: strings.balance,
+      status: strings.colStatus,
+      owesYou: strings.owesYou,
+      youOwe: strings.youOwe,
+      settledUp: strings.settledUp,
+      iPaidForThem: strings.iPaidForThem,
+      theyPaidForMe: strings.theyPaidForMe,
+      open: strings.openStatus,
+      settled: strings.settledStatus,
+      settledOn: strings.settledOn,
+      created: strings.createdOn,
+      lastEdited: strings.lastEdited,
+      edits: strings.colEdits,
+      activeTransactions: strings.activeTransactions,
+      settledHistory: strings.settledHistory,
+      owedToYou: strings.owedToYou,
+      theyPaidYou: strings.theyPaidYou,
+      youPaidThem: strings.youPaidThem,
     );
   }
 

@@ -27,6 +27,11 @@ import 'package:my_budget/features/expenses/data/datasources/expense_local_data_
 import 'package:my_budget/features/expenses/data/repositories/expense_repository_impl.dart';
 import 'package:my_budget/features/expenses/domain/entities/expense.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
+import 'package:my_budget/features/people/data/datasources/people_local_data_source.dart';
+import 'package:my_budget/features/people/data/repositories/people_repository_impl.dart';
+import 'package:my_budget/features/people/domain/entities/person.dart';
+import 'package:my_budget/features/people/domain/entities/person_transaction.dart';
+import 'package:my_budget/features/people/domain/entities/person_transaction_type.dart';
 import 'package:my_budget/features/recurring/data/datasources/recurring_local_data_source.dart';
 import 'package:my_budget/features/recurring/data/repositories/recurring_repository_impl.dart';
 import 'package:my_budget/features/recurring/domain/entities/recurrence_frequency.dart';
@@ -101,6 +106,10 @@ void main() {
         'expenses',
         'settings',
         'recurring_expenses',
+        'people',
+        'settlements',
+        'person_transactions',
+        'person_transaction_edits',
       });
       final expenses = json['expenses'] as List;
       final stored = (await phoneA.records.readAll()).expenses;
@@ -170,6 +179,74 @@ void main() {
       final kept = (await phoneB.recurring.getRecurring()).dataOrNull!;
       expect(kept.single.title, 'Only on this phone');
     });
+
+    test('people and their full ledger travel with the file', () async {
+      final sara = await phoneA.addPerson('سارة', phone: '+20 100');
+      final lunch = await phoneA.addDebt(sara, 20, note: 'Lunch');
+      await phoneA.people.updateTransaction(
+        id: lunch.id,
+        amount: 24,
+        type: PersonTransactionType.iPaidForThem,
+        date: august,
+        note: 'Lunch',
+      );
+      await phoneA.people.settleUp(sara.id);
+      await phoneA.addDebt(
+        sara,
+        7.5,
+        type: PersonTransactionType.theyPaidForMe,
+      );
+      final backup = await phoneA.export(ExportFormat.backup, english);
+
+      final preview = (await phoneB.repository.previewBackup(
+        backup.path,
+      )).dataOrNull!;
+      expect(preview.people, 1);
+      await phoneB.importFile(backup, ImportMode.merge);
+
+      expect(
+        (await phoneB.people.getLedger(sara.id)).dataOrNull,
+        (await phoneA.people.getLedger(sara.id)).dataOrNull,
+      );
+    });
+
+    test('a backup from before people existed imports, and keeps the '
+        "phone's people", () async {
+      await phoneA.addExpense(12.5, note: 'Lunch');
+      final backup = await phoneA.export(ExportFormat.backup, english);
+      final json =
+          jsonDecode(await File(backup.path).readAsString())
+              as Map<String, dynamic>;
+      json['schema_version'] = 3;
+      for (final table in AppDatabase.peopleTables) {
+        json.remove(table);
+      }
+      await File(backup.path).writeAsString(jsonEncode(json));
+      final omar = await phoneB.addPerson('Omar');
+      await phoneB.addDebt(omar, 10);
+
+      await phoneB.importFile(backup, ImportMode.merge);
+
+      expect((await phoneB.monthOf(august)).single.description, 'Lunch');
+      final kept = (await phoneB.people.getPeople()).dataOrNull!;
+      expect(kept.single.balance.cents, 1000);
+    });
+
+    test(
+      'replacing removes people the file lacks, with their ledger',
+      () async {
+        final backup = await phoneA.export(ExportFormat.backup, english);
+        final omar = await phoneB.addPerson('Omar');
+        await phoneB.addDebt(omar, 10);
+
+        await phoneB.importFile(backup, ImportMode.replace);
+
+        expect((await phoneB.people.getPeople()).dataOrNull, isEmpty);
+        final db = await phoneB.database.database;
+        final transactions = await db.query('person_transactions');
+        expect(transactions.single['deleted_at'], isNotNull);
+      },
+    );
 
     test('replacing removes recurring payments the file lacks', () async {
       final kept = await phoneA.addRecurring('Rent');
@@ -413,6 +490,19 @@ void main() {
       expect((await phoneB.recurring.getRecurring()).dataOrNull, isEmpty);
     });
 
+    test('a person transaction that is neither way round', () async {
+      final sara = await phoneA.addPerson('Sara');
+      await phoneA.addDebt(sara, 5);
+      valid = await File(
+        (await phoneA.export(ExportFormat.backup, english)).path,
+      ).readAsString();
+      final json = jsonDecode(valid) as Map<String, dynamic>;
+      ((json['person_transactions'] as List).single as Map)['type'] = 'gift';
+      expect(await importText(jsonEncode(json)), FailureCode.backupDamaged);
+      await expectUnchanged();
+      expect((await phoneB.people.getPeople()).dataOrNull, isEmpty);
+    });
+
     test('the same id twice', () async {
       final json = jsonDecode(valid) as Map<String, dynamic>;
       final expenses = json['expenses'] as List;
@@ -541,6 +631,71 @@ void main() {
       );
     });
 
+    test('people and their debts get two sheets of their own', () async {
+      final sara = await phoneA.addPerson('Sara', phone: '+20 100');
+      final lunch = await phoneA.addDebt(sara, 20, note: 'Lunch, team');
+      await phoneA.people.updateTransaction(
+        id: lunch.id,
+        amount: 24,
+        type: PersonTransactionType.iPaidForThem,
+        date: august,
+        note: 'Lunch, team',
+      );
+      await phoneA.people.settleUp(sara.id);
+      final taxi = await phoneA.addDebt(
+        sara,
+        7.5,
+        type: PersonTransactionType.theyPaidForMe,
+        note: 'Taxi',
+      );
+
+      final files = await phoneA.exportAll(ExportFormat.spreadsheet, english);
+      expect(files.map((f) => f.name), [
+        startsWith('my_budget_expenses_'),
+        startsWith('my_budget_categories_'),
+        startsWith('my_budget_people_'),
+        startsWith('my_budget_debts_'),
+      ]);
+      List<String> lines(ExportedFile file) => utf8
+          .decode(File(file.path).readAsBytesSync())
+          .replaceFirst(CsvExport.byteOrderMark, '')
+          .split('\r\n');
+
+      final people = lines(files[2]);
+      expect(people.first, 'Person,Phone,Status,Balance,Open,Created,ID');
+      // The phone gets the formula guard like any other text.
+      expect(people[1], startsWith("Sara,'+20 100,You owe,7.50,1,"));
+
+      final debts = lines(files[3]);
+      expect(
+        debts.first,
+        'Person,Date,Type,Amount,Currency,Note,Status,Settled on,Created,'
+        'Last edited,Edits,ID',
+      );
+      expect(
+        debts[1],
+        allOf(
+          startsWith('Sara,2026-08-04,They paid for me,7.50,\$,Taxi,Open,,'),
+          endsWith(',,0,${taxi.id}'),
+        ),
+      );
+      expect(
+        debts[2],
+        allOf(
+          startsWith(
+            'Sara,2026-08-04,I paid for them,24.00,\$,"Lunch, team",Settled,',
+          ),
+          endsWith(',1,${lunch.id}'),
+        ),
+      );
+    });
+
+    test('no people sheets for someone with no people', () async {
+      await phoneA.addExpense(12.5);
+      final files = await phoneA.exportAll(ExportFormat.spreadsheet, english);
+      expect(files, hasLength(2));
+    });
+
     test('quotes fields that need it', () {
       expect(CsvExport.field('plain'), 'plain');
       expect(CsvExport.field('a,b'), '"a,b"');
@@ -568,6 +723,23 @@ void main() {
     test('lists recurring payments, in Arabic too', () async {
       await phoneA.addRecurring('الإيجار');
       await phoneA.addExpense(40, note: 'Groceries');
+
+      for (final locale in [english, arabic]) {
+        final file = await phoneA.export(ExportFormat.report, locale);
+        final bytes = await File(file.path).readAsBytes();
+        expect(ascii.decode(bytes.sublist(0, 5)), '%PDF-');
+      }
+    });
+
+    test('lists people and their ledgers, in Arabic too', () async {
+      final sara = await phoneA.addPerson('سارة');
+      await phoneA.addDebt(sara, 20, note: 'غداء');
+      await phoneA.people.settleUp(sara.id);
+      await phoneA.addDebt(
+        sara,
+        7.5,
+        type: PersonTransactionType.theyPaidForMe,
+      );
 
       for (final locale in [english, arabic]) {
         final file = await phoneA.export(ExportFormat.report, locale);
@@ -694,6 +866,7 @@ class Phone {
       SettingsLocalDataSourceImpl(database),
     );
     recurring = RecurringRepositoryImpl(RecurringLocalDataSourceImpl(database));
+    people = PeopleRepositoryImpl(PeopleLocalDataSourceImpl(database));
     repository = DataManagementRepositoryImpl(
       records: records,
       files: files,
@@ -709,7 +882,28 @@ class Phone {
   late final CategoryRepositoryImpl categories;
   late final SettingsRepositoryImpl settingsRepo;
   late final RecurringRepositoryImpl recurring;
+  late final PeopleRepositoryImpl people;
   late final DataManagementRepositoryImpl repository;
+
+  Future<Person> addPerson(String name, {String? phone}) async =>
+      (await people.addPerson(
+        name: name,
+        colorValue: 0xFF1E88E5,
+        phone: phone,
+      )).dataOrNull!;
+
+  Future<PersonTransaction> addDebt(
+    Person person,
+    double amount, {
+    PersonTransactionType type = PersonTransactionType.iPaidForThem,
+    String? note,
+  }) async => (await people.addTransaction(
+    personId: person.id,
+    amount: amount,
+    type: type,
+    date: DateTime(2026, 8, 4),
+    note: note,
+  )).dataOrNull!;
 
   /// Yearly on 29 February, logged automatically.
   Future<RecurringExpense> addRecurring(String title) async =>

@@ -68,27 +68,64 @@ class SyncRemoteDataSourceImpl implements SyncRemoteDataSource {
       for (final row in batch.recurring)
         {'user_id': userId, ...PortableRecords.recurringToPortable(row)},
     ], onUploaded);
+    // People before what was recorded with them.
+    for (final MapEntry(key: table, value: rows)
+        in batch.peopleTables.entries) {
+      await _upsert(table, 'user_id,id', [
+        for (final row in rows)
+          {'user_id': userId, ...PortableRecords.toPortable(table, row)},
+      ], onUploaded);
+    }
   });
 
   @override
-  Future<RecordBatch> download({
-    void Function(double fraction)? onProgress,
-  }) => _guard(() async {
-    final categories = await _readAll('categories', 'id');
-    onProgress?.call(1 / 4);
-    final expenses = await _readAll('expenses', 'id');
-    onProgress?.call(2 / 4);
-    final settings = await _readAll('user_settings', 'key');
-    onProgress?.call(3 / 4);
-    final recurring = await _readAll('recurring_expenses', 'id');
-    onProgress?.call(1);
-    return RecordBatch(
-      categories: categories.map(PortableRecords.categoryFromPortable).toList(),
-      expenses: expenses.map(PortableRecords.expenseFromPortable).toList(),
-      settings: settings.map(PortableRecords.settingFromPortable).toList(),
-      recurring: recurring.map(PortableRecords.recurringFromPortable).toList(),
-    );
-  });
+  Future<RecordBatch> download({void Function(double fraction)? onProgress}) =>
+      _guard(() async {
+        const tables = 8;
+        var done = 0;
+        Future<List<Map<String, Object?>>> read(
+          String table,
+          String key,
+          Map<String, Object?> Function(Map<String, dynamic>) fromPortable,
+        ) async {
+          final rows = await _readAll(table, key);
+          onProgress?.call(++done / tables);
+          return rows.map(fromPortable).toList();
+        }
+
+        Future<List<Map<String, Object?>>> readPeople(String table) => read(
+          table,
+          'id',
+          (json) => PortableRecords.fromPortable(table, json),
+        );
+
+        return RecordBatch(
+          categories: await read(
+            'categories',
+            'id',
+            PortableRecords.categoryFromPortable,
+          ),
+          expenses: await read(
+            'expenses',
+            'id',
+            PortableRecords.expenseFromPortable,
+          ),
+          settings: await read(
+            'user_settings',
+            'key',
+            PortableRecords.settingFromPortable,
+          ),
+          recurring: await read(
+            'recurring_expenses',
+            'id',
+            PortableRecords.recurringFromPortable,
+          ),
+          people: await readPeople('people'),
+          settlements: await readPeople('settlements'),
+          personTransactions: await readPeople('person_transactions'),
+          personTransactionEdits: await readPeople('person_transaction_edits'),
+        );
+      });
 
   Future<void> _upsert(
     String table,

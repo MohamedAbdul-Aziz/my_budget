@@ -1,9 +1,12 @@
+import '../../features/people/domain/entities/person_transaction_type.dart';
+
 /// Converts rows between the phone's SQLite columns and the portable form
 /// that leaves the phone: the Supabase tables and the backup file.
 ///
 /// The two match column for column, except that the portable form stores
 /// `is_default` as a boolean rather than 0/1. A category from before income
-/// existed has no `type`, and is spending. The phone's `dirty` flag never
+/// existed has no `type`, and is spending. The people and debts tables
+/// travel exactly as stored. The phone's `dirty` flag never
 /// leaves the phone. The cloud adds its own `user_id` on top.
 abstract final class PortableRecords {
   static Map<String, Object?> categoryToPortable(Map<String, Object?> row) => {
@@ -98,6 +101,88 @@ abstract final class PortableRecords {
     'created_at': (json['created_at'] as num).toInt(),
     'updated_at': (json['updated_at'] as num).toInt(),
     'deleted_at': (json['deleted_at'] as num?)?.toInt(),
+  };
+
+  /// The people and debts tables have no column that changes form on the
+  /// way out, so each table's portable form is its columns minus `dirty`.
+  static const Map<String, List<String>> peopleColumns = {
+    'people': [
+      'id',
+      'name',
+      'phone',
+      'color_value',
+      'created_at',
+      'updated_at',
+      'deleted_at',
+    ],
+    'settlements': [
+      'id',
+      'person_id',
+      'net_amount',
+      'settled_at',
+      'expense_id',
+      'created_at',
+      'updated_at',
+      'deleted_at',
+    ],
+    'person_transactions': [
+      'id',
+      'person_id',
+      'amount',
+      'type',
+      'note',
+      'date',
+      'settled_at',
+      'settlement_id',
+      'created_at',
+      'updated_at',
+      'deleted_at',
+    ],
+    'person_transaction_edits': [
+      'id',
+      'transaction_id',
+      'amount',
+      'type',
+      'note',
+      'date',
+      'edited_at',
+      'updated_at',
+      'deleted_at',
+    ],
+  };
+
+  static const Set<String> _moneyColumns = {'amount', 'net_amount'};
+  static const Set<String> _intColumns = {
+    'color_value',
+    'created_at',
+    'updated_at',
+    'deleted_at',
+    'settled_at',
+    'date',
+    'edited_at',
+  };
+
+  /// A row of one of the [peopleColumns] tables, in portable form.
+  static Map<String, Object?> toPortable(
+    String table,
+    Map<String, Object?> row,
+  ) => {for (final column in peopleColumns[table]!) column: row[column]};
+
+  /// A portable row of one of the [peopleColumns] tables, in the phone's
+  /// form. Numbers come back as the types SQLite stores, and a transaction
+  /// type this version does not know is read the way the app reads it.
+  static Map<String, Object?> fromPortable(
+    String table,
+    Map<String, dynamic> json,
+  ) => {
+    for (final column in peopleColumns[table]!)
+      column: switch (column) {
+        'type' => PersonTransactionType.fromStorageKey(json[column]).storageKey,
+        _ when _moneyColumns.contains(column) =>
+          (json[column] as num).toDouble(),
+        _ when _intColumns.contains(column) => (json[column] as num?)?.toInt(),
+        _ => json[column],
+      },
   };
 
   static Map<String, Object?> settingToPortable(Map<String, Object?> row) => {

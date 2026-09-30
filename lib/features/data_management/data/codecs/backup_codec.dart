@@ -3,6 +3,7 @@ import 'dart:convert';
 import '../../../../core/database/portable_records.dart';
 import '../../../../core/database/record_batch.dart';
 import '../../../../core/error/failures.dart';
+import '../../../people/domain/entities/person_transaction_type.dart';
 
 /// A backup file, read and checked.
 class DecodedBackup {
@@ -34,7 +35,11 @@ abstract final class BackupCodec {
   /// 3: adds `recurring_expenses`. Older files have none, and import with
   /// none. The bump makes an older app refuse the file rather than import it
   /// and silently drop the schedules.
-  static const int schemaVersion = 3;
+  ///
+  /// 4: adds `people`, `settlements`, `person_transactions` and
+  /// `person_transaction_edits`. Older files have none, and import with
+  /// none; the bump keeps an older app from dropping them.
+  static const int schemaVersion = 4;
 
   static String encode(RecordBatch records, {required DateTime exportedAt}) =>
       const JsonEncoder.withIndent('  ').convert({
@@ -58,6 +63,11 @@ abstract final class BackupCodec {
           for (final row in records.recurring)
             PortableRecords.recurringToPortable(row),
         ],
+        for (final MapEntry(key: table, value: rows)
+            in records.peopleTables.entries)
+          table: [
+            for (final row in rows) PortableRecords.toPortable(table, row),
+          ],
       });
 
   /// Throws a [FileFailure] unless [text] is a complete, well-formed backup
@@ -94,11 +104,28 @@ abstract final class BackupCodec {
         recurring: version < 3
             ? const []
             : _rows(json['recurring_expenses'], _recurring),
+        people: _since(4, version, json['people'], _person),
+        settlements: _since(4, version, json['settlements'], _settlement),
+        personTransactions: _since(
+          4,
+          version,
+          json['person_transactions'],
+          _personTransaction,
+        ),
+        personTransactionEdits: _since(
+          4,
+          version,
+          json['person_transaction_edits'],
+          _personTransactionEdit,
+        ),
       );
       _requireUnique(records.categories, 'id');
       _requireUnique(records.expenses, 'id');
       _requireUnique(records.settings, 'key');
       _requireUnique(records.recurring, 'id');
+      for (final rows in records.peopleTables.values) {
+        _requireUnique(rows, 'id');
+      }
 
       final exportedAt = json['exported_at'];
       return DecodedBackup(
@@ -199,6 +226,73 @@ abstract final class BackupCodec {
         DateTime.tryParse(value) == null) {
       _damaged(key);
     }
+  }
+
+  /// A table added in format [added]: a file from before then has none.
+  static List<Map<String, Object?>> _since(
+    int added,
+    int version,
+    Object? list,
+    Map<String, Object?> Function(Map<String, dynamic>) read,
+  ) => version < added ? const [] : _rows(list, read);
+
+  static Map<String, Object?> _person(Map<String, dynamic> json) {
+    _text(json, 'id');
+    _text(json, 'name');
+    _optionalText(json, 'phone');
+    _int(json, 'color_value');
+    _int(json, 'created_at');
+    _timestamps(json);
+    return PortableRecords.fromPortable('people', json);
+  }
+
+  static Map<String, Object?> _settlement(Map<String, dynamic> json) {
+    _text(json, 'id');
+    _text(json, 'person_id');
+    final amount = json['net_amount'];
+    if (amount is! num || !amount.isFinite) _damaged('net_amount');
+    _int(json, 'settled_at');
+    _optionalText(json, 'expense_id');
+    _int(json, 'created_at');
+    _timestamps(json);
+    return PortableRecords.fromPortable('settlements', json);
+  }
+
+  static Map<String, Object?> _personTransaction(Map<String, dynamic> json) {
+    _text(json, 'id');
+    _text(json, 'person_id');
+    _debt(json);
+    final settledAt = json['settled_at'];
+    if (settledAt != null && settledAt is! int) _damaged('settled_at');
+    _optionalText(json, 'settlement_id');
+    _int(json, 'created_at');
+    _timestamps(json);
+    return PortableRecords.fromPortable('person_transactions', json);
+  }
+
+  static Map<String, Object?> _personTransactionEdit(
+    Map<String, dynamic> json,
+  ) {
+    _text(json, 'id');
+    _text(json, 'transaction_id');
+    _debt(json);
+    _int(json, 'edited_at');
+    _timestamps(json);
+    return PortableRecords.fromPortable('person_transaction_edits', json);
+  }
+
+  /// The money fields a person transaction and its change log share.
+  static void _debt(Map<String, dynamic> json) {
+    final amount = json['amount'];
+    if (amount is! num || !amount.isFinite || amount <= 0) _damaged('amount');
+    if (PersonTransactionType.tryParse(json['type']) == null) _damaged('type');
+    _optionalText(json, 'note');
+    _int(json, 'date');
+  }
+
+  static void _optionalText(Map<String, dynamic> json, String key) {
+    final value = json[key];
+    if (value != null && value is! String) _damaged(key);
   }
 
   static Map<String, Object?> _setting(Map<String, dynamic> json) {

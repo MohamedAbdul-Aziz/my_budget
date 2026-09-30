@@ -13,6 +13,7 @@ import 'package:my_budget/features/categories/presentation/cubit/categories_cubi
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
 import 'package:my_budget/features/expenses/domain/repositories/expense_repository.dart';
 import 'package:my_budget/features/expenses/presentation/cubit/home_cubit.dart';
+import 'package:my_budget/features/people/domain/repositories/people_repository.dart';
 import 'package:my_budget/features/quick_expense/domain/repositories/quick_expense_widget_repository.dart';
 import 'package:my_budget/features/quick_expense/presentation/quick_add_app.dart';
 import 'package:my_budget/features/recurring/domain/repositories/recurring_repository.dart';
@@ -36,6 +37,7 @@ class AppHarness {
     required this.files,
     required this.budgets,
     required this.recurring,
+    required this.people,
   });
 
   final FakeCategoryRepository categories;
@@ -47,6 +49,7 @@ class AppHarness {
   final FakeDataManagementRepository files;
   final FakeBudgetRepository budgets;
   final FakeRecurringRepository recurring;
+  final FakePeopleRepository people;
 }
 
 /// Boots the real widget tree and cubits over in-memory repositories.
@@ -101,6 +104,7 @@ Future<AppHarness> _bootDependencies(
   final files = FakeDataManagementRepository();
   final budgets = FakeBudgetRepository();
   final recurring = FakeRecurringRepository(categories, expenses);
+  final people = FakePeopleRepository();
   final harness = AppHarness(
     categories: categories,
     expenses: expenses,
@@ -111,6 +115,7 @@ Future<AppHarness> _bootDependencies(
     files: files,
     budgets: budgets,
     recurring: recurring,
+    people: people,
   );
   before?.call(harness);
 
@@ -123,7 +128,8 @@ Future<AppHarness> _bootDependencies(
     ..registerLazySingleton<SyncRepository>(() => sync)
     ..registerLazySingleton<DataManagementRepository>(() => files)
     ..registerLazySingleton<BudgetRepository>(() => budgets)
-    ..registerLazySingleton<RecurringRepository>(() => recurring);
+    ..registerLazySingleton<RecurringRepository>(() => recurring)
+    ..registerLazySingleton<PeopleRepository>(() => people);
   configureDependencies();
 
   // The same order as main.dart: due automatic payments first.

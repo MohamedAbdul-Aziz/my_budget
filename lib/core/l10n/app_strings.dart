@@ -193,7 +193,14 @@ abstract class AppStrings {
   String get saveToPhone;
   String get saveToPhoneHint;
   String get importTitle;
-  String importSummary(String? date, int expenses, int categories);
+
+  /// [people] is left out of the sentence when there are none.
+  String importSummary(
+    String? date,
+    int expenses,
+    int categories, {
+    int people = 0,
+  });
   String get importMergeHint;
   String get merge;
   String get replaceEverything;
@@ -262,6 +269,12 @@ abstract class AppStrings {
     NoticeCode.recurringPaymentUndone => recurringPaymentUndone,
     NoticeCode.recurringDeleted => categoryDeleted(notice.name ?? ''),
     NoticeCode.recurringAutoLogged => recurringAutoLogged(notice.count ?? 0),
+    NoticeCode.personAdded => categoryAdded(notice.name ?? ''),
+    NoticeCode.personUpdated => personUpdated,
+    NoticeCode.personDeleted => categoryDeleted(notice.name ?? ''),
+    NoticeCode.debtDeleted => debtDeleted,
+    NoticeCode.settledUp => settledUpNotice,
+    NoticeCode.settlementLogged => settlementLogged,
     NoticeCode.failure => failure(notice.failure?.code ?? FailureCode.unknown),
   };
 
@@ -360,6 +373,84 @@ abstract class AppStrings {
     RecurrenceFrequency.monthly => monthly,
     RecurrenceFrequency.yearly => yearly,
   };
+
+  // People & debts
+  String get people;
+  String get peopleAndDebts;
+  String get person;
+  String get personName;
+  String get phone;
+  String get phoneOptional;
+  String get balance;
+  String get colStatus;
+  String get owesYou;
+  String get youOwe;
+  String get owedToYou;
+  String get settledUp;
+  String get iPaidForThem;
+  String get theyPaidForMe;
+  String get theyPaidYou;
+  String get youPaidThem;
+  String get openStatus;
+  String get settledStatus;
+  String get settledOn;
+  String get createdOn;
+  String get lastEdited;
+  String get colEdits;
+  String get activeTransactions;
+  String get settledHistory;
+  String get filterAll;
+  String get filterOwedToMe;
+  String get filterIOwe;
+  String get filterSettled;
+  String get addPerson;
+  String get addPersonHint;
+  String get newPerson;
+  String get editPerson;
+  String get deletePerson;
+  String get quickTransaction;
+  String get quickTransactionHint;
+  String get noPeopleYet;
+  String get noPeopleHint;
+  String get nobodyHere;
+  String get addPersonFirst;
+  String get newTransaction;
+  String get editTransaction;
+  String get transactionDetails;
+  String get debtNoteHint;
+  String get changeHistory;
+  String get edited;
+  String get settleUp;
+  String get settle;
+  String get noDebtsYet;
+  String get noDebtsHint;
+  String get settleEven;
+  String get logSettlementTitle;
+  String get loggedInBudget;
+  String get deleteTransactionTitle;
+  String get deleteTransactionBody;
+  String get deletePersonBody;
+  String get settledLocked;
+  String get personUpdated;
+  String get debtDeleted;
+  String get settledUpNotice;
+  String get settlementLogged;
+  String personOwesYou(String name);
+  String youOwePerson(String name);
+  String settledWith(String name);
+  String settleUpFor(String amount);
+  String settleTitle(String name);
+  String settleTheyPay(String name, String amount);
+  String settleYouPay(String name, String amount);
+  String settleMoves(int count);
+  String logSettlementIncome(String amount);
+  String logSettlementExpense(String amount);
+  String settlementNote(String name);
+  String settledGroupTitle(String date);
+  String deletePersonTitle(String name);
+  String editedOn(String date);
+  String wasValues(String values);
+  String personCount(int count);
 }
 
 class AppStringsEn extends AppStrings {
@@ -885,9 +976,16 @@ class AppStringsEn extends AppStrings {
   String get reportPageTemplate => 'Page {page} of {pages}';
 
   @override
-  String importSummary(String? date, int expenses, int categories) {
-    final contents =
-        '${expenseCount(expenses)} and ${categoryCount(categories)}';
+  String importSummary(
+    String? date,
+    int expenses,
+    int categories, {
+    int people = 0,
+  }) {
+    final contents = people == 0
+        ? '${expenseCount(expenses)} and ${categoryCount(categories)}'
+        : '${expenseCount(expenses)}, ${categoryCount(categories)} and '
+              '${personCount(people)}';
     return date == null
         ? 'This backup has $contents.'
         : 'Backup from $date: $contents.';
@@ -971,6 +1069,14 @@ class AppStringsEn extends AppStrings {
     FailureCode.titleTooLong => 'Keep the name under 40 characters.',
     FailureCode.dueDayInvalid => 'Pick when it is due.',
     FailureCode.alreadyPaid => 'That payment is already recorded.',
+    FailureCode.personRequired => 'Choose a person.',
+    FailureCode.personNameRequired => 'Enter a name.',
+    FailureCode.personNameTooLong => 'Keep the name under 40 characters.',
+    FailureCode.phoneInvalid => 'Enter a valid phone number.',
+    FailureCode.transactionSettled => "Settled transactions can't be changed.",
+    FailureCode.nothingToSettle => "There's nothing to settle.",
+    FailureCode.settlementAlreadyLogged =>
+      'This settlement is already in your budget.',
   };
 
   @override
@@ -1200,6 +1306,248 @@ class AppStringsEn extends AppStrings {
 
   @override
   String get colPaidThrough => 'Paid through';
+
+  // People & debts
+
+  @override
+  String get people => 'People';
+
+  @override
+  String get peopleAndDebts => 'People & debts';
+
+  @override
+  String get person => 'Person';
+
+  @override
+  String get personName => 'Name';
+
+  @override
+  String get phone => 'Phone';
+
+  @override
+  String get phoneOptional => 'Phone (optional)';
+
+  @override
+  String get balance => 'Balance';
+
+  @override
+  String get colStatus => 'Status';
+
+  @override
+  String get owesYou => 'Owes you';
+
+  @override
+  String get youOwe => 'You owe';
+
+  @override
+  String get owedToYou => 'Owed to you';
+
+  @override
+  String get settledUp => 'Settled up';
+
+  @override
+  String get iPaidForThem => 'I paid for them';
+
+  @override
+  String get theyPaidForMe => 'They paid for me';
+
+  @override
+  String get theyPaidYou => 'They paid you';
+
+  @override
+  String get youPaidThem => 'You paid them';
+
+  @override
+  String get openStatus => 'Open';
+
+  @override
+  String get settledStatus => 'Settled';
+
+  @override
+  String get settledOn => 'Settled on';
+
+  @override
+  String get createdOn => 'Created';
+
+  @override
+  String get lastEdited => 'Last edited';
+
+  @override
+  String get colEdits => 'Edits';
+
+  @override
+  String get activeTransactions => 'Active transactions';
+
+  @override
+  String get settledHistory => 'Settled history';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterOwedToMe => 'Owed to me';
+
+  @override
+  String get filterIOwe => 'I owe';
+
+  @override
+  String get filterSettled => 'Settled';
+
+  @override
+  String get addPerson => 'Add person';
+
+  @override
+  String get addPersonHint => 'Someone you share costs with';
+
+  @override
+  String get newPerson => 'New person';
+
+  @override
+  String get editPerson => 'Edit person';
+
+  @override
+  String get deletePerson => 'Delete person';
+
+  @override
+  String get quickTransaction => 'Quick transaction';
+
+  @override
+  String get quickTransactionHint =>
+      "Record who paid, with someone you've added";
+
+  @override
+  String get noPeopleYet => 'No people yet';
+
+  @override
+  String get noPeopleHint =>
+      'Add the people you share costs with to keep track of who owes whom.';
+
+  @override
+  String get nobodyHere => 'Nobody matches this filter.';
+
+  @override
+  String get addPersonFirst => 'Add a person first.';
+
+  @override
+  String get newTransaction => 'New transaction';
+
+  @override
+  String get editTransaction => 'Edit transaction';
+
+  @override
+  String get transactionDetails => 'Transaction details';
+
+  @override
+  String get debtNoteHint => 'What was it for?';
+
+  @override
+  String get changeHistory => 'Change history';
+
+  @override
+  String get edited => 'Edited';
+
+  @override
+  String get settleUp => 'Settle up';
+
+  @override
+  String get settle => 'Settle';
+
+  @override
+  String get noDebtsYet => 'Nothing recorded yet';
+
+  @override
+  String get noDebtsHint =>
+      'Add what you paid for them, or what they paid for you.';
+
+  @override
+  String get settleEven =>
+      'These transactions cancel each other out, so no money needs to change hands.';
+
+  @override
+  String get logSettlementTitle =>
+      'Log this settlement in your monthly budget?';
+
+  @override
+  String get loggedInBudget => 'In your budget';
+
+  @override
+  String get deleteTransactionTitle => 'Delete this transaction?';
+
+  @override
+  String get deleteTransactionBody =>
+      'It will be removed from the balance with this person.';
+
+  @override
+  String get deletePersonBody =>
+      'Their transactions and settled history are deleted too. Anything you logged in your budget stays.';
+
+  @override
+  String get settledLocked => 'Settled, so it can no longer be changed.';
+
+  @override
+  String get personUpdated => 'Person updated';
+
+  @override
+  String get debtDeleted => 'Transaction deleted';
+
+  @override
+  String get settledUpNotice => 'All settled up';
+
+  @override
+  String get settlementLogged => 'Added to your budget';
+
+  @override
+  String personOwesYou(String name) => '$name owes you';
+
+  @override
+  String youOwePerson(String name) => 'You owe $name';
+
+  @override
+  String settledWith(String name) => 'All settled up with $name';
+
+  @override
+  String settleUpFor(String amount) => 'Settle up $amount';
+
+  @override
+  String settleTitle(String name) => 'Settle up with $name?';
+
+  @override
+  String settleTheyPay(String name, String amount) =>
+      '$name pays you $amount to clear everything.';
+
+  @override
+  String settleYouPay(String name, String amount) =>
+      'You pay $name $amount to clear everything.';
+
+  @override
+  String settleMoves(int count) =>
+      '${transactionCount(count)} will move to the settled history.';
+
+  @override
+  String logSettlementIncome(String amount) =>
+      '$amount will be added as income in Other income. You can move it to another category later.';
+
+  @override
+  String logSettlementExpense(String amount) =>
+      '$amount will be added as an expense in Other. You can move it to another category later.';
+
+  @override
+  String settlementNote(String name) => 'Settlement with $name';
+
+  @override
+  String settledGroupTitle(String date) => 'Settled $date';
+
+  @override
+  String deletePersonTitle(String name) => 'Delete $name?';
+
+  @override
+  String editedOn(String date) => 'Edited $date';
+
+  @override
+  String wasValues(String values) => 'Was: $values';
+
+  @override
+  String personCount(int count) => count == 1 ? '1 person' : '$count people';
 }
 
 class AppStringsAr extends AppStrings {
@@ -1728,8 +2076,16 @@ class AppStringsAr extends AppStrings {
   String get reportPageTemplate => 'صفحة {page} من {pages}';
 
   @override
-  String importSummary(String? date, int expenses, int categories) {
-    final contents = '${expenseCount(expenses)} و${categoryCount(categories)}';
+  String importSummary(
+    String? date,
+    int expenses,
+    int categories, {
+    int people = 0,
+  }) {
+    final contents = people == 0
+        ? '${expenseCount(expenses)} و${categoryCount(categories)}'
+        : '${expenseCount(expenses)} و${categoryCount(categories)} '
+              'و${personCount(people)}';
     return date == null
         ? 'تحتوي هذه النسخة على $contents.'
         : 'نسخة احتياطية بتاريخ $date: $contents.';
@@ -1814,6 +2170,15 @@ class AppStringsAr extends AppStrings {
     FailureCode.titleTooLong => 'اجعل الاسم أقل من ٤٠ حرفًا.',
     FailureCode.dueDayInvalid => 'اختر موعد الاستحقاق.',
     FailureCode.alreadyPaid => 'هذه الدفعة مسجّلة بالفعل.',
+    FailureCode.personRequired => 'اختر شخصًا.',
+    FailureCode.personNameRequired => 'أدخل اسمًا.',
+    FailureCode.personNameTooLong => 'اجعل الاسم أقل من ٤٠ حرفًا.',
+    FailureCode.phoneInvalid => 'أدخل رقم هاتف صحيحًا.',
+    FailureCode.transactionSettled =>
+      'لا يمكن تعديل المعاملات التي تمت تسويتها.',
+    FailureCode.nothingToSettle => 'لا يوجد ما تتم تسويته.',
+    FailureCode.settlementAlreadyLogged =>
+      'هذه التسوية مسجّلة في ميزانيتك بالفعل.',
   };
 
   @override
@@ -2052,6 +2417,251 @@ class AppStringsAr extends AppStrings {
 
   @override
   String get colPaidThrough => 'مدفوعة حتى';
+
+  // People & debts
+
+  @override
+  String get people => 'الأشخاص';
+
+  @override
+  String get peopleAndDebts => 'الأشخاص والتسويات';
+
+  @override
+  String get person => 'الشخص';
+
+  @override
+  String get personName => 'الاسم';
+
+  @override
+  String get phone => 'الهاتف';
+
+  @override
+  String get phoneOptional => 'الهاتف (اختياري)';
+
+  @override
+  String get balance => 'الرصيد';
+
+  @override
+  String get colStatus => 'الحالة';
+
+  @override
+  String get owesYou => 'مدين لك';
+
+  @override
+  String get youOwe => 'أنت مدين';
+
+  @override
+  String get owedToYou => 'مستحق لك';
+
+  @override
+  String get settledUp => 'تمت التسوية';
+
+  @override
+  String get iPaidForThem => 'دفعتُ عنه';
+
+  @override
+  String get theyPaidForMe => 'دفع عنّي';
+
+  @override
+  String get theyPaidYou => 'دفع لك';
+
+  @override
+  String get youPaidThem => 'دفعتَ له';
+
+  @override
+  String get openStatus => 'مفتوحة';
+
+  @override
+  String get settledStatus => 'تمت تسويتها';
+
+  @override
+  String get settledOn => 'تاريخ التسوية';
+
+  @override
+  String get createdOn => 'تاريخ الإنشاء';
+
+  @override
+  String get lastEdited => 'آخر تعديل';
+
+  @override
+  String get colEdits => 'التعديلات';
+
+  @override
+  String get activeTransactions => 'المعاملات الحالية';
+
+  @override
+  String get settledHistory => 'سجل التسويات';
+
+  @override
+  String get filterAll => 'الكل';
+
+  @override
+  String get filterOwedToMe => 'مستحق لي';
+
+  @override
+  String get filterIOwe => 'عليّ';
+
+  @override
+  String get filterSettled => 'تمت تسويتهم';
+
+  @override
+  String get addPerson => 'إضافة شخص';
+
+  @override
+  String get addPersonHint => 'شخص تتقاسم معه المصاريف';
+
+  @override
+  String get newPerson => 'شخص جديد';
+
+  @override
+  String get editPerson => 'تعديل الشخص';
+
+  @override
+  String get deletePerson => 'حذف الشخص';
+
+  @override
+  String get quickTransaction => 'معاملة سريعة';
+
+  @override
+  String get quickTransactionHint => 'سجّل من دفع مع شخص أضفته';
+
+  @override
+  String get noPeopleYet => 'لا يوجد أشخاص بعد';
+
+  @override
+  String get noPeopleHint =>
+      'أضف الأشخاص الذين تتقاسم معهم المصاريف لتعرف من المدين لمن.';
+
+  @override
+  String get nobodyHere => 'لا أحد يطابق هذا الاختيار.';
+
+  @override
+  String get addPersonFirst => 'أضف شخصًا أولًا.';
+
+  @override
+  String get newTransaction => 'معاملة جديدة';
+
+  @override
+  String get editTransaction => 'تعديل المعاملة';
+
+  @override
+  String get transactionDetails => 'تفاصيل المعاملة';
+
+  @override
+  String get debtNoteHint => 'مقابل ماذا؟';
+
+  @override
+  String get changeHistory => 'سجل التعديلات';
+
+  @override
+  String get edited => 'معدّلة';
+
+  @override
+  String get settleUp => 'تسوية';
+
+  @override
+  String get settle => 'تسوية';
+
+  @override
+  String get noDebtsYet => 'لا شيء مسجّل بعد';
+
+  @override
+  String get noDebtsHint => 'أضف ما دفعته عنه، أو ما دفعه عنك.';
+
+  @override
+  String get settleEven =>
+      'هذه المعاملات يلغي بعضها بعضًا، فلا حاجة لدفع أي مبلغ.';
+
+  @override
+  String get logSettlementTitle => 'تسجيل هذه التسوية في ميزانيتك الشهرية؟';
+
+  @override
+  String get loggedInBudget => 'في ميزانيتك';
+
+  @override
+  String get deleteTransactionTitle => 'حذف هذه المعاملة؟';
+
+  @override
+  String get deleteTransactionBody => 'ستُحذف من الرصيد مع هذا الشخص.';
+
+  @override
+  String get deletePersonBody =>
+      'ستُحذف معاملاته وسجل تسوياته أيضًا. ما سجّلته في ميزانيتك يبقى كما هو.';
+
+  @override
+  String get settledLocked => 'تمت تسويتها، فلا يمكن تعديلها بعد الآن.';
+
+  @override
+  String get personUpdated => 'تم تحديث بيانات الشخص';
+
+  @override
+  String get debtDeleted => 'تم حذف المعاملة';
+
+  @override
+  String get settledUpNotice => 'تمت التسوية بالكامل';
+
+  @override
+  String get settlementLogged => 'أُضيفت إلى ميزانيتك';
+
+  @override
+  String personOwesYou(String name) => '$name مدين لك';
+
+  @override
+  String youOwePerson(String name) => 'أنت مدين لـ$name';
+
+  @override
+  String settledWith(String name) => 'لا ديون بينك وبين $name';
+
+  @override
+  String settleUpFor(String amount) => 'تسوية $amount';
+
+  @override
+  String settleTitle(String name) => 'تسوية الحساب مع $name؟';
+
+  @override
+  String settleTheyPay(String name, String amount) =>
+      'يدفع لك $name مبلغ $amount لتسوية كل شيء.';
+
+  @override
+  String settleYouPay(String name, String amount) =>
+      'تدفع لـ$name مبلغ $amount لتسوية كل شيء.';
+
+  @override
+  String settleMoves(int count) =>
+      'ستنتقل ${transactionCount(count)} إلى سجل التسويات.';
+
+  @override
+  String logSettlementIncome(String amount) =>
+      'سيُضاف $amount كدخل في "دخل آخر". يمكنك نقله إلى فئة أخرى لاحقًا.';
+
+  @override
+  String logSettlementExpense(String amount) =>
+      'سيُضاف $amount كمصروف في "أخرى". يمكنك نقله إلى فئة أخرى لاحقًا.';
+
+  @override
+  String settlementNote(String name) => 'تسوية مع $name';
+
+  @override
+  String settledGroupTitle(String date) => 'تمت التسوية في $date';
+
+  @override
+  String deletePersonTitle(String name) => 'حذف $name؟';
+
+  @override
+  String editedOn(String date) => 'عُدّلت في $date';
+
+  @override
+  String wasValues(String values) => 'كانت: $values';
+
+  /// Arabic counts differently for 1, 2, 3-10 and 11 or more.
+  @override
+  String personCount(int count) => switch (count) {
+    0 => 'لا أشخاص',
+    1 => 'شخص واحد',
+    2 => 'شخصان',
+    >= 3 && <= 10 => '$count أشخاص',
+    _ => '$count شخصًا',
+  };
 }
 
 class _AppStringsDelegate extends LocalizationsDelegate<AppStrings> {

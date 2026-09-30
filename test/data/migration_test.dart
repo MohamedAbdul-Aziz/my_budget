@@ -35,7 +35,7 @@ void main() {
       addTearDown(database.close);
       final db = await database.database;
 
-      expect(await db.getVersion(), 4);
+      expect(await db.getVersion(), 5);
 
       final expense = (await db.query('expenses')).single;
       expect(expense['updated_at'], expense['created_at']);
@@ -70,6 +70,16 @@ void main() {
 
       // Recurring payments arrive empty, ready to be set up.
       expect(await db.query('recurring_expenses'), isEmpty);
+
+      // So do people and debts, each table with its sync columns.
+      for (final table in AppDatabase.peopleTables) {
+        expect(await db.query(table), isEmpty);
+        final columns = {
+          for (final row in await db.rawQuery('PRAGMA table_info($table)'))
+            row['name'],
+        };
+        expect(columns, containsAll(['updated_at', 'deleted_at', 'dirty']));
+      }
     },
   );
 

@@ -27,10 +27,16 @@ import '../../features/categories/domain/entities/expense_category.dart';
 /// the schedules (rent, bills, subscriptions). Due dates are calendar days
 /// stored as `yyyy-MM-dd` text, so a payment falls on the same day whatever
 /// the phone's timezone. A payment it logs is an ordinary row in `expenses`.
+///
+/// People and debts, added in schema version 5: `people`, the money that
+/// changed hands with each (`person_transactions`), each settle-up
+/// (`settlements`) and every transaction's change log
+/// (`person_transaction_edits`). A settlement the user logs in the budget is
+/// an ordinary row in `expenses`.
 class AppDatabase {
   AppDatabase({this.fileName = 'my_budget.db', this.inMemory = false});
 
-  static const int _schemaVersion = 4;
+  static const int _schemaVersion = 5;
 
   /// Now, in the form stored in `updated_at` and `deleted_at`.
   static int nowMillis() => DateTime.now().millisecondsSinceEpoch;
@@ -137,6 +143,7 @@ class AppDatabase {
     _addSyncColumns(batch);
     _addIncome(batch);
     _addRecurring(batch);
+    _addPeople(batch);
 
     await batch.commit(noResult: true);
   }
@@ -146,8 +153,108 @@ class AppDatabase {
     if (oldVersion < 2) _addSyncColumns(batch);
     if (oldVersion < 3) _addIncome(batch);
     if (oldVersion < 4) _addRecurring(batch);
+    if (oldVersion < 5) _addPeople(batch);
     await batch.commit(noResult: true);
   }
+
+  /// Schema version 5. Born with the sync columns every table has had since
+  /// version 2.
+  ///
+  /// A transaction is open until `settled_at` is set, together with the
+  /// `settlement_id` of the settle-up that cleared it. A settlement's
+  /// `net_amount` is the balance it cleared: positive when the person paid
+  /// the user back, negative when the user paid them.
+  ///
+  /// `settlement_id` and a settlement's `expense_id` are plain references,
+  /// not foreign keys: the rows they point at can arrive later, or be
+  /// deleted on their own.
+  void _addPeople(Batch batch) {
+    batch
+      ..execute('''
+        CREATE TABLE people (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          phone TEXT,
+          color_value INTEGER NOT NULL,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL DEFAULT 0,
+          deleted_at INTEGER,
+          dirty INTEGER NOT NULL DEFAULT 1
+        )
+      ''')
+      ..execute('''
+        CREATE TABLE settlements (
+          id TEXT PRIMARY KEY,
+          person_id TEXT NOT NULL,
+          net_amount REAL NOT NULL,
+          settled_at INTEGER NOT NULL,
+          expense_id TEXT,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL DEFAULT 0,
+          deleted_at INTEGER,
+          dirty INTEGER NOT NULL DEFAULT 1,
+          FOREIGN KEY (person_id) REFERENCES people (id) ON DELETE RESTRICT
+        )
+      ''')
+      ..execute('''
+        CREATE TABLE person_transactions (
+          id TEXT PRIMARY KEY,
+          person_id TEXT NOT NULL,
+          amount REAL NOT NULL,
+          type TEXT NOT NULL,
+          note TEXT,
+          date INTEGER NOT NULL,
+          settled_at INTEGER,
+          settlement_id TEXT,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL DEFAULT 0,
+          deleted_at INTEGER,
+          dirty INTEGER NOT NULL DEFAULT 1,
+          FOREIGN KEY (person_id) REFERENCES people (id) ON DELETE RESTRICT
+        )
+      ''')
+      ..execute('''
+        CREATE TABLE person_transaction_edits (
+          id TEXT PRIMARY KEY,
+          transaction_id TEXT NOT NULL,
+          amount REAL NOT NULL,
+          type TEXT NOT NULL,
+          note TEXT,
+          date INTEGER NOT NULL,
+          edited_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL DEFAULT 0,
+          deleted_at INTEGER,
+          dirty INTEGER NOT NULL DEFAULT 1,
+          FOREIGN KEY (transaction_id)
+            REFERENCES person_transactions (id) ON DELETE RESTRICT
+        )
+      ''')
+      ..execute(
+        'CREATE INDEX idx_person_transactions_person '
+        'ON person_transactions (person_id)',
+      )
+      ..execute(
+        'CREATE INDEX idx_settlements_person ON settlements (person_id)',
+      )
+      ..execute(
+        'CREATE INDEX idx_person_transaction_edits_transaction '
+        'ON person_transaction_edits (transaction_id)',
+      );
+    for (final table in peopleTables) {
+      batch.execute(
+        'CREATE INDEX idx_${table}_dirty ON $table (dirty) WHERE dirty = 1',
+      );
+    }
+  }
+
+  /// The people and debts tables, parents before children: the order they
+  /// are written in, and the reverse of the order they can be removed in.
+  static const List<String> peopleTables = [
+    'people',
+    'settlements',
+    'person_transactions',
+    'person_transaction_edits',
+  ];
 
   /// Schema version 4. Born with the sync columns every table has had since
   /// version 2.

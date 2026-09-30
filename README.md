@@ -35,6 +35,20 @@ calls anywhere in the codebase.
   phone, so syncing never counts it twice. Needs the
   `supabase/migrations/20260930150000_recurring_expenses.sql` migration for
   cloud backup.
+- **People & debts** — the People tab lists everyone you share costs with
+  and where you stand: green when they owe you, red when you owe them, grey
+  when settled, filterable by *All*, *Owed to me*, *I owe* and *Settled*.
+  Each person's ledger shows the net balance (what you paid for them minus
+  what they paid for you, over open transactions), the active transactions,
+  and the settled history grouped by settle-up. **Settle up** shows the exact
+  amount to clear, moves every open transaction into the history, then asks
+  whether to log the money in your monthly budget (as income in *Other
+  income*, or an expense in *Other*). Every transaction keeps an audit trail:
+  when it was created, last edited and settled, and a change log of the
+  values each edit replaced. Settled transactions are locked. People travel
+  with the cloud backup, backup files (format 4) and the CSV/PDF exports;
+  needs the `supabase/migrations/20260930180000_people_and_debts.sql`
+  migration for cloud backup.
 - **Settings** — light/dark/system theme, English or Arabic (with full RTL),
   and the currency symbol.
 - **Quick Expense widget (Android)** — a home screen widget showing this
@@ -87,6 +101,7 @@ lib/
     categories/    data · domain · presentation
     budgets/       data · domain · presentation
     recurring/     data · domain · presentation
+    people/        data · domain · presentation
     settings/      data · domain · presentation
     quick_expense/ data · domain · presentation
 ```

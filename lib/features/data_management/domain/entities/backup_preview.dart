@@ -7,6 +7,7 @@ class BackupPreview extends Equatable {
     required this.path,
     required this.expenses,
     required this.categories,
+    this.people = 0,
     this.exportedAt,
   });
 
@@ -16,9 +17,12 @@ class BackupPreview extends Equatable {
   final int expenses;
   final int categories;
 
+  /// None in a backup from before people existed.
+  final int people;
+
   /// When the backup was made; null if the file does not say.
   final DateTime? exportedAt;
 
   @override
-  List<Object?> get props => [path, expenses, categories, exportedAt];
+  List<Object?> get props => [path, expenses, categories, people, exportedAt];
 }

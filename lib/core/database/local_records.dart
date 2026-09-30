@@ -28,6 +28,16 @@ class LocalRecords {
         'recurring_expenses',
         orderBy: 'created_at, id',
       ),
+      people: await db.query('people', orderBy: 'created_at, id'),
+      settlements: await db.query('settlements', orderBy: 'settled_at, id'),
+      personTransactions: await db.query(
+        'person_transactions',
+        orderBy: 'date, created_at, id',
+      ),
+      personTransactionEdits: await db.query(
+        'person_transaction_edits',
+        orderBy: 'edited_at, id',
+      ),
     );
   });
 
@@ -39,6 +49,16 @@ class LocalRecords {
       expenses: await db.query('expenses', where: 'dirty = 1'),
       settings: await db.query('settings', where: 'dirty = 1'),
       recurring: await db.query('recurring_expenses', where: 'dirty = 1'),
+      people: await db.query('people', where: 'dirty = 1'),
+      settlements: await db.query('settlements', where: 'dirty = 1'),
+      personTransactions: await db.query(
+        'person_transactions',
+        where: 'dirty = 1',
+      ),
+      personTransactionEdits: await db.query(
+        'person_transaction_edits',
+        where: 'dirty = 1',
+      ),
     );
   });
 
@@ -64,6 +84,10 @@ class LocalRecords {
         clear('expenses', 'id', uploaded.expenses);
         clear('settings', 'key', uploaded.settings);
         clear('recurring_expenses', 'id', uploaded.recurring);
+        for (final MapEntry(key: table, value: rows)
+            in uploaded.peopleTables.entries) {
+          clear(table, 'id', rows);
+        }
         await batch.commit(noResult: true);
       });
 
@@ -116,7 +140,15 @@ class LocalRecords {
             }
           }
 
-          return applied + await _rehomeOrphans(txn);
+          applied += await _writePeople(
+            txn,
+            incoming,
+            (table, row) => _applyIfNewer(txn, table, 'id', row, dirty),
+          );
+
+          return applied +
+              await _rehomeOrphans(txn) +
+              await _cascadeDeletedPeople(txn);
         });
       });
 
@@ -129,97 +161,180 @@ class LocalRecords {
   /// not bring back what it replaced. Dates and creation times are kept.
   ///
   /// Returns how many records were written or deleted.
-  Future<int> replaceAll(RecordBatch incoming) => _guard(
-    'replace records',
-    () async {
-      final db = await _appDatabase.database;
-      return db.transaction((txn) async {
-        final now = AppDatabase.nowMillis();
-        final deleted = {'deleted_at': now, 'updated_at': now, 'dirty': 1};
+  Future<int> replaceAll(
+    RecordBatch incoming,
+  ) => _guard('replace records', () async {
+    final db = await _appDatabase.database;
+    return db.transaction((txn) async {
+      final now = AppDatabase.nowMillis();
+      final deleted = {'deleted_at': now, 'updated_at': now, 'dirty': 1};
 
-        // Delete everything that is live, then write the incoming records
-        // back over it: whatever the file does not contain stays deleted.
-        // The two fallback categories are never deleted.
-        final removedExpenses = await _liveIdsMissingFrom(
+      // Delete everything that is live, then write the incoming records
+      // back over it: whatever the file does not contain stays deleted.
+      // The two fallback categories are never deleted.
+      final removedExpenses = await _liveIdsMissingFrom(
+        txn,
+        'expenses',
+        incoming.expenses,
+      );
+      final removedCategories = await _liveIdsMissingFrom(
+        txn,
+        'categories',
+        incoming.categories,
+      );
+      final removedRecurring = await _liveIdsMissingFrom(
+        txn,
+        'recurring_expenses',
+        incoming.recurring,
+      );
+      final removedPeople = [
+        for (final MapEntry(key: table, value: rows)
+            in incoming.peopleTables.entries)
+          ...await _liveIdsMissingFrom(txn, table, rows),
+      ];
+      removedCategories
+        ..remove(ExpenseCategory.fallbackId)
+        ..remove(ExpenseCategory.incomeFallbackId);
+      await txn.update('expenses', deleted, where: 'deleted_at IS NULL');
+      for (final table in ['recurring_expenses', ...AppDatabase.peopleTables]) {
+        await txn.update(table, deleted, where: 'deleted_at IS NULL');
+      }
+      await txn.update(
+        'categories',
+        deleted,
+        where: 'deleted_at IS NULL AND id NOT IN (?, ?)',
+        whereArgs: [
+          ExpenseCategory.fallbackId,
+          ExpenseCategory.incomeFallbackId,
+        ],
+      );
+      // Settings have no deleted marker: one the file never changed goes
+      // back to its default.
+      final incomingKeys = {for (final row in incoming.settings) row['key']};
+      final removedSettings = [
+        for (final row in await txn.query('settings', columns: ['key']))
+          if (!incomingKeys.contains(row['key'])) row['key'],
+      ];
+      await txn.delete('settings');
+
+      Map<String, Object?> stamped(Map<String, Object?> row) => {
+        ...row,
+        'updated_at': now,
+        'dirty': 1,
+      };
+      for (final row in incoming.categories) {
+        await _upsert(txn, 'categories', 'id', stamped(row));
+      }
+      final known = await _categoryIds(txn);
+      for (final row in incoming.expenses) {
+        await _upsert(
           txn,
           'expenses',
-          incoming.expenses,
+          'id',
+          stamped(_withKnownCategory(row, known)),
         );
-        final removedCategories = await _liveIdsMissingFrom(
-          txn,
-          'categories',
-          incoming.categories,
-        );
-        final removedRecurring = await _liveIdsMissingFrom(
+      }
+      for (final row in incoming.settings) {
+        await txn.insert('settings', stamped(row));
+      }
+      for (final row in incoming.recurring) {
+        await _upsert(
           txn,
           'recurring_expenses',
-          incoming.recurring,
+          'id',
+          stamped(_withKnownCategory(row, known)),
         );
-        removedCategories
-          ..remove(ExpenseCategory.fallbackId)
-          ..remove(ExpenseCategory.incomeFallbackId);
-        await txn.update('expenses', deleted, where: 'deleted_at IS NULL');
-        await txn.update(
-          'recurring_expenses',
-          deleted,
-          where: 'deleted_at IS NULL',
-        );
-        await txn.update(
-          'categories',
-          deleted,
-          where: 'deleted_at IS NULL AND id NOT IN (?, ?)',
-          whereArgs: [
-            ExpenseCategory.fallbackId,
-            ExpenseCategory.incomeFallbackId,
-          ],
-        );
-        // Settings have no deleted marker: one the file never changed goes
-        // back to its default.
-        final incomingKeys = {for (final row in incoming.settings) row['key']};
-        final removedSettings = [
-          for (final row in await txn.query('settings', columns: ['key']))
-            if (!incomingKeys.contains(row['key'])) row['key'],
-        ];
-        await txn.delete('settings');
+      }
 
-        Map<String, Object?> stamped(Map<String, Object?> row) => {
-          ...row,
-          'updated_at': now,
-          'dirty': 1,
-        };
-        for (final row in incoming.categories) {
-          await _upsert(txn, 'categories', 'id', stamped(row));
-        }
-        final known = await _categoryIds(txn);
-        for (final row in incoming.expenses) {
-          await _upsert(
-            txn,
-            'expenses',
-            'id',
-            stamped(_withKnownCategory(row, known)),
-          );
-        }
-        for (final row in incoming.settings) {
-          await txn.insert('settings', stamped(row));
-        }
-        for (final row in incoming.recurring) {
-          await _upsert(
-            txn,
-            'recurring_expenses',
-            'id',
-            stamped(_withKnownCategory(row, known)),
-          );
-        }
-
-        await _rehomeOrphans(txn);
-        return incoming.length +
-            removedExpenses.length +
-            removedCategories.length +
-            removedSettings.length +
-            removedRecurring.length;
+      await _writePeople(txn, incoming, (table, row) async {
+        await _upsert(txn, table, 'id', stamped(row));
+        return true;
       });
-    },
-  );
+
+      await _rehomeOrphans(txn);
+      await _cascadeDeletedPeople(txn);
+      return incoming.length +
+          removedPeople.length +
+          removedExpenses.length +
+          removedCategories.length +
+          removedSettings.length +
+          removedRecurring.length;
+    });
+  });
+
+  /// Writes the people and debts rows with [write], parents first. A row
+  /// whose parent exists nowhere could only come from a damaged copy; it is
+  /// skipped rather than failing everything else. Returns how many rows
+  /// [write] reported as written.
+  Future<int> _writePeople(
+    Transaction txn,
+    RecordBatch incoming,
+    Future<bool> Function(String table, Map<String, Object?> row) write,
+  ) async {
+    var written = 0;
+    Future<void> writeAll(
+      String table,
+      List<Map<String, Object?>> rows, {
+      String? parentKey,
+      Set<String>? parents,
+    }) async {
+      for (final row in rows) {
+        if (parents != null && !parents.contains(row[parentKey])) continue;
+        if (await write(table, row)) written++;
+      }
+    }
+
+    await writeAll('people', incoming.people);
+    final people = await _ids(txn, 'people');
+    await writeAll(
+      'settlements',
+      incoming.settlements,
+      parentKey: 'person_id',
+      parents: people,
+    );
+    await writeAll(
+      'person_transactions',
+      incoming.personTransactions,
+      parentKey: 'person_id',
+      parents: people,
+    );
+    await writeAll(
+      'person_transaction_edits',
+      incoming.personTransactionEdits,
+      parentKey: 'transaction_id',
+      parents: await _ids(txn, 'person_transactions'),
+    );
+    return written;
+  }
+
+  /// A person deleted elsewhere may still have transactions or settlements
+  /// that were only ever recorded here, and a deleted transaction may still
+  /// have its change log. They are deleted too, just as deleting the person
+  /// or the transaction on this phone would delete them, and are marked for
+  /// the next upload.
+  Future<int> _cascadeDeletedPeople(Transaction txn) async {
+    final now = AppDatabase.nowMillis();
+    final deleted = {'deleted_at': now, 'updated_at': now, 'dirty': 1};
+    var count = 0;
+    for (final table in ['person_transactions', 'settlements']) {
+      count += await txn.update(
+        table,
+        deleted,
+        where:
+            'deleted_at IS NULL AND person_id IN '
+            '(SELECT id FROM people WHERE deleted_at IS NOT NULL)',
+      );
+    }
+    return count +
+        await txn.update(
+          'person_transaction_edits',
+          deleted,
+          where:
+              'deleted_at IS NULL AND transaction_id IN '
+              '(SELECT id FROM person_transactions '
+              'WHERE deleted_at IS NOT NULL)',
+        );
+  }
 
   Future<bool> _applyIfNewer(
     Transaction txn,
@@ -268,8 +383,12 @@ class LocalRecords {
     if (updated == 0) await txn.insert(table, row);
   }
 
-  Future<Set<String>> _categoryIds(Transaction txn) async => {
-    for (final row in await txn.query('categories', columns: ['id']))
+  Future<Set<String>> _categoryIds(Transaction txn) => _ids(txn, 'categories');
+
+  /// Every id in [table], deleted rows included: a foreign key only needs
+  /// the row to exist.
+  Future<Set<String>> _ids(Transaction txn, String table) async => {
+    for (final row in await txn.query(table, columns: ['id']))
       row['id']! as String,
   };
 

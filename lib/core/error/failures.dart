@@ -38,6 +38,13 @@ enum FailureCode {
   titleTooLong,
   dueDayInvalid,
   alreadyPaid,
+  personRequired,
+  personNameRequired,
+  personNameTooLong,
+  phoneInvalid,
+  transactionSettled,
+  nothingToSettle,
+  settlementAlreadyLogged,
 }
 
 /// Typed failures produced by the data layer and surfaced through `ApiResult`.

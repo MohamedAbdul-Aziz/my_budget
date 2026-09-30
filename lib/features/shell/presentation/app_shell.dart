@@ -7,10 +7,12 @@ import '../../analyses/presentation/cubit/analyses_cubit.dart';
 import '../../analyses/presentation/pages/analyses_page.dart';
 import '../../expenses/presentation/cubit/home_cubit.dart';
 import '../../expenses/presentation/pages/home_page.dart';
+import '../../people/presentation/cubit/people_cubit.dart';
+import '../../people/presentation/pages/people_page.dart';
 import '../../recurring/presentation/cubit/recurring_cubit.dart';
 import '../../recurring/presentation/cubit/recurring_state.dart';
 
-/// The two top-level screens behind a bottom navigation bar. Both stay alive
+/// The top-level screens behind a bottom navigation bar. All stay alive
 /// in an [IndexedStack], so switching tabs keeps scroll positions.
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -32,6 +34,8 @@ class _AppShellState extends State<AppShell> {
     // app-level listener that keeps analyses in step has no change to react
     // to yet. Load the first analysis here.
     context.read<AnalysesCubit>().load(context.read<HomeCubit>().selectedMonth);
+    // Not needed for the first frame, which shows the home tab.
+    context.read<PeopleCubit>().load();
 
     final recurring = context.read<RecurringCubit>();
     // Back in the foreground, possibly on a later day: log what fell due
@@ -91,9 +95,14 @@ class _AppShellState extends State<AppShell> {
             // The hidden tab's animations (spinners) stop until it is shown.
             TickerMode(enabled: _index == 0, child: const HomePage()),
             TickerMode(enabled: _index == 1, child: const AnalysesPage()),
+            TickerMode(enabled: _index == 2, child: const PeoplePage()),
           ],
         ),
-        floatingActionButton: _index == 0 ? const AddExpenseButton() : null,
+        floatingActionButton: switch (_index) {
+          0 => const AddExpenseButton(),
+          2 => const AddPeopleButton(),
+          _ => null,
+        },
         bottomNavigationBar: NavigationBar(
           selectedIndex: _index,
           onDestinationSelected: (index) => setState(() => _index = index),
@@ -107,6 +116,11 @@ class _AppShellState extends State<AppShell> {
               icon: const Icon(Icons.insights_outlined),
               selectedIcon: const Icon(Icons.insights_rounded),
               label: strings.analyses,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.people_outline_rounded),
+              selectedIcon: const Icon(Icons.people_rounded),
+              label: strings.people,
             ),
           ],
         ),

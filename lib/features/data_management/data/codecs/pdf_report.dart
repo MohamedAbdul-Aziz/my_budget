@@ -7,6 +7,7 @@ import 'package:pdf/widgets.dart' as pw;
 import '../../../../core/utils/app_formats.dart';
 import '../../../expenses/domain/entities/month.dart';
 import '../models/export_texts.dart';
+import 'debt_rows.dart';
 
 /// Everything a report is built from. Plain data, so it can be handed to a
 /// background isolate.
@@ -23,6 +24,10 @@ class ReportInput {
     required this.boldFont,
     this.recurring = const [],
     this.recurringSchedules = const {},
+    this.people = const [],
+    this.settlements = const [],
+    this.personTransactions = const [],
+    this.personTransactionEdits = const [],
   });
 
   /// Rows in the phone's format; deleted ones are skipped.
@@ -49,12 +54,20 @@ class ReportInput {
 
   /// Recurring payment id to its schedule, worded in the report's language.
   final Map<String, String> recurringSchedules;
+
+  /// The people and debts tables' rows; deleted ones are skipped.
+  final List<Map<String, Object?>> people;
+  final List<Map<String, Object?>> settlements;
+  final List<Map<String, Object?>> personTransactions;
+  final List<Map<String, Object?>> personTransactionEdits;
 }
 
 /// A readable, printable report of every expense: totals, spending by
 /// category and by month, then each month's expenses. Income is summed up
-/// next to the spending but kept out of every spending figure. For reading
-/// and sharing only; it cannot be imported.
+/// next to the spending but kept out of every spending figure. Then any
+/// recurring payments, and what is owed between the user and each person,
+/// with the settled history. For reading and sharing only; it cannot be
+/// imported.
 ///
 /// Pure Dart, so it can run on a background isolate.
 Future<Uint8List> buildPdfReport(ReportInput input) async {
@@ -101,6 +114,14 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
     for (final row in input.recurring)
       if (row['deleted_at'] == null) row,
   ];
+
+  final debts = DebtRows(
+    people: input.people,
+    settlements: input.settlements,
+    transactions: input.personTransactions,
+    edits: input.personTransactionEdits,
+  );
+  final (owedToYou, youOwe) = debts.totals;
 
   final theme = pw.ThemeData.withFont(
     base: pw.Font.ttf(input.font.buffer.asByteData()),
@@ -281,10 +302,123 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
             amountColumns: {4},
           ),
         ],
+        if (!debts.isEmpty) ...[
+          heading(texts.peopleAndDebts),
+          _text(
+            '${texts.owedToYou}: ${formats.money(owedToYou)}  ·  '
+            '${texts.youOwe}: ${formats.money(youOwe)}',
+            style: const pw.TextStyle(fontSize: 10),
+          ),
+          pw.SizedBox(height: 6),
+          table(
+            headers: [texts.person, texts.status, texts.balance],
+            rows: [
+              for (final person in debts.people)
+                [
+                  '${person['name']}',
+                  DebtRows.standing(debts.balanceOf(person['id']), texts),
+                  formats.money(debts.balanceOf(person['id']).magnitude),
+                ],
+            ],
+            amountColumns: {2},
+          ),
+          for (final person in debts.people)
+            ..._personLedger(
+              person,
+              debts: debts,
+              texts: texts,
+              formats: formats,
+              table: table,
+            ),
+        ],
       ],
     ),
   );
   return document.save();
+}
+
+/// One person's open transactions, then each settlement with what it
+/// cleared, newest first. Nothing for a person with no transactions.
+List<pw.Widget> _personLedger(
+  Map<String, Object?> person, {
+  required DebtRows debts,
+  required ExportTexts texts,
+  required AppFormats formats,
+  required pw.Widget Function({
+    required List<String> headers,
+    required List<List<String>> rows,
+    required Set<int> amountColumns,
+  })
+  table,
+}) {
+  final transactions = [
+    for (final row in debts.transactions)
+      if (row['person_id'] == person['id']) row,
+  ];
+  if (transactions.isEmpty) return const [];
+
+  final open = [
+    for (final row in transactions)
+      if (row['settled_at'] == null) row,
+  ];
+  final balance = debts.balanceOf(person['id']);
+
+  pw.Widget label(String text, {bool bold = false}) => pw.Padding(
+    padding: const pw.EdgeInsets.only(top: 10, bottom: 4),
+    child: _text(
+      text,
+      style: pw.TextStyle(
+        fontSize: bold ? 11 : 10,
+        fontWeight: bold ? pw.FontWeight.bold : null,
+      ),
+    ),
+  );
+
+  pw.Widget rows(List<Map<String, Object?>> items) => table(
+    headers: [texts.date, texts.type, texts.note, texts.amount],
+    rows: [
+      for (final row in items)
+        [
+          formats.fullDate(DebtRows.time(row['date'])),
+          DebtRows.typeLabel(row, texts),
+          (row['note'] as String?) ?? '',
+          formats.money((row['amount']! as num).toDouble()),
+        ],
+    ],
+    amountColumns: {3},
+  );
+
+  return [
+    pw.SizedBox(height: 8),
+    label(
+      '${person['name']}: ${DebtRows.standing(balance, texts)} '
+      '${formats.money(balance.magnitude)}',
+      bold: true,
+    ),
+    if (open.isNotEmpty) ...[label(texts.activeTransactions), rows(open)],
+    for (final settlement in debts.settlements)
+      if (settlement['person_id'] == person['id']) ...[
+        label(
+          '${texts.settledOn} '
+          '${formats.fullDate(DebtRows.time(settlement['settled_at']))}: '
+          '${_settlementDirection(settlement, texts)} '
+          '${formats.money(((settlement['net_amount']! as num).toDouble()).abs())}',
+        ),
+        rows([
+          for (final row in transactions)
+            if (row['settlement_id'] == settlement['id']) row,
+        ]),
+      ],
+  ];
+}
+
+String _settlementDirection(Map<String, Object?> row, ExportTexts texts) {
+  final net = (row['net_amount']! as num).toDouble();
+  return net > 0
+      ? texts.theyPaidYou
+      : net < 0
+      ? texts.youPaidThem
+      : texts.settledUp;
 }
 
 final RegExp _arabicLetters = RegExp(
