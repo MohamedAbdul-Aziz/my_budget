@@ -159,6 +159,52 @@ class AppStringsUk extends AppStrings {
   String get currencySymbolHint => 'Показується біля кожної суми';
 
   @override
+  String get reminders => 'Нагадування';
+
+  @override
+  String get dailyReminder => 'Щоденне нагадування';
+
+  @override
+  String get dailyReminderHint => 'Нагадаємо записати сьогоднішні витрати';
+
+  @override
+  String get reminderTime => 'Час';
+
+  @override
+  String get notificationsBlocked =>
+      'Сповіщення для цього застосунку вимкнено. Дозвольте їх у налаштуваннях телефона.';
+
+  @override
+  String get reminderNotificationTitle => 'Запишіть сьогоднішні витрати';
+
+  @override
+  String get reminderNotificationBody =>
+      'Знайдіть хвилинку, щоб додати сьогоднішні витрати.';
+
+  @override
+  String get security => 'Безпека';
+
+  @override
+  String get appLock => 'Блокування застосунку';
+
+  @override
+  String get appLockHint =>
+      'Запитувати відбиток, обличчя або блокування екрана під час відкриття';
+
+  @override
+  String get appLockUnavailable =>
+      'Спершу налаштуйте блокування екрана на телефоні';
+
+  @override
+  String get unlock => 'Розблокувати';
+
+  @override
+  String get unlockToContinue => 'Розблокуйте, щоб побачити бюджет';
+
+  @override
+  String get confirmItsYou => 'Підтвердьте, що це ви, щоб змінити блокування';
+
+  @override
   String get storedOnThisDevice =>
       'Ваші витрати зберігаються на цьому пристрої. Увійдіть, щоб зробити '
       'резервну копію.';
@@ -222,6 +268,25 @@ class AppStringsUk extends AppStrings {
   String get useDifferentEmail => 'Інша пошта';
 
   @override
+  String get forgotPassword => 'Забули пароль?';
+
+  @override
+  String get resetPassword => 'Скидання пароля';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'Ми надіслали код на $email. Введіть його разом із новим паролем для облікового запису.';
+
+  @override
+  String get newPassword => 'Новий пароль';
+
+  @override
+  String get saveNewPassword => 'Зберегти пароль';
+
+  @override
+  String get backToSignIn => 'Повернутися до входу';
+
+  @override
   String get backupHint =>
       'Резервна копія зберігає ваші витрати в обліковому записі. Відновлення '
       'переносить цю копію на телефон, нічого не видаляючи з того, що вже '
@@ -229,6 +294,13 @@ class AppStringsUk extends AppStrings {
 
   @override
   String get backUpNow => 'Створити копію';
+
+  @override
+  String get autoBackup => 'Автокопіювання';
+
+  @override
+  String get autoBackupHint =>
+      'Щоразу, коли ви виходите із застосунку, нові зміни копіюються в обліковий запис.';
 
   @override
   String get restoreData => 'Відновити';
@@ -681,6 +753,31 @@ class AppStringsUk extends AppStrings {
   String get income => 'Дохід';
 
   @override
+  String get search => 'Пошук';
+
+  @override
+  String get searchHint => 'Пошук за нотатками й сумами';
+
+  @override
+  String get searchPrompt =>
+      'Знайдіть операцію за нотаткою чи сумою або відфільтруйте за типом, категорією й датою.';
+
+  @override
+  String get noSearchResults => 'Нічого не знайдено';
+
+  @override
+  String get allTypes => 'Усі';
+
+  @override
+  String get anyCategory => 'Будь-яка категорія';
+
+  @override
+  String get anyDate => 'Будь-яка дата';
+
+  @override
+  String get clearFilters => 'Скинути фільтри';
+
+  @override
   String get transactionType => 'Витрата чи дохід';
 
   @override
@@ -871,6 +968,25 @@ class AppStringsUk extends AppStrings {
 
   @override
   String recurringPaid(String name) => '«$name» позначено як оплачене';
+
+  @override
+  String recurringReceived(String name) => '«$name» позначено як отримане';
+
+  @override
+  String get statusReceived => 'Отримано';
+
+  @override
+  String get markAsReceived => 'Отримано';
+
+  @override
+  String get autoAdd => 'Автозарахування';
+
+  @override
+  String get autoAddHint =>
+      'У день надходження автоматично записується як дохід.';
+
+  @override
+  String get monthlyIncomeAverage => 'Дохід на місяць';
 
   @override
   String get recurringPaymentUndone => 'Платіж прибрано';

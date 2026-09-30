@@ -3,7 +3,9 @@ import 'package:equatable/equatable.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/sync_report.dart';
 
-enum SyncKind { backup, restore }
+/// [automatic] is a backup the app started on its own: it shows no success
+/// message, only the new time of the last sync.
+enum SyncKind { backup, restore, automatic }
 
 sealed class SyncState extends Equatable {
   const SyncState({this.lastSyncedAt});

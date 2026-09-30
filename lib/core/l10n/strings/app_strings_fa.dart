@@ -153,6 +153,51 @@ class AppStringsFa extends AppStrings {
   String get currencySymbolHint => 'کنار هر مبلغ نمایش داده می‌شود';
 
   @override
+  String get reminders => 'یادآورها';
+
+  @override
+  String get dailyReminder => 'یادآور روزانه';
+
+  @override
+  String get dailyReminderHint => 'یادآوری برای ثبت خرج‌های امروز';
+
+  @override
+  String get reminderTime => 'زمان';
+
+  @override
+  String get notificationsBlocked =>
+      'اعلان‌های این برنامه خاموش است. از تنظیمات گوشی اجازه دهید.';
+
+  @override
+  String get reminderNotificationTitle => 'خرج‌های امروز را ثبت کنید';
+
+  @override
+  String get reminderNotificationBody =>
+      'چند لحظه وقت بگذارید و خرج‌های امروز را اضافه کنید.';
+
+  @override
+  String get security => 'امنیت';
+
+  @override
+  String get appLock => 'قفل برنامه';
+
+  @override
+  String get appLockHint =>
+      'هنگام باز شدن برنامه، اثر انگشت، چهره یا قفل صفحه خواسته شود';
+
+  @override
+  String get appLockUnavailable => 'ابتدا روی این گوشی قفل صفحه تنظیم کنید';
+
+  @override
+  String get unlock => 'باز کردن قفل';
+
+  @override
+  String get unlockToContinue => 'برای دیدن بودجه‌تان قفل را باز کنید';
+
+  @override
+  String get confirmItsYou => 'برای تغییر قفل برنامه، هویت خود را تأیید کنید';
+
+  @override
   String get storedOnThisDevice =>
       'هزینه‌های شما روی همین دستگاه ذخیره می‌شوند. برای پشتیبان‌گیری وارد '
       'شوید.';
@@ -214,12 +259,38 @@ class AppStringsFa extends AppStrings {
   String get useDifferentEmail => 'استفاده از ایمیل دیگر';
 
   @override
+  String get forgotPassword => 'رمز عبور را فراموش کرده‌اید؟';
+
+  @override
+  String get resetPassword => 'بازنشانی رمز عبور';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'کدی به $email فرستادیم. آن را همراه با رمز عبور جدید حساب خود وارد کنید.';
+
+  @override
+  String get newPassword => 'رمز عبور جدید';
+
+  @override
+  String get saveNewPassword => 'ذخیره رمز عبور جدید';
+
+  @override
+  String get backToSignIn => 'بازگشت به ورود';
+
+  @override
   String get backupHint =>
       'با پشتیبان‌گیری، نسخه‌ای از هزینه‌هایتان در حسابتان نگه داشته می‌شود. '
       'بازیابی آن نسخه را بدون حذف چیزی از این گوشی برمی‌گرداند.';
 
   @override
   String get backUpNow => 'پشتیبان‌گیری';
+
+  @override
+  String get autoBackup => 'پشتیبان‌گیری خودکار';
+
+  @override
+  String get autoBackupHint =>
+      'هر بار که از برنامه بیرون می‌روید، تغییرات تازه در حسابتان پشتیبان‌گیری می‌شود.';
 
   @override
   String get restoreData => 'بازیابی';
@@ -655,6 +726,31 @@ class AppStringsFa extends AppStrings {
   String get income => 'درآمد';
 
   @override
+  String get search => 'جستجو';
+
+  @override
+  String get searchHint => 'جستجوی یادداشت یا مبلغ';
+
+  @override
+  String get searchPrompt =>
+      'هر تراکنش را با یادداشت یا مبلغش پیدا کنید، یا بر اساس نوع، دسته و تاریخ فیلتر کنید.';
+
+  @override
+  String get noSearchResults => 'تراکنشی پیدا نشد';
+
+  @override
+  String get allTypes => 'همه';
+
+  @override
+  String get anyCategory => 'هر دسته';
+
+  @override
+  String get anyDate => 'هر تاریخ';
+
+  @override
+  String get clearFilters => 'پاک کردن فیلترها';
+
+  @override
   String get transactionType => 'هزینه یا درآمد';
 
   @override
@@ -833,6 +929,24 @@ class AppStringsFa extends AppStrings {
 
   @override
   String recurringPaid(String name) => '«$name» پرداخت‌شده علامت خورد';
+
+  @override
+  String recurringReceived(String name) => '«$name» دریافت‌شده علامت خورد';
+
+  @override
+  String get statusReceived => 'دریافت‌شده';
+
+  @override
+  String get markAsReceived => 'دریافت شد';
+
+  @override
+  String get autoAdd => 'افزودن خودکار';
+
+  @override
+  String get autoAddHint => 'در روز سررسید خودکار به‌عنوان درآمد ثبت می‌شود.';
+
+  @override
+  String get monthlyIncomeAverage => 'درآمد ماهانه';
 
   @override
   String get recurringPaymentUndone => 'پرداخت برداشته شد';

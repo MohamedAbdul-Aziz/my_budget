@@ -157,6 +157,52 @@ class AppStringsEs extends AppStrings {
   String get currencySymbolHint => 'Se muestra junto a cada importe';
 
   @override
+  String get reminders => 'Recordatorios';
+
+  @override
+  String get dailyReminder => 'Recordatorio diario';
+
+  @override
+  String get dailyReminderHint => 'Un aviso para anotar lo que gastaste hoy';
+
+  @override
+  String get reminderTime => 'Hora';
+
+  @override
+  String get notificationsBlocked =>
+      'Las notificaciones de esta app están desactivadas. Actívalas en los ajustes del teléfono.';
+
+  @override
+  String get reminderNotificationTitle => 'Anota los gastos de hoy';
+
+  @override
+  String get reminderNotificationBody =>
+      'Tómate un momento para añadir lo que gastaste hoy.';
+
+  @override
+  String get security => 'Seguridad';
+
+  @override
+  String get appLock => 'Bloqueo de la app';
+
+  @override
+  String get appLockHint =>
+      'Pide tu huella, tu cara o el bloqueo de pantalla al abrir la app';
+
+  @override
+  String get appLockUnavailable =>
+      'Configura un bloqueo de pantalla en este teléfono para usarlo';
+
+  @override
+  String get unlock => 'Desbloquear';
+
+  @override
+  String get unlockToContinue => 'Desbloquea para ver tu presupuesto';
+
+  @override
+  String get confirmItsYou => 'Confirma que eres tú para cambiar el bloqueo';
+
+  @override
   String get storedOnThisDevice =>
       'Tus gastos se guardan en este dispositivo. Inicia sesión para hacer '
       'una copia de seguridad.';
@@ -219,6 +265,25 @@ class AppStringsEs extends AppStrings {
   String get useDifferentEmail => 'Usar otro correo';
 
   @override
+  String get forgotPassword => '¿Olvidaste tu contraseña?';
+
+  @override
+  String get resetPassword => 'Restablecer contraseña';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'Enviamos un código a $email. Escríbelo junto con una contraseña nueva para tu cuenta.';
+
+  @override
+  String get newPassword => 'Contraseña nueva';
+
+  @override
+  String get saveNewPassword => 'Guardar contraseña nueva';
+
+  @override
+  String get backToSignIn => 'Volver a iniciar sesión';
+
+  @override
   String get backupHint =>
       'Haz una copia de seguridad para guardar tus gastos en tu cuenta. '
       'Restaurar trae esa copia a este teléfono sin borrar nada de lo que ya '
@@ -226,6 +291,13 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get backUpNow => 'Hacer copia ahora';
+
+  @override
+  String get autoBackup => 'Copia automática';
+
+  @override
+  String get autoBackupHint =>
+      'Cada vez que sales de la app, los cambios nuevos se guardan en tu cuenta.';
 
   @override
   String get restoreData => 'Restaurar';
@@ -680,6 +752,31 @@ class AppStringsEs extends AppStrings {
   String get income => 'Ingreso';
 
   @override
+  String get search => 'Buscar';
+
+  @override
+  String get searchHint => 'Busca notas o importes';
+
+  @override
+  String get searchPrompt =>
+      'Encuentra cualquier movimiento por su nota o importe, o filtra por tipo, categoría y fecha.';
+
+  @override
+  String get noSearchResults => 'Ningún movimiento coincide';
+
+  @override
+  String get allTypes => 'Todo';
+
+  @override
+  String get anyCategory => 'Cualquier categoría';
+
+  @override
+  String get anyDate => 'Cualquier fecha';
+
+  @override
+  String get clearFilters => 'Quitar filtros';
+
+  @override
   String get transactionType => 'Gasto o ingreso';
 
   @override
@@ -867,6 +964,25 @@ class AppStringsEs extends AppStrings {
 
   @override
   String recurringPaid(String name) => '$name marcado como pagado';
+
+  @override
+  String recurringReceived(String name) => '$name marcado como recibido';
+
+  @override
+  String get statusReceived => 'Recibido';
+
+  @override
+  String get markAsReceived => 'Marcar recibido';
+
+  @override
+  String get autoAdd => 'Ingreso automático';
+
+  @override
+  String get autoAddHint =>
+      'Se registra como ingreso automáticamente el día que vence.';
+
+  @override
+  String get monthlyIncomeAverage => 'Ingresos al mes';
 
   @override
   String get recurringPaymentUndone => 'Pago quitado';

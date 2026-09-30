@@ -350,7 +350,15 @@ Future<Uint8List> buildPdfReport(ReportInput input) async {
                   '${row['title']}',
                   categoryName(row['category_id']! as String),
                   input.recurringSchedules[row['id']] ?? '',
-                  row['mode'] == 'auto' ? texts.autoDeduct : texts.reminder,
+                  switch (row['mode']) {
+                    'auto'
+                        when input.incomeCategoryIds.contains(
+                          row['category_id'],
+                        ) =>
+                      texts.autoAdd,
+                    'auto' => texts.autoDeduct,
+                    _ => texts.reminder,
+                  },
                   switch (row['paid_through']) {
                     final String day => formats.fullDate(DateTime.parse(day)),
                     _ => '',

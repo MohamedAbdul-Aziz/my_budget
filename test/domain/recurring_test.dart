@@ -219,8 +219,34 @@ void main() {
       RecurringStatus.paid,
     ]);
     // 1000 + 12 × 52 ÷ 12 + 60 + 120 ÷ 12.
-    expect(overview.monthlyTotal, closeTo(1000 + 52 + 60 + 10, 0.001));
+    expect(overview.monthlySpending, closeTo(1000 + 52 + 60 + 10, 0.001));
     expect(overview.count(RecurringStatus.overdue), 2);
+  });
+
+  test('the overview adds up spending and income apart', () {
+    final overview = GetRecurringOverview.overviewOf([
+      _recurring(amount: 900),
+      RecurringExpense(
+        id: 'rec_salary',
+        title: 'Salary',
+        amount: 3000,
+        category: const ExpenseCategory(
+          id: 'cat_salary',
+          name: 'Salary',
+          iconName: 'payments',
+          colorValue: 0,
+          type: TransactionType.income,
+        ),
+        frequency: RecurrenceFrequency.monthly,
+        dueDay: 25,
+        mode: RecurringMode.autoDeduct,
+        startsOn: DateTime(2026, 9, 1),
+        createdAt: DateTime(2026, 9, 1),
+      ),
+    ], today: DateTime(2026, 9, 20));
+
+    expect(overview.monthlySpending, 900);
+    expect(overview.monthlyIncome, 3000);
   });
 
   group('saving', () {
@@ -250,6 +276,7 @@ void main() {
       expect(codeOf(draft(title: 'x' * 41)), FailureCode.titleTooLong);
       expect(codeOf(draft(amount: 0)), FailureCode.amountRequired);
       expect(codeOf(draft(category: null)), FailureCode.categoryRequired);
+      // Income repeats too, such as a salary.
       expect(
         codeOf(
           draft(
@@ -262,7 +289,7 @@ void main() {
             ),
           ),
         ),
-        FailureCode.categoryRequired,
+        isNull,
       );
       expect(codeOf(draft(dueDay: 32)), FailureCode.dueDayInvalid);
       expect(
@@ -386,6 +413,26 @@ void main() {
       );
       // The reminder waits for the user.
       expect(repository.recurring.last.paidThrough, isNull);
+    });
+
+    test('recurring income is logged as income', () async {
+      repository.seed(
+        title: 'Salary',
+        amount: 3000,
+        categoryId: 'cat_salary',
+        dueDay: 25,
+        mode: RecurringMode.autoDeduct,
+        startsOn: DateTime(2026, 9, 1),
+      );
+
+      await LogDueRecurring(repository)(today: DateTime(2026, 9, 30));
+
+      final salary = expenses.expenses.single;
+      expect(salary.isIncome, isTrue);
+      expect(salary.amount, 3000);
+      expect(salary.date, DateTime(2026, 9, 25));
+      // Income adds nothing to the month's spending.
+      expect(salary.spending, 0);
     });
 
     test('running again logs nothing twice', () async {

@@ -159,6 +159,54 @@ class AppStringsDe extends AppStrings {
   String get currencySymbolHint => 'Wird neben jedem Betrag angezeigt';
 
   @override
+  String get reminders => 'Erinnerungen';
+
+  @override
+  String get dailyReminder => 'Tägliche Erinnerung';
+
+  @override
+  String get dailyReminderHint =>
+      'Ein Hinweis, deine Ausgaben von heute einzutragen';
+
+  @override
+  String get reminderTime => 'Uhrzeit';
+
+  @override
+  String get notificationsBlocked =>
+      'Benachrichtigungen sind für diese App aus. Erlaube sie in den Einstellungen deines Handys.';
+
+  @override
+  String get reminderNotificationTitle => 'Heutige Ausgaben eintragen';
+
+  @override
+  String get reminderNotificationBody =>
+      'Nimm dir kurz Zeit und trag ein, was du heute ausgegeben hast.';
+
+  @override
+  String get security => 'Sicherheit';
+
+  @override
+  String get appLock => 'App-Sperre';
+
+  @override
+  String get appLockHint =>
+      'Beim Öffnen nach Fingerabdruck, Gesicht oder Displaysperre fragen';
+
+  @override
+  String get appLockUnavailable =>
+      'Richte zuerst eine Displaysperre auf diesem Handy ein';
+
+  @override
+  String get unlock => 'Entsperren';
+
+  @override
+  String get unlockToContinue => 'Entsperre, um dein Budget zu sehen';
+
+  @override
+  String get confirmItsYou =>
+      'Bestätige, dass du es bist, um die Sperre zu ändern';
+
+  @override
   String get storedOnThisDevice =>
       'Deine Ausgaben werden auf diesem Gerät gespeichert. Melde dich an, um '
       'sie zu sichern.';
@@ -221,6 +269,25 @@ class AppStringsDe extends AppStrings {
   String get useDifferentEmail => 'Andere E-Mail verwenden';
 
   @override
+  String get forgotPassword => 'Passwort vergessen?';
+
+  @override
+  String get resetPassword => 'Passwort zurücksetzen';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'Wir haben einen Code an $email gesendet. Gib ihn mit einem neuen Passwort für dein Konto ein.';
+
+  @override
+  String get newPassword => 'Neues Passwort';
+
+  @override
+  String get saveNewPassword => 'Passwort speichern';
+
+  @override
+  String get backToSignIn => 'Zurück zur Anmeldung';
+
+  @override
   String get backupHint =>
       'Sichere deine Ausgaben, um eine Kopie in deinem Konto zu behalten. '
       'Wiederherstellen holt diese Kopie auf dieses Handy, ohne etwas zu '
@@ -228,6 +295,13 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get backUpNow => 'Jetzt sichern';
+
+  @override
+  String get autoBackup => 'Automatisch sichern';
+
+  @override
+  String get autoBackupHint =>
+      'Immer wenn du die App verlässt, werden neue Änderungen in deinem Konto gesichert.';
 
   @override
   String get restoreData => 'Wiederherstellen';
@@ -694,6 +768,31 @@ class AppStringsDe extends AppStrings {
   String get income => 'Einnahme';
 
   @override
+  String get search => 'Suchen';
+
+  @override
+  String get searchHint => 'Notizen oder Beträge suchen';
+
+  @override
+  String get searchPrompt =>
+      'Finde jede Buchung über Notiz oder Betrag, oder filtere nach Art, Kategorie und Datum.';
+
+  @override
+  String get noSearchResults => 'Keine passenden Buchungen';
+
+  @override
+  String get allTypes => 'Alle';
+
+  @override
+  String get anyCategory => 'Alle Kategorien';
+
+  @override
+  String get anyDate => 'Beliebiges Datum';
+
+  @override
+  String get clearFilters => 'Filter löschen';
+
+  @override
   String get transactionType => 'Ausgabe oder Einnahme';
 
   @override
@@ -884,6 +983,25 @@ class AppStringsDe extends AppStrings {
 
   @override
   String recurringPaid(String name) => '$name als bezahlt markiert';
+
+  @override
+  String recurringReceived(String name) => '$name als erhalten markiert';
+
+  @override
+  String get statusReceived => 'Erhalten';
+
+  @override
+  String get markAsReceived => 'Erhalten';
+
+  @override
+  String get autoAdd => 'Automatisch';
+
+  @override
+  String get autoAddHint =>
+      'Wird am Fälligkeitstag automatisch als Einnahme erfasst.';
+
+  @override
+  String get monthlyIncomeAverage => 'Einnahmen pro Monat';
 
   @override
   String get recurringPaymentUndone => 'Zahlung entfernt';

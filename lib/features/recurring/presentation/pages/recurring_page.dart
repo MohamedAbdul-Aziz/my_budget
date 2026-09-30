@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/theme/status_colors.dart';
+import '../../../../core/theme/transaction_colors.dart';
 import '../../../../core/utils/app_formats.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../domain/entities/recurring_expense.dart';
@@ -105,8 +106,42 @@ class _RecurringList extends StatelessWidget {
   }
 }
 
-/// What all of them cost in an average month, and how many are paid, still
-/// to come, or late.
+/// One figure of the summary: a label above an amount.
+class _Average extends StatelessWidget {
+  const _Average({required this.label, required this.amount, this.color});
+
+  final String label;
+  final String amount;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          amount,
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// What they cost and bring in an average month, and how many are paid,
+/// still to come, or late.
 class _Summary extends StatelessWidget {
   const _Summary({required this.overview, required this.formats});
 
@@ -125,18 +160,24 @@ class _Summary extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              strings.monthlyAverage,
-              style: theme.textTheme.labelLarge?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              formats.moneyTight(overview.monthlyTotal),
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
+            Wrap(
+              spacing: 32,
+              runSpacing: 12,
+              children: [
+                // Spending is the usual case; income joins it once any
+                // recurring income exists.
+                if (overview.monthlySpending > 0 || overview.monthlyIncome == 0)
+                  _Average(
+                    label: strings.monthlyAverage,
+                    amount: formats.moneyTight(overview.monthlySpending),
+                  ),
+                if (overview.monthlyIncome > 0)
+                  _Average(
+                    label: strings.monthlyIncomeAverage,
+                    amount: '+${formats.moneyTight(overview.monthlyIncome)}',
+                    color: TransactionColors.of(context).income,
+                  ),
+              ],
             ),
             const SizedBox(height: 2),
             Text(

@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:my_budget/core/di/injection.dart';
 import 'package:my_budget/core/l10n/app_strings.dart';
 import 'package:my_budget/features/expenses/presentation/cubit/home_cubit.dart';
+import 'package:my_budget/features/expenses/presentation/cubit/search_cubit.dart';
+import 'package:my_budget/features/reminders/domain/entities/daily_reminder.dart';
 import 'package:my_budget/features/settings/domain/entities/app_settings.dart';
 import 'package:my_budget/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:my_budget/features/settings/presentation/widgets/settings_sheet.dart';
@@ -64,7 +66,11 @@ void main() {
         final harness = await bootApp(
           tester,
           localeName: code,
-          before: (harness) => harness.people.seedPerson('Sara'),
+          before: (harness) {
+            harness.people.seedPerson('Sara');
+            // So the settings sheet lays out the reminder's time row too.
+            harness.reminder.reminder = const DailyReminder(enabled: true);
+          },
         );
         expect(
           find.widgetWithText(FloatingActionButton, strings.add),
@@ -106,6 +112,18 @@ void main() {
         expect(
           find.text(strings.defaultCategoryName('cat_food')!),
           findsWidgets,
+        );
+        await _back(tester);
+
+        await tester.tap(find.byTooltip(strings.search));
+        await tester.pumpAndSettle();
+        expect(find.text(strings.searchPrompt), findsOneWidget);
+        await tester.enterText(find.byType(TextField).first, 'rather long');
+        await tester.pump(SearchCubit.typingPause);
+        await tester.pumpAndSettle();
+        expect(
+          find.textContaining(strings.transactionCount(1)),
+          findsOneWidget,
         );
         await _back(tester);
 

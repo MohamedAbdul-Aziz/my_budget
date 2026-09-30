@@ -67,8 +67,8 @@ class SaveRecurringExpense {
     }
 
     final category = draft.category;
-    // Recurring payments are spending; income has no bills to confirm.
-    if (category == null || category.isIncome) {
+    // Spending or income: a salary repeats just like rent.
+    if (category == null) {
       return const ValidationFailure(FailureCode.categoryRequired);
     }
     final amountFailure = AddExpense.validate(

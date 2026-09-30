@@ -83,6 +83,71 @@ void main() {
     expect(find.text('Payment removed'), findsOneWidget);
   });
 
+  testWidgets('adds a recurring salary, logged as income automatically', (
+    tester,
+  ) async {
+    final harness = await bootApp(tester);
+    await _openRecurring(tester);
+
+    await tester.tap(find.widgetWithText(FloatingActionButton, 'Add'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).at(0), 'Salary');
+    await tester.enterText(find.byType(TextField).at(1), '3000');
+    await tester.tap(find.text('Income'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Auto-add'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    // The automatic mode is worded for money coming in.
+    expect(find.text('Auto-deduct'), findsNothing);
+    await tester.tap(find.text('Auto-add'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Logged as income automatically on the due date.'),
+      findsOneWidget,
+    );
+    await tester.ensureVisible(find.text('Add payment'));
+    await tester.tap(find.text('Add payment'));
+    await tester.pumpAndSettle();
+
+    final saved = harness.recurring.recurring.single;
+    expect(saved.category.isIncome, isTrue);
+    expect(saved.mode, RecurringMode.autoDeduct);
+
+    // Due today, so it was logged at once, as income.
+    final logged = harness.expenses.expenses.single;
+    expect(logged.isIncome, isTrue);
+    expect(logged.amount, 3000);
+    expect(find.text('Received'), findsWidgets);
+    expect(find.text('Income each month'), findsOneWidget);
+    expect(find.textContaining('Auto-add'), findsOneWidget);
+  });
+
+  testWidgets('a salary due today is marked as received', (tester) async {
+    final harness = await bootApp(
+      tester,
+      before: (harness) => harness.recurring.seed(
+        title: 'Salary',
+        amount: 3000,
+        categoryId: 'cat_salary',
+        dueDay: _today.day,
+        startsOn: _today,
+      ),
+    );
+
+    await tester.tap(find.text('Mark as received'));
+    await tester.pumpAndSettle();
+
+    expect(harness.expenses.expenses.single.isIncome, isTrue);
+    expect(find.text('Salary marked as received'), findsOneWidget);
+    // Undo works the same as for a payment.
+    await tester.tap(find.text('Undo'));
+    await tester.pumpAndSettle();
+    expect(harness.expenses.expenses, isEmpty);
+  });
+
   testWidgets('home asks about a reminder due today and logs it this month', (
     tester,
   ) async {
@@ -215,6 +280,8 @@ void main() {
     // The weekday after today, so nothing is logged yet.
     final weekday = _today.weekday % 7 + 1;
     final formats = sl<SettingsCubit>().state.formats;
+    await tester.ensureVisible(find.text(formats.shortWeekdayName(weekday)));
+    await tester.pumpAndSettle();
     await tester.tap(find.text(formats.shortWeekdayName(weekday)));
     await tester.scrollUntilVisible(
       find.text('Auto-deduct'),
@@ -262,6 +329,13 @@ void main() {
             mode: RecurringMode.autoDeduct,
             startsOn: _today,
           );
+          harness.recurring.seed(
+            title: 'Salary',
+            amount: 3000,
+            categoryId: 'cat_salary',
+            dueDay: _today.day,
+            startsOn: _today,
+          );
         },
       );
       await sl<SettingsCubit>().setLanguage(language);
@@ -293,6 +367,7 @@ void main() {
       expect(find.byType(RecurringPage), findsOneWidget);
       expect(find.text(strings.statusOverdue), findsWidgets);
       expect(find.text(strings.markAsPaid), findsWidgets);
+      expect(find.text(strings.monthlyIncomeAverage), findsOneWidget);
       if (language == AppLanguage.arabic) {
         expect(find.text('متأخرة'), findsWidgets);
         expect(find.text('تأكيد الدفع'), findsWidgets);

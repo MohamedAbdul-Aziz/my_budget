@@ -37,34 +37,45 @@ lib/
     theme/         app_theme, status_colors, transaction_colors
     utils/         amount_input, app_formats (numbers and dates), category_icons, ui_notice
   features/
-    expenses/        home screen, add/edit form, month overview and summaries (HomeCubit, ExpenseFormCubit)
+    expenses/        home screen, add/edit form, month overview and summaries, search across months
+                     (HomeCubit, ExpenseFormCubit, SearchCubit per screen)
     categories/      built-in + custom categories, expense or income type (CategoriesCubit)
     budgets/         monthly + per-category limits and alerts (BudgetCubit)
-    recurring/       recurring payments: schedules, Paid/Upcoming/Overdue, auto-deduct,
-                     mark as paid (RecurringCubit app-wide, RecurringFormCubit per screen)
+    recurring/       recurring payments and income (type = category type): schedules,
+                     Paid/Received/Upcoming/Overdue, auto-deduct/auto-add, mark as paid
+                     (RecurringCubit app-wide, RecurringFormCubit per screen)
     people/          People tab, per-person ledger, settle up, audit trail
                      (PeopleCubit app-wide, PersonLedgerCubit per screen)
     analyses/        Analyses tab and charts (AnalysesCubit, domain + presentation only)
     settings/        theme, language, currency (SettingsCubit)
-    auth/            Supabase email sign-up/sign-in, OTP confirm, delete account (AccountCubit)
-    sync/            cloud backup and restore (SyncCubit)
+    reminders/       optional daily "log your spending" notification: on/off + time,
+                     scheduled with flutter_local_notifications (ReminderCubit)
+    auth/            Supabase email sign-up/sign-in, OTP confirm, password reset by code,
+                     delete account (AccountCubit)
+    app_lock/        optional lock screen (local_auth) at launch and after 1 min away
+                     (AppLockCubit + AppLockGate above the navigator)
+    sync/            cloud backup and restore (SyncCubit), optional automatic backup on leaving
+                     the app (AutoBackupCubit for the switch, AutoBackupBridge for the trigger)
     data_management/ JSON backup, CSV and PDF export, import, share and save files (DataManagementCubit)
     quick_expense/   Android widget data publishing + quick-add dialog
     shell/           AppShell (tabs / navigation)
-android/app/src/main/kotlin/.../  MainActivity, QuickAddActivity, QuickExpenseWidgetProvider, QuickExpenseChannel
+android/app/src/main/kotlin/.../  MainActivity (a FlutterFragmentActivity, for local_auth), QuickAddActivity,
+                                  QuickExpenseWidgetProvider, QuickExpenseChannel
+                                  (styles use AppCompat parents: local_auth needs them)
 supabase/migrations/   server-side SQL
 assets/pdf_fonts/      IBM Plex Sans Arabic for PDF export
 test/{core,data,domain,presentation}/
 ```
 
 ## 3) Data Model Essentials
-- Tables: `categories`, `expenses`, `settings` (key/value), `recurring_expenses`, and the people tables (`AppDatabase.peopleTables`). `_schemaVersion` is in `app_database.dart` (currently **5**).
+- Tables: `categories`, `expenses`, `settings` (key/value), `recurring_expenses`, and the people tables (`AppDatabase.peopleTables`). `_schemaVersion` is in `app_database.dart` (currently **6**).
 - v2 added sync columns: `updated_at` (ms), `deleted_at` (soft delete; every read must skip these rows), `dirty` (1 = not yet synced). Stamp local writes with `AppDatabase.changed(row)`.
 - v3 added `categories.type` (`expense` | `income`). A transaction's type is its category's type. The table stays named `expenses` for backup and cloud compatibility (`TransactionType.fromStorageKey`).
 - v4 added `recurring_expenses`: a schedule (`frequency` weekly|monthly|yearly, `due_day`, `due_month` for yearly), `mode` (`auto` | `reminder`), and `starts_on` / `paid_through` as `yyyy-MM-dd` text (calendar days, timezone-free). A payment it logs is an ordinary `expenses` row whose id is `<recurringId>_<yyyymmdd>`, so two phones logging the same payment merge into one row. Paying settles the oldest unpaid due date (`paid_through`) in the same SQLite transaction as the expense insert.
 - v5 added `people`, `settlements`, `person_transactions` and `person_transaction_edits` (the change log: values *before* each edit). A transaction is open until `settled_at` + `settlement_id` are set; the balance is summed in whole cents over open ones (`DebtBalance`). Settled transactions are locked. Deleting a person soft-deletes everything recorded with them; `LocalRecords` writes these tables parents first, skips orphans, and cascades a person deleted elsewhere. A settlement logged in the budget is an ordinary `expenses` row in Other / Other income, linked by `settlements.expense_id`.
+- v6 added `device_settings` (key/value, **phone-only**): preferences that belong to this device (`app_lock`, `auto_backup`). Like `sync_meta`, it is not in `SyncedTables`, so it never syncs, is not in backup files, and a restore/import never touches it. No Data Parity work for it.
 - `expenses.month_key` drives monthly queries. Deleting a category moves its transactions and recurring payments to *Other*.
-- Budgets are stored as `budget.*` rows in `settings`, so they travel with backups without a schema change.
+- Budgets are stored as `budget.*` rows in `settings`, so they travel with backups without a schema change. The daily reminder is stored the same way, as `reminder.enabled` / `reminder.time` (`HH:mm`).
 - For any schema change, follow the **Data Parity Rule** below.
 
 ## 3.1) Data Parity Rule (IMPORTANT)

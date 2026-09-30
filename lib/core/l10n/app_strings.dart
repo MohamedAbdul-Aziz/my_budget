@@ -155,6 +155,22 @@ abstract class AppStrings {
   String get currencySymbolHint;
   String get storedOnThisDevice;
 
+  // Daily reminder
+  String get reminders;
+  String get dailyReminder;
+  String get dailyReminderHint;
+  String get reminderTime;
+  String get notificationsBlocked;
+  String get reminderNotificationTitle;
+  String get reminderNotificationBody;
+  String get security;
+  String get appLock;
+  String get appLockHint;
+  String get appLockUnavailable;
+  String get unlock;
+  String get unlockToContinue;
+  String get confirmItsYou;
+
   // Account
   String get account;
   String get accountOptional;
@@ -174,10 +190,18 @@ abstract class AppStrings {
   String get resendCode;
   String get codeResent;
   String get useDifferentEmail;
+  String get forgotPassword;
+  String get resetPassword;
+  String resetCodeSentTo(String email);
+  String get newPassword;
+  String get saveNewPassword;
+  String get backToSignIn;
 
   // Backup
   String get backupHint;
   String get backUpNow;
+  String get autoBackup;
+  String get autoBackupHint;
   String get restoreData;
   String get backingUp;
   String get restoring;
@@ -333,6 +357,7 @@ abstract class AppStrings {
       notice.count ?? 0,
     ),
     NoticeCode.recurringPaid => recurringPaid(notice.name ?? ''),
+    NoticeCode.recurringReceived => recurringReceived(notice.name ?? ''),
     NoticeCode.recurringPaymentUndone => recurringPaymentUndone,
     NoticeCode.recurringDeleted => categoryDeleted(notice.name ?? ''),
     NoticeCode.recurringAutoLogged => recurringAutoLogged(notice.count ?? 0),
@@ -356,6 +381,14 @@ abstract class AppStrings {
   // Income and the month's balance
   String get expense;
   String get income;
+  String get search;
+  String get searchHint;
+  String get searchPrompt;
+  String get noSearchResults;
+  String get allTypes;
+  String get anyCategory;
+  String get anyDate;
+  String get clearFilters;
   String get transactionType;
   String get quickIncome;
   String get newIncome;
@@ -416,6 +449,12 @@ abstract class AppStrings {
   String get seeAll;
   String get deleteRecurringBody;
   String recurringPaid(String name);
+  String recurringReceived(String name);
+  String get statusReceived;
+  String get markAsReceived;
+  String get autoAdd;
+  String get autoAddHint;
+  String get monthlyIncomeAverage;
   String get recurringPaymentUndone;
   String recurringAutoLogged(int count);
   String paymentCount(int count);

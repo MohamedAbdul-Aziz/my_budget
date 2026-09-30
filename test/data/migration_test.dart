@@ -35,7 +35,7 @@ void main() {
       addTearDown(database.close);
       final db = await database.database;
 
-      expect(await db.getVersion(), 5);
+      expect(await db.getVersion(), 6);
 
       final expense = (await db.query('expenses')).single;
       expect(expense['updated_at'], expense['created_at']);
@@ -67,6 +67,8 @@ void main() {
       expect(setting['dirty'], 1);
 
       expect(await db.query('sync_meta'), isEmpty);
+      // Phone-only preferences start empty: everything off.
+      expect(await db.query('device_settings'), isEmpty);
 
       // Recurring payments arrive empty, ready to be set up.
       expect(await db.query('recurring_expenses'), isEmpty);

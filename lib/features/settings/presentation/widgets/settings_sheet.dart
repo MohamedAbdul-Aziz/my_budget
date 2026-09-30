@@ -3,19 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/l10n/app_strings.dart';
+import '../../../app_lock/presentation/widgets/app_lock_section.dart';
 import '../../../auth/domain/entities/app_user.dart';
 import '../../../auth/presentation/cubit/account_cubit.dart';
 import '../../../auth/presentation/cubit/account_state.dart';
 import '../../../auth/presentation/pages/sign_in_page.dart';
 import '../../../data_management/presentation/widgets/data_management_section.dart';
+import '../../../reminders/presentation/widgets/reminder_section.dart';
 import '../../../sync/presentation/widgets/backup_section.dart';
 import '../../domain/entities/app_settings.dart';
 import '../../domain/usecases/save_currency_symbol.dart';
 import '../cubit/settings_cubit.dart';
 import '../cubit/settings_state.dart';
 
-/// Account and cloud backup, files kept on the phone, appearance, language
-/// and currency.
+/// Account and cloud backup, files kept on the phone, appearance, language,
+/// currency, the daily reminder and the app lock.
 class SettingsSheet extends StatelessWidget {
   const SettingsSheet({super.key});
 
@@ -73,6 +75,8 @@ class SettingsSheet extends StatelessWidget {
               Text(strings.currency, style: theme.textTheme.labelLarge),
               const SizedBox(height: 10),
               const _CurrencyField(),
+              const ReminderSection(),
+              const AppLockSection(),
               const _GuestStorageNote(),
             ],
           ),

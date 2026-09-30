@@ -25,6 +25,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        // flutter_local_notifications schedules the daily reminder with
+        // java.time, which older Android versions only get through desugaring.
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -71,4 +74,11 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    // The AppCompat themes in res/values*/styles.xml, which the app lock's
+    // system prompt needs.
+    implementation("androidx.appcompat:appcompat:1.7.0")
 }

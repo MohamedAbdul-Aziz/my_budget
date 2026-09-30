@@ -86,7 +86,12 @@ class RecurringCubit extends Cubit<RecurringState> {
         _lastPayment = data;
         _ledgerVersion++;
         await _fetch(
-          notice: UiNotice(NoticeCode.recurringPaid, name: recurring.title),
+          notice: UiNotice(
+            recurring.isIncome
+                ? NoticeCode.recurringReceived
+                : NoticeCode.recurringPaid,
+            name: recurring.title,
+          ),
         );
       case ResultFailure(:final failure):
         // Read again: an already-paid payment means the list was stale.

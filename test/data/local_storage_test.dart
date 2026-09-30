@@ -11,6 +11,7 @@ import 'package:my_budget/features/categories/domain/usecases/delete_category.da
 import 'package:my_budget/features/expenses/data/datasources/expense_local_data_source.dart';
 import 'package:my_budget/features/expenses/data/repositories/expense_repository_impl.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
+import 'package:my_budget/features/expenses/domain/entities/transaction_search.dart';
 import 'package:my_budget/features/expenses/domain/repositories/expense_repository.dart';
 import 'package:my_budget/features/settings/data/datasources/settings_local_data_source.dart';
 import 'package:my_budget/features/settings/data/repositories/settings_repository_impl.dart';
@@ -295,6 +296,108 @@ void main() {
 
     expect(result, isA<ResultFailure<dynamic>>());
     expect(result.failureOrNull, isA<DatabaseFailure>());
+  });
+
+  group('search', () {
+    setUp(() async {
+      Future<void> add(
+        double amount,
+        String categoryId,
+        DateTime date, [
+        String? note,
+      ]) => expenses.addExpense(
+        amount: amount,
+        categoryId: categoryId,
+        date: date,
+        description: note,
+      );
+
+      await add(12.5, 'cat_food', DateTime(2026, 6, 3), 'Lunch with Sara');
+      await add(80, 'cat_bills', DateTime(2026, 7, 15), 'Internet');
+      await add(3000, 'cat_salary', DateTime(2026, 7, 28), 'July salary');
+      await add(40, 'cat_food', DateTime(2026, 8, 2), 'Кафе');
+      await add(15, 'cat_shopping', DateTime(2026, 8, 20), '100% cotton');
+      await add(80, 'cat_transport', DateTime(2026, 8, 21));
+    });
+
+    Future<List<String?>> notes(TransactionSearch search) async => [
+      for (final expense in (await expenses.searchTransactions(
+        search,
+        limit: 200,
+      )).dataOrNull!)
+        expense.description,
+    ];
+
+    test('finds notes in every month, ignoring case, newest first', () async {
+      expect(await notes(const TransactionSearch(text: 'SALARY')), [
+        'July salary',
+      ]);
+      expect(await notes(const TransactionSearch(text: 'N')), [
+        '100% cotton',
+        'Internet',
+        'Lunch with Sara',
+      ]);
+    });
+
+    test('ignores the case of any alphabet, not only English', () async {
+      expect(await notes(const TransactionSearch(text: 'кафе')), ['Кафе']);
+    });
+
+    test('takes % and _ in the text literally', () async {
+      expect(await notes(const TransactionSearch(text: '0%')), ['100% cotton']);
+      expect(await notes(const TransactionSearch(text: '_')), isEmpty);
+    });
+
+    test('finds an amount typed either way', () async {
+      expect(await notes(const TransactionSearch(text: '80')), [
+        null,
+        'Internet',
+      ]);
+      expect(await notes(const TransactionSearch(text: '12,5')), [
+        'Lunch with Sara',
+      ]);
+    });
+
+    test('filters by type, category and dates, all at once', () async {
+      expect(
+        await notes(const TransactionSearch(type: TransactionType.income)),
+        ['July salary'],
+      );
+      expect(await notes(const TransactionSearch(categoryIds: {'cat_food'})), [
+        'Кафе',
+        'Lunch with Sara',
+      ]);
+      expect(
+        await notes(
+          TransactionSearch(
+            type: TransactionType.expense,
+            from: DateTime(2026, 7, 15),
+            to: DateTime(2026, 8, 2),
+          ),
+        ),
+        // Both ends are included, whatever the time of day.
+        ['Кафе', 'Internet'],
+      );
+    });
+
+    test('skips deleted transactions', () async {
+      final month = (await expenses.getTransactionsForMonth(
+        const Month(2026, 7),
+      )).dataOrNull!;
+      await expenses.deleteExpense(
+        month.firstWhere((expense) => expense.description == 'Internet').id,
+      );
+
+      expect(await notes(const TransactionSearch(text: 'internet')), isEmpty);
+    });
+
+    test('stops at the limit', () async {
+      final found = await expenses.searchTransactions(
+        const TransactionSearch(type: TransactionType.expense),
+        limit: 2,
+      );
+      expect(found.dataOrNull, hasLength(2));
+    });
   });
 
   group('the language preference', () {

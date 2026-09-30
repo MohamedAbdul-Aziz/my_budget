@@ -1,5 +1,5 @@
 name: my_budget
-description: "Offline personal expense tracker. All data stays on the device."
+description: "Local-first expense and income tracker with optional cloud backup."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -49,6 +49,12 @@ dependencies:
   file_picker: ^11.0.3
   pdf: ^3.12.0
   path_provider: ^2.1.5
+  flutter_local_notifications: ^20.1.0
+  timezone: ^0.10.1
+  flutter_timezone: ^5.1.0
+  local_auth: ^3.0.1
+  local_auth_android: ^2.0.8
+  local_auth_darwin: ^2.0.1
 
 dev_dependencies:
   flutter_test:

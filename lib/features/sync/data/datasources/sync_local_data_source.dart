@@ -1,6 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 
 import '../../../../core/database/app_database.dart';
+import '../../../../core/database/device_settings.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/database/local_records.dart';
 import '../../../../core/database/record_batch.dart';
@@ -28,18 +29,39 @@ abstract interface class SyncLocalDataSource {
   /// Unlinks the phone's data from the deleted account [userId] and queues
   /// all of it for the next backup, whoever makes it.
   Future<void> forgetAccount(String userId);
+
+  /// Whether this phone backs up on its own. Off until the user turns it on.
+  Future<bool> autoBackupEnabled();
+
+  Future<void> setAutoBackup({required bool enabled});
 }
 
 /// Sync bookkeeping (who the data belongs to, when it last synced) lives
 /// here; moving the records themselves is [LocalRecords]' job, shared with
 /// the file backup.
 class SyncLocalDataSourceImpl implements SyncLocalDataSource {
-  const SyncLocalDataSourceImpl(this._appDatabase, this._records);
+  const SyncLocalDataSourceImpl(
+    this._appDatabase,
+    this._records,
+    this._deviceSettings,
+  );
 
   static const String _ownerKey = 'owner';
 
   final AppDatabase _appDatabase;
   final LocalRecords _records;
+
+  /// A phone-only preference: turning it on for one phone must not start
+  /// uploads from another.
+  final DeviceSettings _deviceSettings;
+
+  @override
+  Future<bool> autoBackupEnabled() =>
+      _deviceSettings.readFlag(DeviceSettings.autoBackup);
+
+  @override
+  Future<void> setAutoBackup({required bool enabled}) =>
+      _deviceSettings.writeFlag(DeviceSettings.autoBackup, on: enabled);
 
   @override
   Future<String?> owner() =>

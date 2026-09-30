@@ -157,6 +157,50 @@ class AppStringsUr extends AppStrings {
   String get currencySymbolHint => 'ہر رقم کے ساتھ دکھائی جاتی ہے';
 
   @override
+  String get reminders => 'یاد دہانیاں';
+
+  @override
+  String get dailyReminder => 'روزانہ یاد دہانی';
+
+  @override
+  String get dailyReminderHint => 'آج کے اخراجات درج کرنے کی یاد دہانی';
+
+  @override
+  String get reminderTime => 'وقت';
+
+  @override
+  String get notificationsBlocked =>
+      'اس ایپ کی اطلاعات بند ہیں۔ اپنے فون کی ترتیبات میں اجازت دیں۔';
+
+  @override
+  String get reminderNotificationTitle => 'آج کے اخراجات درج کریں';
+
+  @override
+  String get reminderNotificationBody =>
+      'ایک لمحہ نکال کر آج کے اخراجات شامل کریں۔';
+
+  @override
+  String get security => 'سیکیورٹی';
+
+  @override
+  String get appLock => 'ایپ لاک';
+
+  @override
+  String get appLockHint => 'ایپ کھلنے پر فنگر پرنٹ، چہرہ یا اسکرین لاک مانگیں';
+
+  @override
+  String get appLockUnavailable => 'پہلے اس فون پر اسکرین لاک سیٹ کریں';
+
+  @override
+  String get unlock => 'ان لاک کریں';
+
+  @override
+  String get unlockToContinue => 'اپنا بجٹ دیکھنے کے لیے ان لاک کریں';
+
+  @override
+  String get confirmItsYou => 'ایپ لاک بدلنے کے لیے تصدیق کریں کہ یہ آپ ہیں';
+
+  @override
   String get storedOnThisDevice =>
       'آپ کے اخراجات اسی ڈیوائس پر محفوظ ہیں۔ بیک اپ کے لیے سائن ان کریں۔';
 
@@ -218,12 +262,38 @@ class AppStringsUr extends AppStrings {
   String get useDifferentEmail => 'دوسری ای میل استعمال کریں';
 
   @override
+  String get forgotPassword => 'پاس ورڈ بھول گئے؟';
+
+  @override
+  String get resetPassword => 'پاس ورڈ ری سیٹ کریں';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'ہم نے $email پر ایک کوڈ بھیجا ہے۔ اسے اپنے اکاؤنٹ کے نئے پاس ورڈ کے ساتھ درج کریں۔';
+
+  @override
+  String get newPassword => 'نیا پاس ورڈ';
+
+  @override
+  String get saveNewPassword => 'نیا پاس ورڈ محفوظ کریں';
+
+  @override
+  String get backToSignIn => 'سائن ان پر واپس جائیں';
+
+  @override
   String get backupHint =>
       'بیک اپ لینے سے آپ کے اخراجات کی ایک کاپی آپ کے اکاؤنٹ میں رہتی ہے۔ '
       'بحالی اس کاپی کو اس فون پر لاتی ہے، یہاں موجود کچھ بھی ہٹائے بغیر۔';
 
   @override
   String get backUpNow => 'ابھی بیک اپ لیں';
+
+  @override
+  String get autoBackup => 'خودکار بیک اپ';
+
+  @override
+  String get autoBackupHint =>
+      'جب بھی آپ ایپ سے باہر جائیں، نئی تبدیلیاں آپ کے اکاؤنٹ میں بیک اپ ہو جاتی ہیں۔';
 
   @override
   String get restoreData => 'بحال کریں';
@@ -667,6 +737,31 @@ class AppStringsUr extends AppStrings {
   String get income => 'آمدنی';
 
   @override
+  String get search => 'تلاش';
+
+  @override
+  String get searchHint => 'نوٹ یا رقم تلاش کریں';
+
+  @override
+  String get searchPrompt =>
+      'کسی بھی لین دین کو اس کے نوٹ یا رقم سے ڈھونڈیں، یا قسم، زمرے اور تاریخ سے چھانٹیں۔';
+
+  @override
+  String get noSearchResults => 'کوئی مماثل لین دین نہیں';
+
+  @override
+  String get allTypes => 'سب';
+
+  @override
+  String get anyCategory => 'کوئی بھی زمرہ';
+
+  @override
+  String get anyDate => 'کوئی بھی تاریخ';
+
+  @override
+  String get clearFilters => 'فلٹر ہٹائیں';
+
+  @override
   String get transactionType => 'خرچ یا آمدنی';
 
   @override
@@ -849,6 +944,24 @@ class AppStringsUr extends AppStrings {
 
   @override
   String recurringPaid(String name) => '"$name" ادا شدہ نشان زد';
+
+  @override
+  String recurringReceived(String name) => '$name وصول شدہ نشان زد';
+
+  @override
+  String get statusReceived => 'وصول شدہ';
+
+  @override
+  String get markAsReceived => 'وصول ہو گئی';
+
+  @override
+  String get autoAdd => 'خودکار اندراج';
+
+  @override
+  String get autoAddHint => 'مقررہ دن خودبخود آمدنی کے طور پر درج ہو جاتی ہے۔';
+
+  @override
+  String get monthlyIncomeAverage => 'ہر مہینے آمدنی';
 
   @override
   String get recurringPaymentUndone => 'ادائیگی ہٹا دی گئی';

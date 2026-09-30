@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_budget/core/di/injection.dart';
+import 'package:my_budget/core/error/failures.dart';
+import 'package:my_budget/core/l10n/app_strings.dart';
 
 import 'app_harness.dart';
 
@@ -221,5 +223,108 @@ void main() {
 
     expect(find.text('Enter a valid email address.'), findsOneWidget);
     expect(harness.auth.passwords, isEmpty);
+  });
+
+  group('forgotten password', () {
+    Future<AppHarness> startReset(WidgetTester tester) async {
+      final harness = await bootApp(tester);
+      harness.auth.addConfirmedAccount('mohamed@example.com', 'old-secret');
+      await openSignIn(tester);
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Email'),
+        'mohamed@example.com',
+      );
+      await tester.tap(find.text('Forgot password?'));
+      await tester.pumpAndSettle();
+      return harness;
+    }
+
+    Future<void> saveNewPassword(
+      WidgetTester tester, {
+      required String code,
+      String password = 'new-secret',
+    }) async {
+      await tester.enterText(find.widgetWithText(TextField, 'Code'), code);
+      await tester.enterText(
+        find.widgetWithText(TextField, 'New password'),
+        password,
+      );
+      await tester.tap(find.widgetWithText(FilledButton, 'Save new password'));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('is reset with the emailed code, which signs in', (
+      tester,
+    ) async {
+      final harness = await startReset(tester);
+
+      expect(find.text('Reset password'), findsOneWidget);
+      expect(
+        find.textContaining('code to mohamed@example.com'),
+        findsOneWidget,
+      );
+
+      await saveNewPassword(tester, code: '111111');
+
+      expect(harness.auth.passwords['mohamed@example.com'], 'new-secret');
+      // The sign-in page closed on its own and settings shows the account.
+      expect(find.text('Reset password'), findsNothing);
+      expect(find.text('mohamed@example.com'), findsOneWidget);
+    });
+
+    testWidgets('a wrong code keeps asking and changes nothing', (
+      tester,
+    ) async {
+      final harness = await startReset(tester);
+
+      await saveNewPassword(tester, code: '999999');
+
+      expect(
+        find.text(
+          AppStrings.forLanguageCode('en').failure(FailureCode.codeInvalid),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('Reset password'), findsOneWidget);
+      expect(harness.auth.passwords['mohamed@example.com'], 'old-secret');
+    });
+
+    testWidgets('a new code can be requested', (tester) async {
+      final harness = await startReset(tester);
+
+      await tester.tap(find.text('Send a new code'));
+      await tester.pumpAndSettle();
+      expect(find.text('A new code is on its way'), findsOneWidget);
+
+      await saveNewPassword(tester, code: '222222');
+      expect(harness.auth.passwords['mohamed@example.com'], 'new-secret');
+    });
+
+    testWidgets('goes back to signing in', (tester) async {
+      await startReset(tester);
+
+      await tester.tap(find.text('Back to sign in'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Reset password'), findsNothing);
+      expect(find.text('Forgot password?'), findsOneWidget);
+    });
+
+    testWidgets('needs an email address first', (tester) async {
+      final harness = await bootApp(tester);
+      await openSignIn(tester);
+
+      await tester.tap(find.text('Forgot password?'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(
+          AppStrings.forLanguageCode('en').failure(FailureCode.emailInvalid),
+        ),
+        findsOneWidget,
+      );
+      expect(harness.auth.resetCodes, isEmpty);
+      expect(find.text('Reset password'), findsNothing);
+    });
   });
 }

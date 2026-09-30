@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_budget/core/database/app_database.dart';
+import 'package:my_budget/core/database/device_settings.dart';
 import 'package:my_budget/core/database/local_records.dart';
 import 'package:my_budget/core/database/record_batch.dart';
 import 'package:my_budget/core/database/synced_tables.dart';
@@ -541,7 +542,11 @@ class Phone {
     recurring = RecurringRepositoryImpl(RecurringLocalDataSourceImpl(database));
     people = PeopleRepositoryImpl(PeopleLocalDataSourceImpl(database));
     sync = SyncRepositoryImpl(
-      local: SyncLocalDataSourceImpl(database, LocalRecords(database)),
+      local: SyncLocalDataSourceImpl(
+        database,
+        LocalRecords(database),
+        DeviceSettings(database),
+      ),
       remote: remote,
     );
   }

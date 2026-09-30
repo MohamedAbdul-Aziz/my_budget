@@ -31,9 +31,19 @@ class GetRecurringOverview {
           b.recurring.title.toLowerCase(),
         );
       });
+    var spending = 0.0;
+    var income = 0.0;
+    for (final item in items) {
+      if (item.isIncome) {
+        income += item.monthlyCost;
+      } else {
+        spending += item.monthlyCost;
+      }
+    }
     return RecurringOverview(
       commitments: commitments,
-      monthlyTotal: items.fold(0, (sum, item) => sum + item.monthlyCost),
+      monthlySpending: spending,
+      monthlyIncome: income,
     );
   }
 

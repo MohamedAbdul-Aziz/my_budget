@@ -4,7 +4,9 @@ import '../../../categories/domain/entities/expense_category.dart';
 import 'recurrence_frequency.dart';
 import 'recurring_mode.dart';
 
-/// A payment that comes back on a schedule: rent, a bill, a subscription.
+/// Money that comes back on a schedule: rent, a bill, a subscription, or
+/// income such as a salary. Like a transaction, it is whichever type its
+/// [category] is.
 ///
 /// Due dates are whole calendar days, a [DateTime] at local midnight. The
 /// schedule is kept as a rule rather than a list of dates:
@@ -55,6 +57,9 @@ class RecurringExpense extends Equatable {
   final DateTime createdAt;
 
   bool get isAutomatic => mode == RecurringMode.autoDeduct;
+
+  /// Money coming in, such as a salary, rather than a payment going out.
+  bool get isIncome => category.isIncome;
 
   /// What it costs in an average month, so different schedules add up.
   double get monthlyCost => switch (frequency) {

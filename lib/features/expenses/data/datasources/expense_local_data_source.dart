@@ -2,15 +2,19 @@ import 'package:sqflite/sqflite.dart';
 
 import '../../../../core/database/app_database.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/utils/amount_input.dart';
 import '../../domain/entities/category_usage.dart';
 import '../../domain/entities/month.dart';
 import '../../domain/entities/monthly_summary.dart';
+import '../../domain/entities/transaction_search.dart';
 import '../models/expense_model.dart';
 
 abstract interface class ExpenseLocalDataSource {
   Future<List<ExpenseModel>> getTransactionsForMonth(Month month);
 
   Future<List<MonthlySummary>> getMonthlySummaries();
+
+  Future<List<ExpenseModel>> search(TransactionSearch search, {int limit});
 
   Future<List<CategoryUsage>> getCategoryUsage();
 
@@ -41,6 +45,62 @@ class ExpenseLocalDataSourceImpl implements ExpenseLocalDataSource {
       return rows.map(ExpenseModel.fromJoinedMap).toList();
     } on DatabaseException catch (error) {
       throw DatabaseFailure('load month: $error');
+    }
+  }
+
+  /// The filters are SQL; the text is matched in Dart, because SQLite only
+  /// ignores the case of English letters and notes are written in any
+  /// language.
+  @override
+  Future<List<ExpenseModel>> search(
+    TransactionSearch search, {
+    int limit = 200,
+  }) async {
+    final where = ['e.deleted_at IS NULL'];
+    final args = <Object?>[];
+    if (search.type case final type?) {
+      where.add('c.type = ?');
+      args.add(type.storageKey);
+    }
+    if (search.categoryIds.isNotEmpty) {
+      where.add(
+        'e.category_id IN (${List.filled(search.categoryIds.length, '?').join(', ')})',
+      );
+      args.addAll(search.categoryIds);
+    }
+    if (search.from case final from?) {
+      where.add('e.date >= ?');
+      args.add(
+        DateTime(from.year, from.month, from.day).millisecondsSinceEpoch,
+      );
+    }
+    if (search.to case final to?) {
+      where.add('e.date < ?');
+      args.add(DateTime(to.year, to.month, to.day + 1).millisecondsSinceEpoch);
+    }
+
+    try {
+      final db = await _appDatabase.database;
+      final rows = await db.rawQuery(
+        '${ExpenseModel.selectJoin} '
+        'WHERE ${where.join(' AND ')} '
+        'ORDER BY e.date DESC, e.created_at DESC',
+        args,
+      );
+      final text = search.text.trim().toLowerCase();
+      final amount = AmountInput.parse(text);
+      return rows
+          .map(ExpenseModel.fromJoinedMap)
+          .where(
+            (expense) =>
+                text.isEmpty ||
+                (expense.description?.toLowerCase().contains(text) ?? false) ||
+                (amount != null && (expense.amount - amount).abs() < 0.005),
+          )
+          .take(limit)
+          .toList();
+    } on DatabaseException catch (error) {
+      throw DatabaseFailure('search: $error');
     }
   }
 

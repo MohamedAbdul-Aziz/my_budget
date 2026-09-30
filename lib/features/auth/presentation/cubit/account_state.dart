@@ -15,6 +15,7 @@ final class SignedOut extends AccountState {
     this.isSubmitting = false,
     this.error,
     this.unconfirmedEmail,
+    this.resettingEmail,
   });
 
   /// A request is waiting on the server.
@@ -27,8 +28,17 @@ final class SignedOut extends AccountState {
   /// email. While set, the sign-in page asks for that code.
   final String? unconfirmedEmail;
 
+  /// An account whose password is being reset. While set, the sign-in page
+  /// asks for the code from the reset email and a new password.
+  final String? resettingEmail;
+
   @override
-  List<Object?> get props => [isSubmitting, error, unconfirmedEmail];
+  List<Object?> get props => [
+    isSubmitting,
+    error,
+    unconfirmedEmail,
+    resettingEmail,
+  ];
 }
 
 final class SignedIn extends AccountState {

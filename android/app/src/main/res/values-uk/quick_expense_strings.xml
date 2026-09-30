@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_expense_widget_label">Швидка витрата</string>
+    <string name="quick_expense_widget_description">Додайте витрату у два дотики.</string>
+
+    <string name="quick_expense_title">Швидка витрата</string>
+    <string name="quick_expense_add">Додати витрату</string>
+</resources>

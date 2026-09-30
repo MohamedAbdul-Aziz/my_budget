@@ -154,6 +154,52 @@ class AppStringsVi extends AppStrings {
   String get currencySymbolHint => 'Hiển thị cạnh mỗi số tiền';
 
   @override
+  String get reminders => 'Lời nhắc';
+
+  @override
+  String get dailyReminder => 'Nhắc nhở hằng ngày';
+
+  @override
+  String get dailyReminderHint => 'Nhắc ghi lại các khoản chi hôm nay';
+
+  @override
+  String get reminderTime => 'Thời gian';
+
+  @override
+  String get notificationsBlocked =>
+      'Thông báo của ứng dụng này đang tắt. Hãy cho phép trong phần cài đặt của điện thoại.';
+
+  @override
+  String get reminderNotificationTitle => 'Ghi lại chi tiêu hôm nay';
+
+  @override
+  String get reminderNotificationBody =>
+      'Dành một phút để thêm các khoản chi hôm nay.';
+
+  @override
+  String get security => 'Bảo mật';
+
+  @override
+  String get appLock => 'Khóa ứng dụng';
+
+  @override
+  String get appLockHint =>
+      'Yêu cầu vân tay, khuôn mặt hoặc khóa màn hình khi mở ứng dụng';
+
+  @override
+  String get appLockUnavailable =>
+      'Hãy đặt khóa màn hình trên điện thoại này trước';
+
+  @override
+  String get unlock => 'Mở khóa';
+
+  @override
+  String get unlockToContinue => 'Mở khóa để xem ngân sách';
+
+  @override
+  String get confirmItsYou => 'Xác nhận là bạn để thay đổi khóa ứng dụng';
+
+  @override
   String get storedOnThisDevice =>
       'Các khoản chi được lưu trên thiết bị này. Đăng nhập để sao lưu.';
 
@@ -216,12 +262,38 @@ class AppStringsVi extends AppStrings {
   String get useDifferentEmail => 'Dùng email khác';
 
   @override
+  String get forgotPassword => 'Quên mật khẩu?';
+
+  @override
+  String get resetPassword => 'Đặt lại mật khẩu';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'Chúng tôi đã gửi mã đến $email. Nhập mã cùng mật khẩu mới cho tài khoản.';
+
+  @override
+  String get newPassword => 'Mật khẩu mới';
+
+  @override
+  String get saveNewPassword => 'Lưu mật khẩu mới';
+
+  @override
+  String get backToSignIn => 'Quay lại đăng nhập';
+
+  @override
   String get backupHint =>
       'Sao lưu để giữ một bản các khoản chi trong tài khoản. Khôi phục sẽ '
       'đưa bản đó về điện thoại này mà không xóa gì đang có.';
 
   @override
   String get backUpNow => 'Sao lưu ngay';
+
+  @override
+  String get autoBackup => 'Tự động sao lưu';
+
+  @override
+  String get autoBackupHint =>
+      'Mỗi khi bạn rời ứng dụng, các thay đổi mới được sao lưu vào tài khoản.';
 
   @override
   String get restoreData => 'Khôi phục';
@@ -662,6 +734,31 @@ class AppStringsVi extends AppStrings {
   String get income => 'Khoản thu';
 
   @override
+  String get search => 'Tìm kiếm';
+
+  @override
+  String get searchHint => 'Tìm ghi chú hoặc số tiền';
+
+  @override
+  String get searchPrompt =>
+      'Tìm giao dịch theo ghi chú hoặc số tiền, hoặc lọc theo loại, danh mục và ngày.';
+
+  @override
+  String get noSearchResults => 'Không có giao dịch phù hợp';
+
+  @override
+  String get allTypes => 'Tất cả';
+
+  @override
+  String get anyCategory => 'Mọi danh mục';
+
+  @override
+  String get anyDate => 'Mọi ngày';
+
+  @override
+  String get clearFilters => 'Xóa bộ lọc';
+
+  @override
   String get transactionType => 'Chi hay thu';
 
   @override
@@ -843,6 +940,24 @@ class AppStringsVi extends AppStrings {
 
   @override
   String recurringPaid(String name) => 'Đã đánh dấu $name là đã trả';
+
+  @override
+  String recurringReceived(String name) => 'Đã đánh dấu $name là đã nhận';
+
+  @override
+  String get statusReceived => 'Đã nhận';
+
+  @override
+  String get markAsReceived => 'Đã nhận';
+
+  @override
+  String get autoAdd => 'Tự động cộng';
+
+  @override
+  String get autoAddHint => 'Tự động ghi thành khoản thu vào ngày đến hạn.';
+
+  @override
+  String get monthlyIncomeAverage => 'Thu mỗi tháng';
 
   @override
   String get recurringPaymentUndone => 'Đã bỏ khoản thanh toán';

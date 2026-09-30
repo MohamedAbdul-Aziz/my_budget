@@ -29,8 +29,13 @@ void main() {
       );
       expect(
         {for (final row in tables) row['name']},
-        // sync_meta is the phone's own bookkeeping and never leaves it.
-        {for (final table in SyncedTables.all) table.name, 'sync_meta'},
+        // sync_meta and device_settings are the phone's own and never leave
+        // it.
+        {
+          for (final table in SyncedTables.all) table.name,
+          'sync_meta',
+          'device_settings',
+        },
       );
     });
 

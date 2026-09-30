@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/app_strings.dart';
+import '../../../../core/theme/transaction_colors.dart';
 import '../../../../core/utils/app_formats.dart';
 import '../../../categories/presentation/widgets/category_avatar.dart';
 import '../../domain/entities/recurring_overview.dart';
@@ -75,9 +76,14 @@ class RecurringTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        formats.money(recurring.amount),
+                        recurring.isIncome
+                            ? '+${formats.money(recurring.amount)}'
+                            : formats.money(recurring.amount),
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w700,
+                          color: recurring.isIncome
+                              ? TransactionColors.of(context).income
+                              : null,
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -108,7 +114,10 @@ class RecurringTile extends StatelessWidget {
                   ),
                   if (commitment.isPayableNow) ...[
                     const SizedBox(width: 8),
-                    MarkPaidButton(onPressed: onMarkPaid),
+                    MarkPaidButton(
+                      isIncome: recurring.isIncome,
+                      onPressed: onMarkPaid,
+                    ),
                   ],
                 ],
               ),
@@ -120,11 +129,17 @@ class RecurringTile extends StatelessWidget {
   }
 }
 
-/// The compact "Mark as paid" button shared by the list and the home card.
+/// The compact "Mark as paid" button shared by the list and the home card;
+/// "Mark as received" for income.
 class MarkPaidButton extends StatelessWidget {
-  const MarkPaidButton({super.key, required this.onPressed});
+  const MarkPaidButton({
+    super.key,
+    required this.onPressed,
+    this.isIncome = false,
+  });
 
   final VoidCallback onPressed;
+  final bool isIncome;
 
   @override
   Widget build(BuildContext context) => FilledButton.tonalIcon(
@@ -136,6 +151,8 @@ class MarkPaidButton extends StatelessWidget {
     ),
     onPressed: onPressed,
     icon: const Icon(Icons.check_rounded, size: 18),
-    label: Text(context.strings.markAsPaid),
+    label: Text(
+      isIncome ? context.strings.markAsReceived : context.strings.markAsPaid,
+    ),
   );
 }

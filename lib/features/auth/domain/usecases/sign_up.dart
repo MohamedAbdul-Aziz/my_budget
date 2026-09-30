@@ -29,10 +29,13 @@ class SignUp {
 
   static String normalizeEmail(String email) => email.trim().toLowerCase();
 
+  /// Whether a normalized [email] looks like an address.
+  static bool isEmail(String email) => _emailPattern.hasMatch(email);
+
   /// Shared with [SignIn] so both paths enforce the same rules. Expects an
   /// email that has already been through [normalizeEmail].
   static Failure? validate({required String email, required String password}) {
-    if (!_emailPattern.hasMatch(email)) {
+    if (!isEmail(email)) {
       return const ValidationFailure(FailureCode.emailInvalid);
     }
     if (password.length < minPasswordLength) {

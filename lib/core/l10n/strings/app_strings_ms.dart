@@ -154,6 +154,53 @@ class AppStringsMs extends AppStrings {
   String get currencySymbolHint => 'Dipaparkan di sebelah setiap amaun';
 
   @override
+  String get reminders => 'Peringatan';
+
+  @override
+  String get dailyReminder => 'Peringatan harian';
+
+  @override
+  String get dailyReminderHint =>
+      'Peringatan untuk mencatat perbelanjaan anda hari ini';
+
+  @override
+  String get reminderTime => 'Masa';
+
+  @override
+  String get notificationsBlocked =>
+      'Pemberitahuan untuk apl ini dimatikan. Benarkan dalam tetapan telefon anda.';
+
+  @override
+  String get reminderNotificationTitle => 'Catat perbelanjaan hari ini';
+
+  @override
+  String get reminderNotificationBody =>
+      'Luangkan sedikit masa untuk menambah perbelanjaan hari ini.';
+
+  @override
+  String get security => 'Keselamatan';
+
+  @override
+  String get appLock => 'Kunci apl';
+
+  @override
+  String get appLockHint =>
+      'Minta cap jari, wajah atau kunci skrin apabila apl dibuka';
+
+  @override
+  String get appLockUnavailable =>
+      'Tetapkan kunci skrin pada telefon ini dahulu';
+
+  @override
+  String get unlock => 'Buka kunci';
+
+  @override
+  String get unlockToContinue => 'Buka kunci untuk melihat bajet anda';
+
+  @override
+  String get confirmItsYou => 'Sahkan ini anda untuk menukar kunci apl';
+
+  @override
   String get storedOnThisDevice =>
       'Perbelanjaan anda disimpan pada peranti ini. Log masuk untuk membuat '
       'sandaran.';
@@ -216,6 +263,25 @@ class AppStringsMs extends AppStrings {
   String get useDifferentEmail => 'Guna e-mel lain';
 
   @override
+  String get forgotPassword => 'Lupa kata laluan?';
+
+  @override
+  String get resetPassword => 'Tetapkan semula kata laluan';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'Kami telah menghantar kod ke $email. Masukkan kod itu bersama kata laluan baharu untuk akaun anda.';
+
+  @override
+  String get newPassword => 'Kata laluan baharu';
+
+  @override
+  String get saveNewPassword => 'Simpan kata laluan baharu';
+
+  @override
+  String get backToSignIn => 'Kembali ke log masuk';
+
+  @override
   String get backupHint =>
       'Buat sandaran untuk menyimpan salinan perbelanjaan dalam akaun anda. '
       'Pulihkan membawa salinan itu ke telefon ini tanpa membuang apa-apa '
@@ -223,6 +289,13 @@ class AppStringsMs extends AppStrings {
 
   @override
   String get backUpNow => 'Sandarkan sekarang';
+
+  @override
+  String get autoBackup => 'Sandaran automatik';
+
+  @override
+  String get autoBackupHint =>
+      'Setiap kali anda keluar dari apl, perubahan baharu disandarkan ke akaun anda.';
 
   @override
   String get restoreData => 'Pulihkan';
@@ -672,6 +745,31 @@ class AppStringsMs extends AppStrings {
   String get income => 'Pendapatan';
 
   @override
+  String get search => 'Cari';
+
+  @override
+  String get searchHint => 'Cari nota atau amaun';
+
+  @override
+  String get searchPrompt =>
+      'Cari mana-mana transaksi melalui nota atau amaunnya, atau tapis mengikut jenis, kategori dan tarikh.';
+
+  @override
+  String get noSearchResults => 'Tiada transaksi yang sepadan';
+
+  @override
+  String get allTypes => 'Semua';
+
+  @override
+  String get anyCategory => 'Semua kategori';
+
+  @override
+  String get anyDate => 'Semua tarikh';
+
+  @override
+  String get clearFilters => 'Kosongkan penapis';
+
+  @override
   String get transactionType => 'Perbelanjaan atau pendapatan';
 
   @override
@@ -856,6 +954,25 @@ class AppStringsMs extends AppStrings {
 
   @override
   String recurringPaid(String name) => '$name ditanda sebagai dibayar';
+
+  @override
+  String recurringReceived(String name) => '$name ditanda sebagai diterima';
+
+  @override
+  String get statusReceived => 'Diterima';
+
+  @override
+  String get markAsReceived => 'Diterima';
+
+  @override
+  String get autoAdd => 'Tambah automatik';
+
+  @override
+  String get autoAddHint =>
+      'Direkod sebagai pendapatan secara automatik pada tarikh akhir.';
+
+  @override
+  String get monthlyIncomeAverage => 'Pendapatan sebulan';
 
   @override
   String get recurringPaymentUndone => 'Bayaran dibuang';

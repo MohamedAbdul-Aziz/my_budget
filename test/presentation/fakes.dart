@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:my_budget/core/error/api_result.dart';
+import 'package:my_budget/features/app_lock/domain/entities/app_lock_prompt.dart';
+import 'package:my_budget/features/app_lock/domain/repositories/app_lock_repository.dart';
 import 'package:my_budget/core/error/failures.dart';
 import 'package:my_budget/features/auth/domain/entities/app_user.dart';
 import 'package:my_budget/features/auth/domain/repositories/auth_repository.dart';
@@ -20,6 +22,7 @@ import 'package:my_budget/features/expenses/domain/entities/category_usage.dart'
 import 'package:my_budget/features/expenses/domain/entities/expense.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
 import 'package:my_budget/features/expenses/domain/entities/monthly_summary.dart';
+import 'package:my_budget/features/expenses/domain/entities/transaction_search.dart';
 import 'package:my_budget/features/expenses/domain/repositories/expense_repository.dart';
 import 'package:my_budget/features/people/domain/entities/debt_balance.dart';
 import 'package:my_budget/features/people/domain/entities/person.dart';
@@ -37,6 +40,9 @@ import 'package:my_budget/features/recurring/domain/entities/recurring_expense.d
 import 'package:my_budget/features/recurring/domain/entities/recurring_mode.dart';
 import 'package:my_budget/features/recurring/domain/entities/recurring_payment.dart';
 import 'package:my_budget/features/recurring/domain/repositories/recurring_repository.dart';
+import 'package:my_budget/features/reminders/domain/entities/daily_reminder.dart';
+import 'package:my_budget/features/reminders/domain/entities/reminder_message.dart';
+import 'package:my_budget/features/reminders/domain/repositories/reminder_repository.dart';
 import 'package:my_budget/features/settings/domain/entities/app_settings.dart';
 import 'package:my_budget/features/settings/domain/repositories/settings_repository.dart';
 import 'package:my_budget/features/sync/domain/entities/sync_report.dart';
@@ -174,6 +180,35 @@ class FakeExpenseRepository implements ExpenseRepository {
             .toList()
           ..sort((a, b) => b.month.compareTo(a.month));
     return Success(summaries);
+  }
+
+  /// The same rules as the SQL in `ExpenseLocalDataSourceImpl.search`, which
+  /// `test/data/local_storage_test.dart` covers.
+  @override
+  Future<ApiResult<List<Expense>>> searchTransactions(
+    TransactionSearch search, {
+    required int limit,
+  }) async {
+    final text = search.text.toLowerCase();
+    final amount = double.tryParse(text.replaceAll(',', '.'));
+    final from = search.from;
+    final to = search.to;
+    final matching = expenses.where((expense) {
+      final day = DateTime(
+        expense.date.year,
+        expense.date.month,
+        expense.date.day,
+      );
+      return (search.type == null || expense.type == search.type) &&
+          (search.categoryIds.isEmpty ||
+              search.categoryIds.contains(expense.category.id)) &&
+          (from == null || !day.isBefore(from)) &&
+          (to == null || !day.isAfter(to)) &&
+          (text.isEmpty ||
+              (expense.description?.toLowerCase().contains(text) ?? false) ||
+              (amount != null && (expense.amount - amount).abs() < 0.005));
+    }).toList()..sort((a, b) => b.date.compareTo(a.date));
+    return Success(matching.take(limit).toList());
   }
 
   @override
@@ -465,6 +500,99 @@ class FakeQuickExpenseWidgetRepository implements QuickExpenseWidgetRepository {
   }
 }
 
+/// The app lock on a phone whose screen lock and answers a test controls.
+class FakeAppLockRepository implements AppLockRepository {
+  /// False plays a desktop, where no lock is offered.
+  bool supported = true;
+
+  /// The phone has a screen lock or biometrics set up.
+  bool available = true;
+
+  bool enabled = false;
+
+  /// What the user does at the phone's prompt: true unlocks.
+  bool answer = true;
+
+  /// Every prompt shown, in order.
+  final List<AppLockPrompt> prompts = [];
+
+  @override
+  bool get isSupported => supported;
+
+  @override
+  Future<ApiResult<bool>> isAvailable() async => Success(available);
+
+  @override
+  Future<ApiResult<bool>> isEnabled() async => Success(enabled);
+
+  @override
+  Future<ApiResult<void>> setEnabled({required bool enabled}) async {
+    this.enabled = enabled;
+    return const Success(null);
+  }
+
+  @override
+  Future<ApiResult<bool>> authenticate(AppLockPrompt prompt) async {
+    prompts.add(prompt);
+    return Success(answer);
+  }
+}
+
+/// The reminder in memory, on a phone whose notification permission a test
+/// controls. Records what is scheduled; the SQL is covered by
+/// `test/data/reminder_storage_test.dart`.
+class FakeReminderRepository implements ReminderRepository {
+  DailyReminder reminder = const DailyReminder();
+
+  /// False plays a desktop, where the reminder is not offered.
+  bool supported = true;
+
+  /// Whether the phone lets the app show notifications right now.
+  bool allowed = true;
+
+  /// What the user answers when the phone asks to allow notifications.
+  bool grantOnRequest = true;
+
+  int permissionRequests = 0;
+
+  /// What is scheduled on the phone, and in which words; null when nothing
+  /// is.
+  DailyReminder? scheduled;
+  ReminderMessage? scheduledMessage;
+
+  @override
+  bool get isSupported => supported;
+
+  @override
+  Future<ApiResult<DailyReminder>> getReminder() async => Success(reminder);
+
+  @override
+  Future<ApiResult<void>> saveReminder(DailyReminder reminder) async {
+    this.reminder = reminder;
+    return const Success(null);
+  }
+
+  @override
+  Future<ApiResult<bool>> notificationsAllowed() async => Success(allowed);
+
+  @override
+  Future<ApiResult<bool>> requestPermission() async {
+    permissionRequests++;
+    if (!allowed) allowed = grantOnRequest;
+    return Success(allowed);
+  }
+
+  @override
+  Future<ApiResult<void>> schedule(
+    DailyReminder reminder,
+    ReminderMessage message,
+  ) async {
+    scheduled = reminder.enabled ? reminder : null;
+    scheduledMessage = reminder.enabled ? message : null;
+    return const Success(null);
+  }
+}
+
 /// Stands in for Supabase Auth with "Confirm email" on: a new account cannot
 /// sign in until it is confirmed with the code in [codes].
 class FakeAuthRepository implements AuthRepository {
@@ -540,6 +668,34 @@ class FakeAuthRepository implements AuthRepository {
     return const Success(null);
   }
 
+  /// The code each password reset was last emailed. An address with no
+  /// account gets no email but the same answer, as on the real server.
+  final Map<String, String> resetCodes = {};
+
+  @override
+  Future<ApiResult<void>> sendPasswordReset({required String email}) async {
+    if (passwords.containsKey(email)) {
+      resetCodes[email] = resetCodes.containsKey(email) ? '222222' : '111111';
+    }
+    return const Success(null);
+  }
+
+  @override
+  Future<ApiResult<AppUser>> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async {
+    if (resetCodes[email] != code) {
+      return const ResultFailure(AuthFailure(FailureCode.codeInvalid));
+    }
+    resetCodes.remove(email);
+    passwords[email] = newPassword;
+    // The real server signs the user in as soon as the code is accepted.
+    _changes.add(currentUser = _userFor(email));
+    return Success(currentUser!);
+  }
+
   @override
   Future<ApiResult<void>> signOut() async {
     currentUser = null;
@@ -607,10 +763,29 @@ class FakeSyncRepository implements SyncRepository {
     return const Success(null);
   }
 
+  /// This phone's automatic backup switch; off, as on a new phone.
+  bool autoBackup = false;
+
+  /// Whether anything changed since the last backup.
+  bool pending = true;
+
+  @override
+  Future<ApiResult<bool>> autoBackupEnabled() async => Success(autoBackup);
+
+  @override
+  Future<ApiResult<void>> setAutoBackup({required bool enabled}) async {
+    autoBackup = enabled;
+    return const Success(null);
+  }
+
+  @override
+  Future<ApiResult<bool>> hasPendingChanges() async => Success(pending);
+
   ApiResult<SyncReport> _finish(SyncProgress? onProgress) {
     final failure = failWith;
     if (failure != null) return ResultFailure(failure);
     onProgress?.call(1);
+    pending = false;
     final at = last = DateTime.now();
     return Success(SyncReport(changes: 1, finishedAt: at));
   }

@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_budget/core/di/injection.dart';
 import 'package:my_budget/core/error/failures.dart';
@@ -96,5 +97,74 @@ void main() {
     await tapInSheet(tester, 'Sign out');
 
     expect(find.text('Back up now'), findsNothing);
+  });
+
+  group('automatic backup', () {
+    final autoSwitch = find.text('Back up automatically');
+
+    /// What the phone does when the user switches to another app.
+    Future<void> leaveApp(WidgetTester tester) async {
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('is off until turned on, which backs up right away', (
+      tester,
+    ) async {
+      final harness = await bootSignedIn(tester);
+      await openSettings(tester);
+      await tester.ensureVisible(autoSwitch);
+      expect(harness.sync.autoBackup, isFalse);
+      expect(harness.sync.backUps, 0);
+
+      await tester.tap(autoSwitch);
+      await tester.pumpAndSettle();
+
+      expect(harness.sync.autoBackup, isTrue);
+      expect(harness.sync.backUps, 1);
+      // No message: only the time of the last sync moves on.
+      expect(find.text('Backup complete'), findsNothing);
+      expect(find.textContaining('Last synced Today'), findsOneWidget);
+    });
+
+    testWidgets('backs up new changes whenever the app is left', (
+      tester,
+    ) async {
+      final harness = await bootApp(
+        tester,
+        before: (harness) => harness.sync.autoBackup = true,
+      );
+      harness.auth.openConfirmationLink('mohamed@example.com');
+      await tester.pumpAndSettle();
+
+      await leaveApp(tester);
+      expect(harness.sync.backUps, 1);
+
+      // Nothing new since: no upload at all.
+      await leaveApp(tester);
+      expect(harness.sync.backUps, 1);
+    });
+
+    testWidgets('leaving the app uploads nothing while it is off', (
+      tester,
+    ) async {
+      final harness = await bootSignedIn(tester);
+
+      await leaveApp(tester);
+
+      expect(harness.sync.backUps, 0);
+    });
+
+    testWidgets('a signed-out phone never backs up on its own', (tester) async {
+      final harness = await bootApp(
+        tester,
+        before: (harness) => harness.sync.autoBackup = true,
+      );
+
+      await leaveApp(tester);
+
+      expect(harness.sync.backUps, 0);
+    });
   });
 }

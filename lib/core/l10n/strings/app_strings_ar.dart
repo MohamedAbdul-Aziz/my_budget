@@ -158,6 +158,50 @@ class AppStringsAr extends AppStrings {
   String get currencySymbolHint => 'يظهر بجانب كل مبلغ';
 
   @override
+  String get reminders => 'التذكيرات';
+
+  @override
+  String get dailyReminder => 'تذكير يومي';
+
+  @override
+  String get dailyReminderHint => 'تنبيه لتسجيل ما صرفته اليوم';
+
+  @override
+  String get reminderTime => 'الوقت';
+
+  @override
+  String get notificationsBlocked =>
+      'الإشعارات متوقفة لهذا التطبيق. اسمح بها من إعدادات هاتفك.';
+
+  @override
+  String get reminderNotificationTitle => 'سجّل مصروفات اليوم';
+
+  @override
+  String get reminderNotificationBody => 'خذ لحظة لإضافة ما صرفته اليوم.';
+
+  @override
+  String get security => 'الأمان';
+
+  @override
+  String get appLock => 'قفل التطبيق';
+
+  @override
+  String get appLockHint => 'اطلب بصمتك أو وجهك أو قفل الشاشة عند فتح التطبيق';
+
+  @override
+  String get appLockUnavailable =>
+      'اضبط قفل شاشة على هذا الهاتف لاستخدام هذه الميزة';
+
+  @override
+  String get unlock => 'فتح القفل';
+
+  @override
+  String get unlockToContinue => 'افتح القفل لرؤية ميزانيتك';
+
+  @override
+  String get confirmItsYou => 'أكّد هويتك لتغيير قفل التطبيق';
+
+  @override
   String get storedOnThisDevice =>
       'تُحفظ مصروفاتك على هذا الجهاز. سجّل الدخول لنسخها احتياطيًا.';
 
@@ -217,12 +261,38 @@ class AppStringsAr extends AppStrings {
   String get useDifferentEmail => 'استخدام بريد آخر';
 
   @override
+  String get forgotPassword => 'نسيت كلمة المرور؟';
+
+  @override
+  String get resetPassword => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'أرسلنا رمزًا إلى $email. أدخله مع كلمة مرور جديدة لحسابك.';
+
+  @override
+  String get newPassword => 'كلمة المرور الجديدة';
+
+  @override
+  String get saveNewPassword => 'حفظ كلمة المرور الجديدة';
+
+  @override
+  String get backToSignIn => 'العودة إلى تسجيل الدخول';
+
+  @override
   String get backupHint =>
       'انسخ مصروفاتك احتياطيًا لتحتفظ بنسخة منها في حسابك. الاستعادة تنقل '
       'هذه النسخة إلى هذا الهاتف دون حذف أي شيء موجود عليه.';
 
   @override
   String get backUpNow => 'نسخ احتياطي الآن';
+
+  @override
+  String get autoBackup => 'نسخ احتياطي تلقائي';
+
+  @override
+  String get autoBackupHint =>
+      'كلما غادرت التطبيق، تُنسخ التغييرات الجديدة احتياطيًا إلى حسابك.';
 
   @override
   String get restoreData => 'استعادة';
@@ -662,6 +732,31 @@ class AppStringsAr extends AppStrings {
   String get income => 'دخل';
 
   @override
+  String get search => 'بحث';
+
+  @override
+  String get searchHint => 'ابحث في الملاحظات أو المبالغ';
+
+  @override
+  String get searchPrompt =>
+      'ابحث عن أي معاملة بملاحظتها أو مبلغها، أو صفِّ حسب النوع والفئة والتاريخ.';
+
+  @override
+  String get noSearchResults => 'لا توجد معاملات مطابقة';
+
+  @override
+  String get allTypes => 'الكل';
+
+  @override
+  String get anyCategory => 'أي فئة';
+
+  @override
+  String get anyDate => 'أي تاريخ';
+
+  @override
+  String get clearFilters => 'مسح عوامل التصفية';
+
+  @override
   String get transactionType => 'مصروف أو دخل';
 
   @override
@@ -847,6 +942,24 @@ class AppStringsAr extends AppStrings {
 
   @override
   String recurringPaid(String name) => 'تم تسجيل دفع $name';
+
+  @override
+  String recurringReceived(String name) => 'تم تسجيل استلام $name';
+
+  @override
+  String get statusReceived => 'مستلمة';
+
+  @override
+  String get markAsReceived => 'تأكيد الاستلام';
+
+  @override
+  String get autoAdd => 'إضافة تلقائية';
+
+  @override
+  String get autoAddHint => 'تُسجَّل كدخل تلقائيًا في موعد استحقاقها.';
+
+  @override
+  String get monthlyIncomeAverage => 'الدخل كل شهر';
 
   @override
   String get recurringPaymentUndone => 'أُلغيت الدفعة';

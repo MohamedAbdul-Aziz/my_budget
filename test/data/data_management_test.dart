@@ -634,6 +634,22 @@ void main() {
       );
     });
 
+    test('automatic recurring income is added, not deducted', () async {
+      final bonus = await phoneA.addRecurring(
+        'Bonus',
+        categoryId: 'cat_salary',
+      );
+
+      final files = await phoneA.exportAll(ExportFormat.spreadsheet, english);
+      final lines = utf8
+          .decode(await File(files.last.path).readAsBytes())
+          .split('\r\n');
+      expect(
+        lines[1],
+        'Bonus,Salary,900.00,\$,Yearly on Feb 29,Auto-add,,${bonus.id}',
+      );
+    });
+
     test('people and their debts get two sheets of their own', () async {
       final sara = await phoneA.addPerson('Sara', phone: '+20 100');
       final lunch = await phoneA.addDebt(sara, 20, note: 'Lunch, team');
@@ -1060,17 +1076,19 @@ class Phone {
   )).dataOrNull!;
 
   /// Yearly on 29 February, logged automatically.
-  Future<RecurringExpense> addRecurring(String title) async =>
-      (await recurring.createRecurring(
-        title: title,
-        amount: 900,
-        categoryId: 'cat_bills',
-        frequency: RecurrenceFrequency.yearly,
-        dueDay: 29,
-        dueMonth: 2,
-        mode: RecurringMode.autoDeduct,
-        startsOn: DateTime(2026, 8, 1),
-      )).dataOrNull!;
+  Future<RecurringExpense> addRecurring(
+    String title, {
+    String categoryId = 'cat_bills',
+  }) async => (await recurring.createRecurring(
+    title: title,
+    amount: 900,
+    categoryId: categoryId,
+    frequency: RecurrenceFrequency.yearly,
+    dueDay: 29,
+    dueMonth: 2,
+    mode: RecurringMode.autoDeduct,
+    startsOn: DateTime(2026, 8, 1),
+  )).dataOrNull!;
 
   Future<Expense> addExpense(
     double amount, {

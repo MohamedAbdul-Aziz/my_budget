@@ -150,6 +150,48 @@ class AppStringsZh extends AppStrings {
   String get currencySymbolHint => '显示在每个金额旁边';
 
   @override
+  String get reminders => '提醒';
+
+  @override
+  String get dailyReminder => '每日提醒';
+
+  @override
+  String get dailyReminderHint => '提醒你记录今天的花费';
+
+  @override
+  String get reminderTime => '时间';
+
+  @override
+  String get notificationsBlocked => '此应用的通知已关闭。请在手机设置中允许通知。';
+
+  @override
+  String get reminderNotificationTitle => '记录今天的支出';
+
+  @override
+  String get reminderNotificationBody => '花一点时间，添加今天的花费。';
+
+  @override
+  String get security => '安全';
+
+  @override
+  String get appLock => '应用锁';
+
+  @override
+  String get appLockHint => '打开应用时需要指纹、面容或屏幕锁';
+
+  @override
+  String get appLockUnavailable => '请先在手机上设置屏幕锁';
+
+  @override
+  String get unlock => '解锁';
+
+  @override
+  String get unlockToContinue => '解锁以查看你的预算';
+
+  @override
+  String get confirmItsYou => '确认是你本人以更改应用锁';
+
+  @override
   String get storedOnThisDevice => '你的支出保存在这台设备上。登录即可备份。';
 
   @override
@@ -207,10 +249,34 @@ class AppStringsZh extends AppStrings {
   String get useDifferentEmail => '使用其他邮箱';
 
   @override
+  String get forgotPassword => '忘记密码？';
+
+  @override
+  String get resetPassword => '重置密码';
+
+  @override
+  String resetCodeSentTo(String email) => '我们已向 $email 发送验证码。请输入验证码并为账户设置新密码。';
+
+  @override
+  String get newPassword => '新密码';
+
+  @override
+  String get saveNewPassword => '保存新密码';
+
+  @override
+  String get backToSignIn => '返回登录';
+
+  @override
   String get backupHint => '备份后，你的支出会在账户中保留一份副本。恢复会把这份副本带回这部手机，不会删除手机上已有的内容。';
 
   @override
   String get backUpNow => '立即备份';
+
+  @override
+  String get autoBackup => '自动备份';
+
+  @override
+  String get autoBackupHint => '每次离开应用时，新的更改都会备份到你的账户。';
 
   @override
   String get restoreData => '恢复';
@@ -624,6 +690,30 @@ class AppStringsZh extends AppStrings {
   String get income => '收入';
 
   @override
+  String get search => '搜索';
+
+  @override
+  String get searchHint => '搜索备注或金额';
+
+  @override
+  String get searchPrompt => '按备注或金额查找任意一笔记录，或按类型、类别和日期筛选。';
+
+  @override
+  String get noSearchResults => '没有匹配的记录';
+
+  @override
+  String get allTypes => '全部';
+
+  @override
+  String get anyCategory => '任意类别';
+
+  @override
+  String get anyDate => '任意日期';
+
+  @override
+  String get clearFilters => '清除筛选';
+
+  @override
   String get transactionType => '支出还是收入';
 
   @override
@@ -797,6 +887,24 @@ class AppStringsZh extends AppStrings {
 
   @override
   String recurringPaid(String name) => '“$name”已标为已付';
+
+  @override
+  String recurringReceived(String name) => '“$name”已标为已收到';
+
+  @override
+  String get statusReceived => '已收到';
+
+  @override
+  String get markAsReceived => '标为已收';
+
+  @override
+  String get autoAdd => '自动入账';
+
+  @override
+  String get autoAddHint => '到期日自动记为一笔收入。';
+
+  @override
+  String get monthlyIncomeAverage => '每月收入';
 
   @override
   String get recurringPaymentUndone => '已移除付款';

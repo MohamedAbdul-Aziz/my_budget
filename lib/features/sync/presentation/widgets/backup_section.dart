@@ -4,11 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/app_formats.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
+import '../cubit/auto_backup_cubit.dart';
+import '../cubit/auto_backup_state.dart';
 import '../cubit/sync_cubit.dart';
 import '../cubit/sync_state.dart';
 
 /// Back up and restore buttons with their progress, result and the time of
-/// the last sync. Shown only to a signed-in user.
+/// the last sync, and the switch for backing up automatically. Shown only to
+/// a signed-in user.
 class BackupSection extends StatefulWidget {
   const BackupSection({super.key});
 
@@ -22,6 +25,7 @@ class _BackupSectionState extends State<BackupSection> {
     super.initState();
     // Built fresh each time someone signs in, so the time shown is theirs.
     context.read<SyncCubit>().load();
+    context.read<AutoBackupCubit>().load();
   }
 
   @override
@@ -39,7 +43,7 @@ class _BackupSectionState extends State<BackupSection> {
         ),
         const SizedBox(height: 12),
         const _SyncButtons(),
-        const SizedBox(height: 12),
+        const _AutoBackupSwitch(),
         const _SyncStatus(),
       ],
     );
@@ -81,6 +85,44 @@ class _SyncButtons extends StatelessWidget {
   }
 }
 
+/// Off by default: nothing leaves the phone until the user asks.
+class _AutoBackupSwitch extends StatelessWidget {
+  const _AutoBackupSwitch();
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = context.strings;
+    final theme = Theme.of(context);
+
+    return BlocBuilder<AutoBackupCubit, AutoBackupState>(
+      builder: (context, state) => switch (state) {
+        AutoBackupLoading() => const SizedBox(height: 12),
+        AutoBackupReady(:final enabled, :final error) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              secondary: const Icon(Icons.cloud_sync_outlined),
+              title: Text(strings.autoBackup),
+              subtitle: Text(strings.autoBackupHint),
+              value: enabled,
+              onChanged: context.read<AutoBackupCubit>().setEnabled,
+            ),
+            if (error != null)
+              Text(
+                strings.failure(error),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.error,
+                ),
+              ),
+            const SizedBox(height: 4),
+          ],
+        ),
+      },
+    );
+  }
+}
+
 class _SyncStatus extends StatelessWidget {
   const _SyncStatus();
 
@@ -109,10 +151,14 @@ class _SyncStatus extends StatelessWidget {
               LinearProgressIndicator(value: progress),
               const SizedBox(height: 6),
               Text(
-                kind == SyncKind.backup ? strings.backingUp : strings.restoring,
+                kind == SyncKind.restore
+                    ? strings.restoring
+                    : strings.backingUp,
               ),
             ],
           ),
+          // An automatic backup only moves the time of the last sync on.
+          SyncSucceeded(kind: SyncKind.automatic) => null,
           SyncSucceeded(:final kind) => _StatusLine(
             icon: Icons.check_circle_outline_rounded,
             color: theme.colorScheme.primary,

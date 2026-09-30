@@ -103,6 +103,7 @@ abstract final class CsvExport {
     required Map<String, String> schedules,
     required String currency,
     required ExportTexts texts,
+    Set<String> incomeCategoryIds = const {},
   }) => _document([
     [
       texts.name,
@@ -121,7 +122,12 @@ abstract final class CsvExport {
         amount(row['amount']! as num),
         currency,
         schedules[row['id']] ?? '',
-        row['mode'] == 'auto' ? texts.autoDeduct : texts.reminder,
+        switch (row['mode']) {
+          'auto' when incomeCategoryIds.contains(row['category_id']) =>
+            texts.autoAdd,
+          'auto' => texts.autoDeduct,
+          _ => texts.reminder,
+        },
         // Already ISO: 2026-09-30.
         (row['paid_through'] as String?) ?? '',
         '${row['id']}',

@@ -152,6 +152,52 @@ class AppStringsEn extends AppStrings {
   String get currencySymbolHint => 'Shown next to every amount';
 
   @override
+  String get reminders => 'Reminders';
+
+  @override
+  String get dailyReminder => 'Daily reminder';
+
+  @override
+  String get dailyReminderHint => 'A nudge to log what you spent today';
+
+  @override
+  String get reminderTime => 'Time';
+
+  @override
+  String get notificationsBlocked =>
+      "Notifications are off for this app. Allow them in your phone's settings.";
+
+  @override
+  String get reminderNotificationTitle => "Log today's spending";
+
+  @override
+  String get reminderNotificationBody =>
+      'Take a moment to add what you spent today.';
+
+  @override
+  String get security => 'Security';
+
+  @override
+  String get appLock => 'App lock';
+
+  @override
+  String get appLockHint =>
+      'Ask for your fingerprint, face or screen lock when the app opens';
+
+  @override
+  String get appLockUnavailable =>
+      'Set up a screen lock on this phone to use this';
+
+  @override
+  String get unlock => 'Unlock';
+
+  @override
+  String get unlockToContinue => 'Unlock to see your budget';
+
+  @override
+  String get confirmItsYou => "Confirm it's you to change the app lock";
+
+  @override
   String get storedOnThisDevice =>
       'Your expenses are stored on this device. Sign in to back them up.';
 
@@ -213,12 +259,38 @@ class AppStringsEn extends AppStrings {
   String get useDifferentEmail => 'Use a different email';
 
   @override
+  String get forgotPassword => 'Forgot password?';
+
+  @override
+  String get resetPassword => 'Reset password';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'We sent a code to $email. Enter it with a new password for your account.';
+
+  @override
+  String get newPassword => 'New password';
+
+  @override
+  String get saveNewPassword => 'Save new password';
+
+  @override
+  String get backToSignIn => 'Back to sign in';
+
+  @override
   String get backupHint =>
       'Back up to keep a copy of your expenses in your account. Restore '
       'brings that copy to this phone without removing anything already here.';
 
   @override
   String get backUpNow => 'Back up now';
+
+  @override
+  String get autoBackup => 'Back up automatically';
+
+  @override
+  String get autoBackupHint =>
+      'Whenever you leave the app, new changes are backed up to your account.';
 
   @override
   String get restoreData => 'Restore';
@@ -657,6 +729,31 @@ class AppStringsEn extends AppStrings {
   String get income => 'Income';
 
   @override
+  String get search => 'Search';
+
+  @override
+  String get searchHint => 'Search notes or amounts';
+
+  @override
+  String get searchPrompt =>
+      'Find any transaction by its note or amount, or filter by type, category and date.';
+
+  @override
+  String get noSearchResults => 'No transactions match';
+
+  @override
+  String get allTypes => 'All';
+
+  @override
+  String get anyCategory => 'Any category';
+
+  @override
+  String get anyDate => 'Any date';
+
+  @override
+  String get clearFilters => 'Clear filters';
+
+  @override
   String get transactionType => 'Expense or income';
 
   @override
@@ -839,6 +936,24 @@ class AppStringsEn extends AppStrings {
 
   @override
   String recurringPaid(String name) => '$name marked as paid';
+
+  @override
+  String recurringReceived(String name) => '$name marked as received';
+
+  @override
+  String get statusReceived => 'Received';
+
+  @override
+  String get markAsReceived => 'Mark as received';
+
+  @override
+  String get autoAdd => 'Auto-add';
+
+  @override
+  String get autoAddHint => 'Logged as income automatically on the due date.';
+
+  @override
+  String get monthlyIncomeAverage => 'Income each month';
 
   @override
   String get recurringPaymentUndone => 'Payment removed';

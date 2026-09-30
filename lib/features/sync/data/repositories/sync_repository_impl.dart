@@ -64,6 +64,18 @@ class SyncRepositoryImpl implements SyncRepository {
   Future<ApiResult<void>> forgetAccount(String userId) =>
       ApiResult.guard(() => _local.forgetAccount(userId));
 
+  @override
+  Future<ApiResult<bool>> autoBackupEnabled() =>
+      ApiResult.guard(_local.autoBackupEnabled);
+
+  @override
+  Future<ApiResult<void>> setAutoBackup({required bool enabled}) =>
+      ApiResult.guard(() => _local.setAutoBackup(enabled: enabled));
+
+  @override
+  Future<ApiResult<bool>> hasPendingChanges() =>
+      ApiResult.guard(() async => (await _local.pendingChanges()).length > 0);
+
   /// The phone's data carries no owner of its own, so the first account to
   /// sync it claims it. Syncing it with any other account afterwards is
   /// refused: that would upload one person's expenses into someone else's

@@ -33,10 +33,15 @@ import '../../features/categories/domain/entities/expense_category.dart';
 /// (`settlements`) and every transaction's change log
 /// (`person_transaction_edits`). A settlement the user logs in the budget is
 /// an ordinary row in `expenses`.
+///
+/// Phone-only preferences, added in schema version 6: `device_settings`,
+/// key/value rows such as app lock and automatic backup. Like `sync_meta` it
+/// never leaves the phone: these choices belong to this device, and a
+/// restore must never, say, lock a phone that has no screen lock.
 class AppDatabase {
   AppDatabase({this.fileName = 'my_budget.db', this.inMemory = false});
 
-  static const int _schemaVersion = 5;
+  static const int _schemaVersion = 6;
 
   /// Now, in the form stored in `updated_at` and `deleted_at`.
   static int nowMillis() => DateTime.now().millisecondsSinceEpoch;
@@ -144,6 +149,7 @@ class AppDatabase {
     _addIncome(batch);
     _addRecurring(batch);
     _addPeople(batch);
+    _addDeviceSettings(batch);
 
     await batch.commit(noResult: true);
   }
@@ -154,7 +160,19 @@ class AppDatabase {
     if (oldVersion < 3) _addIncome(batch);
     if (oldVersion < 4) _addRecurring(batch);
     if (oldVersion < 5) _addPeople(batch);
+    if (oldVersion < 6) _addDeviceSettings(batch);
     await batch.commit(noResult: true);
+  }
+
+  /// Schema version 6. No sync columns: the rows are never uploaded, backed
+  /// up to a file, or overwritten by a restore.
+  static void _addDeviceSettings(Batch batch) {
+    batch.execute('''
+      CREATE TABLE device_settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      )
+    ''');
   }
 
   /// Schema version 5. Born with the sync columns every table has had since

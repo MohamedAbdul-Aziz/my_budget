@@ -62,15 +62,22 @@ class RecurringCommitment extends Equatable {
 class RecurringOverview extends Equatable {
   const RecurringOverview({
     required this.commitments,
-    required this.monthlyTotal,
+    required this.monthlySpending,
+    this.monthlyIncome = 0,
   });
 
-  const RecurringOverview.empty() : commitments = const [], monthlyTotal = 0;
+  const RecurringOverview.empty()
+    : commitments = const [],
+      monthlySpending = 0,
+      monthlyIncome = 0;
 
   final List<RecurringCommitment> commitments;
 
-  /// What they all cost in an average month.
-  final double monthlyTotal;
+  /// What the payments going out cost in an average month.
+  final double monthlySpending;
+
+  /// What the recurring income brings in an average month.
+  final double monthlyIncome;
 
   bool get isEmpty => commitments.isEmpty;
 
@@ -84,5 +91,5 @@ class RecurringOverview extends Equatable {
   ];
 
   @override
-  List<Object?> get props => [commitments, monthlyTotal];
+  List<Object?> get props => [commitments, monthlySpending, monthlyIncome];
 }

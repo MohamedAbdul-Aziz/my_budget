@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_expense_widget_label">Chi nhanh</string>
+    <string name="quick_expense_widget_description">Thêm khoản chi chỉ với hai lần chạm.</string>
+
+    <string name="quick_expense_title">Chi nhanh</string>
+    <string name="quick_expense_add">Thêm khoản chi</string>
+</resources>

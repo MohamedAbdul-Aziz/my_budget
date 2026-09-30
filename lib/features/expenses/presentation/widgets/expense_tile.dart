@@ -7,21 +7,23 @@ import '../../../categories/presentation/category_label.dart';
 import '../../../categories/presentation/widgets/category_avatar.dart';
 import '../../domain/entities/expense.dart';
 
-/// One row in the month's list. Swipe it away to delete. Income shows its
-/// amount with a plus, in green.
+/// One row in the month's list. Swipe it away to delete, where
+/// [onDismissed] is given. Income shows its amount with a plus, in green.
 class ExpenseTile extends StatelessWidget {
   const ExpenseTile({
     super.key,
     required this.expense,
     required this.formats,
     required this.onTap,
-    required this.onDismissed,
+    this.onDismissed,
   });
 
   final Expense expense;
   final AppFormats formats;
   final VoidCallback onTap;
-  final VoidCallback onDismissed;
+
+  /// Null where a row cannot be swiped away, such as in search results.
+  final VoidCallback? onDismissed;
 
   @override
   Widget build(BuildContext context) {
@@ -30,40 +32,42 @@ class ExpenseTile extends StatelessWidget {
     final description = expense.description;
     final category = categoryLabel(strings, expense.category);
 
+    final tile = ListTile(
+      onTap: onTap,
+      leading: CategoryAvatar(category: expense.category),
+      title: Text(
+        description ?? category,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(
+        description == null
+            ? strings.dayLabel(expense.date, formats)
+            : '$category · ${strings.dayLabel(expense.date, formats)}',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      trailing: Text(
+        expense.isIncome
+            ? '+${formats.money(expense.amount)}'
+            : formats.money(expense.amount),
+        style: theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w700,
+          color: expense.isIncome ? TransactionColors.of(context).income : null,
+        ),
+      ),
+    );
+
+    final dismissed = onDismissed;
+    if (dismissed == null) return tile;
     return Dismissible(
       key: ValueKey(expense.id),
       // Always "swipe towards the end", which flips with the text direction.
       direction: DismissDirection.endToStart,
-      onDismissed: (_) => onDismissed(),
+      onDismissed: (_) => dismissed(),
       background: _DismissBackground(color: theme.colorScheme.errorContainer),
-      child: ListTile(
-        onTap: onTap,
-        leading: CategoryAvatar(category: expense.category),
-        title: Text(
-          description ?? category,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        subtitle: Text(
-          description == null
-              ? strings.dayLabel(expense.date, formats)
-              : '$category · ${strings.dayLabel(expense.date, formats)}',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        trailing: Text(
-          expense.isIncome
-              ? '+${formats.money(expense.amount)}'
-              : formats.money(expense.amount),
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: expense.isIncome
-                ? TransactionColors.of(context).income
-                : null,
-          ),
-        ),
-      ),
+      child: tile,
     );
   }
 }

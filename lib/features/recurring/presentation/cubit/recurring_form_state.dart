@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../categories/domain/entities/expense_category.dart';
+import '../../../categories/domain/entities/transaction_type.dart';
 import '../../domain/entities/recurrence_frequency.dart';
 import '../../domain/entities/recurring_expense.dart';
 import '../../domain/entities/recurring_mode.dart';
@@ -14,6 +15,7 @@ enum RecurringFormStatus { editing, submitting, success, failure }
 class RecurringFormState extends Equatable {
   const RecurringFormState({
     this.existing,
+    this.type = TransactionType.expense,
     this.category,
     this.frequency = RecurrenceFrequency.monthly,
     this.dueDay = 1,
@@ -25,6 +27,10 @@ class RecurringFormState extends Equatable {
 
   /// Set when editing.
   final RecurringExpense? existing;
+
+  /// A payment going out, or income such as a salary. Only categories of
+  /// this type are offered.
+  final TransactionType type;
   final ExpenseCategory? category;
   final RecurrenceFrequency frequency;
 
@@ -45,6 +51,7 @@ class RecurringFormState extends Equatable {
   bool get isSubmitting => status == RecurringFormStatus.submitting;
 
   RecurringFormState copyWith({
+    TransactionType? type,
     ExpenseCategory? category,
     RecurrenceFrequency? frequency,
     int? dueDay,
@@ -54,6 +61,7 @@ class RecurringFormState extends Equatable {
     FailureCode? error,
   }) => RecurringFormState(
     existing: existing,
+    type: type ?? this.type,
     category: category ?? this.category,
     frequency: frequency ?? this.frequency,
     dueDay: dueDay ?? this.dueDay,
@@ -67,6 +75,7 @@ class RecurringFormState extends Equatable {
   @override
   List<Object?> get props => [
     existing,
+    type,
     category,
     frequency,
     dueDay,

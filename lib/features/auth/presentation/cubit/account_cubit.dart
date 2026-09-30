@@ -9,6 +9,8 @@ import '../../domain/usecases/confirm_sign_up.dart';
 import '../../domain/usecases/delete_account.dart';
 import '../../domain/usecases/get_current_user.dart';
 import '../../domain/usecases/resend_sign_up_code.dart';
+import '../../domain/usecases/reset_password.dart';
+import '../../domain/usecases/send_password_reset.dart';
 import '../../domain/usecases/sign_in.dart';
 import '../../domain/usecases/sign_out.dart';
 import '../../domain/usecases/sign_up.dart';
@@ -25,12 +27,16 @@ class AccountCubit extends Cubit<AccountState> {
     required SignUp signUp,
     required ConfirmSignUp confirmSignUp,
     required ResendSignUpCode resendSignUpCode,
+    required SendPasswordReset sendPasswordReset,
+    required ResetPassword resetPassword,
     required SignOut signOut,
     required DeleteAccount deleteAccount,
   }) : _signIn = signIn,
        _signUp = signUp,
        _confirmSignUp = confirmSignUp,
        _resendSignUpCode = resendSignUpCode,
+       _sendPasswordReset = sendPasswordReset,
+       _resetPassword = resetPassword,
        _signOut = signOut,
        _deleteAccount = deleteAccount,
        super(switch (getCurrentUser()) {
@@ -51,6 +57,8 @@ class AccountCubit extends Cubit<AccountState> {
   final SignUp _signUp;
   final ConfirmSignUp _confirmSignUp;
   final ResendSignUpCode _resendSignUpCode;
+  final SendPasswordReset _sendPasswordReset;
+  final ResetPassword _resetPassword;
   final SignOut _signOut;
   final DeleteAccount _deleteAccount;
 
@@ -117,7 +125,57 @@ class AccountCubit extends Cubit<AccountState> {
     return result.isSuccess;
   }
 
-  /// Leaves the code step, for example to sign up with a different email.
+  /// Emails a code for a new password to [email], then asks for it.
+  Future<void> requestPasswordReset(String email) async {
+    if (!_canSubmit) return;
+
+    emit(const SignedOut(isSubmitting: true));
+    switch (await _sendPasswordReset(email: email)) {
+      case Success():
+        emit(SignedOut(resettingEmail: SignUp.normalizeEmail(email)));
+      case ResultFailure(:final failure):
+        emit(SignedOut(error: failure.code));
+    }
+  }
+
+  /// Returns true once a new reset code is on its way; a failure is shown
+  /// through the state like any other.
+  Future<bool> resendPasswordReset() async {
+    final email = _resettingEmail;
+    if (email == null || !_canSubmit) return false;
+
+    emit(SignedOut(isSubmitting: true, resettingEmail: email));
+    final result = await _sendPasswordReset(email: email);
+    emit(SignedOut(error: result.failureOrNull?.code, resettingEmail: email));
+    return result.isSuccess;
+  }
+
+  Future<void> resetPassword({
+    required String code,
+    required String newPassword,
+  }) async {
+    final email = _resettingEmail;
+    if (email == null || !_canSubmit) return;
+
+    emit(SignedOut(isSubmitting: true, resettingEmail: email));
+    switch (await _resetPassword(
+      email: email,
+      code: code,
+      newPassword: newPassword,
+    )) {
+      case Success(:final data):
+        emit(SignedIn(data));
+      // The code was accepted, which already signed the user in, and only
+      // saving the password failed: the old password still works.
+      case ResultFailure() when state is SignedIn:
+        break;
+      case ResultFailure(:final failure):
+        emit(SignedOut(error: failure.code, resettingEmail: email));
+    }
+  }
+
+  /// Leaves the code step, for example to sign up with a different email or
+  /// to go back from resetting the password.
   void cancelConfirmation() {
     if (state is SignedOut) emit(const SignedOut());
   }
@@ -148,6 +206,11 @@ class AccountCubit extends Cubit<AccountState> {
 
   String? get _unconfirmedEmail => switch (state) {
     SignedOut(:final unconfirmedEmail) => unconfirmedEmail,
+    SignedIn() => null,
+  };
+
+  String? get _resettingEmail => switch (state) {
+    SignedOut(:final resettingEmail) => resettingEmail,
     SignedIn() => null,
   };
 

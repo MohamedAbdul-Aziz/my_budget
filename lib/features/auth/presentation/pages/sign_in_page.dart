@@ -7,8 +7,9 @@ import '../cubit/account_cubit.dart';
 import '../cubit/account_state.dart';
 
 /// Sign in or create an account with an email and password, then confirm a
-/// new account with the code emailed to it. Closes itself once the user is
-/// signed in.
+/// new account with the code emailed to it. A forgotten password is reset
+/// the same way, with an emailed code. Closes itself once the user is signed
+/// in.
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
 
@@ -19,9 +20,14 @@ class SignInPage extends StatefulWidget {
   State<SignInPage> createState() => _SignInPageState();
 }
 
-String? _unconfirmedEmailOf(AccountState state) => switch (state) {
-  SignedOut(:final unconfirmedEmail) => unconfirmedEmail,
-  SignedIn() => null,
+/// Which code the page is asking for, if any: the one confirming a new
+/// account, or the one resetting a password.
+(String?, String?) _codeStepOf(AccountState state) => switch (state) {
+  SignedOut(:final unconfirmedEmail, :final resettingEmail) => (
+    unconfirmedEmail,
+    resettingEmail,
+  ),
+  SignedIn() => (null, null),
 };
 
 class _SignInPageState extends State<SignInPage> {
@@ -61,6 +67,9 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
+  void _forgotPassword() =>
+      context.read<AccountCubit>().requestPasswordReset(_emailController.text);
+
   @override
   Widget build(BuildContext context) {
     final strings = context.strings;
@@ -86,18 +95,21 @@ class _SignInPageState extends State<SignInPage> {
           ),
           title: _PageTitle(isSignUp: _isSignUp),
         ),
-        body: BlocSelector<AccountCubit, AccountState, String?>(
-          selector: _unconfirmedEmailOf,
-          builder: (context, unconfirmedEmail) => unconfirmedEmail == null
-              ? _CredentialsForm(
-                  emailController: _emailController,
-                  passwordController: _passwordController,
-                  passwordFocus: _passwordFocus,
-                  isSignUp: _isSignUp,
-                  onToggleMode: () => setState(() => _isSignUp = !_isSignUp),
-                  onSubmit: _submit,
-                )
-              : _CodeForm(email: unconfirmedEmail),
+        body: BlocSelector<AccountCubit, AccountState, (String?, String?)>(
+          selector: _codeStepOf,
+          builder: (context, codeStep) => switch (codeStep) {
+            (final unconfirmedEmail?, _) => _CodeForm(email: unconfirmedEmail),
+            (_, final resettingEmail?) => _ResetForm(email: resettingEmail),
+            _ => _CredentialsForm(
+              emailController: _emailController,
+              passwordController: _passwordController,
+              passwordFocus: _passwordFocus,
+              isSignUp: _isSignUp,
+              onToggleMode: () => setState(() => _isSignUp = !_isSignUp),
+              onSubmit: _submit,
+              onForgotPassword: _forgotPassword,
+            ),
+          },
         ),
       ),
     );
@@ -113,15 +125,14 @@ class _PageTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final strings = context.strings;
 
-    return BlocSelector<AccountCubit, AccountState, bool>(
-      selector: (state) => _unconfirmedEmailOf(state) != null,
-      builder: (context, isConfirming) => Text(
-        isConfirming
-            ? strings.confirmEmail
-            : isSignUp
-            ? strings.createAccount
-            : strings.signIn,
-      ),
+    return BlocSelector<AccountCubit, AccountState, (String?, String?)>(
+      selector: _codeStepOf,
+      builder: (context, codeStep) => Text(switch (codeStep) {
+        (_?, _) => strings.confirmEmail,
+        (_, _?) => strings.resetPassword,
+        _ when isSignUp => strings.createAccount,
+        _ => strings.signIn,
+      }),
     );
   }
 }
@@ -134,6 +145,7 @@ class _CredentialsForm extends StatelessWidget {
     required this.isSignUp,
     required this.onToggleMode,
     required this.onSubmit,
+    required this.onForgotPassword,
   });
 
   final TextEditingController emailController;
@@ -142,6 +154,9 @@ class _CredentialsForm extends StatelessWidget {
   final bool isSignUp;
   final VoidCallback onToggleMode;
   final VoidCallback onSubmit;
+
+  /// Emails a reset code to the address typed above.
+  final VoidCallback onForgotPassword;
 
   @override
   Widget build(BuildContext context) {
@@ -186,6 +201,11 @@ class _CredentialsForm extends StatelessWidget {
             onPressed: onSubmit,
           ),
           const SizedBox(height: 8),
+          if (!isSignUp)
+            TextButton(
+              onPressed: onForgotPassword,
+              child: Text(strings.forgotPassword),
+            ),
           TextButton(
             onPressed: onToggleMode,
             child: Text(
@@ -285,18 +305,127 @@ class _CodeFormState extends State<_CodeForm> {
   }
 }
 
+/// The code from the reset email and the new password. Saving them signs the
+/// user in with the new password.
+class _ResetForm extends StatefulWidget {
+  const _ResetForm({required this.email});
+
+  final String email;
+
+  @override
+  State<_ResetForm> createState() => _ResetFormState();
+}
+
+class _ResetFormState extends State<_ResetForm> {
+  late final TextEditingController _codeController;
+  late final TextEditingController _passwordController;
+  late final FocusNode _passwordFocus;
+
+  @override
+  void initState() {
+    super.initState();
+    _codeController = TextEditingController();
+    _passwordController = TextEditingController();
+    _passwordFocus = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _codeController.dispose();
+    _passwordController.dispose();
+    _passwordFocus.dispose();
+    super.dispose();
+  }
+
+  void _save() => context.read<AccountCubit>().resetPassword(
+    code: _codeController.text,
+    newPassword: _passwordController.text,
+  );
+
+  Future<void> _resend() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final sentMessage = context.strings.codeResent;
+    final sent = await context.read<AccountCubit>().resendPasswordReset();
+    if (!sent) return;
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(sentMessage)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final strings = context.strings;
+
+    return AutofillGroup(
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+        children: [
+          Icon(
+            Icons.lock_reset_rounded,
+            size: 48,
+            color: theme.colorScheme.primary,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            strings.resetCodeSentTo(widget.email),
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyLarge,
+          ),
+          const SizedBox(height: 24),
+          TextField(
+            controller: _codeController,
+            autofocus: true,
+            keyboardType: TextInputType.number,
+            textAlign: TextAlign.center,
+            textInputAction: TextInputAction.next,
+            autofillHints: const [AutofillHints.oneTimeCode],
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(10),
+            ],
+            style: theme.textTheme.headlineSmall?.copyWith(letterSpacing: 8),
+            onSubmitted: (_) => _passwordFocus.requestFocus(),
+            decoration: InputDecoration(labelText: strings.confirmationCode),
+          ),
+          const SizedBox(height: 16),
+          _PasswordField(
+            controller: _passwordController,
+            focusNode: _passwordFocus,
+            isNewPassword: true,
+            label: strings.newPassword,
+            onSubmitted: _save,
+          ),
+          const SizedBox(height: 24),
+          _SubmitButton(label: strings.saveNewPassword, onPressed: _save),
+          const SizedBox(height: 8),
+          TextButton(onPressed: _resend, child: Text(strings.resendCode)),
+          TextButton(
+            onPressed: context.read<AccountCubit>().cancelConfirmation,
+            child: Text(strings.backToSignIn),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _PasswordField extends StatefulWidget {
   const _PasswordField({
     required this.controller,
     required this.focusNode,
     required this.isNewPassword,
     required this.onSubmitted,
+    this.label,
   });
 
   final TextEditingController controller;
   final FocusNode focusNode;
   final bool isNewPassword;
   final VoidCallback onSubmitted;
+
+  /// Defaults to "Password".
+  final String? label;
 
   @override
   State<_PasswordField> createState() => _PasswordFieldState();
@@ -324,7 +453,7 @@ class _PasswordFieldState extends State<_PasswordField> {
       ],
       onSubmitted: (_) => widget.onSubmitted(),
       decoration: InputDecoration(
-        labelText: strings.password,
+        labelText: widget.label ?? strings.password,
         helperText: widget.isNewPassword ? strings.passwordRules : null,
         prefixIcon: const Icon(Icons.lock_outline_rounded),
         suffixIcon: IconButton(

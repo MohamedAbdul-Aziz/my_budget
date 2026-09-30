@@ -32,6 +32,19 @@ abstract interface class AuthRepository {
 
   Future<ApiResult<void>> resendSignUpCode({required String email});
 
+  /// Emails a code for choosing a new password. Succeeds for any address,
+  /// registered or not, so nobody can probe which emails have an account.
+  Future<ApiResult<void>> sendPasswordReset({required String email});
+
+  /// Checks the code from the reset email and saves [newPassword]. Checking
+  /// the code signs the user in, so if only saving the password fails, the
+  /// user is signed in with the old one.
+  Future<ApiResult<AppUser>> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  });
+
   Future<ApiResult<void>> signOut();
 
   /// Permanently deletes the signed-in account and the data stored with it

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_expense_widget_label">هزینه سریع</string>
+    <string name="quick_expense_widget_description">با دو ضربه هزینه‌ای ثبت کنید.</string>
+
+    <string name="quick_expense_title">هزینه سریع</string>
+    <string name="quick_expense_add">افزودن هزینه</string>
+</resources>

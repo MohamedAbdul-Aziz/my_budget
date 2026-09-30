@@ -43,6 +43,23 @@ class AuthRepositoryImpl implements AuthRepository {
       ApiResult.guard(() => _remoteDataSource.resendSignUpCode(email: email));
 
   @override
+  Future<ApiResult<void>> sendPasswordReset({required String email}) =>
+      ApiResult.guard(() => _remoteDataSource.sendPasswordReset(email: email));
+
+  @override
+  Future<ApiResult<AppUser>> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) => ApiResult.guard(
+    () => _remoteDataSource.resetPassword(
+      email: email,
+      code: code,
+      newPassword: newPassword,
+    ),
+  );
+
+  @override
   Future<ApiResult<void>> deleteAccount() =>
       ApiResult.guard(_remoteDataSource.deleteAccount);
 

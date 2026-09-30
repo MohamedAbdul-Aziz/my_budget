@@ -2,6 +2,13 @@ import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../features/analyses/domain/usecases/get_month_analysis.dart';
+import '../../features/app_lock/data/datasources/device_auth_data_source.dart';
+import '../../features/app_lock/data/repositories/app_lock_repository_impl.dart';
+import '../../features/app_lock/domain/repositories/app_lock_repository.dart';
+import '../../features/app_lock/domain/usecases/get_app_lock.dart';
+import '../../features/app_lock/domain/usecases/set_app_lock.dart';
+import '../../features/app_lock/domain/usecases/unlock_app.dart';
+import '../../features/app_lock/presentation/cubit/app_lock_cubit.dart';
 import '../../features/analyses/presentation/cubit/analyses_cubit.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../features/data_management/data/datasources/device_files_data_source.dart';
@@ -20,6 +27,8 @@ import '../../features/auth/domain/usecases/confirm_sign_up.dart';
 import '../../features/auth/domain/usecases/delete_account.dart';
 import '../../features/auth/domain/usecases/get_current_user.dart';
 import '../../features/auth/domain/usecases/resend_sign_up_code.dart';
+import '../../features/auth/domain/usecases/reset_password.dart';
+import '../../features/auth/domain/usecases/send_password_reset.dart';
 import '../../features/auth/domain/usecases/sign_in.dart';
 import '../../features/auth/domain/usecases/sign_out.dart';
 import '../../features/auth/domain/usecases/sign_up.dart';
@@ -48,9 +57,11 @@ import '../../features/expenses/domain/usecases/add_expense.dart';
 import '../../features/expenses/domain/usecases/delete_expense.dart';
 import '../../features/expenses/domain/usecases/get_month_overview.dart';
 import '../../features/expenses/domain/usecases/get_monthly_summaries.dart';
+import '../../features/expenses/domain/usecases/search_transactions.dart';
 import '../../features/expenses/domain/usecases/update_expense.dart';
 import '../../features/expenses/presentation/cubit/expense_form_cubit.dart';
 import '../../features/expenses/presentation/cubit/home_cubit.dart';
+import '../../features/expenses/presentation/cubit/search_cubit.dart';
 import '../../features/people/data/datasources/people_local_data_source.dart';
 import '../../features/people/data/repositories/people_repository_impl.dart';
 import '../../features/people/domain/repositories/people_repository.dart';
@@ -83,6 +94,13 @@ import '../../features/recurring/domain/usecases/save_recurring_expense.dart';
 import '../../features/recurring/domain/usecases/undo_recurring_payment.dart';
 import '../../features/recurring/presentation/cubit/recurring_cubit.dart';
 import '../../features/recurring/presentation/cubit/recurring_form_cubit.dart';
+import '../../features/reminders/data/datasources/reminder_local_data_source.dart';
+import '../../features/reminders/data/datasources/reminder_notifications_data_source.dart';
+import '../../features/reminders/data/repositories/reminder_repository_impl.dart';
+import '../../features/reminders/domain/repositories/reminder_repository.dart';
+import '../../features/reminders/domain/usecases/load_reminder.dart';
+import '../../features/reminders/domain/usecases/save_reminder.dart';
+import '../../features/reminders/presentation/cubit/reminder_cubit.dart';
 import '../../features/settings/data/datasources/settings_local_data_source.dart';
 import '../../features/settings/data/repositories/settings_repository_impl.dart';
 import '../../features/settings/domain/repositories/settings_repository.dart';
@@ -95,11 +113,16 @@ import '../../features/sync/data/datasources/sync_local_data_source.dart';
 import '../../features/sync/data/datasources/sync_remote_data_source.dart';
 import '../../features/sync/data/repositories/sync_repository_impl.dart';
 import '../../features/sync/domain/repositories/sync_repository.dart';
+import '../../features/sync/domain/usecases/auto_back_up.dart';
 import '../../features/sync/domain/usecases/back_up_data.dart';
+import '../../features/sync/domain/usecases/get_auto_backup.dart';
 import '../../features/sync/domain/usecases/get_last_synced_at.dart';
 import '../../features/sync/domain/usecases/restore_data.dart';
+import '../../features/sync/domain/usecases/set_auto_backup.dart';
+import '../../features/sync/presentation/cubit/auto_backup_cubit.dart';
 import '../../features/sync/presentation/cubit/sync_cubit.dart';
 import '../database/app_database.dart';
+import '../database/device_settings.dart';
 import '../database/local_records.dart';
 
 /// The single service locator. Nothing in the app constructs a cubit, use case
@@ -119,6 +142,8 @@ void configureDependencies({AppDatabase? database}) {
   _registerRecurring();
   _registerPeople();
   _registerSettings();
+  _registerReminders();
+  _registerAppLock();
   _registerQuickExpense();
   _registerSync();
   _registerAnalyses();
@@ -135,7 +160,9 @@ void _registerCore(AppDatabase? database) {
   sl
     ..registerLazySingleton<AppDatabase>(() => database ?? AppDatabase())
     // Bulk record moves shared by cloud sync and file backups.
-    ..registerLazySingleton(() => LocalRecords(sl()));
+    ..registerLazySingleton(() => LocalRecords(sl()))
+    // Phone-only preferences: automatic backup, app lock.
+    ..registerLazySingleton(() => DeviceSettings(sl()));
   // Lazy so tests that never touch the network need no Supabase.initialize.
   if (!sl.isRegistered<SupabaseClient>()) {
     sl.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
@@ -154,6 +181,8 @@ void _registerAuth() {
     ..registerLazySingleton(() => SignUp(sl()))
     ..registerLazySingleton(() => ConfirmSignUp(sl()))
     ..registerLazySingleton(() => ResendSignUpCode(sl()))
+    ..registerLazySingleton(() => SendPasswordReset(sl()))
+    ..registerLazySingleton(() => ResetPassword(sl()))
     ..registerLazySingleton(
       () => DeleteAccount(authRepository: sl(), syncRepository: sl()),
     )
@@ -166,6 +195,8 @@ void _registerAuth() {
         signUp: sl(),
         confirmSignUp: sl(),
         resendSignUpCode: sl(),
+        sendPasswordReset: sl(),
+        resetPassword: sl(),
         signOut: sl(),
         deleteAccount: sl(),
       ),
@@ -205,6 +236,7 @@ void _registerExpenses() {
     ..registerLazySingleton(() => AddExpense(sl()))
     ..registerLazySingleton(() => UpdateExpense(sl()))
     ..registerLazySingleton(() => DeleteExpense(sl()))
+    ..registerLazySingleton(() => SearchTransactions(sl()))
     ..registerLazySingleton(
       () => HomeCubit(
         getMonthOverview: sl(),
@@ -213,6 +245,8 @@ void _registerExpenses() {
         addExpense: sl(),
       ),
     )
+    // One per search screen: each keeps its own text and filters.
+    ..registerFactory(() => SearchCubit(searchTransactions: sl()))
     // One per add/edit screen: each form owns its own draft state.
     ..registerFactory(
       () => ExpenseFormCubit(
@@ -361,13 +395,48 @@ void _registerSettings() {
     );
 }
 
+void _registerReminders() {
+  _registerRepository<ReminderRepository>(
+    () => ReminderRepositoryImpl(local: sl(), notifications: sl()),
+  );
+  sl
+    ..registerLazySingleton<ReminderLocalDataSource>(
+      () => ReminderLocalDataSourceImpl(sl()),
+    )
+    ..registerLazySingleton<ReminderNotificationsDataSource>(
+      ReminderNotificationsDataSourceImpl.new,
+    )
+    ..registerLazySingleton(() => LoadReminder(sl()))
+    ..registerLazySingleton(() => SaveReminder(sl()))
+    // Shared: the launch, a restore and a language change reschedule the
+    // same reminder the settings sheet shows.
+    ..registerLazySingleton(
+      () => ReminderCubit(loadReminder: sl(), saveReminder: sl()),
+    );
+}
+
+void _registerAppLock() {
+  _registerRepository<AppLockRepository>(
+    () => AppLockRepositoryImpl(deviceAuth: sl(), deviceSettings: sl()),
+  );
+  sl
+    ..registerLazySingleton<DeviceAuthDataSource>(DeviceAuthDataSourceImpl.new)
+    ..registerLazySingleton(() => GetAppLock(sl()))
+    ..registerLazySingleton(() => SetAppLock(sl()))
+    ..registerLazySingleton(() => UnlockApp(sl()))
+    // Shared: the lock screen over the whole app and the settings switch.
+    ..registerLazySingleton(
+      () => AppLockCubit(getAppLock: sl(), setAppLock: sl(), unlockApp: sl()),
+    );
+}
+
 void _registerSync() {
   _registerRepository<SyncRepository>(
     () => SyncRepositoryImpl(local: sl(), remote: sl()),
   );
   sl
     ..registerLazySingleton<SyncLocalDataSource>(
-      () => SyncLocalDataSourceImpl(sl(), sl()),
+      () => SyncLocalDataSourceImpl(sl(), sl(), sl()),
     )
     ..registerLazySingleton<SyncRemoteDataSource>(
       () => SyncRemoteDataSourceImpl(sl()),
@@ -375,11 +444,23 @@ void _registerSync() {
     ..registerLazySingleton(() => GetLastSyncedAt(sl()))
     ..registerLazySingleton(() => BackUpData(sl()))
     ..registerLazySingleton(() => RestoreData(sl()))
+    ..registerLazySingleton(() => GetAutoBackup(sl()))
+    ..registerLazySingleton(() => SetAutoBackup(sl()))
+    ..registerLazySingleton(
+      () => AutoBackUp(syncRepository: sl(), authRepository: sl()),
+    )
     // Shared, so a backup keeps running and reporting when the settings
     // sheet is closed and reopened.
     ..registerLazySingleton(
-      () =>
-          SyncCubit(getLastSyncedAt: sl(), backUpData: sl(), restoreData: sl()),
+      () => SyncCubit(
+        getLastSyncedAt: sl(),
+        backUpData: sl(),
+        restoreData: sl(),
+        autoBackUp: sl(),
+      ),
+    )
+    ..registerLazySingleton(
+      () => AutoBackupCubit(getAutoBackup: sl(), setAutoBackup: sl()),
     );
 }
 

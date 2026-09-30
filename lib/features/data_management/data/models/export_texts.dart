@@ -37,6 +37,7 @@ class ExportTexts {
     required this.repeats,
     required this.mode,
     required this.autoDeduct,
+    required this.autoAdd,
     required this.reminder,
     required this.paidThrough,
     required this.peopleAndDebts,
@@ -110,6 +111,9 @@ class ExportTexts {
   final String repeats;
   final String mode;
   final String autoDeduct;
+
+  /// The automatic mode of recurring income, which is added, not deducted.
+  final String autoAdd;
   final String reminder;
   final String paidThrough;
 

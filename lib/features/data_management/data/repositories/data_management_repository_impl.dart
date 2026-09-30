@@ -263,6 +263,7 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
         'recurring': CsvExport.recurring(
           recurring: records.recurring,
           categoryNames: categoryNames,
+          incomeCategoryIds: _incomeCategoryIds(records),
           schedules: recurringSchedules,
           currency: currency,
           texts: texts,
@@ -402,6 +403,7 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
       repeats: strings.repeats,
       mode: strings.whenDue,
       autoDeduct: strings.autoDeduct,
+      autoAdd: strings.autoAdd,
       reminder: strings.remindMe,
       paidThrough: strings.colPaidThrough,
       peopleAndDebts: strings.peopleAndDebts,

@@ -153,6 +153,54 @@ class AppStringsTr extends AppStrings {
   String get currencySymbolHint => 'Her tutarın yanında gösterilir';
 
   @override
+  String get reminders => 'Hatırlatıcılar';
+
+  @override
+  String get dailyReminder => 'Günlük hatırlatıcı';
+
+  @override
+  String get dailyReminderHint =>
+      'Bugünkü harcamalarınızı kaydetmeniz için bir hatırlatma';
+
+  @override
+  String get reminderTime => 'Saat';
+
+  @override
+  String get notificationsBlocked =>
+      'Bu uygulamanın bildirimleri kapalı. Telefonunuzun ayarlarından izin verin.';
+
+  @override
+  String get reminderNotificationTitle => 'Bugünkü harcamalarınızı kaydedin';
+
+  @override
+  String get reminderNotificationBody =>
+      'Bugün harcadıklarınızı eklemek için bir dakikanızı ayırın.';
+
+  @override
+  String get security => 'Güvenlik';
+
+  @override
+  String get appLock => 'Uygulama kilidi';
+
+  @override
+  String get appLockHint =>
+      'Uygulama açılırken parmak izi, yüz veya ekran kilidi istensin';
+
+  @override
+  String get appLockUnavailable =>
+      'Önce bu telefonda bir ekran kilidi ayarlayın';
+
+  @override
+  String get unlock => 'Kilidi aç';
+
+  @override
+  String get unlockToContinue => 'Bütçenizi görmek için kilidi açın';
+
+  @override
+  String get confirmItsYou =>
+      'Kilidi değiştirmek için siz olduğunuzu doğrulayın';
+
+  @override
   String get storedOnThisDevice =>
       'Giderleriniz bu cihazda saklanır. Yedeklemek için giriş yapın.';
 
@@ -214,12 +262,38 @@ class AppStringsTr extends AppStrings {
   String get useDifferentEmail => 'Başka bir e-posta kullan';
 
   @override
+  String get forgotPassword => 'Şifrenizi mi unuttunuz?';
+
+  @override
+  String get resetPassword => 'Şifreyi sıfırla';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      '$email adresine bir kod gönderdik. Kodu, hesabınız için yeni bir şifreyle birlikte girin.';
+
+  @override
+  String get newPassword => 'Yeni şifre';
+
+  @override
+  String get saveNewPassword => 'Yeni şifreyi kaydet';
+
+  @override
+  String get backToSignIn => 'Girişe dön';
+
+  @override
   String get backupHint =>
       'Giderlerinizin bir kopyasını hesabınızda tutmak için yedekleyin. Geri '
       'yükleme, bu kopyayı buradaki hiçbir şeyi silmeden telefona getirir.';
 
   @override
   String get backUpNow => 'Şimdi yedekle';
+
+  @override
+  String get autoBackup => 'Otomatik yedekle';
+
+  @override
+  String get autoBackupHint =>
+      'Uygulamadan her çıktığınızda yeni değişiklikler hesabınıza yedeklenir.';
 
   @override
   String get restoreData => 'Geri yükle';
@@ -658,6 +732,31 @@ class AppStringsTr extends AppStrings {
   String get income => 'Gelir';
 
   @override
+  String get search => 'Ara';
+
+  @override
+  String get searchHint => 'Not veya tutar arayın';
+
+  @override
+  String get searchPrompt =>
+      'Herhangi bir işlemi notu veya tutarıyla bulun ya da tür, kategori ve tarihe göre süzün.';
+
+  @override
+  String get noSearchResults => 'Eşleşen işlem yok';
+
+  @override
+  String get allTypes => 'Tümü';
+
+  @override
+  String get anyCategory => 'Tüm kategoriler';
+
+  @override
+  String get anyDate => 'Tüm tarihler';
+
+  @override
+  String get clearFilters => 'Filtreleri temizle';
+
+  @override
   String get transactionType => 'Gider ya da gelir';
 
   @override
@@ -839,6 +938,24 @@ class AppStringsTr extends AppStrings {
 
   @override
   String recurringPaid(String name) => '$name ödendi olarak işaretlendi';
+
+  @override
+  String recurringReceived(String name) => '$name alındı olarak işaretlendi';
+
+  @override
+  String get statusReceived => 'Alındı';
+
+  @override
+  String get markAsReceived => 'Alındı';
+
+  @override
+  String get autoAdd => 'Otomatik';
+
+  @override
+  String get autoAddHint => 'Ödeme gününde otomatik olarak gelir kaydedilir.';
+
+  @override
+  String get monthlyIncomeAverage => 'Aylık gelir';
 
   @override
   String get recurringPaymentUndone => 'Ödeme kaldırıldı';

@@ -13,12 +13,16 @@ class ConfirmSignUp {
 
   final AuthRepository _repository;
 
+  /// Whether a trimmed [code] looks like one Supabase sends. Shared with
+  /// [ResetPassword]'s code.
+  static bool isCode(String code) => _codePattern.hasMatch(code);
+
   Future<ApiResult<AppUser>> call({
     required String email,
     required String code,
   }) async {
     final trimmed = code.trim();
-    if (!_codePattern.hasMatch(trimmed)) {
+    if (!isCode(trimmed)) {
       return const ResultFailure(ValidationFailure(FailureCode.codeInvalid));
     }
     return _repository.confirmSignUp(email: email, code: trimmed);

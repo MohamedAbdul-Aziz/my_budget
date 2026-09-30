@@ -62,9 +62,11 @@ class _AppShellState extends State<AppShell> {
     final notice = state.notice;
     if (notice == null) return;
     final strings = context.strings;
-    // Undo belongs to the paid notice only.
+    // Undo belongs to the paid (or received) notice only.
     final canUndo =
-        state.canUndoPayment && notice.code == NoticeCode.recurringPaid;
+        state.canUndoPayment &&
+        (notice.code == NoticeCode.recurringPaid ||
+            notice.code == NoticeCode.recurringReceived);
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(

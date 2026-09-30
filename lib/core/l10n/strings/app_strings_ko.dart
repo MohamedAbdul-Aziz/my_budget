@@ -150,6 +150,48 @@ class AppStringsKo extends AppStrings {
   String get currencySymbolHint => '모든 금액 옆에 표시됩니다';
 
   @override
+  String get reminders => '알림';
+
+  @override
+  String get dailyReminder => '매일 알림';
+
+  @override
+  String get dailyReminderHint => '오늘 쓴 돈을 기록하도록 알려 드려요';
+
+  @override
+  String get reminderTime => '시간';
+
+  @override
+  String get notificationsBlocked => '이 앱의 알림이 꺼져 있습니다. 휴대폰 설정에서 허용하세요.';
+
+  @override
+  String get reminderNotificationTitle => '오늘의 지출을 기록하세요';
+
+  @override
+  String get reminderNotificationBody => '잠시 시간을 내어 오늘 쓴 금액을 추가하세요.';
+
+  @override
+  String get security => '보안';
+
+  @override
+  String get appLock => '앱 잠금';
+
+  @override
+  String get appLockHint => '앱을 열 때 지문, 얼굴 또는 화면 잠금을 요청해요';
+
+  @override
+  String get appLockUnavailable => '먼저 이 휴대폰에 화면 잠금을 설정하세요';
+
+  @override
+  String get unlock => '잠금 해제';
+
+  @override
+  String get unlockToContinue => '잠금을 해제하고 예산을 확인하세요';
+
+  @override
+  String get confirmItsYou => '앱 잠금을 바꾸려면 본인임을 확인하세요';
+
+  @override
   String get storedOnThisDevice => '지출은 이 기기에 저장됩니다. 백업하려면 로그인하세요.';
 
   @override
@@ -208,11 +250,36 @@ class AppStringsKo extends AppStrings {
   String get useDifferentEmail => '다른 이메일 사용';
 
   @override
+  String get forgotPassword => '비밀번호를 잊으셨나요?';
+
+  @override
+  String get resetPassword => '비밀번호 재설정';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      '$email(으)로 코드를 보냈어요. 코드와 계정의 새 비밀번호를 입력하세요.';
+
+  @override
+  String get newPassword => '새 비밀번호';
+
+  @override
+  String get saveNewPassword => '새 비밀번호 저장';
+
+  @override
+  String get backToSignIn => '로그인으로 돌아가기';
+
+  @override
   String get backupHint =>
       '백업하면 지출 사본이 계정에 보관돼요. 복원하면 이 휴대폰에 있는 기록은 그대로 두고 사본을 가져옵니다.';
 
   @override
   String get backUpNow => '지금 백업';
+
+  @override
+  String get autoBackup => '자동 백업';
+
+  @override
+  String get autoBackupHint => '앱을 나갈 때마다 새 변경 사항이 계정에 백업돼요.';
 
   @override
   String get restoreData => '복원';
@@ -629,6 +696,30 @@ class AppStringsKo extends AppStrings {
   String get income => '수입';
 
   @override
+  String get search => '검색';
+
+  @override
+  String get searchHint => '메모나 금액 검색';
+
+  @override
+  String get searchPrompt => '메모나 금액으로 내역을 찾거나 유형, 카테고리, 날짜로 걸러 보세요.';
+
+  @override
+  String get noSearchResults => '일치하는 내역이 없어요';
+
+  @override
+  String get allTypes => '전체';
+
+  @override
+  String get anyCategory => '모든 카테고리';
+
+  @override
+  String get anyDate => '모든 날짜';
+
+  @override
+  String get clearFilters => '필터 지우기';
+
+  @override
   String get transactionType => '지출 또는 수입';
 
   @override
@@ -804,6 +895,24 @@ class AppStringsKo extends AppStrings {
 
   @override
   String recurringPaid(String name) => '$name 결제 완료로 표시했어요';
+
+  @override
+  String recurringReceived(String name) => '$name 수령 완료로 표시했어요';
+
+  @override
+  String get statusReceived => '받음';
+
+  @override
+  String get markAsReceived => '수령 완료';
+
+  @override
+  String get autoAdd => '자동 추가';
+
+  @override
+  String get autoAddHint => '예정일에 자동으로 수입으로 기록돼요.';
+
+  @override
+  String get monthlyIncomeAverage => '월 수입';
 
   @override
   String get recurringPaymentUndone => '결제를 취소했어요';

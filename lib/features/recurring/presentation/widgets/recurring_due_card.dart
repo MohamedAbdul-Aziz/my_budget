@@ -129,6 +129,7 @@ class _DueRow extends StatelessWidget {
                       ),
                     ),
                     Text(
+                      '${recurring.isIncome ? '+' : ''}'
                       '${formats.money(recurring.amount)} · '
                       '${commitment.dueLabel(context.strings, formats)}',
                       maxLines: 2,
@@ -145,6 +146,7 @@ class _DueRow extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           MarkPaidButton(
+            isIncome: recurring.isIncome,
             onPressed: () => context.read<RecurringCubit>().markPaid(recurring),
           ),
         ],

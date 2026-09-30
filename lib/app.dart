@@ -6,6 +6,8 @@ import 'core/di/injection.dart';
 import 'core/l10n/app_strings.dart';
 import 'core/theme/app_theme.dart';
 import 'features/analyses/presentation/cubit/analyses_cubit.dart';
+import 'features/app_lock/presentation/cubit/app_lock_cubit.dart';
+import 'features/app_lock/presentation/widgets/app_lock_gate.dart';
 import 'features/auth/presentation/cubit/account_cubit.dart';
 import 'features/budgets/presentation/cubit/budget_cubit.dart';
 import 'features/data_management/presentation/cubit/data_management_cubit.dart';
@@ -18,11 +20,16 @@ import 'features/people/presentation/cubit/people_cubit.dart';
 import 'features/quick_expense/presentation/widgets/quick_expense_bridge.dart';
 import 'features/recurring/presentation/cubit/recurring_cubit.dart';
 import 'features/recurring/presentation/cubit/recurring_state.dart';
+import 'features/reminders/presentation/cubit/reminder_cubit.dart';
+import 'features/reminders/presentation/reminder_texts.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 import 'features/settings/presentation/cubit/settings_state.dart';
 import 'features/shell/presentation/app_shell.dart';
+import 'features/sync/presentation/cubit/auto_backup_cubit.dart';
+import 'features/sync/presentation/cubit/auto_backup_state.dart';
 import 'features/sync/presentation/cubit/sync_cubit.dart';
 import 'features/sync/presentation/cubit/sync_state.dart';
+import 'features/sync/presentation/widgets/auto_backup_bridge.dart';
 
 /// Hosts the long-lived cubits. They are resolved from the service locator
 /// with `.value`, so navigating away never closes them.
@@ -43,6 +50,9 @@ class MyBudgetApp extends StatelessWidget {
         BlocProvider.value(value: sl<DataManagementCubit>()),
         BlocProvider.value(value: sl<RecurringCubit>()),
         BlocProvider.value(value: sl<PeopleCubit>()),
+        BlocProvider.value(value: sl<ReminderCubit>()),
+        BlocProvider.value(value: sl<AutoBackupCubit>()),
+        BlocProvider.value(value: sl<AppLockCubit>()),
       ],
       child: MultiBlocListener(
         listeners: [
@@ -99,6 +109,24 @@ class MyBudgetApp extends StatelessWidget {
                     },
             listener: (context, _) => context.read<HomeCubit>().refresh(),
           ),
+          // Turning automatic backup on uploads what is waiting right away,
+          // rather than the next time the app is left.
+          BlocListener<AutoBackupCubit, AutoBackupState>(
+            listenWhen: (previous, current) =>
+                current is AutoBackupReady &&
+                current.enabled &&
+                !(previous is AutoBackupReady && previous.enabled),
+            listener: (context, _) => context.read<SyncCubit>().autoBackUp(),
+          ),
+          // The scheduled reminder carries its own text, so it is written
+          // again in the new language.
+          BlocListener<SettingsCubit, SettingsState>(
+            listenWhen: (previous, current) =>
+                previous.languageCode != current.languageCode,
+            listener: (context, state) => context.read<ReminderCubit>().load(
+              reminderMessage(AppStrings.forLanguageCode(state.languageCode)),
+            ),
+          ),
         ],
         // Only theme and language rebuild MaterialApp — the currency format
         // is read further down the tree.
@@ -121,8 +149,14 @@ class MyBudgetApp extends StatelessWidget {
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
-              builder: (context, child) =>
-                  QuickExpenseBridge(child: child ?? const SizedBox.shrink()),
+              // The lock covers everything, the navigator included.
+              builder: (context, child) => AppLockGate(
+                child: QuickExpenseBridge(
+                  child: AutoBackupBridge(
+                    child: child ?? const SizedBox.shrink(),
+                  ),
+                ),
+              ),
               home: const AppShell(),
             );
           },
@@ -141,5 +175,7 @@ class MyBudgetApp extends StatelessWidget {
     context.read<RecurringCubit>().refresh();
     // People, their transactions and settlements came along as well.
     context.read<PeopleCubit>().refresh();
+    // So did the reminder, which is scheduled again or cancelled.
+    context.read<ReminderCubit>().load(currentReminderMessage());
   }
 }

@@ -14,6 +14,7 @@ enum NoticeCode {
   categoryDeletedWithMoves,
   incomeCategoryDeletedWithMoves,
   recurringPaid,
+  recurringReceived,
   recurringPaymentUndone,
   recurringDeleted,
   recurringAutoLogged,

@@ -160,6 +160,53 @@ class AppStringsPl extends AppStrings {
   String get currencySymbolHint => 'Wyświetlany przy każdej kwocie';
 
   @override
+  String get reminders => 'Przypomnienia';
+
+  @override
+  String get dailyReminder => 'Codzienne przypomnienie';
+
+  @override
+  String get dailyReminderHint =>
+      'Przypomnienie, by zapisać dzisiejsze wydatki';
+
+  @override
+  String get reminderTime => 'Godzina';
+
+  @override
+  String get notificationsBlocked =>
+      'Powiadomienia tej aplikacji są wyłączone. Zezwól na nie w ustawieniach telefonu.';
+
+  @override
+  String get reminderNotificationTitle => 'Zapisz dzisiejsze wydatki';
+
+  @override
+  String get reminderNotificationBody =>
+      'Poświęć chwilę, aby dodać dzisiejsze wydatki.';
+
+  @override
+  String get security => 'Bezpieczeństwo';
+
+  @override
+  String get appLock => 'Blokada aplikacji';
+
+  @override
+  String get appLockHint =>
+      'Pytaj o odcisk palca, twarz lub blokadę ekranu przy otwieraniu';
+
+  @override
+  String get appLockUnavailable =>
+      'Najpierw ustaw blokadę ekranu w tym telefonie';
+
+  @override
+  String get unlock => 'Odblokuj';
+
+  @override
+  String get unlockToContinue => 'Odblokuj, aby zobaczyć budżet';
+
+  @override
+  String get confirmItsYou => 'Potwierdź, że to Ty, aby zmienić blokadę';
+
+  @override
   String get storedOnThisDevice =>
       'Twoje wydatki są zapisane na tym urządzeniu. Zaloguj się, aby zrobić '
       'kopię zapasową.';
@@ -222,6 +269,25 @@ class AppStringsPl extends AppStrings {
   String get useDifferentEmail => 'Użyj innego adresu';
 
   @override
+  String get forgotPassword => 'Nie pamiętasz hasła?';
+
+  @override
+  String get resetPassword => 'Resetuj hasło';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'Wysłaliśmy kod na adres $email. Wpisz go razem z nowym hasłem do konta.';
+
+  @override
+  String get newPassword => 'Nowe hasło';
+
+  @override
+  String get saveNewPassword => 'Zapisz nowe hasło';
+
+  @override
+  String get backToSignIn => 'Wróć do logowania';
+
+  @override
   String get backupHint =>
       'Kopia zapasowa zachowuje Twoje wydatki na koncie. Przywracanie '
       'przenosi tę kopię na ten telefon, nie usuwając niczego, co już tu '
@@ -229,6 +295,13 @@ class AppStringsPl extends AppStrings {
 
   @override
   String get backUpNow => 'Utwórz kopię';
+
+  @override
+  String get autoBackup => 'Automatyczna kopia';
+
+  @override
+  String get autoBackupHint =>
+      'Za każdym razem, gdy wychodzisz z aplikacji, nowe zmiany trafiają do kopii na koncie.';
 
   @override
   String get restoreData => 'Przywróć';
@@ -683,6 +756,31 @@ class AppStringsPl extends AppStrings {
   String get income => 'Przychód';
 
   @override
+  String get search => 'Szukaj';
+
+  @override
+  String get searchHint => 'Szukaj notatek lub kwot';
+
+  @override
+  String get searchPrompt =>
+      'Znajdź transakcję po notatce lub kwocie albo filtruj według typu, kategorii i daty.';
+
+  @override
+  String get noSearchResults => 'Brak pasujących transakcji';
+
+  @override
+  String get allTypes => 'Wszystko';
+
+  @override
+  String get anyCategory => 'Dowolna kategoria';
+
+  @override
+  String get anyDate => 'Dowolna data';
+
+  @override
+  String get clearFilters => 'Wyczyść filtry';
+
+  @override
   String get transactionType => 'Wydatek czy przychód';
 
   @override
@@ -873,6 +971,25 @@ class AppStringsPl extends AppStrings {
 
   @override
   String recurringPaid(String name) => 'Oznaczono jako zapłacone: $name';
+
+  @override
+  String recurringReceived(String name) => 'Oznaczono jako otrzymane: $name';
+
+  @override
+  String get statusReceived => 'Otrzymano';
+
+  @override
+  String get markAsReceived => 'Otrzymane';
+
+  @override
+  String get autoAdd => 'Automatycznie';
+
+  @override
+  String get autoAddHint =>
+      'W dniu wpływu zapisywany automatycznie jako przychód.';
+
+  @override
+  String get monthlyIncomeAverage => 'Przychód miesięcznie';
 
   @override
   String get recurringPaymentUndone => 'Płatność usunięta';

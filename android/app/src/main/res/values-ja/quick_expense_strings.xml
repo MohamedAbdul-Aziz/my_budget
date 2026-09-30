@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_expense_widget_label">クイック支出</string>
+    <string name="quick_expense_widget_description">2回のタップで支出を追加。</string>
+
+    <string name="quick_expense_title">クイック支出</string>
+    <string name="quick_expense_add">支出を追加</string>
+</resources>

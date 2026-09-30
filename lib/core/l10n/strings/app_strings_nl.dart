@@ -159,6 +159,54 @@ class AppStringsNl extends AppStrings {
   String get currencySymbolHint => 'Staat naast elk bedrag';
 
   @override
+  String get reminders => 'Herinneringen';
+
+  @override
+  String get dailyReminder => 'Dagelijkse herinnering';
+
+  @override
+  String get dailyReminderHint =>
+      'Een seintje om je uitgaven van vandaag te noteren';
+
+  @override
+  String get reminderTime => 'Tijd';
+
+  @override
+  String get notificationsBlocked =>
+      'Meldingen staan uit voor deze app. Sta ze toe in de instellingen van je telefoon.';
+
+  @override
+  String get reminderNotificationTitle => 'Noteer je uitgaven van vandaag';
+
+  @override
+  String get reminderNotificationBody =>
+      'Neem even de tijd om toe te voegen wat je vandaag hebt uitgegeven.';
+
+  @override
+  String get security => 'Beveiliging';
+
+  @override
+  String get appLock => 'App-vergrendeling';
+
+  @override
+  String get appLockHint =>
+      'Vraag om vingerafdruk, gezicht of schermvergrendeling bij openen';
+
+  @override
+  String get appLockUnavailable =>
+      'Stel eerst een schermvergrendeling in op deze telefoon';
+
+  @override
+  String get unlock => 'Ontgrendelen';
+
+  @override
+  String get unlockToContinue => 'Ontgrendel om je budget te zien';
+
+  @override
+  String get confirmItsYou =>
+      'Bevestig dat jij het bent om de vergrendeling te wijzigen';
+
+  @override
   String get storedOnThisDevice =>
       'Je uitgaven staan op dit apparaat. Log in om er een back-up van te '
       'maken.';
@@ -221,6 +269,25 @@ class AppStringsNl extends AppStrings {
   String get useDifferentEmail => 'Ander e-mailadres gebruiken';
 
   @override
+  String get forgotPassword => 'Wachtwoord vergeten?';
+
+  @override
+  String get resetPassword => 'Wachtwoord opnieuw instellen';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'We hebben een code naar $email gestuurd. Vul die in met een nieuw wachtwoord voor je account.';
+
+  @override
+  String get newPassword => 'Nieuw wachtwoord';
+
+  @override
+  String get saveNewPassword => 'Nieuw wachtwoord opslaan';
+
+  @override
+  String get backToSignIn => 'Terug naar inloggen';
+
+  @override
   String get backupHint =>
       'Maak een back-up om een kopie van je uitgaven in je account te '
       'bewaren. Herstellen zet die kopie op deze telefoon zonder iets weg te '
@@ -228,6 +295,13 @@ class AppStringsNl extends AppStrings {
 
   @override
   String get backUpNow => 'Nu back-up maken';
+
+  @override
+  String get autoBackup => 'Automatisch back-uppen';
+
+  @override
+  String get autoBackupHint =>
+      'Telkens als je de app verlaat, worden nieuwe wijzigingen naar je account geback-upt.';
 
   @override
   String get restoreData => 'Herstellen';
@@ -684,6 +758,31 @@ class AppStringsNl extends AppStrings {
   String get income => 'Inkomsten';
 
   @override
+  String get search => 'Zoeken';
+
+  @override
+  String get searchHint => 'Zoek notities of bedragen';
+
+  @override
+  String get searchPrompt =>
+      'Vind een transactie via de notitie of het bedrag, of filter op soort, categorie en datum.';
+
+  @override
+  String get noSearchResults => 'Geen transacties gevonden';
+
+  @override
+  String get allTypes => 'Alles';
+
+  @override
+  String get anyCategory => 'Elke categorie';
+
+  @override
+  String get anyDate => 'Elke datum';
+
+  @override
+  String get clearFilters => 'Filters wissen';
+
+  @override
   String get transactionType => 'Uitgave of inkomsten';
 
   @override
@@ -872,6 +971,25 @@ class AppStringsNl extends AppStrings {
 
   @override
   String recurringPaid(String name) => '$name gemarkeerd als betaald';
+
+  @override
+  String recurringReceived(String name) => '$name gemarkeerd als ontvangen';
+
+  @override
+  String get statusReceived => 'Ontvangen';
+
+  @override
+  String get markAsReceived => 'Ontvangen';
+
+  @override
+  String get autoAdd => 'Automatisch';
+
+  @override
+  String get autoAddHint =>
+      'Wordt op de vervaldatum automatisch als inkomsten vastgelegd.';
+
+  @override
+  String get monthlyIncomeAverage => 'Inkomsten per maand';
 
   @override
   String get recurringPaymentUndone => 'Betaling verwijderd';

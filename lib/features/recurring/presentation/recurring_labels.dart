@@ -10,6 +10,7 @@ import '../domain/entities/recurring_overview.dart';
 /// every screen.
 extension RecurringLabels on RecurringCommitment {
   String statusLabel(AppStrings strings) => switch (status) {
+    RecurringStatus.paid when recurring.isIncome => strings.statusReceived,
     RecurringStatus.paid => strings.statusPaid,
     RecurringStatus.upcoming => strings.statusUpcoming,
     RecurringStatus.overdue => strings.statusOverdue,
@@ -41,7 +42,8 @@ extension RecurringLabels on RecurringCommitment {
   };
 }
 
-/// "Monthly on day 15", and "· Auto-deduct" when the app logs it.
+/// "Monthly on day 15", and "· Auto-deduct" (or, for income, "· Auto-add")
+/// when the app logs it.
 String scheduleLabel(
   AppStrings strings,
   RecurringExpense recurring,
@@ -53,5 +55,10 @@ String scheduleLabel(
     dueMonth: recurring.dueMonth,
     formats: formats,
   );
-  return recurring.isAutomatic ? '$schedule · ${strings.autoDeduct}' : schedule;
+  if (!recurring.isAutomatic) return schedule;
+  return '$schedule · ${autoModeLabel(strings, isIncome: recurring.isIncome)}';
 }
+
+/// The automatic mode: a payment is deducted, income is added.
+String autoModeLabel(AppStrings strings, {required bool isIncome}) =>
+    isIncome ? strings.autoAdd : strings.autoDeduct;

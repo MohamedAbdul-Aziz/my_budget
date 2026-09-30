@@ -158,6 +158,53 @@ class AppStringsPt extends AppStrings {
   String get currencySymbolHint => 'Aparece ao lado de cada valor';
 
   @override
+  String get reminders => 'Lembretes';
+
+  @override
+  String get dailyReminder => 'Lembrete diário';
+
+  @override
+  String get dailyReminderHint =>
+      'Um aviso para registrar o que você gastou hoje';
+
+  @override
+  String get reminderTime => 'Horário';
+
+  @override
+  String get notificationsBlocked =>
+      'As notificações deste app estão desativadas. Permita-as nas configurações do aparelho.';
+
+  @override
+  String get reminderNotificationTitle => 'Registre os gastos de hoje';
+
+  @override
+  String get reminderNotificationBody =>
+      'Reserve um momento para adicionar o que você gastou hoje.';
+
+  @override
+  String get security => 'Segurança';
+
+  @override
+  String get appLock => 'Bloqueio do app';
+
+  @override
+  String get appLockHint =>
+      'Pede digital, rosto ou bloqueio de tela ao abrir o app';
+
+  @override
+  String get appLockUnavailable =>
+      'Configure um bloqueio de tela neste aparelho para usar';
+
+  @override
+  String get unlock => 'Desbloquear';
+
+  @override
+  String get unlockToContinue => 'Desbloqueie para ver seu orçamento';
+
+  @override
+  String get confirmItsYou => 'Confirme que é você para alterar o bloqueio';
+
+  @override
   String get storedOnThisDevice =>
       'Suas despesas ficam salvas neste aparelho. Entre para fazer backup '
       'delas.';
@@ -220,6 +267,25 @@ class AppStringsPt extends AppStrings {
   String get useDifferentEmail => 'Usar outro e-mail';
 
   @override
+  String get forgotPassword => 'Esqueceu a senha?';
+
+  @override
+  String get resetPassword => 'Redefinir senha';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'Enviamos um código para $email. Digite-o com uma nova senha para sua conta.';
+
+  @override
+  String get newPassword => 'Nova senha';
+
+  @override
+  String get saveNewPassword => 'Salvar nova senha';
+
+  @override
+  String get backToSignIn => 'Voltar para entrar';
+
+  @override
   String get backupHint =>
       'Faça backup para guardar uma cópia das suas despesas na sua conta. '
       'Restaurar traz essa cópia para este celular sem apagar nada que já '
@@ -227,6 +293,13 @@ class AppStringsPt extends AppStrings {
 
   @override
   String get backUpNow => 'Fazer backup agora';
+
+  @override
+  String get autoBackup => 'Backup automático';
+
+  @override
+  String get autoBackupHint =>
+      'Sempre que você sai do app, as novas alterações vão para o backup da sua conta.';
 
   @override
   String get restoreData => 'Restaurar';
@@ -681,6 +754,31 @@ class AppStringsPt extends AppStrings {
   String get income => 'Receita';
 
   @override
+  String get search => 'Pesquisar';
+
+  @override
+  String get searchHint => 'Pesquise notas ou valores';
+
+  @override
+  String get searchPrompt =>
+      'Encontre qualquer transação pela nota ou pelo valor, ou filtre por tipo, categoria e data.';
+
+  @override
+  String get noSearchResults => 'Nenhuma transação encontrada';
+
+  @override
+  String get allTypes => 'Tudo';
+
+  @override
+  String get anyCategory => 'Qualquer categoria';
+
+  @override
+  String get anyDate => 'Qualquer data';
+
+  @override
+  String get clearFilters => 'Limpar filtros';
+
+  @override
   String get transactionType => 'Despesa ou receita';
 
   @override
@@ -869,6 +967,25 @@ class AppStringsPt extends AppStrings {
 
   @override
   String recurringPaid(String name) => '$name marcado como pago';
+
+  @override
+  String recurringReceived(String name) => '$name marcado como recebido';
+
+  @override
+  String get statusReceived => 'Recebido';
+
+  @override
+  String get markAsReceived => 'Marcar recebido';
+
+  @override
+  String get autoAdd => 'Crédito automático';
+
+  @override
+  String get autoAddHint =>
+      'Registrado como receita automaticamente no vencimento.';
+
+  @override
+  String get monthlyIncomeAverage => 'Receita por mês';
 
   @override
   String get recurringPaymentUndone => 'Pagamento removido';

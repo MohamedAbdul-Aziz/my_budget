@@ -138,6 +138,10 @@ class AppFormats {
   /// `2:05 PM`, or the local equivalent.
   String time(DateTime date) => _time.format(date);
 
+  /// [time] for a time of day with no date attached, such as the reminder's.
+  String timeOfDay(int hour, int minute) =>
+      _time.format(DateTime(2000, 1, 1, hour, minute));
+
   /// `Aug`.
   String shortMonth(Month month) => _shortMonth.format(month.start);
 

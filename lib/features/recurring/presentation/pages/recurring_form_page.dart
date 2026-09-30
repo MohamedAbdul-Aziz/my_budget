@@ -19,6 +19,7 @@ import '../../domain/entities/recurring_mode.dart';
 import '../cubit/recurring_cubit.dart';
 import '../cubit/recurring_form_cubit.dart';
 import '../cubit/recurring_form_state.dart';
+import '../recurring_labels.dart';
 
 /// Add or edit one recurring payment: its name, amount and category, how
 /// often it repeats and on which day, and whether the app logs it on its own
@@ -81,7 +82,7 @@ class _RecurringFormPageState extends State<RecurringFormPage> {
     final formCubit = context.read<RecurringFormCubit>();
     final draft = await CategoryEditorSheet.show(
       context,
-      type: TransactionType.expense,
+      type: formCubit.state.type,
     );
     if (draft == null) return;
 
@@ -183,6 +184,8 @@ class _RecurringFormPageState extends State<RecurringFormPage> {
             ),
             const SizedBox(height: 16),
             _AmountField(controller: _amountController),
+            const SizedBox(height: 20),
+            const _TypeSelector(),
             const SizedBox(height: 24),
             _FieldLabel(strings.category),
             _CategorySection(onCreate: _createCategory),
@@ -248,7 +251,28 @@ class _FieldLabel extends StatelessWidget {
   );
 }
 
-/// Spending categories only: a recurring payment is money going out.
+/// A payment going out, or income coming in such as a salary.
+class _TypeSelector extends StatelessWidget {
+  const _TypeSelector();
+
+  @override
+  Widget build(BuildContext context) =>
+      BlocSelector<RecurringFormCubit, RecurringFormState, TransactionType>(
+        selector: (state) => state.type,
+        builder: (context, type) => TransactionTypeToggle(
+          selected: type,
+          onChanged: (type) => context.read<RecurringFormCubit>().selectType(
+            type,
+            category: categoriesOfType(
+              context.read<CategoriesCubit>().state,
+              type,
+            ).firstOrNull,
+          ),
+        ),
+      );
+}
+
+/// The categories of the chosen type only.
 class _CategorySection extends StatelessWidget {
   const _CategorySection({required this.onCreate});
 
@@ -258,14 +282,15 @@ class _CategorySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CategoriesCubit, CategoriesState>(
       builder: (context, categoriesState) =>
-          BlocSelector<RecurringFormCubit, RecurringFormState, String?>(
-            selector: (state) => state.category?.id,
-            builder: (context, selectedId) => CategoryPicker(
-              categories: categoriesOfType(
-                categoriesState,
-                TransactionType.expense,
-              ),
-              selectedId: selectedId,
+          BlocSelector<
+            RecurringFormCubit,
+            RecurringFormState,
+            (TransactionType, String?)
+          >(
+            selector: (state) => (state.type, state.category?.id),
+            builder: (context, selection) => CategoryPicker(
+              categories: categoriesOfType(categoriesState, selection.$1),
+              selectedId: selection.$2,
               onSelected: context.read<RecurringFormCubit>().selectCategory,
               onCreate: onCreate,
             ),
@@ -477,9 +502,13 @@ class _ModeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final strings = context.strings;
-    return BlocSelector<RecurringFormCubit, RecurringFormState, RecurringMode>(
-      selector: (state) => state.mode,
-      builder: (context, mode) => Column(
+    return BlocSelector<
+      RecurringFormCubit,
+      RecurringFormState,
+      (RecurringMode, TransactionType)
+    >(
+      selector: (state) => (state.mode, state.type),
+      builder: (context, selection) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SegmentedButton<RecurringMode>(
@@ -492,19 +521,27 @@ class _ModeSelector extends StatelessWidget {
               ButtonSegment(
                 value: RecurringMode.autoDeduct,
                 icon: const Icon(Icons.autorenew_rounded),
-                label: Text(strings.autoDeduct),
+                label: Text(
+                  autoModeLabel(
+                    strings,
+                    isIncome: selection.$2 == TransactionType.income,
+                  ),
+                ),
               ),
             ],
-            selected: {mode},
+            selected: {selection.$1},
             showSelectedIcon: false,
             onSelectionChanged: (selection) =>
                 context.read<RecurringFormCubit>().selectMode(selection.first),
           ),
           const SizedBox(height: 8),
           Text(
-            switch (mode) {
-              RecurringMode.reminder => strings.remindMeHint,
-              RecurringMode.autoDeduct => strings.autoDeductHint,
+            switch (selection) {
+              (RecurringMode.reminder, _) => strings.remindMeHint,
+              (RecurringMode.autoDeduct, TransactionType.income) =>
+                strings.autoAddHint,
+              (RecurringMode.autoDeduct, TransactionType.expense) =>
+                strings.autoDeductHint,
             },
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,

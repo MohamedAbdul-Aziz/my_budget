@@ -4,6 +4,7 @@ import '../../../../core/error/api_result.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/utils/amount_input.dart';
 import '../../../categories/domain/entities/expense_category.dart';
+import '../../../categories/domain/entities/transaction_type.dart';
 import '../../domain/entities/recurrence_frequency.dart';
 import '../../domain/entities/recurring_draft.dart';
 import '../../domain/entities/recurring_expense.dart';
@@ -28,7 +29,8 @@ class RecurringFormCubit extends Cubit<RecurringFormState> {
   final Map<RecurrenceFrequency, int> _days = {};
 
   /// Seeds the form. [existing] switches it to edit mode. A new payment is
-  /// monthly, due on today's date, and asks before logging anything.
+  /// an expense, monthly, due on today's date, and asks before logging
+  /// anything.
   void start({RecurringExpense? existing, ExpenseCategory? suggestedCategory}) {
     final today = _clock();
     _days
@@ -41,6 +43,10 @@ class RecurringFormCubit extends Cubit<RecurringFormState> {
     emit(
       RecurringFormState(
         existing: existing,
+        type:
+            existing?.category.type ??
+            suggestedCategory?.type ??
+            TransactionType.expense,
         category: existing?.category ?? suggestedCategory,
         frequency: existing?.frequency ?? RecurrenceFrequency.monthly,
         dueDay: existing?.dueDay ?? today.day,
@@ -51,7 +57,24 @@ class RecurringFormCubit extends Cubit<RecurringFormState> {
   }
 
   void selectCategory(ExpenseCategory category) =>
-      emit(state.copyWith(category: category));
+      emit(state.copyWith(type: category.type, category: category));
+
+  /// Switches between a payment and income, starting on [category], the
+  /// first of that type, since the current one no longer fits.
+  void selectType(TransactionType type, {ExpenseCategory? category}) {
+    if (type == state.type) return;
+    emit(
+      RecurringFormState(
+        existing: state.existing,
+        type: type,
+        category: category,
+        frequency: state.frequency,
+        dueDay: state.dueDay,
+        dueMonth: state.dueMonth,
+        mode: state.mode,
+      ),
+    );
+  }
 
   void selectFrequency(RecurrenceFrequency frequency) {
     if (frequency == state.frequency) return;

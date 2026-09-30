@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_expense_widget_label">Schnelle Ausgabe</string>
+    <string name="quick_expense_widget_description">Füge eine Ausgabe mit zwei Tipps hinzu.</string>
+
+    <string name="quick_expense_title">Schnelle Ausgabe</string>
+    <string name="quick_expense_add">Ausgabe hinzufügen</string>
+</resources>

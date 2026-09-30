@@ -20,6 +20,17 @@ abstract interface class AuthRemoteDataSource {
 
   Future<void> resendSignUpCode({required String email});
 
+  /// Emails a code that lets the user choose a new password.
+  Future<void> sendPasswordReset({required String email});
+
+  /// Checks the emailed code, which signs the user in, then saves the new
+  /// password.
+  Future<AppUser> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  });
+
   Future<void> signOut();
 
   /// Permanently deletes the signed-in account and everything stored with it
@@ -105,6 +116,35 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       emailRedirectTo: confirmationRedirect,
     ),
   );
+
+  /// The "Reset Password" email template must show `{{ .Token }}`, the code
+  /// the user types into the app, the same way the "Confirm signup" template
+  /// does. No redirect is passed: the reset happens in the app, not through
+  /// a link.
+  @override
+  Future<void> sendPasswordReset({required String email}) =>
+      _guard(() => _auth.resetPasswordForEmail(email));
+
+  @override
+  Future<AppUser> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) => _guard(() async {
+    final response = await _auth.verifyOTP(
+      type: OtpType.recovery,
+      email: email,
+      token: code,
+    );
+    try {
+      await _auth.updateUser(UserAttributes(password: newPassword));
+    } on AuthException catch (error) {
+      // The "new" password is the one the account already has, so the user
+      // knows it: nothing to change.
+      if (error.code != 'same_password') rethrow;
+    }
+    return _toAppUser(response.user!);
+  });
 
   /// Supabase drops the session on the device before telling the server, so
   /// this signs the user out locally even when offline.

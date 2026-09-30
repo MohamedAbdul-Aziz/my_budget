@@ -20,6 +20,7 @@ import '../widgets/expense_tile.dart';
 import '../widgets/month_picker_sheet.dart';
 import '../widgets/month_summary_card.dart';
 import 'expense_form_page.dart';
+import 'search_page.dart';
 
 /// The month at a glance: what came in, what it cost, what is left, where
 /// the spending went, and everything recorded.
@@ -35,6 +36,11 @@ class HomePage extends StatelessWidget {
         titleSpacing: 8,
         title: const _MonthTitleButton(),
         actions: [
+          IconButton(
+            tooltip: strings.search,
+            icon: const Icon(Icons.search_rounded),
+            onPressed: () => Navigator.of(context).push(SearchPage.route()),
+          ),
           IconButton(
             tooltip: strings.recurringPayments,
             icon: const Icon(Icons.event_repeat_rounded),

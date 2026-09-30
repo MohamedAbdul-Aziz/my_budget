@@ -158,6 +158,53 @@ class AppStringsIt extends AppStrings {
   String get currencySymbolHint => 'Mostrato accanto a ogni importo';
 
   @override
+  String get reminders => 'Promemoria';
+
+  @override
+  String get dailyReminder => 'Promemoria giornaliero';
+
+  @override
+  String get dailyReminderHint =>
+      'Un avviso per registrare quanto hai speso oggi';
+
+  @override
+  String get reminderTime => 'Ora';
+
+  @override
+  String get notificationsBlocked =>
+      'Le notifiche di questa app sono disattivate. Consentile nelle impostazioni del telefono.';
+
+  @override
+  String get reminderNotificationTitle => 'Registra le spese di oggi';
+
+  @override
+  String get reminderNotificationBody =>
+      'Prenditi un momento per aggiungere quanto hai speso oggi.';
+
+  @override
+  String get security => 'Sicurezza';
+
+  @override
+  String get appLock => 'Blocco app';
+
+  @override
+  String get appLockHint =>
+      'Chiedi impronta, volto o blocco schermo all’apertura';
+
+  @override
+  String get appLockUnavailable =>
+      'Imposta prima un blocco schermo su questo telefono';
+
+  @override
+  String get unlock => 'Sblocca';
+
+  @override
+  String get unlockToContinue => 'Sblocca per vedere il tuo budget';
+
+  @override
+  String get confirmItsYou => 'Conferma la tua identità per cambiare il blocco';
+
+  @override
   String get storedOnThisDevice =>
       'Le tue spese sono salvate su questo dispositivo. Accedi per farne un '
       'backup.';
@@ -220,6 +267,25 @@ class AppStringsIt extends AppStrings {
   String get useDifferentEmail => 'Usa un’altra email';
 
   @override
+  String get forgotPassword => 'Password dimenticata?';
+
+  @override
+  String get resetPassword => 'Reimposta password';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'Abbiamo inviato un codice a $email. Inseriscilo con una nuova password per il tuo account.';
+
+  @override
+  String get newPassword => 'Nuova password';
+
+  @override
+  String get saveNewPassword => 'Salva nuova password';
+
+  @override
+  String get backToSignIn => 'Torna all’accesso';
+
+  @override
   String get backupHint =>
       'Fai un backup per tenere una copia delle tue spese nel tuo account. '
       'Ripristina riporta quella copia su questo telefono senza togliere '
@@ -227,6 +293,13 @@ class AppStringsIt extends AppStrings {
 
   @override
   String get backUpNow => 'Esegui backup';
+
+  @override
+  String get autoBackup => 'Backup automatico';
+
+  @override
+  String get autoBackupHint =>
+      'Ogni volta che esci dall’app, le nuove modifiche vengono salvate nel tuo account.';
 
   @override
   String get restoreData => 'Ripristina';
@@ -681,6 +754,31 @@ class AppStringsIt extends AppStrings {
   String get income => 'Entrata';
 
   @override
+  String get search => 'Cerca';
+
+  @override
+  String get searchHint => 'Cerca note o importi';
+
+  @override
+  String get searchPrompt =>
+      'Trova un movimento dalla nota o dall’importo, oppure filtra per tipo, categoria e data.';
+
+  @override
+  String get noSearchResults => 'Nessun movimento corrisponde';
+
+  @override
+  String get allTypes => 'Tutto';
+
+  @override
+  String get anyCategory => 'Qualsiasi categoria';
+
+  @override
+  String get anyDate => 'Qualsiasi data';
+
+  @override
+  String get clearFilters => 'Rimuovi filtri';
+
+  @override
   String get transactionType => 'Spesa o entrata';
 
   @override
@@ -869,6 +967,25 @@ class AppStringsIt extends AppStrings {
 
   @override
   String recurringPaid(String name) => '$name segnato come pagato';
+
+  @override
+  String recurringReceived(String name) => '$name segnato come ricevuto';
+
+  @override
+  String get statusReceived => 'Ricevuto';
+
+  @override
+  String get markAsReceived => 'Ricevuto';
+
+  @override
+  String get autoAdd => 'Accredito automatico';
+
+  @override
+  String get autoAddHint =>
+      'Registrato automaticamente come entrata alla scadenza.';
+
+  @override
+  String get monthlyIncomeAverage => 'Entrate al mese';
 
   @override
   String get recurringPaymentUndone => 'Pagamento rimosso';

@@ -25,4 +25,13 @@ abstract interface class SyncRepository {
   /// phone's data from it, so a different account can back everything up
   /// from scratch. The phone's own records are kept.
   Future<ApiResult<void>> forgetAccount(String userId);
+
+  /// Whether this phone backs up on its own; a preference of this phone
+  /// alone, never synced.
+  Future<ApiResult<bool>> autoBackupEnabled();
+
+  Future<ApiResult<void>> setAutoBackup({required bool enabled});
+
+  /// Whether this phone has changes its last backup does not include.
+  Future<ApiResult<bool>> hasPendingChanges();
 }

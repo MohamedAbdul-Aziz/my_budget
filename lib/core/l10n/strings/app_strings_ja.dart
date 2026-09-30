@@ -150,6 +150,48 @@ class AppStringsJa extends AppStrings {
   String get currencySymbolHint => 'すべての金額の横に表示されます';
 
   @override
+  String get reminders => 'リマインダー';
+
+  @override
+  String get dailyReminder => '毎日のリマインダー';
+
+  @override
+  String get dailyReminderHint => '今日の支出を記録するためのお知らせ';
+
+  @override
+  String get reminderTime => '時刻';
+
+  @override
+  String get notificationsBlocked => 'このアプリの通知がオフになっています。端末の設定で許可してください。';
+
+  @override
+  String get reminderNotificationTitle => '今日の支出を記録しましょう';
+
+  @override
+  String get reminderNotificationBody => '少し時間をとって、今日使ったお金を追加しましょう。';
+
+  @override
+  String get security => 'セキュリティ';
+
+  @override
+  String get appLock => 'アプリロック';
+
+  @override
+  String get appLockHint => 'アプリを開くときに指紋・顔・画面ロックを求めます';
+
+  @override
+  String get appLockUnavailable => '先にこの端末で画面ロックを設定してください';
+
+  @override
+  String get unlock => 'ロック解除';
+
+  @override
+  String get unlockToContinue => 'ロックを解除して予算を表示';
+
+  @override
+  String get confirmItsYou => 'アプリロックを変更するには本人確認をしてください';
+
+  @override
   String get storedOnThisDevice => '支出はこの端末に保存されています。バックアップするにはログインしてください。';
 
   @override
@@ -208,11 +250,36 @@ class AppStringsJa extends AppStrings {
   String get useDifferentEmail => '別のメールアドレスを使う';
 
   @override
+  String get forgotPassword => 'パスワードをお忘れですか？';
+
+  @override
+  String get resetPassword => 'パスワードの再設定';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      '$email にコードを送信しました。コードとアカウントの新しいパスワードを入力してください。';
+
+  @override
+  String get newPassword => '新しいパスワード';
+
+  @override
+  String get saveNewPassword => '新しいパスワードを保存';
+
+  @override
+  String get backToSignIn => 'ログインに戻る';
+
+  @override
   String get backupHint =>
       'バックアップすると支出のコピーがアカウントに保存されます。復元すると、この端末にある記録を消さずにコピーを取り戻せます。';
 
   @override
   String get backUpNow => '今すぐバックアップ';
+
+  @override
+  String get autoBackup => '自動バックアップ';
+
+  @override
+  String get autoBackupHint => 'アプリを離れるたびに、新しい変更がアカウントにバックアップされます。';
 
   @override
   String get restoreData => '復元';
@@ -629,6 +696,30 @@ class AppStringsJa extends AppStrings {
   String get income => '収入';
 
   @override
+  String get search => '検索';
+
+  @override
+  String get searchHint => 'メモや金額で検索';
+
+  @override
+  String get searchPrompt => 'メモや金額で記録を探すか、種類・カテゴリ・日付で絞り込みます。';
+
+  @override
+  String get noSearchResults => '一致する記録はありません';
+
+  @override
+  String get allTypes => 'すべて';
+
+  @override
+  String get anyCategory => 'すべてのカテゴリ';
+
+  @override
+  String get anyDate => 'すべての日付';
+
+  @override
+  String get clearFilters => '絞り込みを解除';
+
+  @override
   String get transactionType => '支出か収入か';
 
   @override
@@ -802,6 +893,24 @@ class AppStringsJa extends AppStrings {
 
   @override
   String recurringPaid(String name) => '「$name」を支払済みにしました';
+
+  @override
+  String recurringReceived(String name) => '「$name」を受取済みにしました';
+
+  @override
+  String get statusReceived => '受取済み';
+
+  @override
+  String get markAsReceived => '受取済み';
+
+  @override
+  String get autoAdd => '自動で記録';
+
+  @override
+  String get autoAddHint => '予定日に自動で収入として記録されます。';
+
+  @override
+  String get monthlyIncomeAverage => '月あたりの収入';
 
   @override
   String get recurringPaymentUndone => '支払いを取り消しました';

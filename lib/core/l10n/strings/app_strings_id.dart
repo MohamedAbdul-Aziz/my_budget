@@ -155,6 +155,53 @@ class AppStringsId extends AppStrings {
   String get currencySymbolHint => 'Ditampilkan di samping setiap jumlah';
 
   @override
+  String get reminders => 'Pengingat';
+
+  @override
+  String get dailyReminder => 'Pengingat harian';
+
+  @override
+  String get dailyReminderHint =>
+      'Pengingat untuk mencatat pengeluaranmu hari ini';
+
+  @override
+  String get reminderTime => 'Waktu';
+
+  @override
+  String get notificationsBlocked =>
+      'Notifikasi aplikasi ini nonaktif. Izinkan di pengaturan ponselmu.';
+
+  @override
+  String get reminderNotificationTitle => 'Catat pengeluaran hari ini';
+
+  @override
+  String get reminderNotificationBody =>
+      'Luangkan waktu sejenak untuk menambahkan pengeluaranmu hari ini.';
+
+  @override
+  String get security => 'Keamanan';
+
+  @override
+  String get appLock => 'Kunci aplikasi';
+
+  @override
+  String get appLockHint =>
+      'Minta sidik jari, wajah, atau kunci layar saat aplikasi dibuka';
+
+  @override
+  String get appLockUnavailable => 'Atur kunci layar di ponsel ini dulu';
+
+  @override
+  String get unlock => 'Buka kunci';
+
+  @override
+  String get unlockToContinue => 'Buka kunci untuk melihat anggaranmu';
+
+  @override
+  String get confirmItsYou =>
+      'Konfirmasi bahwa ini kamu untuk mengubah kunci aplikasi';
+
+  @override
   String get storedOnThisDevice =>
       'Pengeluaranmu tersimpan di perangkat ini. Masuk untuk mencadangkannya.';
 
@@ -216,6 +263,25 @@ class AppStringsId extends AppStrings {
   String get useDifferentEmail => 'Pakai email lain';
 
   @override
+  String get forgotPassword => 'Lupa kata sandi?';
+
+  @override
+  String get resetPassword => 'Atur ulang kata sandi';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'Kami mengirim kode ke $email. Masukkan kode itu beserta kata sandi baru untuk akunmu.';
+
+  @override
+  String get newPassword => 'Kata sandi baru';
+
+  @override
+  String get saveNewPassword => 'Simpan kata sandi baru';
+
+  @override
+  String get backToSignIn => 'Kembali ke halaman masuk';
+
+  @override
   String get backupHint =>
       'Cadangkan untuk menyimpan salinan pengeluaranmu di akunmu. Pulihkan '
       'membawa salinan itu ke ponsel ini tanpa menghapus apa pun yang sudah '
@@ -223,6 +289,13 @@ class AppStringsId extends AppStrings {
 
   @override
   String get backUpNow => 'Cadangkan sekarang';
+
+  @override
+  String get autoBackup => 'Cadangkan otomatis';
+
+  @override
+  String get autoBackupHint =>
+      'Setiap kali kamu keluar dari aplikasi, perubahan baru dicadangkan ke akunmu.';
 
   @override
   String get restoreData => 'Pulihkan';
@@ -663,6 +736,31 @@ class AppStringsId extends AppStrings {
   String get income => 'Pemasukan';
 
   @override
+  String get search => 'Cari';
+
+  @override
+  String get searchHint => 'Cari catatan atau jumlah';
+
+  @override
+  String get searchPrompt =>
+      'Temukan transaksi lewat catatan atau jumlahnya, atau saring menurut jenis, kategori, dan tanggal.';
+
+  @override
+  String get noSearchResults => 'Tidak ada transaksi yang cocok';
+
+  @override
+  String get allTypes => 'Semua';
+
+  @override
+  String get anyCategory => 'Semua kategori';
+
+  @override
+  String get anyDate => 'Semua tanggal';
+
+  @override
+  String get clearFilters => 'Hapus filter';
+
+  @override
   String get transactionType => 'Pengeluaran atau pemasukan';
 
   @override
@@ -847,6 +945,25 @@ class AppStringsId extends AppStrings {
 
   @override
   String recurringPaid(String name) => '$name ditandai lunas';
+
+  @override
+  String recurringReceived(String name) => '$name ditandai diterima';
+
+  @override
+  String get statusReceived => 'Diterima';
+
+  @override
+  String get markAsReceived => 'Diterima';
+
+  @override
+  String get autoAdd => 'Tambah otomatis';
+
+  @override
+  String get autoAddHint =>
+      'Dicatat sebagai pemasukan otomatis pada tanggal jatuh tempo.';
+
+  @override
+  String get monthlyIncomeAverage => 'Pemasukan per bulan';
 
   @override
   String get recurringPaymentUndone => 'Pembayaran dihapus';

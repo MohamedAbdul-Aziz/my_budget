@@ -159,6 +159,54 @@ class AppStringsFr extends AppStrings {
   String get currencySymbolHint => 'Affiché à côté de chaque montant';
 
   @override
+  String get reminders => 'Rappels';
+
+  @override
+  String get dailyReminder => 'Rappel quotidien';
+
+  @override
+  String get dailyReminderHint =>
+      'Un petit rappel pour noter vos dépenses du jour';
+
+  @override
+  String get reminderTime => 'Heure';
+
+  @override
+  String get notificationsBlocked =>
+      'Les notifications de cette appli sont désactivées. Autorisez-les dans les réglages du téléphone.';
+
+  @override
+  String get reminderNotificationTitle => 'Notez vos dépenses du jour';
+
+  @override
+  String get reminderNotificationBody =>
+      'Prenez un instant pour ajouter ce que vous avez dépensé aujourd’hui.';
+
+  @override
+  String get security => 'Sécurité';
+
+  @override
+  String get appLock => 'Verrouillage de l’appli';
+
+  @override
+  String get appLockHint =>
+      'Demander l’empreinte, le visage ou le verrouillage de l’écran à l’ouverture';
+
+  @override
+  String get appLockUnavailable =>
+      'Configurez d’abord un verrouillage de l’écran sur ce téléphone';
+
+  @override
+  String get unlock => 'Déverrouiller';
+
+  @override
+  String get unlockToContinue => 'Déverrouillez pour voir votre budget';
+
+  @override
+  String get confirmItsYou =>
+      'Confirmez votre identité pour modifier le verrouillage';
+
+  @override
   String get storedOnThisDevice =>
       'Vos dépenses sont stockées sur cet appareil. Connectez-vous pour les '
       'sauvegarder.';
@@ -221,6 +269,25 @@ class AppStringsFr extends AppStrings {
   String get useDifferentEmail => 'Utiliser une autre adresse e-mail';
 
   @override
+  String get forgotPassword => 'Mot de passe oublié ?';
+
+  @override
+  String get resetPassword => 'Réinitialiser le mot de passe';
+
+  @override
+  String resetCodeSentTo(String email) =>
+      'Nous avons envoyé un code à $email. Saisissez-le avec un nouveau mot de passe pour votre compte.';
+
+  @override
+  String get newPassword => 'Nouveau mot de passe';
+
+  @override
+  String get saveNewPassword => 'Enregistrer le mot de passe';
+
+  @override
+  String get backToSignIn => 'Retour à la connexion';
+
+  @override
   String get backupHint =>
       'Sauvegardez pour garder une copie de vos dépenses dans votre compte. '
       'Restaurer ramène cette copie sur ce téléphone sans rien supprimer de '
@@ -228,6 +295,13 @@ class AppStringsFr extends AppStrings {
 
   @override
   String get backUpNow => 'Sauvegarder';
+
+  @override
+  String get autoBackup => 'Sauvegarde automatique';
+
+  @override
+  String get autoBackupHint =>
+      'Chaque fois que vous quittez l’appli, les nouveaux changements sont sauvegardés dans votre compte.';
 
   @override
   String get restoreData => 'Restaurer';
@@ -689,6 +763,31 @@ class AppStringsFr extends AppStrings {
   String get income => 'Revenu';
 
   @override
+  String get search => 'Rechercher';
+
+  @override
+  String get searchHint => 'Chercher une note ou un montant';
+
+  @override
+  String get searchPrompt =>
+      'Retrouvez une opération par sa note ou son montant, ou filtrez par type, catégorie et date.';
+
+  @override
+  String get noSearchResults => 'Aucune opération ne correspond';
+
+  @override
+  String get allTypes => 'Tout';
+
+  @override
+  String get anyCategory => 'Toutes catégories';
+
+  @override
+  String get anyDate => 'Toutes dates';
+
+  @override
+  String get clearFilters => 'Effacer les filtres';
+
+  @override
   String get transactionType => 'Dépense ou revenu';
 
   @override
@@ -878,6 +977,25 @@ class AppStringsFr extends AppStrings {
 
   @override
   String recurringPaid(String name) => '« $name » marqué comme payé';
+
+  @override
+  String recurringReceived(String name) => '« $name » marqué comme reçu';
+
+  @override
+  String get statusReceived => 'Reçu';
+
+  @override
+  String get markAsReceived => 'Marquer reçu';
+
+  @override
+  String get autoAdd => 'Ajout auto';
+
+  @override
+  String get autoAddHint =>
+      'Enregistré automatiquement comme revenu à l’échéance.';
+
+  @override
+  String get monthlyIncomeAverage => 'Revenus par mois';
 
   @override
   String get recurringPaymentUndone => 'Paiement retiré';

@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:my_budget/app.dart';
 import 'package:my_budget/core/di/injection.dart';
+import 'package:my_budget/features/app_lock/domain/repositories/app_lock_repository.dart';
+import 'package:my_budget/features/app_lock/presentation/cubit/app_lock_cubit.dart';
 import 'package:my_budget/features/auth/domain/repositories/auth_repository.dart';
 import 'package:my_budget/features/budgets/domain/repositories/budget_repository.dart';
 import 'package:my_budget/features/budgets/presentation/cubit/budget_cubit.dart';
@@ -18,6 +20,9 @@ import 'package:my_budget/features/quick_expense/domain/repositories/quick_expen
 import 'package:my_budget/features/quick_expense/presentation/quick_add_app.dart';
 import 'package:my_budget/features/recurring/domain/repositories/recurring_repository.dart';
 import 'package:my_budget/features/recurring/presentation/cubit/recurring_cubit.dart';
+import 'package:my_budget/features/reminders/domain/repositories/reminder_repository.dart';
+import 'package:my_budget/features/reminders/presentation/cubit/reminder_cubit.dart';
+import 'package:my_budget/features/reminders/presentation/reminder_texts.dart';
 import 'package:my_budget/features/settings/domain/repositories/settings_repository.dart';
 import 'package:my_budget/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:my_budget/features/sync/domain/repositories/sync_repository.dart';
@@ -38,6 +43,8 @@ class AppHarness {
     required this.budgets,
     required this.recurring,
     required this.people,
+    required this.reminder,
+    required this.appLock,
   });
 
   final FakeCategoryRepository categories;
@@ -50,6 +57,8 @@ class AppHarness {
   final FakeBudgetRepository budgets;
   final FakeRecurringRepository recurring;
   final FakePeopleRepository people;
+  final FakeReminderRepository reminder;
+  final FakeAppLockRepository appLock;
 }
 
 /// Boots the real widget tree and cubits over in-memory repositories.
@@ -105,6 +114,8 @@ Future<AppHarness> _bootDependencies(
   final budgets = FakeBudgetRepository();
   final recurring = FakeRecurringRepository(categories, expenses);
   final people = FakePeopleRepository();
+  final reminder = FakeReminderRepository();
+  final appLock = FakeAppLockRepository();
   final harness = AppHarness(
     categories: categories,
     expenses: expenses,
@@ -116,6 +127,8 @@ Future<AppHarness> _bootDependencies(
     budgets: budgets,
     recurring: recurring,
     people: people,
+    reminder: reminder,
+    appLock: appLock,
   );
   before?.call(harness);
 
@@ -129,17 +142,21 @@ Future<AppHarness> _bootDependencies(
     ..registerLazySingleton<DataManagementRepository>(() => files)
     ..registerLazySingleton<BudgetRepository>(() => budgets)
     ..registerLazySingleton<RecurringRepository>(() => recurring)
-    ..registerLazySingleton<PeopleRepository>(() => people);
+    ..registerLazySingleton<PeopleRepository>(() => people)
+    ..registerLazySingleton<ReminderRepository>(() => reminder)
+    ..registerLazySingleton<AppLockRepository>(() => appLock);
   configureDependencies();
 
   // The same order as main.dart: due automatic payments first.
   await sl<SettingsCubit>().load(localeName: localeName);
+  await sl<AppLockCubit>().load();
   await sl<RecurringCubit>().load();
   await Future.wait([
     sl<CategoriesCubit>().load(),
     sl<HomeCubit>().load(),
     sl<BudgetCubit>().load(Month.current()),
   ]);
+  await sl<ReminderCubit>().load(currentReminderMessage());
 
   return harness;
 }

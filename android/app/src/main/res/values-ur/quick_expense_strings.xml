@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_expense_widget_label">فوری خرچ</string>
+    <string name="quick_expense_widget_description">دو ٹیپ میں خرچ شامل کریں۔</string>
+
+    <string name="quick_expense_title">فوری خرچ</string>
+    <string name="quick_expense_add">خرچ شامل کریں</string>
+</resources>
