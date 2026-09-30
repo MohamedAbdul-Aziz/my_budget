@@ -8,6 +8,7 @@ import 'package:my_budget/features/auth/domain/repositories/auth_repository.dart
 import 'package:my_budget/features/budgets/domain/repositories/budget_repository.dart';
 import 'package:my_budget/features/budgets/presentation/cubit/budget_cubit.dart';
 import 'package:my_budget/features/categories/domain/repositories/category_repository.dart';
+import 'package:my_budget/features/data_management/domain/repositories/data_management_repository.dart';
 import 'package:my_budget/features/categories/presentation/cubit/categories_cubit.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
 import 'package:my_budget/features/expenses/domain/repositories/expense_repository.dart';
@@ -30,6 +31,7 @@ class AppHarness {
     required this.widget,
     required this.auth,
     required this.sync,
+    required this.files,
     required this.budgets,
   });
 
@@ -39,6 +41,7 @@ class AppHarness {
   final FakeQuickExpenseWidgetRepository widget;
   final FakeAuthRepository auth;
   final FakeSyncRepository sync;
+  final FakeDataManagementRepository files;
   final FakeBudgetRepository budgets;
 }
 
@@ -82,6 +85,7 @@ Future<AppHarness> _bootDependencies(
   final widget = FakeQuickExpenseWidgetRepository();
   final auth = FakeAuthRepository();
   final sync = FakeSyncRepository();
+  final files = FakeDataManagementRepository();
   final budgets = FakeBudgetRepository();
 
   sl
@@ -91,6 +95,7 @@ Future<AppHarness> _bootDependencies(
     ..registerLazySingleton<QuickExpenseWidgetRepository>(() => widget)
     ..registerLazySingleton<AuthRepository>(() => auth)
     ..registerLazySingleton<SyncRepository>(() => sync)
+    ..registerLazySingleton<DataManagementRepository>(() => files)
     ..registerLazySingleton<BudgetRepository>(() => budgets);
   configureDependencies();
 
@@ -108,6 +113,7 @@ Future<AppHarness> _bootDependencies(
     widget: widget,
     auth: auth,
     sync: sync,
+    files: files,
     budgets: budgets,
   );
 }

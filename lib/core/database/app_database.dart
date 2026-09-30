@@ -45,19 +45,26 @@ class AppDatabase {
   Future<Database> _open() async {
     // sqflite ships native bindings for Android/iOS only; desktop runs need the
     // FFI implementation so `flutter run -d macos` works during development.
-    if (!Platform.isAndroid && !Platform.isIOS) {
+    // The FFI factory is used directly rather than installed as sqflite's
+    // global default, which warns every time it is replaced.
+    final DatabaseFactory factory;
+    if (Platform.isAndroid || Platform.isIOS) {
+      factory = databaseFactory;
+    } else {
       sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi;
+      factory = databaseFactoryFfi;
     }
     final path = inMemory
         ? inMemoryDatabasePath
-        : p.join(await getDatabasesPath(), fileName);
-    return openDatabase(
+        : p.join(await factory.getDatabasesPath(), fileName);
+    return factory.openDatabase(
       path,
-      version: _schemaVersion,
-      onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
-      onCreate: _onCreate,
-      onUpgrade: _onUpgrade,
+      options: OpenDatabaseOptions(
+        version: _schemaVersion,
+        onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
+        onCreate: _onCreate,
+        onUpgrade: _onUpgrade,
+      ),
     );
   }
 

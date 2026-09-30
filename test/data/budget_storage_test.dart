@@ -1,17 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_budget/core/database/app_database.dart';
+import 'package:my_budget/core/database/local_records.dart';
 import 'package:my_budget/core/error/api_result.dart';
 import 'package:my_budget/features/budgets/data/datasources/budget_local_data_source.dart';
 import 'package:my_budget/features/budgets/data/repositories/budget_repository_impl.dart';
 import 'package:my_budget/features/budgets/domain/entities/budget_limits.dart';
+import 'package:my_budget/features/data_management/data/codecs/backup_codec.dart';
 import 'package:my_budget/features/settings/data/datasources/settings_local_data_source.dart';
 import 'package:my_budget/features/settings/data/repositories/settings_repository_impl.dart';
-import 'package:my_budget/features/sync/data/datasources/sync_local_data_source.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-/// Budgets on the real SQLite data layer, including the trip they take to
-/// another phone with the cloud sync.
+/// Budgets on the real SQLite data layer, including the trip they take with
+/// the backup file and the cloud sync, which share [LocalRecords].
 void main() {
   late Phone phoneA;
   late Phone phoneB;
@@ -63,7 +64,7 @@ void main() {
     await phoneA.budgets.saveMonthlyLimit(5000);
     await phoneA.budgets.saveCategoryLimit('cat_food', null);
 
-    final pending = (await phoneA.sync.pendingChanges()).settings;
+    final pending = (await phoneA.records.readPending()).settings;
     expect(
       {for (final row in pending) row['key']: row['value']},
       // A removal is a row too: that is what carries it to other phones.
@@ -94,11 +95,18 @@ void main() {
     expect(await phoneA.limits(), const BudgetLimits(monthly: 5000));
   });
 
-  test('budgets travel to another phone with the cloud sync', () async {
+  test('budgets travel to another phone in a backup file', () async {
     await phoneA.budgets.saveMonthlyLimit(3000);
     await phoneA.budgets.saveCategoryLimit('cat_food', 450);
 
-    await phoneB.sync.merge(await phoneA.sync.pendingChanges());
+    final file = BackupCodec.encode(
+      await phoneA.records.readAll(),
+      exportedAt: DateTime(2026, 9, 28),
+    );
+    await phoneB.records.mergeNewest(
+      BackupCodec.decode(file).records,
+      fromCloud: false,
+    );
 
     expect(
       await phoneB.limits(),
@@ -112,7 +120,10 @@ void main() {
     await Future<void>.delayed(const Duration(milliseconds: 5));
     await phoneA.budgets.saveMonthlyLimit(null);
 
-    await phoneB.sync.merge(await phoneA.sync.pendingChanges());
+    await phoneB.records.mergeNewest(
+      await phoneA.records.readAll(),
+      fromCloud: false,
+    );
 
     expect((await phoneB.limits()).monthly, isNull);
   });
@@ -124,14 +135,14 @@ class Phone {
     : fileName =
           'budget_test_${name}_${DateTime.now().microsecondsSinceEpoch}.db' {
     database = AppDatabase(fileName: fileName);
-    sync = SyncLocalDataSourceImpl(database);
+    records = LocalRecords(database);
     budgets = BudgetRepositoryImpl(BudgetLocalDataSourceImpl(database));
     settings = SettingsRepositoryImpl(SettingsLocalDataSourceImpl(database));
   }
 
   final String fileName;
   late final AppDatabase database;
-  late final SyncLocalDataSourceImpl sync;
+  late final LocalRecords records;
   late final BudgetRepositoryImpl budgets;
   late final SettingsRepositoryImpl settings;
 

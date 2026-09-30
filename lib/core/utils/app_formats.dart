@@ -116,6 +116,9 @@ class AppFormats {
         : _dayMonthYear.format(date);
   }
 
+  /// `12 Aug 2026`: a full date with the year, for reports.
+  String fullDate(DateTime date) => _dayMonthYear.format(date);
+
   /// `2:05 PM`, or the local equivalent.
   String time(DateTime date) => _time.format(date);
 
