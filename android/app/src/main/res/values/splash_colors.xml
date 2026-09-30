@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Launch screen background: the navy of the app icon, in light and
+         dark mode alike, so the splash always matches the launcher icon. -->
+    <color name="splash_background">#14213D</color>
+</resources>
