@@ -1,0 +1,1 @@
+Track spending, income and budgets. Works offline, with optional cloud backup.

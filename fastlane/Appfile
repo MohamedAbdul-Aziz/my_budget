@@ -1,0 +1,4 @@
+# The service account key is written by CI (or exported locally) and never
+# committed: the repository is public.
+json_key_file(ENV["PLAY_JSON_KEY_PATH"])
+package_name("com.mohamed.mybudget")

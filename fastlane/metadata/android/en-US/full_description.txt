@@ -1,0 +1,55 @@
+My Budget shows you exactly where your money goes. Record expenses and income in seconds, set budgets, keep on top of bills and shared debts, and follow clear charts, all in one simple app.
+
+Your records live on your phone, and the app works fully offline with no account. Want them safe across phones? Sign in with your email to turn on cloud backup, and restore everything on any phone in a moment.
+
+CLOUD BACKUP, WHEN YOU WANT IT
+• Sign in with just your email and back up with one tap
+• Turn on automatic backup and new changes are saved whenever you leave the app
+• New phone? Sign in, restore, and carry on where you left off
+• Your backup is private to your account and sent over an encrypted connection
+• Rather stay offline? Skip it: every other feature works without an account
+
+EXPENSES AND INCOME
+• Add a transaction in seconds: amount, category, date and an optional note
+• See the month's income, expenses, balance and savings rate at a glance
+• Use the built-in categories, or create your own with an icon and a colour
+• Search every month by note or amount, and filter by type, category and dates
+• Deleted something by mistake? Undo it straight away
+
+BUDGETS
+• Set a monthly budget and limits for individual categories
+• A progress bar shows what is left, and you are warned as you get close to a limit or go over it
+
+RECURRING PAYMENTS AND INCOME
+• Rent, bills, subscriptions or your salary: weekly, monthly or yearly
+• Log them automatically on the due date, or get reminded and mark them as paid
+• See at a glance what is paid, upcoming or overdue
+
+PEOPLE AND DEBTS
+• Keep track of money you lend to and borrow from friends and family
+• See who owes you and whom you owe
+• Settle up in one tap, with a full history of every change
+
+ANALYSES
+• Compare this month with last month
+• Daily spending, spending by category and your last six months
+• Net balance and savings rate
+
+HOME SCREEN WIDGET
+See this month's total on your home screen and add an expense from your most-used categories without opening the app.
+
+EXPORT YOUR DATA
+• Save a backup file, a CSV spreadsheet or a PDF report
+• Share it or keep it on your phone, and import a backup again any time
+
+PRIVATE AND SECURE
+• No ads, no analytics, no trackers
+• Your records only leave your phone when you choose to back them up
+• Lock the app with your fingerprint, face or screen lock
+• Delete your account and its cloud backup at any time from Settings
+
+MADE FOR YOU
+• 20 languages, with full right-to-left support for Arabic, Persian and Urdu
+• Your own currency symbol
+• Light and dark themes
+• An optional daily reminder to log your spending

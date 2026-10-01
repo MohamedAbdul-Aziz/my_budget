@@ -1,0 +1,12 @@
+Una gran actualización:
+• Registra ingresos además de gastos
+• Presupuestos mensuales y por categoría con avisos
+• Pagos e ingresos recurrentes
+• Personas y deudas, con saldar cuentas
+• Análisis con gráficos
+• Búsqueda en todos los meses
+• Copia de seguridad en la nube opcional con cuenta de correo
+• Exportación de copia, CSV y PDF
+• Bloqueo de la app y recordatorio diario
+• 20 idiomas
+• Nuevo icono

@@ -1,0 +1,37 @@
+name: Store listing
+
+# Pushes the Play Store text and graphics in fastlane/metadata without
+# releasing a new build.
+on:
+  push:
+    branches: [main]
+    paths: ['fastlane/metadata/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: store-listing
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Upload the listing to Google Play
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          export PLAY_JSON_KEY_PATH="$RUNNER_TEMP/play-service-account.json"
+          echo "$PLAY_SERVICE_ACCOUNT_JSON" > "$PLAY_JSON_KEY_PATH"
+          bundle exec fastlane metadata
+          rm -f "$PLAY_JSON_KEY_PATH"

@@ -1,0 +1,12 @@
+Un grande aggiornamento:
+• Registra le entrate oltre alle spese
+• Budget mensili e per categoria con avvisi
+• Pagamenti ed entrate ricorrenti
+• Persone e debiti, con saldo dei conti
+• Analisi con grafici
+• Ricerca in tutti i mesi
+• Backup nel cloud facoltativo con account email
+• Esportazione di backup, CSV e PDF
+• Blocco dell'app e promemoria giornaliero
+• 20 lingue
+• Nuova icona

@@ -1,0 +1,46 @@
+Il Mio Budget è un modo semplice e riservato per sapere dove vanno i tuoi soldi. Registra spese ed entrate in pochi secondi, imposta budget, tieni d'occhio bollette e debiti condivisi e segui grafici chiari, tutto sul tuo telefono. Funziona completamente offline e non richiede un account.
+
+SPESE ED ENTRATE
+• Aggiungi un movimento in pochi secondi: importo, categoria, data e una nota facoltativa
+• Vedi a colpo d'occhio entrate, spese e saldo del mese
+• Usa le categorie predefinite o crea le tue con un'icona e un colore
+• Cerca in tutti i mesi per nota o importo e filtra per tipo, categoria e date
+• Hai eliminato qualcosa per errore? Annulla subito
+
+BUDGET
+• Imposta un budget mensile e limiti per singola categoria
+• Una barra di avanzamento mostra quanto resta e ti avvisa quando ti avvicini a un limite o lo superi
+
+PAGAMENTI ED ENTRATE RICORRENTI
+• Affitto, bollette, abbonamenti o il tuo stipendio: settimanali, mensili o annuali
+• Aggiunti in automatico alla scadenza, oppure con un promemoria per segnarli come pagati
+• Vedi a colpo d'occhio cosa è pagato, in arrivo o scaduto
+
+PERSONE E DEBITI
+• Tieni traccia dei soldi che presti e prendi in prestito da amici e familiari
+• Scopri chi ti deve dei soldi e a chi li devi
+• Salda i conti con un tocco, con la cronologia completa di ogni modifica
+
+ANALISI
+• Confronta questo mese con il mese scorso
+• Spesa giornaliera, spesa per categoria e gli ultimi sei mesi
+• Saldo netto e tasso di risparmio
+
+WIDGET DELLA SCHERMATA HOME
+Vedi il totale del mese nella schermata home e aggiungi una spesa dalle categorie che usi di più senza aprire l'app.
+
+BACKUP ED ESPORTAZIONE
+• Backup nel cloud facoltativo: accedi con la tua email per salvare i dati e ripristinarli su qualsiasi telefono, manualmente o in automatico
+• Esporta un file di backup, un foglio CSV o un report PDF, e importa di nuovo un backup
+
+PRIVATA E SICURA
+• I tuoi dati restano sul telefono. Escono solo se scegli di salvarli nel tuo account
+• Niente pubblicità, niente analisi, niente tracker
+• Blocca l'app con impronta, volto o blocco schermo
+• Elimina l'account e il suo backup nel cloud quando vuoi dalle Impostazioni
+
+FATTA PER TE
+• 20 lingue, con pieno supporto da destra a sinistra per arabo, persiano e urdu
+• Il simbolo di valuta che preferisci
+• Tema chiaro e scuro
+• Un promemoria giornaliero facoltativo per registrare le spese

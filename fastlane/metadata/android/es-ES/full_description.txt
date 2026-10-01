@@ -1,0 +1,46 @@
+Mi Presupuesto es una forma sencilla y privada de saber adónde va tu dinero. Registra gastos e ingresos en segundos, define presupuestos, controla facturas y deudas compartidas y consulta gráficos claros, todo en tu teléfono. Funciona totalmente sin conexión y no necesita cuenta.
+
+GASTOS E INGRESOS
+• Añade un movimiento en segundos: importe, categoría, fecha y una nota opcional
+• Consulta de un vistazo los ingresos, gastos y saldo del mes
+• Usa las categorías incluidas o crea las tuyas con un icono y un color
+• Busca en todos los meses por nota o importe, y filtra por tipo, categoría y fechas
+• ¿Borraste algo por error? Deshazlo al instante
+
+PRESUPUESTOS
+• Define un presupuesto mensual y límites por categoría
+• Una barra de progreso muestra lo que queda, y te avisa al acercarte a un límite o superarlo
+
+PAGOS E INGRESOS RECURRENTES
+• Alquiler, facturas, suscripciones o tu sueldo: semanal, mensual o anual
+• Se añaden solos en la fecha de vencimiento, o te lo recuerda para marcarlos como pagados
+• Ve de un vistazo qué está pagado, qué viene y qué está vencido
+
+PERSONAS Y DEUDAS
+• Lleva la cuenta del dinero que prestas y pides prestado a amigos y familia
+• Mira quién te debe y a quién debes
+• Salda cuentas con un toque, con el historial completo de cada cambio
+
+ANÁLISIS
+• Compara este mes con el anterior
+• Gasto diario, gasto por categoría y los últimos seis meses
+• Saldo neto y tasa de ahorro
+
+WIDGET DE PANTALLA DE INICIO
+Ve el total del mes en tu pantalla de inicio y añade un gasto de tus categorías más usadas sin abrir la app.
+
+COPIA DE SEGURIDAD Y EXPORTACIÓN
+• Copia de seguridad en la nube opcional: inicia sesión con tu correo para guardar tus datos y restaurarlos en cualquier teléfono, de forma manual o automática
+• Exporta un archivo de copia de seguridad, una hoja CSV o un informe PDF, e importa una copia de nuevo
+
+PRIVADA Y SEGURA
+• Tus datos se guardan en tu teléfono. Solo salen de él si decides hacer una copia en tu propia cuenta
+• Sin anuncios, sin analíticas, sin rastreadores
+• Bloquea la app con tu huella, tu cara o el bloqueo de pantalla
+• Elimina tu cuenta y su copia en la nube cuando quieras desde Ajustes
+
+HECHA PARA TI
+• 20 idiomas, con soporte completo de derecha a izquierda para árabe, persa y urdu
+• Tu propio símbolo de moneda
+• Tema claro y oscuro
+• Un recordatorio diario opcional para anotar tus gastos

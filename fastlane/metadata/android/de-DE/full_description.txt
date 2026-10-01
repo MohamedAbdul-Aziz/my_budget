@@ -1,0 +1,46 @@
+Mein Budget zeigt dir einfach und privat, wohin dein Geld geht. Erfasse Ausgaben und Einnahmen in Sekunden, lege Budgets fest, behalte Rechnungen und geteilte Schulden im Blick und verfolge übersichtliche Diagramme, alles auf deinem Handy. Die App funktioniert komplett offline und braucht kein Konto.
+
+AUSGABEN UND EINNAHMEN
+• Buchung in Sekunden: Betrag, Kategorie, Datum und eine optionale Notiz
+• Einnahmen, Ausgaben und Saldo des Monats auf einen Blick
+• Nutze die vorhandenen Kategorien oder lege eigene mit Symbol und Farbe an
+• Durchsuche alle Monate nach Notiz oder Betrag und filtere nach Art, Kategorie und Zeitraum
+• Versehentlich gelöscht? Sofort rückgängig machen
+
+BUDGETS
+• Lege ein Monatsbudget und Limits für einzelne Kategorien fest
+• Ein Fortschrittsbalken zeigt, was übrig ist, und du wirst gewarnt, wenn du dich einem Limit näherst oder es überschreitest
+
+WIEDERKEHRENDE ZAHLUNGEN UND EINNAHMEN
+• Miete, Rechnungen, Abos oder dein Gehalt: wöchentlich, monatlich oder jährlich
+• Automatisch am Fälligkeitstag gebucht oder mit Erinnerung zum Abhaken
+• Auf einen Blick sehen, was bezahlt, demnächst fällig oder überfällig ist
+
+PERSONEN UND SCHULDEN
+• Behalte Geld im Blick, das du Freunden und Familie leihst oder dir von ihnen leihst
+• Sieh, wer dir etwas schuldet und wem du etwas schuldest
+• Mit einem Tippen ausgleichen, mit vollständigem Verlauf jeder Änderung
+
+AUSWERTUNGEN
+• Vergleiche diesen Monat mit dem letzten
+• Ausgaben pro Tag, nach Kategorie und über die letzten sechs Monate
+• Nettosaldo und Sparquote
+
+STARTBILDSCHIRM-WIDGET
+Sieh die Monatssumme auf dem Startbildschirm und erfasse eine Ausgabe in deinen meistgenutzten Kategorien, ohne die App zu öffnen.
+
+SICHERUNG UND EXPORT
+• Optionale Cloud-Sicherung: Melde dich mit deiner E-Mail an, um deine Daten zu sichern und auf jedem Handy wiederherzustellen, manuell oder automatisch
+• Exportiere eine Sicherungsdatei, eine CSV-Tabelle oder einen PDF-Bericht und importiere eine Sicherung wieder
+
+PRIVAT UND SICHER
+• Deine Daten werden auf deinem Handy gespeichert. Sie verlassen es nur, wenn du sie in deinem eigenen Konto sicherst
+• Keine Werbung, keine Analyse, keine Tracker
+• Sperre die App mit Fingerabdruck, Gesicht oder Displaysperre
+• Lösche dein Konto und seine Cloud-Sicherung jederzeit in den Einstellungen
+
+FÜR DICH GEMACHT
+• 20 Sprachen, mit voller Rechts-nach-links-Unterstützung für Arabisch, Persisch und Urdu
+• Dein eigenes Währungssymbol
+• Helles und dunkles Design
+• Eine optionale tägliche Erinnerung, deine Ausgaben einzutragen

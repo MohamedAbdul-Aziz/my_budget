@@ -1,0 +1,12 @@
+Bản cập nhật lớn:
+• Theo dõi thu nhập bên cạnh chi tiêu
+• Ngân sách theo tháng và theo danh mục kèm cảnh báo
+• Khoản chi và thu định kỳ
+• Mọi người và khoản nợ, có tất toán
+• Phân tích với biểu đồ
+• Tìm kiếm trong mọi tháng
+• Sao lưu đám mây tùy chọn bằng tài khoản email
+• Xuất sao lưu, CSV và PDF
+• Khóa ứng dụng và lời nhắc hằng ngày
+• 20 ngôn ngữ
+• Biểu tượng mới

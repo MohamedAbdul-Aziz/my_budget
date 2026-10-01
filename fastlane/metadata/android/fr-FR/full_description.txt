@@ -1,0 +1,46 @@
+Mon Budget est une façon simple et privée de savoir où va votre argent. Enregistrez dépenses et revenus en quelques secondes, fixez des budgets, gardez un œil sur vos factures et vos dettes partagées, et suivez des graphiques clairs, le tout sur votre téléphone. L'application fonctionne entièrement hors ligne et ne demande aucun compte.
+
+DÉPENSES ET REVENUS
+• Ajoutez une opération en quelques secondes : montant, catégorie, date et note facultative
+• Voyez d'un coup d'œil les revenus, les dépenses et le solde du mois
+• Utilisez les catégories fournies ou créez les vôtres avec une icône et une couleur
+• Recherchez dans tous les mois par note ou montant, et filtrez par type, catégorie et dates
+• Supprimé par erreur ? Annulez tout de suite
+
+BUDGETS
+• Fixez un budget mensuel et des plafonds par catégorie
+• Une barre de progression montre ce qu'il reste, et vous êtes averti à l'approche d'un plafond ou en cas de dépassement
+
+PAIEMENTS ET REVENUS RÉCURRENTS
+• Loyer, factures, abonnements ou salaire : chaque semaine, chaque mois ou chaque année
+• Ajoutés automatiquement à l'échéance, ou avec un rappel pour les marquer comme payés
+• Voyez d'un coup d'œil ce qui est payé, à venir ou en retard
+
+PERSONNES ET DETTES
+• Suivez l'argent que vous prêtez et empruntez à vos amis et à votre famille
+• Sachez qui vous doit et à qui vous devez
+• Soldez les comptes en un geste, avec l'historique complet de chaque modification
+
+ANALYSES
+• Comparez ce mois-ci avec le mois dernier
+• Dépenses par jour, par catégorie et sur les six derniers mois
+• Solde net et taux d'épargne
+
+WIDGET D'ÉCRAN D'ACCUEIL
+Affichez le total du mois sur votre écran d'accueil et ajoutez une dépense dans vos catégories favorites sans ouvrir l'application.
+
+SAUVEGARDE ET EXPORT
+• Sauvegarde dans le cloud facultative : connectez-vous avec votre e-mail pour sauvegarder vos données et les restaurer sur n'importe quel téléphone, manuellement ou automatiquement
+• Exportez un fichier de sauvegarde, un tableau CSV ou un rapport PDF, et réimportez une sauvegarde
+
+PRIVÉ ET SÉCURISÉ
+• Vos données sont stockées sur votre téléphone. Elles n'en sortent que si vous choisissez de les sauvegarder sur votre propre compte
+• Pas de publicité, pas d'analyse, pas de traceurs
+• Verrouillez l'application avec votre empreinte, votre visage ou le verrouillage de l'écran
+• Supprimez votre compte et sa sauvegarde dans le cloud à tout moment depuis les Paramètres
+
+PENSÉ POUR VOUS
+• 20 langues, avec une prise en charge complète de l'écriture de droite à gauche pour l'arabe, le persan et l'ourdou
+• Le symbole de devise de votre choix
+• Thèmes clair et sombre
+• Un rappel quotidien facultatif pour noter vos dépenses

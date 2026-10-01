@@ -169,6 +169,54 @@ The app asks for emailed **codes**, not links. In the Supabase dashboard,
 Authentication → Email Templates, both the *Confirm signup* and the
 *Reset Password* templates must show `{{ .Token }}`.
 
+## Releasing to Google Play
+
+GitHub Actions does the building and uploading:
+
+- **`ci.yml`** runs `flutter analyze` and `flutter test` on every pull request
+  and every push to `main`.
+- **`release.yml`** runs on a `v*` tag: the same checks, then a signed app
+  bundle uploaded to the **production** track with its release notes. It can
+  also be started by hand from the Actions tab, with a track to choose
+  (`internal` for a trial run).
+- **`store-listing.yml`** uploads the store text and graphics when
+  `fastlane/metadata/` changes on `main`, without a new build.
+
+To release:
+
+1. Raise `version:` in `pubspec.yaml` (e.g. `1.1.0+2` to `1.1.1+3`). The
+   number after `+` is the Play version code and must go up every time.
+2. Write the release notes in
+   `fastlane/metadata/android/<locale>/changelogs/<version code>.txt`
+   (≤500 characters). Languages without one show `default.txt`.
+3. Merge to `main`, then tag it with the version name:
+   `git tag v1.1.1 && git push origin v1.1.1`.
+
+The tag must match the version name in `pubspec.yaml`, or the release stops.
+
+**Store listing.** `fastlane/metadata/android/<locale>/` holds the title,
+short and full description, release notes and graphics for all 20 languages.
+The icon and feature graphic live under `en-US/images/` and Play shows them
+for every language. Phone screenshots are taken on an emulator with
+`./scripts/store_screenshots.sh [locale…]`. It boots the real app over demo
+data in each language and saves the images into the matching
+`images/phoneScreenshots/` folder.
+
+**Secrets** (repository settings → Secrets and variables → Actions):
+`ANDROID_KEYSTORE_BASE64` (`base64 -i upload-keystore.jks`),
+`ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_PASSWORD`, `ANDROID_KEY_ALIAS`, and
+`PLAY_SERVICE_ACCOUNT_JSON` (a Google Cloud service account key, invited in
+Play Console with release and store listing rights). Locally, run fastlane
+with `PLAY_JSON_KEY_PATH=<key.json> bundle exec fastlane validate`.
+
+The privacy policy and the account deletion page are served by GitHub Pages
+from `docs/` on `main`:
+`https://mohamedabdul-aziz.github.io/my_budget/privacy-policy.html` and
+`…/delete-account.html`.
+
+`./scripts/release_to_drive.sh` still builds a bundle locally and copies it
+to Google Drive, as a manual fallback.
+
 ## Tests
 
 ```bash

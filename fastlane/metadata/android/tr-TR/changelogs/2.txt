@@ -1,0 +1,12 @@
+Büyük bir güncelleme:
+• Harcamaların yanında gelirleri de takip et
+• Uyarılı aylık ve kategori bütçeleri
+• Düzenli ödemeler ve gelirler
+• Hesaplaşmalı kişiler ve borçlar
+• Grafikli analizler
+• Tüm aylarda arama
+• E-posta hesabıyla isteğe bağlı bulut yedeği
+• Yedek, CSV ve PDF dışa aktarma
+• Uygulama kilidi ve günlük hatırlatma
+• 20 dil
+• Yeni simge

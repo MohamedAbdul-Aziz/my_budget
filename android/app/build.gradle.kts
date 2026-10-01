@@ -64,6 +64,10 @@ android {
             // Play rejects debug-signed uploads.
             signingConfig = if (hasReleaseKeystore) {
                 signingConfigs.getByName("release")
+            } else if (System.getenv("CI") == "true") {
+                // CI builds are uploaded to Play; never let a missing secret
+                // turn into a debug-signed bundle.
+                throw GradleException("android/key.properties is missing: CI must sign with the upload key.")
             } else {
                 logger.warn("android/key.properties not found: signing the release build with the debug key.")
                 signingConfigs.getByName("debug")

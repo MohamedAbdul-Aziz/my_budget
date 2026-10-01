@@ -1,0 +1,12 @@
+Une grosse mise à jour :
+• Suivi des revenus en plus des dépenses
+• Budgets mensuels et par catégorie avec alertes
+• Paiements et revenus récurrents
+• Personnes et dettes, avec règlement des comptes
+• Analyses avec graphiques
+• Recherche dans tous les mois
+• Sauvegarde cloud facultative avec un compte e-mail
+• Export de sauvegarde, CSV et PDF
+• Verrouillage de l'app et rappel quotidien
+• 20 langues
+• Nouvelle icône

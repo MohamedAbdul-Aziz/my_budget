@@ -1,0 +1,12 @@
+Pembaruan besar:
+• Catat pemasukan selain pengeluaran
+• Anggaran bulanan dan per kategori dengan peringatan
+• Pembayaran dan pemasukan berulang
+• Orang dan utang, dengan pelunasan
+• Analisis dengan grafik
+• Pencarian di semua bulan
+• Cadangan cloud opsional dengan akun email
+• Ekspor cadangan, CSV, dan PDF
+• Kunci aplikasi dan pengingat harian
+• 20 bahasa
+• Ikon baru

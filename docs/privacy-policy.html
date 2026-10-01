@@ -73,81 +73,111 @@
 <main>
 
   <h1>Privacy Policy for My Budget</h1>
-  <p class="meta">Last updated: 10 September 2026</p>
+  <p class="meta">Last updated: 1 October 2026</p>
 
   <div class="summary">
-    <p><strong>The short version:</strong> My Budget collects nothing. It has no
-    account, no analytics, and no advertising. Everything you enter stays in a
-    database on your own device, and the released app does not have permission
-    to use the internet at all.</p>
+    <p><strong>The short version:</strong> My Budget keeps your records on your
+    own phone and works without an account. Only if you choose to sign in and
+    back up does a copy of your records go to your private cloud backup, which
+    you can delete at any time. There are no ads, no analytics and no
+    tracking.</p>
   </div>
 
   <h2>Who this covers</h2>
-  <p>This policy applies to the My Budget mobile application ("the app"), an
-  offline personal expense tracker. It describes what happens to the information
-  you enter into the app.</p>
+  <p>This policy applies to the My Budget mobile application ("the app"), a
+  personal expense and income tracker. It describes what happens to the
+  information you enter into the app.</p>
 
-  <h2>Information collected about you</h2>
-  <p><strong>None.</strong> The app does not ask for, gather, or transmit any
-  personal or device information. Specifically, it does not collect:</p>
+  <h2>Using the app without an account</h2>
+  <p>You can use every feature except cloud backup without signing in. Your
+  transactions, categories, budgets, recurring payments, people and debts, and
+  settings are written to a private database inside the app's own storage on
+  your device. Android isolates this storage so that other apps cannot read
+  it. Nothing you enter is sent anywhere while you are not signed in.</p>
+
+  <h2>Optional account and cloud backup</h2>
+  <p>If you create an account, the app collects:</p>
   <ul>
-    <li>Your name, email address, phone number, or any account credentials —
-        the app has no sign-up or login of any kind.</li>
-    <li>Your location.</li>
-    <li>Device identifiers, advertising IDs, or usage analytics.</li>
-    <li>Contacts, photos, files, or any other content on your device.</li>
-    <li>Crash reports or diagnostic telemetry.</li>
+    <li><strong>Your email address and a password</strong>, used only to sign
+        you in, to email you confirmation and password-reset codes, and to
+        keep your backup separate from everyone else's. The password is stored
+        hashed by the sign-in service; nobody can read it.</li>
+  </ul>
+  <p>When you back up (by tapping <em>Back up</em>, or automatically if you turn
+  on <em>Back up automatically</em>), the app uploads a copy of your records:</p>
+  <ul>
+    <li>Transactions (amount, category, date and your note), categories,
+        budgets and app settings such as currency and language.</li>
+    <li>Recurring payments and income.</li>
+    <li>People you track debts with (the name and, if you entered one, a phone
+        number), their transactions, settlements and the edit history.</li>
+  </ul>
+  <p>This data is used only to restore your records on a phone you sign in on.
+  It is sent over an encrypted (HTTPS) connection and stored with
+  <a href="https://supabase.com/privacy">Supabase</a>, the hosting provider
+  that runs the app's sign-in and database. Access rules on the server let
+  only your signed-in account read or change your rows. The developer does not
+  sell, share or use it for anything else.</p>
+  <p>Preferences that belong to one phone, such as the app lock and the
+  automatic backup switch, are never uploaded.</p>
+
+  <h2>What the app does not collect</h2>
+  <ul>
+    <li>No location, contacts, photos or other content from your device.</li>
+    <li>No advertising IDs, usage analytics or tracking.</li>
+    <li>No crash reports or diagnostic telemetry.</li>
+    <li>No advertising networks or social media SDKs.</li>
   </ul>
 
-  <h2>What the app stores, and where</h2>
-  <p>The expenses, categories, and settings you enter are written to a private
-  SQLite database inside the app's own storage area on your device. Android
-  isolates this storage so that other apps cannot read it.</p>
-  <p>This information never leaves your device. It is not uploaded to any
-  server, and the developer has no access to it and no ability to view,
-  retrieve, or recover it.</p>
+  <h2>Permissions</h2>
+  <ul>
+    <li><strong>Internet</strong> &mdash; only for signing in and the cloud
+        backup.</li>
+    <li><strong>Biometrics</strong> &mdash; if you turn on the app lock, the
+        app asks Android to check your fingerprint, face or screen lock.
+        Android does the check; the app never receives biometric data.</li>
+    <li><strong>Notifications</strong> &mdash; if you turn on the daily
+        reminder. The reminder is scheduled on the phone itself, and the app
+        re-schedules it after a restart.</li>
+  </ul>
 
-  <h2>Network access</h2>
-  <p>The released version of the app does not declare the Android
-  <code>INTERNET</code> permission. Without that permission the operating system
-  will not allow the app to open a network connection, so it is not technically
-  capable of sending your data anywhere.</p>
-
-  <h2>Third parties</h2>
-  <p>The app contains no advertising networks, no analytics or attribution SDKs,
-  no crash reporting services, and no social media integrations. No information
-  is sold, shared, or disclosed to anyone, because none is collected.</p>
-
-  <h2>Device backups</h2>
-  <p>Android may include the app's data in the automatic device backup
-  associated with <em>your</em> Google account, which is a feature of the
-  operating system rather than of this app. Those backups are governed by
-  Google's privacy policy and are controlled entirely by you in your device
-  settings, where automatic backup can be turned off. The developer has no
-  access to them.</p>
+  <h2>Files you export</h2>
+  <p>Backup files, CSV spreadsheets and PDF reports are created on your device
+  and go only where you save or share them.</p>
 
   <h2>Deleting your data</h2>
-  <p>Because everything is stored locally, you are always in control of it.
-  Clearing the app's storage from your device settings, or uninstalling the
-  app, permanently removes all of the data it holds. There is nothing stored
-  elsewhere that would need to be deleted, and no request needs to be made to
-  anyone.</p>
+  <ul>
+    <li><strong>Your account and cloud backup:</strong> in the app, open
+        Settings &rarr; Account &rarr; <em>Delete account</em>. This permanently
+        deletes your account and every record in your cloud backup straight
+        away. The records on your phone stay, and the app carries on without
+        an account. If you can no longer open the app, see
+        <a href="delete-account.html">how to request deletion</a>.</li>
+    <li><strong>Data on your phone:</strong> delete records in the app, clear
+        the app's storage in your device settings, or uninstall the app.</li>
+  </ul>
+
+  <h2>Device backups</h2>
+  <p>Android may include the app's local data in the device backup linked to
+  <em>your</em> Google account. That is a feature of the operating system,
+  governed by Google's privacy policy and controlled by you in your device
+  settings. The developer has no access to it.</p>
 
   <h2>Children</h2>
-  <p>The app is not directed at children, and since it collects no information
-  from anyone, it collects no information from children either.</p>
+  <p>The app is not directed at children under 13 and does not knowingly
+  collect information from them.</p>
 
   <h2>Changes to this policy</h2>
-  <p>If the app's behaviour ever changes in a way that affects your privacy,
-  this policy will be updated and the date at the top revised. Material changes
-  will be reflected in the app's store listing.</p>
+  <p>If the app's behaviour changes in a way that affects your privacy, this
+  policy will be updated and the date at the top revised.</p>
 
   <h2>Contact</h2>
   <p>Questions about this policy can be sent to
   <a href="mailto:zmohamedzizo827@gmail.com">zmohamedzizo827@gmail.com</a>.</p>
 
   <footer>
-    My Budget — offline personal expense tracker. All data stays on the device.
+    My Budget &mdash; personal expense and income tracker. Local first, with
+    optional cloud backup.
   </footer>
 
 </main>
