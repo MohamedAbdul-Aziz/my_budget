@@ -72,7 +72,8 @@ restore on any phone.
   Spanish, French, Portuguese, Russian, German, Japanese, Korean, Turkish,
   Indonesian, Italian, Persian, Urdu, Vietnamese, Polish, Dutch, Ukrainian and
   Malay), with full right-to-left layout for Arabic, Persian and Urdu. The
-  picker offers the device setting, English and the phone's own language.
+  picker lists every language, led by the device setting, English and the
+  phone's own language, so a phone set to English can still use Arabic.
   PDF reports embed their fonts, so Chinese, Japanese and Korean reports are
   written in English rather than bundling multi-megabyte fonts; the app
   itself and CSV exports stay in those languages.

@@ -43,21 +43,21 @@ class SettingsState extends Equatable {
   /// The device's language, when the app translates it.
   AppLanguage? get deviceLanguage => AppLanguage.fromCode(systemLocaleName);
 
-  /// What the language picker offers: the device setting, English, and the
-  /// device's own language. Anything else chosen earlier stays listed so the
-  /// current choice never disappears from the picker.
+  /// What the language picker offers: every translation, led by the device
+  /// setting, English and the device's own language. A phone set to English
+  /// (common in Egypt, for one) can still pick Arabic without switching the
+  /// whole phone's language.
   List<AppLanguage> get pickerLanguages {
     final device = deviceLanguage;
-    return [
+    final first = [
       AppLanguage.system,
       AppLanguage.english,
       if (device != null && device != AppLanguage.english) device,
-      if (!{
-        AppLanguage.system,
-        AppLanguage.english,
-        device,
-      }.contains(settings.language))
-        settings.language,
+    ];
+    return [
+      ...first,
+      for (final language in AppLanguage.values)
+        if (!first.contains(language)) language,
     ];
   }
 
