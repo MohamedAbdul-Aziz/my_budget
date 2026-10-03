@@ -137,3 +137,114 @@ class BarChart extends StatelessWidget {
     );
   }
 }
+
+/// One group of a [GroupedBarChart]: the same thing measured twice.
+typedef BarPair = ({Widget label, double first, double second});
+
+/// Pairs of bars side by side, e.g. each category in two months. The first
+/// bar of a pair is drawn solid and the second faded, matching [legend].
+class GroupedBarChart extends StatelessWidget {
+  const GroupedBarChart({
+    super.key,
+    required this.pairs,
+    required this.legend,
+    this.height = 150,
+  });
+
+  final List<BarPair> pairs;
+
+  /// What the solid and the faded bars stand for.
+  final (String, String) legend;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final solid = theme.colorScheme.primary;
+    final faded = theme.colorScheme.primary.withValues(alpha: 0.35);
+    final highest = pairs.fold<double>(
+      0,
+      (max, pair) => math.max(max, math.max(pair.first, pair.second)),
+    );
+
+    Widget bar(double value, Color color) => Expanded(
+      child: FractionallySizedBox(
+        alignment: Alignment.bottomCenter,
+        heightFactor: highest == 0 || value == 0
+            ? 0
+            : math.max(value / highest, 0.02),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+          ),
+          child: const SizedBox.expand(),
+        ),
+      ),
+    );
+
+    Widget key(Color color, String text) => Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Flexible(
+          child: Text(
+            text,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.labelSmall,
+          ),
+        ),
+      ],
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(
+          height: height,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              for (final pair in pairs)
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              bar(pair.first, solid),
+                              const SizedBox(width: 2),
+                              bar(pair.second, faded),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        pair.label,
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 16,
+          runSpacing: 4,
+          children: [key(solid, legend.$1), key(faded, legend.$2)],
+        ),
+      ],
+    );
+  }
+}

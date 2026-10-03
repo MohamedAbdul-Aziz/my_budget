@@ -12,11 +12,24 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  /// The page itself, not the row of questions that also scrolls.
+  Finder page() => find
+      .ancestor(
+        of: find.byType(ChoiceChip).first,
+        matching: find.byType(Scrollable),
+      )
+      .last;
+
   testWidgets('the analyses tab shows an empty month plainly', (tester) async {
     await bootApp(tester);
     await openAnalyses(tester);
 
     expect(find.text('Compared with last month'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Nothing spent this month yet.'),
+      200,
+      scrollable: page(),
+    );
     expect(find.text('Nothing spent this month yet.'), findsOneWidget);
     expect(find.text('No data last month'), findsOneWidget);
   });
@@ -31,6 +44,11 @@ void main() {
     await tester.pumpAndSettle();
 
     await openAnalyses(tester);
+    await tester.scrollUntilVisible(
+      find.text('Spending by category'),
+      200,
+      scrollable: page(),
+    );
 
     expect(find.text('Spending by category'), findsOneWidget);
     expect(find.text('Nothing spent this month yet.'), findsNothing);

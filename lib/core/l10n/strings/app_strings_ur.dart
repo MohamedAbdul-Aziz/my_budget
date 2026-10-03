@@ -1232,4 +1232,148 @@ class AppStringsUr extends AppStrings {
     one: '$count شخص',
     other: '$count افراد',
   );
+
+  @override
+  String get askTitle => 'اپنے اخراجات کے بارے میں پوچھیں';
+
+  @override
+  String get askHint => 'جواب دیکھنے کے لیے سوال پر ٹیپ کریں۔';
+
+  @override
+  String get askCompareMonths => 'مہینوں کا موازنہ';
+
+  @override
+  String get askTopCategory => 'سب سے بڑی کیٹیگری';
+
+  @override
+  String get askVsLastMonth => 'پچھلے مہینے سے موازنہ';
+
+  @override
+  String get askBiggestExpense => 'سب سے بڑا خرچ';
+
+  @override
+  String get askTopDay => 'سب سے مہنگا دن';
+
+  @override
+  String get askWeekday => 'ہفتے کا مصروف ترین دن';
+
+  @override
+  String get askMonthEnd => 'مہینے کے آخر کا اندازہ';
+
+  @override
+  String get askSaved => 'کیا بچت ہوئی؟';
+
+  @override
+  String get askBudgetLeft => 'بجٹ میں باقی';
+
+  @override
+  String get askHighestLowest => 'سب سے زیادہ اور کم مہینہ';
+
+  @override
+  String get askCount => 'کتنے اخراجات؟';
+
+  @override
+  String get askTopIncome => 'سب سے بڑی آمدنی';
+
+  @override
+  String get compareWith => 'موازنہ کریں';
+
+  @override
+  String get otherCategories => 'دیگر';
+
+  @override
+  String answerTopCategory(String category, String amount, String percent) =>
+      'سب سے زیادہ خرچ $category پر: $amount (مہینے کا $percent)۔';
+
+  @override
+  String answerSpentMore(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => '$month میں آپ نے $other سے $amount زیادہ خرچ کیا (+$percent)۔';
+
+  @override
+  String answerSpentLess(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => '$month میں آپ نے $other سے $amount کم خرچ کیا (−$percent)۔';
+
+  @override
+  String answerSpentSame(String month, String other) =>
+      '$month اور $other میں آپ نے برابر خرچ کیا۔';
+
+  @override
+  String answerNothingIn(String month) => '$month میں کوئی خرچ نہیں ہوا۔';
+
+  @override
+  String answerRise(String category, String amount) =>
+      'سب سے زیادہ اضافہ: $category (+$amount)۔';
+
+  @override
+  String answerDrop(String category, String amount) =>
+      'سب سے زیادہ کمی: $category (−$amount)۔';
+
+  @override
+  String answerBiggestExpense(String amount, String category, String date) =>
+      'سب سے بڑا خرچ: $category میں $amount ($date)۔';
+
+  @override
+  String answerTopDay(String date, String amount) =>
+      'سب سے مہنگا دن: $date، خرچ $amount۔';
+
+  @override
+  String answerWeekday(String weekday, String amount) =>
+      'ہفتے کا مصروف ترین دن: $weekday (اس مہینے $amount)۔';
+
+  @override
+  String answerMonthEnd(String amount, String average) =>
+      'اسی رفتار سے (تقریباً $average روزانہ) مہینے کے آخر تک تقریباً $amount خرچ ہوگا۔';
+
+  @override
+  String answerMonthTotal(String amount) =>
+      'یہ مہینہ ختم ہو چکا ہے: کل خرچ $amount۔';
+
+  @override
+  String answerSaved(String amount, String income) =>
+      'آپ نے اپنی $income آمدنی میں سے $amount بچائے۔';
+
+  @override
+  String answerOverspent(String amount) =>
+      'آپ نے اپنی آمدنی سے $amount زیادہ خرچ کیا۔';
+
+  @override
+  String get answerNoIncome => 'اس مہینے کوئی آمدنی درج نہیں۔';
+
+  @override
+  String answerBudgetLeft(String amount, String percent) =>
+      'ماہانہ بجٹ میں $amount باقی ہیں ($percent استعمال ہوا)۔';
+
+  @override
+  String answerBudgetOver(String amount) =>
+      'آپ ماہانہ بجٹ سے $amount زیادہ ہیں۔';
+
+  @override
+  String get answerNoBudget => 'آپ نے ابھی ماہانہ بجٹ مقرر نہیں کیا۔';
+
+  @override
+  String answerOverLimit(String names) => 'حد سے تجاوز: $names۔';
+
+  @override
+  String answerHighestLowest(
+    String high,
+    String highAmount,
+    String low,
+    String lowAmount,
+  ) => 'سب سے زیادہ: $high ($highAmount)۔ سب سے کم: $low ($lowAmount)۔';
+
+  @override
+  String answerCount(int count, String average) =>
+      'آپ نے ${expenseCount(count)} درج کیے، اوسطاً $average فی خرچ۔';
+
+  @override
+  String answerTopIncome(String category, String amount, String percent) =>
+      'زیادہ تر آمدنی $category سے: $amount ($percent)۔';
 }

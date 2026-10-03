@@ -25,6 +25,8 @@ ANALISI
 • Confronta questo mese con il mese scorso
 • Spesa giornaliera, spesa per categoria e gli ultimi sei mesi
 • Saldo netto e tasso di risparmio
+• Fai domande già pronte: categoria principale, spesa più alta, stima di fine mese, risparmio e altro
+• Confronta due mesi qualsiasi fianco a fianco, con un grafico
 
 WIDGET DELLA SCHERMATA HOME
 Vedi il totale del mese nella schermata home e aggiungi una spesa dalle categorie che usi di più senza aprire l'app.

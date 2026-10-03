@@ -11,7 +11,9 @@ import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../domain/entities/month_analysis.dart';
 import '../cubit/analyses_cubit.dart';
 import '../cubit/analyses_state.dart';
+import '../widgets/ask_card.dart';
 import '../widgets/charts.dart';
+import '../widgets/section_card.dart';
 
 /// Where the selected month's money went, how it compares with the months
 /// before, and what a typical day cost.
@@ -72,6 +74,8 @@ class _AnalysisView extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
+        AskCard(analysis),
+        const SizedBox(height: 12),
         _ComparisonCard(analysis),
         const SizedBox(height: 12),
         _DailyCard(analysis),
@@ -80,32 +84,6 @@ class _AnalysisView extends StatelessWidget {
         const SizedBox(height: 12),
         _TrendCard(analysis.trend),
       ],
-    );
-  }
-}
-
-class _SectionCard extends StatelessWidget {
-  const _SectionCard({required this.title, required this.child});
-
-  final String title;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(title, style: theme.textTheme.titleSmall),
-            const SizedBox(height: 12),
-            child,
-          ],
-        ),
-      ),
     );
   }
 }
@@ -130,7 +108,7 @@ class _ComparisonCard extends StatelessWidget {
         ? theme.colorScheme.error
         : theme.colorScheme.primary;
 
-    return _SectionCard(
+    return SectionCard(
       title: strings.vsLastMonth,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -225,7 +203,7 @@ class _DailyCard extends StatelessWidget {
       ),
     );
 
-    return _SectionCard(
+    return SectionCard(
       title: strings.dailySpending,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,7 +234,7 @@ class _CategoryCard extends StatelessWidget {
     final strings = context.strings;
     final breakdown = analysis.breakdown;
 
-    return _SectionCard(
+    return SectionCard(
       title: strings.byCategory,
       child: breakdown.isEmpty
           ? Padding(
@@ -356,7 +334,7 @@ class _TrendCard extends StatelessWidget {
     final formats = context.select<SettingsCubit, AppFormats>(
       (cubit) => cubit.state.formats,
     );
-    return _SectionCard(
+    return SectionCard(
       title: context.strings.monthlyTrend,
       child: BarChart(
         bars: [

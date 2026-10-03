@@ -1259,4 +1259,148 @@ class AppStringsPt extends AppStrings {
     one: '$count pessoa',
     other: '$count pessoas',
   );
+
+  @override
+  String get askTitle => 'Pergunte sobre seus gastos';
+
+  @override
+  String get askHint => 'Toque numa pergunta para ver a resposta.';
+
+  @override
+  String get askCompareMonths => 'Comparar meses';
+
+  @override
+  String get askTopCategory => 'Categoria principal';
+
+  @override
+  String get askVsLastMonth => 'vs mês passado';
+
+  @override
+  String get askBiggestExpense => 'Maior despesa';
+
+  @override
+  String get askTopDay => 'Dia mais caro';
+
+  @override
+  String get askWeekday => 'Dia de mais gasto';
+
+  @override
+  String get askMonthEnd => 'Estimativa do mês';
+
+  @override
+  String get askSaved => 'Economizei?';
+
+  @override
+  String get askBudgetLeft => 'Orçamento restante';
+
+  @override
+  String get askHighestLowest => 'Mês mais alto e mais baixo';
+
+  @override
+  String get askCount => 'Quantas despesas';
+
+  @override
+  String get askTopIncome => 'Maior receita';
+
+  @override
+  String get compareWith => 'Comparar com';
+
+  @override
+  String get otherCategories => 'Outras';
+
+  @override
+  String answerTopCategory(String category, String amount, String percent) =>
+      'O maior gasto foi em $category: $amount ($percent do mês).';
+
+  @override
+  String answerSpentMore(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => 'Você gastou $amount a mais em $month do que em $other (+$percent).';
+
+  @override
+  String answerSpentLess(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => 'Você gastou $amount a menos em $month do que em $other (−$percent).';
+
+  @override
+  String answerSpentSame(String month, String other) =>
+      'Você gastou o mesmo em $month e em $other.';
+
+  @override
+  String answerNothingIn(String month) => 'Nenhum gasto em $month.';
+
+  @override
+  String answerRise(String category, String amount) =>
+      'Maior alta: $category (+$amount).';
+
+  @override
+  String answerDrop(String category, String amount) =>
+      'Maior queda: $category (−$amount).';
+
+  @override
+  String answerBiggestExpense(String amount, String category, String date) =>
+      'Maior despesa: $amount em $category ($date).';
+
+  @override
+  String answerTopDay(String date, String amount) =>
+      'Dia mais caro: $date, com $amount gastos.';
+
+  @override
+  String answerWeekday(String weekday, String amount) =>
+      'Dia da semana com mais gastos: $weekday ($amount este mês).';
+
+  @override
+  String answerMonthEnd(String amount, String average) =>
+      'Nesse ritmo (cerca de $average por dia) você vai gastar uns $amount até o fim do mês.';
+
+  @override
+  String answerMonthTotal(String amount) =>
+      'Este mês já terminou: você gastou $amount no total.';
+
+  @override
+  String answerSaved(String amount, String income) =>
+      'Você economizou $amount dos $income que recebeu.';
+
+  @override
+  String answerOverspent(String amount) =>
+      'Você gastou $amount a mais do que recebeu.';
+
+  @override
+  String get answerNoIncome => 'Nenhuma receita registrada este mês.';
+
+  @override
+  String answerBudgetLeft(String amount, String percent) =>
+      'Restam $amount do seu orçamento mensal ($percent usado).';
+
+  @override
+  String answerBudgetOver(String amount) =>
+      'Você passou $amount do seu orçamento mensal.';
+
+  @override
+  String get answerNoBudget => 'Você ainda não definiu um orçamento mensal.';
+
+  @override
+  String answerOverLimit(String names) => 'Acima do limite: $names.';
+
+  @override
+  String answerHighestLowest(
+    String high,
+    String highAmount,
+    String low,
+    String lowAmount,
+  ) => 'Mês mais alto: $high ($highAmount). Mais baixo: $low ($lowAmount).';
+
+  @override
+  String answerCount(int count, String average) =>
+      'Você registrou ${expenseCount(count)}, $average em média cada.';
+
+  @override
+  String answerTopIncome(String category, String amount, String percent) =>
+      'A maior parte da receita veio de $category: $amount ($percent).';
 }

@@ -25,6 +25,8 @@ ANÁLISES
 • Compare este mês com o mês passado
 • Gastos por dia, por categoria e nos últimos seis meses
 • Saldo líquido e taxa de poupança
+• Faça perguntas prontas: categoria principal, maior despesa, estimativa do fim do mês, economia e mais
+• Compare dois meses lado a lado, com um gráfico
 
 WIDGET DA TELA INICIAL
 Veja o total do mês na tela inicial e adicione um gasto das categorias que você mais usa sem abrir o app.

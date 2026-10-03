@@ -163,6 +163,18 @@ void main() {
           find.widgetWithText(NavigationDestination, strings.analyses),
         );
         await tester.pumpAndSettle();
+        expect(find.text(strings.askTitle), findsOneWidget);
+        // The questions card comes first, so the charts sit below it.
+        await tester.scrollUntilVisible(
+          find.text(strings.byCategory),
+          200,
+          scrollable: find
+              .ancestor(
+                of: find.text(strings.askTitle),
+                matching: find.byType(Scrollable),
+              )
+              .first,
+        );
         expect(find.text(strings.byCategory), findsOneWidget);
 
         await tester.tap(

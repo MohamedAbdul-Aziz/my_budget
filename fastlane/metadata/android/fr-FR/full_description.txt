@@ -25,6 +25,8 @@ ANALYSES
 • Comparez ce mois-ci avec le mois dernier
 • Dépenses par jour, par catégorie et sur les six derniers mois
 • Solde net et taux d'épargne
+• Posez des questions toutes prêtes : catégorie principale, plus grosse dépense, estimation de fin de mois, épargne et plus
+• Comparez deux mois côte à côte, avec un graphique
 
 WIDGET D'ÉCRAN D'ACCUEIL
 Affichez le total du mois sur votre écran d'accueil et ajoutez une dépense dans vos catégories favorites sans ouvrir l'application.

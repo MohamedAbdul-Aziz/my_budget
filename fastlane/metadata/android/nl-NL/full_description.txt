@@ -25,6 +25,8 @@ ANALYSES
 • Vergelijk deze maand met vorige maand
 • Uitgaven per dag, per categorie en over de laatste zes maanden
 • Nettosaldo en spaarpercentage
+• Stel kant-en-klare vragen: topcategorie, grootste uitgave, schatting voor het maandeinde, sparen en meer
+• Vergelijk twee maanden naast elkaar, met een grafiek
 
 WIDGET VOOR HET STARTSCHERM
 Zie het totaal van de maand op je startscherm en voeg een uitgave toe in je meestgebruikte categorieën zonder de app te openen.

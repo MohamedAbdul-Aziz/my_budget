@@ -1266,4 +1266,148 @@ class AppStringsRu extends AppStrings {
     many: '$count человек',
     other: '$count человека',
   );
+
+  @override
+  String get askTitle => 'Вопросы о расходах';
+
+  @override
+  String get askHint => 'Нажмите на вопрос, чтобы увидеть ответ.';
+
+  @override
+  String get askCompareMonths => 'Сравнить месяцы';
+
+  @override
+  String get askTopCategory => 'Главная категория';
+
+  @override
+  String get askVsLastMonth => 'С прошлым месяцем';
+
+  @override
+  String get askBiggestExpense => 'Крупнейший расход';
+
+  @override
+  String get askTopDay => 'Самый дорогой день';
+
+  @override
+  String get askWeekday => 'Дорогой день недели';
+
+  @override
+  String get askMonthEnd => 'Прогноз на месяц';
+
+  @override
+  String get askSaved => 'Есть экономия?';
+
+  @override
+  String get askBudgetLeft => 'Остаток бюджета';
+
+  @override
+  String get askHighestLowest => 'Макс. и мин. месяц';
+
+  @override
+  String get askCount => 'Сколько расходов';
+
+  @override
+  String get askTopIncome => 'Главный доход';
+
+  @override
+  String get compareWith => 'Сравнить с';
+
+  @override
+  String get otherCategories => 'Другие';
+
+  @override
+  String answerTopCategory(String category, String amount, String percent) =>
+      'Больше всего ушло на «$category»: $amount ($percent месяца).';
+
+  @override
+  String answerSpentMore(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => '$month: на $amount больше, чем $other (+$percent).';
+
+  @override
+  String answerSpentLess(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => '$month: на $amount меньше, чем $other (−$percent).';
+
+  @override
+  String answerSpentSame(String month, String other) =>
+      '$month и $other: потрачено одинаково.';
+
+  @override
+  String answerNothingIn(String month) => '$month: расходов нет.';
+
+  @override
+  String answerRise(String category, String amount) =>
+      'Сильнее всего вырос: «$category» (+$amount).';
+
+  @override
+  String answerDrop(String category, String amount) =>
+      'Сильнее всего снизился: «$category» (−$amount).';
+
+  @override
+  String answerBiggestExpense(String amount, String category, String date) =>
+      'Крупнейший расход: $amount, «$category» ($date).';
+
+  @override
+  String answerTopDay(String date, String amount) =>
+      'Самый дорогой день: $date — $amount.';
+
+  @override
+  String answerWeekday(String weekday, String amount) =>
+      'Самый затратный день недели: $weekday ($amount в этом месяце).';
+
+  @override
+  String answerMonthEnd(String amount, String average) =>
+      'В таком темпе (около $average в день) к концу месяца выйдет около $amount.';
+
+  @override
+  String answerMonthTotal(String amount) =>
+      'Месяц закончился: всего потрачено $amount.';
+
+  @override
+  String answerSaved(String amount, String income) =>
+      'Вы сэкономили $amount из дохода $income.';
+
+  @override
+  String answerOverspent(String amount) =>
+      'Вы потратили на $amount больше, чем заработали.';
+
+  @override
+  String get answerNoIncome => 'В этом месяце доходов нет.';
+
+  @override
+  String answerBudgetLeft(String amount, String percent) =>
+      'В месячном бюджете осталось $amount (использовано $percent).';
+
+  @override
+  String answerBudgetOver(String amount) =>
+      'Месячный бюджет превышен на $amount.';
+
+  @override
+  String get answerNoBudget => 'Месячный бюджет ещё не задан.';
+
+  @override
+  String answerOverLimit(String names) => 'Превышен лимит: $names.';
+
+  @override
+  String answerHighestLowest(
+    String high,
+    String highAmount,
+    String low,
+    String lowAmount,
+  ) => 'Максимум: $high ($highAmount). Минимум: $low ($lowAmount).';
+
+  @override
+  String answerCount(int count, String average) =>
+      'Записано: ${expenseCount(count)}, в среднем $average.';
+
+  @override
+  String answerTopIncome(String category, String amount, String percent) =>
+      'Основной доход — «$category»: $amount ($percent).';
 }

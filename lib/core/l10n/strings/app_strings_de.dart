@@ -1275,4 +1275,149 @@ class AppStringsDe extends AppStrings {
     one: '$count Person',
     other: '$count Personen',
   );
+
+  @override
+  String get askTitle => 'Fragen zu deinen Ausgaben';
+
+  @override
+  String get askHint => 'Tippe auf eine Frage, um die Antwort zu sehen.';
+
+  @override
+  String get askCompareMonths => 'Monate vergleichen';
+
+  @override
+  String get askTopCategory => 'Top-Kategorie';
+
+  @override
+  String get askVsLastMonth => 'vs. Vormonat';
+
+  @override
+  String get askBiggestExpense => 'Größte Ausgabe';
+
+  @override
+  String get askTopDay => 'Teuerster Tag';
+
+  @override
+  String get askWeekday => 'Teuerster Wochentag';
+
+  @override
+  String get askMonthEnd => 'Prognose Monatsende';
+
+  @override
+  String get askSaved => 'Gespart?';
+
+  @override
+  String get askBudgetLeft => 'Budget übrig';
+
+  @override
+  String get askHighestLowest => 'Höchster & niedrigster Monat';
+
+  @override
+  String get askCount => 'Wie viele Ausgaben';
+
+  @override
+  String get askTopIncome => 'Top-Einnahme';
+
+  @override
+  String get compareWith => 'Vergleichen mit';
+
+  @override
+  String get otherCategories => 'Andere';
+
+  @override
+  String answerTopCategory(String category, String amount, String percent) =>
+      'Am meisten für $category: $amount ($percent des Monats).';
+
+  @override
+  String answerSpentMore(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => 'Im $month hast du $amount mehr ausgegeben als im $other (+$percent).';
+
+  @override
+  String answerSpentLess(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) =>
+      'Im $month hast du $amount weniger ausgegeben als im $other (−$percent).';
+
+  @override
+  String answerSpentSame(String month, String other) =>
+      'Im $month und im $other hast du gleich viel ausgegeben.';
+
+  @override
+  String answerNothingIn(String month) => 'Im $month gab es keine Ausgaben.';
+
+  @override
+  String answerRise(String category, String amount) =>
+      'Größter Anstieg: $category (+$amount).';
+
+  @override
+  String answerDrop(String category, String amount) =>
+      'Größter Rückgang: $category (−$amount).';
+
+  @override
+  String answerBiggestExpense(String amount, String category, String date) =>
+      'Größte Ausgabe: $amount in $category ($date).';
+
+  @override
+  String answerTopDay(String date, String amount) =>
+      'Teuerster Tag: $date mit $amount.';
+
+  @override
+  String answerWeekday(String weekday, String amount) =>
+      'Teuerster Wochentag: $weekday ($amount in diesem Monat).';
+
+  @override
+  String answerMonthEnd(String amount, String average) =>
+      'Bei diesem Tempo (etwa $average pro Tag) gibst du bis Monatsende rund $amount aus.';
+
+  @override
+  String answerMonthTotal(String amount) =>
+      'Dieser Monat ist vorbei: Du hast insgesamt $amount ausgegeben.';
+
+  @override
+  String answerSaved(String amount, String income) =>
+      'Du hast $amount von $income Einnahmen gespart.';
+
+  @override
+  String answerOverspent(String amount) =>
+      'Du hast $amount mehr ausgegeben als eingenommen.';
+
+  @override
+  String get answerNoIncome => 'Keine Einnahmen in diesem Monat.';
+
+  @override
+  String answerBudgetLeft(String amount, String percent) =>
+      'Noch $amount im Monatsbudget ($percent verbraucht).';
+
+  @override
+  String answerBudgetOver(String amount) =>
+      'Du liegst $amount über deinem Monatsbudget.';
+
+  @override
+  String get answerNoBudget => 'Du hast noch kein Monatsbudget festgelegt.';
+
+  @override
+  String answerOverLimit(String names) => 'Über dem Limit: $names.';
+
+  @override
+  String answerHighestLowest(
+    String high,
+    String highAmount,
+    String low,
+    String lowAmount,
+  ) => 'Höchster Monat: $high ($highAmount). Niedrigster: $low ($lowAmount).';
+
+  @override
+  String answerCount(int count, String average) =>
+      'Du hast ${expenseCount(count)} erfasst, im Schnitt $average pro Ausgabe.';
+
+  @override
+  String answerTopIncome(String category, String amount, String percent) =>
+      'Die meisten Einnahmen aus $category: $amount ($percent).';
 }

@@ -25,6 +25,8 @@ ANALISIS
 • Bandingkan bulan ini dengan bulan lalu
 • Pengeluaran harian, pengeluaran per kategori, dan enam bulan terakhir
 • Saldo bersih dan tingkat tabungan
+• Ajukan pertanyaan siap pakai: kategori teratas, pengeluaran terbesar, perkiraan akhir bulan, tabungan, dan lainnya
+• Bandingkan dua bulan mana pun berdampingan, lengkap dengan grafik
 
 WIDGET LAYAR UTAMA
 Lihat total bulan ini di layar utama dan tambahkan pengeluaran dari kategori yang paling sering dipakai tanpa membuka aplikasi.

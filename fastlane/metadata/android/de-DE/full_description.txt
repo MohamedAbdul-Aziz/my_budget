@@ -25,6 +25,8 @@ AUSWERTUNGEN
 • Vergleiche diesen Monat mit dem letzten
 • Ausgaben pro Tag, nach Kategorie und über die letzten sechs Monate
 • Nettosaldo und Sparquote
+• Stelle fertige Fragen: Top-Kategorie, größte Ausgabe, Prognose zum Monatsende, Ersparnis und mehr
+• Vergleiche zwei beliebige Monate nebeneinander, mit Diagramm
 
 STARTBILDSCHIRM-WIDGET
 Sieh die Monatssumme auf dem Startbildschirm und erfasse eine Ausgabe in deinen meistgenutzten Kategorien, ohne die App zu öffnen.

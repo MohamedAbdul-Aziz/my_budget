@@ -25,6 +25,8 @@ ANALİZLER
 • Bu ayı geçen ayla karşılaştır
 • Günlük harcama, kategoriye göre harcama ve son altı ay
 • Net bakiye ve tasarruf oranı
+• Hazır sorular sor: en çok harcanan kategori, en büyük harcama, ay sonu tahmini, birikim ve dahası
+• İki ayı grafikle yan yana karşılaştır
 
 ANA EKRAN WIDGET'I
 Ayın toplamını ana ekranında gör ve en çok kullandığın kategorilerden uygulamayı açmadan harcama ekle.

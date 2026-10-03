@@ -230,6 +230,63 @@ abstract class AppStrings {
   String get noSpendingThisMonth;
   String get monthlyTrend;
 
+  // Ready-made questions on the Analyses tab
+  String get askTitle;
+  String get askHint;
+  String get askCompareMonths;
+  String get askTopCategory;
+  String get askVsLastMonth;
+  String get askBiggestExpense;
+  String get askTopDay;
+  String get askWeekday;
+  String get askMonthEnd;
+  String get askSaved;
+  String get askBudgetLeft;
+  String get askHighestLowest;
+  String get askCount;
+  String get askTopIncome;
+  String get compareWith;
+
+  /// The bar that gathers the smaller categories in the comparison chart.
+  String get otherCategories;
+  String answerTopCategory(String category, String amount, String percent);
+  String answerSpentMore(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  );
+  String answerSpentLess(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  );
+  String answerSpentSame(String month, String other);
+  String answerNothingIn(String month);
+  String answerRise(String category, String amount);
+  String answerDrop(String category, String amount);
+  String answerBiggestExpense(String amount, String category, String date);
+  String answerTopDay(String date, String amount);
+  String answerWeekday(String weekday, String amount);
+  String answerMonthEnd(String amount, String average);
+  String answerMonthTotal(String amount);
+  String answerSaved(String amount, String income);
+  String answerOverspent(String amount);
+  String get answerNoIncome;
+  String answerBudgetLeft(String amount, String percent);
+  String answerBudgetOver(String amount);
+  String get answerNoBudget;
+  String answerOverLimit(String names);
+  String answerHighestLowest(
+    String high,
+    String highAmount,
+    String low,
+    String lowAmount,
+  );
+  String answerCount(int count, String average);
+  String answerTopIncome(String category, String amount, String percent);
+
   // Budgets
   String get budgets;
   String get monthlyBudget;
