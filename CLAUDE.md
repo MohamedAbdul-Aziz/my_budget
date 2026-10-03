@@ -6,7 +6,7 @@ Read this first in every new chat. It covers what the app is, where things live,
 ## 0) Project Snapshot
 - **Local-first**: all data is stored in one on-device SQLite DB (`sqflite`; `sqflite_common_ffi` on desktop). The app only reads from the local DB.
 - **Optional cloud backup**: a signed-in user can back up and restore to Supabase (`features/sync`, `features/auth`). Config lives in `lib/core/config/supabase_config.dart` (publishable key only; never add the service-role key).
-- **Languages**: 20 (en, ar, zh, es, fr, pt, ru, de, ja, ko, tr, id, it, fa, ur, vi, pl, nl, uk, ms), with full RTL for ar/fa/ur. The picker offers only *System*, English and the device's own language. Settings cover theme, language, and currency symbol.
+- **Languages**: 20 (en, ar, zh, es, fr, pt, ru, de, ja, ko, tr, id, it, fa, ur, vi, pl, nl, uk, ms), with full RTL for ar/fa/ur. The picker lists every language, led by *System*, English and the device's own language. Settings cover theme, language, and currency symbol.
 - **Android home-screen widget**: Quick Expense (Kotlin in `android/app/src/main/kotlin/com/mohamed/mybudget/`).
 - Package name: `my_budget`. Android app id: `com.mohamed.mybudget`. Dart SDK `^3.9.2`.
 

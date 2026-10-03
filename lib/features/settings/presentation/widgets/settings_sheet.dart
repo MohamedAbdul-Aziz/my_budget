@@ -49,11 +49,21 @@ class SettingsSheet extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                strings.settings,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+              // A visible way out besides dragging the sheet down, which not
+              // everyone discovers. BackButton mirrors itself in RTL.
+              Row(
+                children: [
+                  const BackButton(),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      strings.settings,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
               Text(strings.account, style: theme.textTheme.labelLarge),
@@ -278,45 +288,77 @@ class _ThemeModeSelector extends StatelessWidget {
   }
 }
 
-/// Offers the device setting, English and the device's own language — not
-/// every translation. Language names are always written in their own
-/// language, so each option is readable whatever the app is currently in.
+/// Shows the current language; tapping it lists every translation in a
+/// sheet. Language names are always written in their own language, so each
+/// option is readable whatever the app is currently in.
 class _LanguageSelector extends StatelessWidget {
   const _LanguageSelector();
 
+  static String _label(BuildContext context, AppLanguage language) =>
+      language == AppLanguage.system
+      ? context.strings.languageSystem
+      : language.nativeName;
+
   @override
   Widget build(BuildContext context) {
-    // The options depend only on these two, and enums compare by value.
-    return BlocSelector<
-      SettingsCubit,
-      SettingsState,
-      (AppLanguage, AppLanguage?)
-    >(
-      selector: (state) => (state.settings.language, state.deviceLanguage),
-      builder: (context, selection) {
-        final (language, _) = selection;
-        final options = context.read<SettingsCubit>().state.pickerLanguages;
-        return SegmentedButton<AppLanguage>(
-          segments: [
-            for (final option in options)
-              ButtonSegment(
-                value: option,
-                label: Text(
-                  option == AppLanguage.system
-                      ? context.strings.languageSystem
-                      : option.nativeName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+    final theme = Theme.of(context);
+    return BlocSelector<SettingsCubit, SettingsState, AppLanguage>(
+      selector: (state) => state.settings.language,
+      builder: (context, language) => OutlinedButton(
+        key: const Key('language_selector'),
+        onPressed: () => _pick(context, language),
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 12, 14),
+          alignment: AlignmentDirectional.centerStart,
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.translate_rounded, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                _label(context, language),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodyLarge,
               ),
+            ),
+            const Icon(Icons.expand_more_rounded),
           ],
-          selected: {language},
-          showSelectedIcon: false,
-          onSelectionChanged: (selection) =>
-              context.read<SettingsCubit>().setLanguage(selection.first),
-        );
-      },
+        ),
+      ),
     );
+  }
+
+  Future<void> _pick(BuildContext context, AppLanguage current) async {
+    final cubit = context.read<SettingsCubit>();
+    final options = cubit.state.pickerLanguages;
+    final picked = await showModalBottomSheet<AppLanguage>(
+      context: context,
+      showDragHandle: true,
+      // About twenty rows: cheap enough to build at once, and the sheet sizes
+      // itself to them.
+      builder: (sheetContext) => SafeArea(
+        child: SingleChildScrollView(
+          key: const Key('language_options'),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final option in options)
+                ListTile(
+                  title: Text(_label(sheetContext, option)),
+                  trailing: option == current
+                      ? const Icon(Icons.check_rounded)
+                      : null,
+                  selected: option == current,
+                  onTap: () => Navigator.of(sheetContext).pop(option),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (picked != null && picked != current) await cubit.setLanguage(picked);
   }
 }
 

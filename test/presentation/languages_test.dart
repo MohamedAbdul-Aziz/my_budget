@@ -11,13 +11,40 @@ import 'package:my_budget/features/settings/presentation/widgets/settings_sheet.
 
 import 'app_harness.dart';
 
-/// The labels the settings sheet's language picker offers, in order.
-List<String> _languageOptions(WidgetTester tester) {
-  final picker = tester.widget<SegmentedButton<AppLanguage>>(
-    find.byType(SegmentedButton<AppLanguage>),
-  );
+/// The labels the settings sheet's language picker offers, in order. Opens
+/// the list and closes it again.
+Future<List<String>> _languageOptions(WidgetTester tester) async {
+  await tester.tap(find.byKey(const Key('language_selector')));
+  await tester.pumpAndSettle();
+  final options = [
+    for (final tile in tester.widgetList<ListTile>(
+      find.descendant(
+        of: find.byKey(const Key('language_options')),
+        matching: find.byType(ListTile),
+      ),
+    ))
+      (tile.title! as Text).data!,
+  ];
+  await _back(tester);
+  return options;
+}
+
+/// Every translation, led by the system setting, English and [device]'s own
+/// language when the app translates it.
+List<String> _allLanguages(AppStrings strings, {AppLanguage? device}) {
+  final first = [
+    AppLanguage.system,
+    AppLanguage.english,
+    if (device != null && device != AppLanguage.english) device,
+  ];
   return [
-    for (final segment in picker.segments) (segment.label! as Text).data!,
+    for (final language in [
+      ...first,
+      ...AppLanguage.values.where((language) => !first.contains(language)),
+    ])
+      language == AppLanguage.system
+          ? strings.languageSystem
+          : language.nativeName,
   ];
 }
 
@@ -26,7 +53,7 @@ Future<void> _openSettings(WidgetTester tester, AppStrings strings) async {
   await tester.pumpAndSettle();
   expect(find.byType(SettingsSheet), findsOneWidget);
   await tester.scrollUntilVisible(
-    find.byType(SegmentedButton<AppLanguage>),
+    find.byKey(const Key('language_selector')),
     200,
     scrollable: find
         .descendant(
@@ -149,37 +176,38 @@ void main() {
         );
         await tester.pumpAndSettle();
         await _openSettings(tester, strings);
-        expect(_languageOptions(tester), [
-          strings.languageSystem,
-          'English',
-          if (language != AppLanguage.english) language.nativeName,
-        ]);
+        expect(
+          await _languageOptions(tester),
+          _allLanguages(strings, device: language),
+        );
       });
     }
   });
 
   group('the language picker', () {
-    testWidgets('offers only the system setting and English on an English '
-        'phone', (tester) async {
+    testWidgets('offers every translation on an English phone, English first', (
+      tester,
+    ) async {
       await bootApp(tester);
       final strings = AppStrings.forLanguageCode('en');
       await _openSettings(tester, strings);
 
-      expect(_languageOptions(tester), ['System', 'English']);
+      final options = await _languageOptions(tester);
+      expect(options, _allLanguages(strings));
+      expect(options.take(2), ['System', 'English']);
+      expect(options, hasLength(AppLanguage.values.length));
     });
 
-    testWidgets('adds the phone\'s own language, named in that language', (
+    testWidgets('puts the phone\'s own language right after English', (
       tester,
     ) async {
       await bootApp(tester, localeName: 'zh_CN');
       final strings = AppStrings.forLanguageCode('zh');
       await _openSettings(tester, strings);
 
-      expect(_languageOptions(tester), [
-        strings.languageSystem,
-        'English',
-        '中文',
-      ]);
+      final options = await _languageOptions(tester);
+      expect(options.take(3), [strings.languageSystem, 'English', '中文']);
+      expect(options, _allLanguages(strings, device: AppLanguage.chinese));
     });
 
     testWidgets('an untranslated phone language falls back to English', (
@@ -188,35 +216,68 @@ void main() {
       await bootApp(tester, localeName: 'sw_KE');
 
       expect(find.text('Nothing recorded yet'), findsOneWidget);
-      await _openSettings(tester, AppStrings.forLanguageCode('en'));
-      expect(_languageOptions(tester), ['System', 'English']);
+      final strings = AppStrings.forLanguageCode('en');
+      await _openSettings(tester, strings);
+      expect(await _languageOptions(tester), _allLanguages(strings));
     });
 
-    testWidgets('keeps an earlier choice listed so it never disappears', (
+    testWidgets('an English phone in Egypt can switch the app to Arabic', (
       tester,
     ) async {
-      await bootApp(tester, localeName: 'fr_FR');
-      await sl<SettingsCubit>().setLanguage(AppLanguage.arabic);
-      await tester.pumpAndSettle();
-      final strings = AppStrings.forLanguageCode('ar');
-      await _openSettings(tester, strings);
+      await bootApp(tester, localeName: 'en_EG');
+      await _openSettings(tester, AppStrings.forLanguageCode('en'));
 
-      expect(_languageOptions(tester), [
-        strings.languageSystem,
-        'English',
-        'Français',
-        'العربية',
-      ]);
-
-      // Picking the phone's language switches the whole app to it.
-      await tester.tap(find.text('Français'));
+      await tester.tap(find.byKey(const Key('language_selector')));
       await tester.pumpAndSettle();
-      expect(sl<SettingsCubit>().state.settings.language, AppLanguage.french);
+      await tester.scrollUntilVisible(
+        find.text('العربية'),
+        100,
+        scrollable: find
+            .descendant(
+              of: find.byKey(const Key('language_options')),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
+      await tester.tap(find.text('العربية'));
+      await tester.pumpAndSettle();
+
+      expect(sl<SettingsCubit>().state.settings.language, AppLanguage.arabic);
+      // The selector now shows Arabic, and the sheet's own labels switched.
       expect(
-        find.text(AppStrings.forLanguageCode('fr').language),
+        find.descendant(
+          of: find.byKey(const Key('language_selector')),
+          matching: find.text('العربية'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(AppStrings.forLanguageCode('ar').language),
         findsOneWidget,
       );
     });
+  });
+
+  group('the settings sheet', () {
+    for (final (localeName, code) in [('en_US', 'en'), ('ar_EG', 'ar')]) {
+      testWidgets('closes from its back button ($code)', (tester) async {
+        await bootApp(tester, localeName: localeName);
+        final strings = AppStrings.forLanguageCode(code);
+        await tester.tap(find.byTooltip(strings.settings));
+        await tester.pumpAndSettle();
+        expect(find.byType(SettingsSheet), findsOneWidget);
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(SettingsSheet),
+            matching: find.byType(BackButton),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byType(SettingsSheet), findsNothing);
+      });
+    }
   });
 
   group('number and date formats follow the displayed language', () {
