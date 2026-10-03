@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'status_colors.dart';
+import 'transaction_colors.dart';
+
 /// Material 3 light and dark themes, built once and reused — never rebuilt
 /// inside a widget's `build()`.
 abstract final class AppTheme {
@@ -17,6 +20,12 @@ abstract final class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
+      extensions: [
+        brightness == Brightness.dark ? StatusColors.dark : StatusColors.light,
+        brightness == Brightness.dark
+            ? TransactionColors.dark
+            : TransactionColors.light,
+      ],
       scaffoldBackgroundColor: scheme.surface,
       appBarTheme: AppBarTheme(
         backgroundColor: scheme.surface,

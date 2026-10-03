@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_expense_widget_label">Spesa rapida</string>
+    <string name="quick_expense_widget_description">Aggiungi una spesa con due tocchi.</string>
+
+    <string name="quick_expense_title">Spesa rapida</string>
+    <string name="quick_expense_add">Aggiungi spesa</string>
+</resources>

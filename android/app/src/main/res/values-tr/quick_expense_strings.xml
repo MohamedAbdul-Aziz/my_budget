@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_expense_widget_label">Hızlı gider</string>
+    <string name="quick_expense_widget_description">İki dokunuşla gider ekleyin.</string>
+
+    <string name="quick_expense_title">Hızlı gider</string>
+    <string name="quick_expense_add">Gider ekle</string>
+</resources>

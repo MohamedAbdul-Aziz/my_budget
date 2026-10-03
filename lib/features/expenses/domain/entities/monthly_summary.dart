@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'month.dart';
 
 /// Aggregate row used by the month picker: one entry per month that has data.
+/// [total] and [expenseCount] count spending only; income is left out.
 class MonthlySummary extends Equatable {
   const MonthlySummary({
     required this.month,

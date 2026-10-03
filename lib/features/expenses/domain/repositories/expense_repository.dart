@@ -3,13 +3,22 @@ import '../entities/category_usage.dart';
 import '../entities/expense.dart';
 import '../entities/month.dart';
 import '../entities/monthly_summary.dart';
+import '../entities/transaction_search.dart';
 
 abstract interface class ExpenseRepository {
-  /// All expenses recorded in [month], newest first.
-  Future<ApiResult<List<Expense>>> getExpensesForMonth(Month month);
+  /// Everything recorded in [month], spending and income, newest first.
+  Future<ApiResult<List<Expense>>> getTransactionsForMonth(Month month);
 
-  /// One row per month that has at least one expense, newest month first.
+  /// One row per month that has anything recorded, newest month first. The
+  /// totals are spending only.
   Future<ApiResult<List<MonthlySummary>>> getMonthlySummaries();
+
+  /// The transactions in any month matching [search], newest first, at most
+  /// [limit] of them.
+  Future<ApiResult<List<Expense>>> searchTransactions(
+    TransactionSearch search, {
+    required int limit,
+  });
 
   /// Categories that have been used at least once, most used first.
   Future<ApiResult<List<CategoryUsage>>> getCategoryUsage();

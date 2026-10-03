@@ -1,8 +1,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Release builds need this to reach Supabase; debug gets it from the
+         debug manifest. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- The daily reminder is scheduled with the alarm manager, which forgets
+         it on a reboot; the receiver below sets it again. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- The app lock asks for a fingerprint, face or the screen lock. -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
     <application
-        android:label="my_budget"
+        android:label="@string/app_name"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -24,6 +33,21 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- The link in the sign-up confirmation email. Supabase reads it
+                 through app_links and finishes signing the user in. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="com.mohamed.mybudget"
+                    android:host="login-callback"/>
+            </intent-filter>
+            <!-- Otherwise Flutter would also try to open the link as a route,
+                 and the app has no route by that name. -->
+            <meta-data
+                android:name="flutter_deeplinking_enabled"
+                android:value="false"/>
         </activity>
         <!-- Opened by the widget instead of MainActivity. Its own task with
              no recents entry, so finishing after a save returns the user to
@@ -49,6 +73,22 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/quick_expense_widget_info" />
+        </receiver>
+        <!-- The daily reminder (flutter_local_notifications): one receiver
+             shows it when it is due, the other schedules it again after a
+             reboot or an app update. -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
+            android:exported="false" />
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
         </receiver>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

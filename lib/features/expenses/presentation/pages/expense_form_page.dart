@@ -6,7 +6,9 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/app_formats.dart';
-import '../../../categories/domain/entities/expense_category.dart';
+import '../../../budgets/presentation/pages/budgets_page.dart';
+import '../../../budgets/presentation/widgets/budget_alert_messages.dart';
+import '../../../categories/domain/entities/transaction_type.dart';
 import '../../../categories/presentation/cubit/categories_cubit.dart';
 import '../../../categories/presentation/cubit/categories_state.dart';
 import '../../../categories/presentation/widgets/category_editor_sheet.dart';
@@ -15,28 +17,29 @@ import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../domain/entities/expense.dart';
 import '../cubit/expense_form_cubit.dart';
 import '../cubit/expense_form_state.dart';
+import '../widgets/transaction_type_toggle.dart';
 
-/// Add or edit one expense. Amount is focused on open, the category list is
-/// fully visible, and the date already says Today — so the fastest path to a
-/// saved expense is: type a number, tap Add.
+/// Add or edit one expense or income. Amount is focused on open, the category
+/// list is fully visible, and the date already says Today — so the fastest
+/// path to a saved expense is: type a number, tap Add. Income is one tap on
+/// the toggle away, and the page takes on its green accent.
 class ExpenseFormPage extends StatefulWidget {
   const ExpenseFormPage({super.key, this.existing});
 
   final Expense? existing;
 
-  /// Pops with `true` once an expense has been saved.
+  /// Pops with `true` once something has been saved.
   static Route<bool> route({Expense? existing}) {
-    final categoriesState = sl<CategoriesCubit>().state;
-    final suggested = switch (categoriesState) {
-      CategoriesReady(:final categories) when categories.isNotEmpty =>
-        categories.first,
-      _ => null,
-    };
+    final suggested = categoriesOfType(
+      sl<CategoriesCubit>().state,
+      TransactionType.expense,
+    ).firstOrNull;
 
     return MaterialPageRoute<bool>(
       builder: (_) => BlocProvider(
-        create: (_) => sl<ExpenseFormCubit>()
-          ..start(existing: existing, suggestedCategory: suggested),
+        create: (_) =>
+            sl<ExpenseFormCubit>()
+              ..start(existing: existing, suggestedCategory: suggested),
         child: ExpenseFormPage(existing: existing),
       ),
     );
@@ -83,13 +86,18 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> {
   Future<void> _createCategory() async {
     final categoriesCubit = context.read<CategoriesCubit>();
     final formCubit = context.read<ExpenseFormCubit>();
-    final draft = await CategoryEditorSheet.show(context);
+    // A category made here is for whatever is being recorded.
+    final draft = await CategoryEditorSheet.show(
+      context,
+      type: formCubit.state.type,
+    );
     if (draft == null) return;
 
     final created = await categoriesCubit.create(
       name: draft.name,
       iconName: draft.iconName,
       colorValue: draft.colorValue,
+      type: draft.type,
     );
     // Selecting it immediately saves the user a second tap.
     if (created != null) formCubit.selectCategory(created);
@@ -105,16 +113,24 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> {
       listener: (context, state) {
         switch (state.status) {
           case ExpenseFormStatus.success:
-            Navigator.of(context).pop(true);
+            final navigator = Navigator.of(context);
+            if (state.budgetAlerts.isNotEmpty) {
+              // The snackbar outlives this page and stays up on the home
+              // screen, whose navigator can still open the budgets.
+              BudgetAlertMessages.showAsSnackBar(
+                context,
+                state.budgetAlerts,
+                onView: () => navigator.push(BudgetsPage.route()),
+              );
+            }
+            navigator.pop(true);
           case ExpenseFormStatus.failure:
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
                 SnackBar(
                   content: Text(
-                    context.strings.failure(
-                      state.error ?? FailureCode.unknown,
-                    ),
+                    context.strings.failure(state.error ?? FailureCode.unknown),
                   ),
                 ),
               );
@@ -122,45 +138,78 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> {
             break;
         }
       },
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.close_rounded),
-            onPressed: () => Navigator.of(context).maybePop(),
-          ),
-          title: Text(isEditing ? strings.editExpense : strings.newExpense),
-        ),
-        body: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-          children: [
-            _AmountField(controller: _amountController, focusNode: _amountFocus),
-            const SizedBox(height: 24),
-            _FieldLabel(strings.when),
-            const _DateSelector(),
-            const SizedBox(height: 24),
-            _FieldLabel(strings.category),
-            _CategorySection(onCreate: _createCategory),
-            const SizedBox(height: 24),
-            _FieldLabel(strings.noteOptional),
-            TextField(
-              controller: _noteController,
-              textCapitalization: TextCapitalization.sentences,
-              textInputAction: TextInputAction.done,
-              maxLength: 80,
-              onSubmitted: (_) => _submit(),
-              decoration: InputDecoration(
-                hintText: strings.noteHint,
-                counterText: '',
-                prefixIcon: const Icon(Icons.notes_rounded),
-              ),
+      child: ExpenseFormAccent(
+        child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.close_rounded),
+              onPressed: () => Navigator.of(context).maybePop(),
             ),
-          ],
-        ),
-        bottomNavigationBar: _SubmitBar(
-          isEditing: isEditing,
-          onSubmit: _submit,
+            title: _Title(isEditing: isEditing),
+          ),
+          body: ListView(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+            children: [
+              const ExpenseFormTypeToggle(),
+              const SizedBox(height: 20),
+              _AmountField(
+                controller: _amountController,
+                focusNode: _amountFocus,
+              ),
+              const SizedBox(height: 24),
+              _FieldLabel(strings.when),
+              const _DateSelector(),
+              const SizedBox(height: 24),
+              _FieldLabel(strings.category),
+              _CategorySection(onCreate: _createCategory),
+              const SizedBox(height: 24),
+              _FieldLabel(strings.noteOptional),
+              BlocSelector<ExpenseFormCubit, ExpenseFormState, bool>(
+                selector: (state) => state.isIncome,
+                builder: (context, isIncome) => TextField(
+                  controller: _noteController,
+                  textCapitalization: TextCapitalization.sentences,
+                  textInputAction: TextInputAction.done,
+                  maxLength: 80,
+                  onSubmitted: (_) => _submit(),
+                  decoration: InputDecoration(
+                    hintText: isIncome
+                        ? strings.incomeNoteHint
+                        : strings.noteHint,
+                    counterText: '',
+                    prefixIcon: const Icon(Icons.notes_rounded),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          bottomNavigationBar: _SubmitBar(
+            isEditing: isEditing,
+            onSubmit: _submit,
+          ),
         ),
       ),
+    );
+  }
+}
+
+/// New or edit, expense or income.
+class _Title extends StatelessWidget {
+  const _Title({required this.isEditing});
+
+  final bool isEditing;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = context.strings;
+    return BlocSelector<ExpenseFormCubit, ExpenseFormState, bool>(
+      selector: (state) => state.isIncome,
+      builder: (context, isIncome) => Text(switch ((isEditing, isIncome)) {
+        (false, false) => strings.newExpense,
+        (false, true) => strings.newIncome,
+        (true, false) => strings.editExpense,
+        (true, true) => strings.editIncome,
+      }),
     );
   }
 }
@@ -185,7 +234,7 @@ class _AmountField extends StatelessWidget {
         Text(
           symbol,
           style: theme.textTheme.headlineMedium?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+            color: theme.colorScheme.primary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -202,6 +251,7 @@ class _AmountField extends StatelessWidget {
             ],
             style: theme.textTheme.displaySmall?.copyWith(
               fontWeight: FontWeight.w700,
+              color: theme.colorScheme.primary,
             ),
             decoration: InputDecoration(
               hintText: context.strings.amountHint,
@@ -311,22 +361,24 @@ class _CategorySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CategoriesCubit, CategoriesState>(
-      builder: (context, categoriesState) {
-        final categories = switch (categoriesState) {
-          CategoriesReady(:final categories) => categories,
-          _ => const <ExpenseCategory>[],
-        };
-
-        return BlocSelector<ExpenseFormCubit, ExpenseFormState, String?>(
-          selector: (state) => state.category?.id,
-          builder: (context, selectedId) => CategoryPicker(
-            categories: categories,
-            selectedId: selectedId,
-            onSelected: context.read<ExpenseFormCubit>().selectCategory,
-            onCreate: onCreate,
+      builder: (context, categoriesState) =>
+          BlocSelector<
+            ExpenseFormCubit,
+            ExpenseFormState,
+            (TransactionType, String?)
+          >(
+            selector: (state) => (state.type, state.category?.id),
+            builder: (context, selection) {
+              final (type, selectedId) = selection;
+              return CategoryPicker(
+                // Only the categories of the type being recorded.
+                categories: categoriesOfType(categoriesState, type),
+                selectedId: selectedId,
+                onSelected: context.read<ExpenseFormCubit>().selectCategory,
+                onCreate: onCreate,
+              );
+            },
           ),
-        );
-      },
     );
   }
 }
@@ -340,27 +392,32 @@ class _SubmitBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<ExpenseFormCubit, ExpenseFormState, bool>(
-      selector: (state) => state.isSubmitting,
+    return BlocSelector<ExpenseFormCubit, ExpenseFormState, (bool, bool)>(
+      selector: (state) => (state.isSubmitting, state.isIncome),
       // Scaffold already lifts its bottomNavigationBar above the keyboard, so
       // adding the view inset here would push the button up twice.
-      builder: (context, isSubmitting) => SafeArea(
-        minimum: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-        child: FilledButton.icon(
-          onPressed: isSubmitting ? null : onSubmit,
-          icon: isSubmitting
-              ? const SizedBox.square(
-                  dimension: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : Icon(isEditing ? Icons.check_rounded : Icons.add_rounded),
-          label: Text(
-            isEditing
-                ? context.strings.saveChanges
-                : context.strings.addExpense,
+      builder: (context, flags) {
+        final (isSubmitting, isIncome) = flags;
+        return SafeArea(
+          minimum: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+          child: FilledButton.icon(
+            onPressed: isSubmitting ? null : onSubmit,
+            icon: isSubmitting
+                ? const SizedBox.square(
+                    dimension: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Icon(isEditing ? Icons.check_rounded : Icons.add_rounded),
+            label: Text(
+              isEditing
+                  ? context.strings.saveChanges
+                  : isIncome
+                  ? context.strings.addIncome
+                  : context.strings.addExpense,
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

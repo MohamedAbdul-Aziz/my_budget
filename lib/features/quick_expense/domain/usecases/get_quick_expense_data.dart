@@ -33,9 +33,12 @@ class GetQuickExpenseData {
     }
 
     final double monthTotal;
-    switch (await _expenses.getExpensesForMonth(month)) {
+    switch (await _expenses.getTransactionsForMonth(month)) {
       case Success(:final data):
-        monthTotal = data.fold(0.0, (total, expense) => total + expense.amount);
+        monthTotal = data.fold(
+          0.0,
+          (total, expense) => total + expense.spending,
+        );
       case ResultFailure(:final failure):
         return ResultFailure(failure);
     }
@@ -47,7 +50,12 @@ class GetQuickExpenseData {
       QuickExpenseData(
         month: month,
         monthTotal: monthTotal,
-        categories: rank(categories, usage),
+        // The widget's shortcuts record spending, so income categories are
+        // never offered there.
+        categories: rank([
+          for (final category in categories)
+            if (!category.isIncome) category,
+        ], usage),
       ),
     );
   }

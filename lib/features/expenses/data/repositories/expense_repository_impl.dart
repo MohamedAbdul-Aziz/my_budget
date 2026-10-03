@@ -5,6 +5,7 @@ import '../../domain/entities/category_usage.dart';
 import '../../domain/entities/expense.dart';
 import '../../domain/entities/month.dart';
 import '../../domain/entities/monthly_summary.dart';
+import '../../domain/entities/transaction_search.dart';
 import '../../domain/repositories/expense_repository.dart';
 import '../datasources/expense_local_data_source.dart';
 import '../models/expense_model.dart';
@@ -16,12 +17,20 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   final Random _random = Random();
 
   @override
-  Future<ApiResult<List<Expense>>> getExpensesForMonth(Month month) =>
-      ApiResult.guard(() async => await _localDataSource.getExpensesForMonth(month));
+  Future<ApiResult<List<Expense>>> getTransactionsForMonth(Month month) =>
+      ApiResult.guard(() async => await _localDataSource.getTransactionsForMonth(month));
 
   @override
   Future<ApiResult<List<MonthlySummary>>> getMonthlySummaries() =>
       ApiResult.guard(() async => await _localDataSource.getMonthlySummaries());
+
+  @override
+  Future<ApiResult<List<Expense>>> searchTransactions(
+    TransactionSearch search, {
+    required int limit,
+  }) => ApiResult.guard(
+    () async => await _localDataSource.search(search, limit: limit),
+  );
 
   @override
   Future<ApiResult<List<CategoryUsage>>> getCategoryUsage() =>

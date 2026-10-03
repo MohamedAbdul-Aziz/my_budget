@@ -7,12 +7,51 @@ import '../../features/categories/domain/entities/expense_category.dart';
 
 /// Owns the single on-device SQLite connection.
 ///
-/// Everything the app stores lives here — there is no network layer and no
-/// remote data source anywhere in the project.
+/// Everything the app stores lives here. A signed-in user can copy it to their
+/// Supabase account and back (see `features/sync`); the app itself only ever
+/// reads from this database.
+///
+/// Sync bookkeeping, added in schema version 2:
+/// * `updated_at`: when the row last changed, in milliseconds. When the same
+///   row changed on two phones, the newer change wins.
+/// * `deleted_at`: set instead of deleting, so a delete can reach the cloud.
+///   Every read skips these rows.
+/// * `dirty`: 1 while the row has changes the cloud has not seen yet.
+///
+/// Income, added in schema version 3: every category has a `type`, `expense`
+/// or `income`, and a transaction in the `expenses` table is whichever type
+/// its category is. The table keeps its name so older backups and the cloud
+/// copy still line up with it.
+///
+/// Recurring payments, added in schema version 4: `recurring_expenses` holds
+/// the schedules (rent, bills, subscriptions). Due dates are calendar days
+/// stored as `yyyy-MM-dd` text, so a payment falls on the same day whatever
+/// the phone's timezone. A payment it logs is an ordinary row in `expenses`.
+///
+/// People and debts, added in schema version 5: `people`, the money that
+/// changed hands with each (`person_transactions`), each settle-up
+/// (`settlements`) and every transaction's change log
+/// (`person_transaction_edits`). A settlement the user logs in the budget is
+/// an ordinary row in `expenses`.
+///
+/// Phone-only preferences, added in schema version 6: `device_settings`,
+/// key/value rows such as app lock and automatic backup. Like `sync_meta` it
+/// never leaves the phone: these choices belong to this device, and a
+/// restore must never, say, lock a phone that has no screen lock.
 class AppDatabase {
   AppDatabase({this.fileName = 'my_budget.db', this.inMemory = false});
 
-  static const int _schemaVersion = 1;
+  static const int _schemaVersion = 6;
+
+  /// Now, in the form stored in `updated_at` and `deleted_at`.
+  static int nowMillis() => DateTime.now().millisecondsSinceEpoch;
+
+  /// [row] stamped as a local change the cloud has not seen yet.
+  static Map<String, Object?> changed(Map<String, Object?> row) => {
+    ...row,
+    'updated_at': nowMillis(),
+    'dirty': 1,
+  };
 
   final String fileName;
 
@@ -27,18 +66,26 @@ class AppDatabase {
   Future<Database> _open() async {
     // sqflite ships native bindings for Android/iOS only; desktop runs need the
     // FFI implementation so `flutter run -d macos` works during development.
-    if (!Platform.isAndroid && !Platform.isIOS) {
+    // The FFI factory is used directly rather than installed as sqflite's
+    // global default, which warns every time it is replaced.
+    final DatabaseFactory factory;
+    if (Platform.isAndroid || Platform.isIOS) {
+      factory = databaseFactory;
+    } else {
       sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi;
+      factory = databaseFactoryFfi;
     }
     final path = inMemory
         ? inMemoryDatabasePath
-        : p.join(await getDatabasesPath(), fileName);
-    return openDatabase(
+        : p.join(await factory.getDatabasesPath(), fileName);
+    return factory.openDatabase(
       path,
-      version: _schemaVersion,
-      onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
-      onCreate: _onCreate,
+      options: OpenDatabaseOptions(
+        version: _schemaVersion,
+        onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
+        onCreate: _onCreate,
+        onUpgrade: _onUpgrade,
+      ),
     );
   }
 
@@ -96,7 +143,237 @@ class AppDatabase {
       });
     }
 
+    // A fresh install takes the same upgrade path as an existing one, so both
+    // end up with exactly the same schema.
+    _addSyncColumns(batch);
+    _addIncome(batch);
+    _addRecurring(batch);
+    _addPeople(batch);
+    _addDeviceSettings(batch);
+
     await batch.commit(noResult: true);
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    final batch = db.batch();
+    if (oldVersion < 2) _addSyncColumns(batch);
+    if (oldVersion < 3) _addIncome(batch);
+    if (oldVersion < 4) _addRecurring(batch);
+    if (oldVersion < 5) _addPeople(batch);
+    if (oldVersion < 6) _addDeviceSettings(batch);
+    await batch.commit(noResult: true);
+  }
+
+  /// Schema version 6. No sync columns: the rows are never uploaded, backed
+  /// up to a file, or overwritten by a restore.
+  static void _addDeviceSettings(Batch batch) {
+    batch.execute('''
+      CREATE TABLE device_settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      )
+    ''');
+  }
+
+  /// Schema version 5. Born with the sync columns every table has had since
+  /// version 2.
+  ///
+  /// A transaction is open until `settled_at` is set, together with the
+  /// `settlement_id` of the settle-up that cleared it. A settlement's
+  /// `net_amount` is the balance it cleared: positive when the person paid
+  /// the user back, negative when the user paid them.
+  ///
+  /// `settlement_id` and a settlement's `expense_id` are plain references,
+  /// not foreign keys: the rows they point at can arrive later, or be
+  /// deleted on their own.
+  void _addPeople(Batch batch) {
+    batch
+      ..execute('''
+        CREATE TABLE people (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          phone TEXT,
+          color_value INTEGER NOT NULL,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL DEFAULT 0,
+          deleted_at INTEGER,
+          dirty INTEGER NOT NULL DEFAULT 1
+        )
+      ''')
+      ..execute('''
+        CREATE TABLE settlements (
+          id TEXT PRIMARY KEY,
+          person_id TEXT NOT NULL,
+          net_amount REAL NOT NULL,
+          settled_at INTEGER NOT NULL,
+          expense_id TEXT,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL DEFAULT 0,
+          deleted_at INTEGER,
+          dirty INTEGER NOT NULL DEFAULT 1,
+          FOREIGN KEY (person_id) REFERENCES people (id) ON DELETE RESTRICT
+        )
+      ''')
+      ..execute('''
+        CREATE TABLE person_transactions (
+          id TEXT PRIMARY KEY,
+          person_id TEXT NOT NULL,
+          amount REAL NOT NULL,
+          type TEXT NOT NULL,
+          note TEXT,
+          date INTEGER NOT NULL,
+          settled_at INTEGER,
+          settlement_id TEXT,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL DEFAULT 0,
+          deleted_at INTEGER,
+          dirty INTEGER NOT NULL DEFAULT 1,
+          FOREIGN KEY (person_id) REFERENCES people (id) ON DELETE RESTRICT
+        )
+      ''')
+      ..execute('''
+        CREATE TABLE person_transaction_edits (
+          id TEXT PRIMARY KEY,
+          transaction_id TEXT NOT NULL,
+          amount REAL NOT NULL,
+          type TEXT NOT NULL,
+          note TEXT,
+          date INTEGER NOT NULL,
+          edited_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL DEFAULT 0,
+          deleted_at INTEGER,
+          dirty INTEGER NOT NULL DEFAULT 1,
+          FOREIGN KEY (transaction_id)
+            REFERENCES person_transactions (id) ON DELETE RESTRICT
+        )
+      ''')
+      ..execute(
+        'CREATE INDEX idx_person_transactions_person '
+        'ON person_transactions (person_id)',
+      )
+      ..execute(
+        'CREATE INDEX idx_settlements_person ON settlements (person_id)',
+      )
+      ..execute(
+        'CREATE INDEX idx_person_transaction_edits_transaction '
+        'ON person_transaction_edits (transaction_id)',
+      );
+    for (final table in peopleTables) {
+      batch.execute(
+        'CREATE INDEX idx_${table}_dirty ON $table (dirty) WHERE dirty = 1',
+      );
+    }
+  }
+
+  /// The people and debts tables, parents before children: the order they
+  /// are written in, and the reverse of the order they can be removed in.
+  static const List<String> peopleTables = [
+    'people',
+    'settlements',
+    'person_transactions',
+    'person_transaction_edits',
+  ];
+
+  /// Schema version 4. Born with the sync columns every table has had since
+  /// version 2.
+  void _addRecurring(Batch batch) {
+    batch
+      ..execute('''
+        CREATE TABLE recurring_expenses (
+          id TEXT PRIMARY KEY,
+          title TEXT NOT NULL,
+          amount REAL NOT NULL,
+          category_id TEXT NOT NULL,
+          frequency TEXT NOT NULL DEFAULT 'monthly',
+          due_day INTEGER NOT NULL,
+          due_month INTEGER,
+          mode TEXT NOT NULL DEFAULT 'reminder',
+          starts_on TEXT NOT NULL,
+          paid_through TEXT,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL DEFAULT 0,
+          deleted_at INTEGER,
+          dirty INTEGER NOT NULL DEFAULT 1,
+          FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE RESTRICT
+        )
+      ''')
+      ..execute(
+        'CREATE INDEX idx_recurring_expenses_dirty '
+        'ON recurring_expenses (dirty) WHERE dirty = 1',
+      );
+  }
+
+  /// Schema version 3. Everything already recorded is spending, which is what
+  /// the column's default says. The income categories are built-ins nobody
+  /// has edited yet, so like the others they start at `updated_at` 0; they
+  /// are skipped if a sync already brought them in.
+  void _addIncome(Batch batch) {
+    batch.execute(
+      "ALTER TABLE categories ADD COLUMN type TEXT NOT NULL DEFAULT 'expense'",
+    );
+    for (final (index, category) in defaultIncomeCategories.indexed) {
+      batch.insert('categories', {
+        ...category,
+        'type': 'income',
+        'is_default': 1,
+        'sort_order': index,
+        'updated_at': 0,
+      }, conflictAlgorithm: ConflictAlgorithm.ignore);
+    }
+  }
+
+  /// Schema version 2. Everything already on the phone starts out dirty, so
+  /// the first backup uploads all of it.
+  void _addSyncColumns(Batch batch) {
+    for (final table in ['categories', 'expenses']) {
+      batch
+        ..execute(
+          'ALTER TABLE $table ADD COLUMN updated_at INTEGER NOT NULL DEFAULT 0',
+        )
+        ..execute('ALTER TABLE $table ADD COLUMN deleted_at INTEGER')
+        ..execute(
+          'ALTER TABLE $table ADD COLUMN dirty INTEGER NOT NULL DEFAULT 1',
+        )
+        ..execute(
+          'CREATE INDEX idx_${table}_dirty ON $table (dirty) WHERE dirty = 1',
+        );
+    }
+    batch
+      ..execute(
+        'ALTER TABLE settings ADD COLUMN updated_at INTEGER NOT NULL DEFAULT 0',
+      )
+      ..execute(
+        'ALTER TABLE settings ADD COLUMN dirty INTEGER NOT NULL DEFAULT 1',
+      );
+
+    final now = nowMillis();
+    batch
+      ..execute('UPDATE expenses SET updated_at = created_at')
+      ..execute('UPDATE categories SET updated_at = ?', [now])
+      ..execute('UPDATE settings SET updated_at = ?', [now]);
+    // A built-in category nobody has edited is the same on every phone. It
+    // stays at 0 so that an edit to it made anywhere else always wins.
+    for (final category in defaultCategories) {
+      batch.execute(
+        'UPDATE categories SET updated_at = 0 '
+        'WHERE id = ? AND name = ? AND icon_name = ? AND color_value = ?',
+        [
+          category['id'],
+          category['name'],
+          category['icon_name'],
+          category['color_value'],
+        ],
+      );
+    }
+
+    // Local bookkeeping for sync (who this phone's data belongs to, when it
+    // last synced). Never uploaded.
+    batch.execute('''
+      CREATE TABLE sync_meta (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      )
+    ''');
   }
 
   /// Seeded on first launch. `icon_name` is a key into the app's const icon
@@ -149,6 +426,40 @@ class AppDatabase {
       'name': 'Other',
       'icon_name': 'category',
       'color_value': 0xFF546E7A,
+    },
+  ];
+
+  /// Seeded by schema version 3, on a fresh install and an upgrade alike.
+  static const List<Map<String, Object>> defaultIncomeCategories = [
+    {
+      'id': 'cat_salary',
+      'name': 'Salary',
+      'icon_name': 'payments',
+      'color_value': 0xFF2E7D32,
+    },
+    {
+      'id': 'cat_freelance',
+      'name': 'Freelance',
+      'icon_name': 'laptop',
+      'color_value': 0xFF00897B,
+    },
+    {
+      'id': 'cat_investments',
+      'name': 'Investments',
+      'icon_name': 'trending_up',
+      'color_value': 0xFF558B2F,
+    },
+    {
+      'id': 'cat_gifts',
+      'name': 'Gifts',
+      'icon_name': 'card_giftcard',
+      'color_value': 0xFF00838F,
+    },
+    {
+      'id': ExpenseCategory.incomeFallbackId,
+      'name': 'Other income',
+      'icon_name': 'savings',
+      'color_value': 0xFF607D8B,
     },
   ];
 }

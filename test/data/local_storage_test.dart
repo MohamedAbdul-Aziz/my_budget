@@ -5,12 +5,17 @@ import 'package:my_budget/core/error/failures.dart';
 import 'package:my_budget/features/categories/data/datasources/category_local_data_source.dart';
 import 'package:my_budget/features/categories/data/repositories/category_repository_impl.dart';
 import 'package:my_budget/features/categories/domain/entities/expense_category.dart';
+import 'package:my_budget/features/categories/domain/entities/transaction_type.dart';
 import 'package:my_budget/features/categories/domain/repositories/category_repository.dart';
 import 'package:my_budget/features/categories/domain/usecases/delete_category.dart';
 import 'package:my_budget/features/expenses/data/datasources/expense_local_data_source.dart';
 import 'package:my_budget/features/expenses/data/repositories/expense_repository_impl.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
+import 'package:my_budget/features/expenses/domain/entities/transaction_search.dart';
 import 'package:my_budget/features/expenses/domain/repositories/expense_repository.dart';
+import 'package:my_budget/features/settings/data/datasources/settings_local_data_source.dart';
+import 'package:my_budget/features/settings/data/repositories/settings_repository_impl.dart';
+import 'package:my_budget/features/settings/domain/entities/app_settings.dart';
 
 void main() {
   late AppDatabase database;
@@ -20,9 +25,7 @@ void main() {
   setUp(() {
     database = AppDatabase(inMemory: true);
     expenses = ExpenseRepositoryImpl(ExpenseLocalDataSourceImpl(database));
-    categories = CategoryRepositoryImpl(
-      CategoryLocalDataSourceImpl(database),
-    );
+    categories = CategoryRepositoryImpl(CategoryLocalDataSourceImpl(database));
   });
 
   tearDown(() => database.close());
@@ -31,10 +34,17 @@ void main() {
     final result = await categories.getCategories();
     final seeded = result.dataOrNull!;
 
-    expect(seeded, hasLength(8));
+    expect(seeded, hasLength(13));
     expect(
       seeded.map((category) => category.name),
       containsAll(['Food', 'Transportation', 'Bills', 'Other']),
+    );
+    expect(
+      [
+        for (final category in seeded)
+          if (category.isIncome) category.name,
+      ],
+      ['Salary', 'Freelance', 'Investments', 'Gifts', 'Other income'],
     );
     expect(seeded.every((category) => category.isDefault), isTrue);
   });
@@ -48,7 +58,7 @@ void main() {
     );
     expect(added.isSuccess, isTrue);
 
-    final month = await expenses.getExpensesForMonth(const Month(2026, 8));
+    final month = await expenses.getTransactionsForMonth(const Month(2026, 8));
     final stored = month.dataOrNull!;
 
     expect(stored, hasLength(1));
@@ -74,7 +84,7 @@ void main() {
       date: DateTime(2026, 8, 15),
     );
 
-    final august = (await expenses.getExpensesForMonth(
+    final august = (await expenses.getTransactionsForMonth(
       const Month(2026, 8),
     )).dataOrNull!;
     expect(august.map((expense) => expense.amount), [30, 20]);
@@ -103,10 +113,10 @@ void main() {
       date: DateTime(2026, 9, 2),
     );
 
-    final august = (await expenses.getExpensesForMonth(
+    final august = (await expenses.getTransactionsForMonth(
       const Month(2026, 8),
     )).dataOrNull!;
-    final september = (await expenses.getExpensesForMonth(
+    final september = (await expenses.getTransactionsForMonth(
       const Month(2026, 9),
     )).dataOrNull!;
 
@@ -119,6 +129,7 @@ void main() {
       name: 'Coffee',
       iconName: 'local_cafe',
       colorValue: 0xFF6D4C41,
+      type: TransactionType.expense,
     )).dataOrNull!;
 
     await expenses.addExpense(
@@ -134,11 +145,79 @@ void main() {
     expect(remaining.any((category) => category.id == custom.id), isFalse);
 
     // The spending survives — only its label changed.
-    final august = (await expenses.getExpensesForMonth(
+    final august = (await expenses.getTransactionsForMonth(
       const Month(2026, 8),
     )).dataOrNull!;
     expect(august.single.amount, 4);
     expect(august.single.category.id, ExpenseCategory.fallbackId);
+  });
+
+  test(
+    'deleting an income category moves its income to Other income',
+    () async {
+      final bonus = (await categories.createCategory(
+        name: 'Bonus',
+        iconName: 'savings',
+        colorValue: 0xFF2E7D32,
+        type: TransactionType.income,
+      )).dataOrNull!;
+      expect(bonus.isIncome, isTrue);
+
+      await expenses.addExpense(
+        amount: 250,
+        categoryId: bonus.id,
+        date: DateTime(2026, 8, 3),
+      );
+
+      expect((await categories.deleteCategory(bonus.id)).dataOrNull, 1);
+
+      // Still income: it never turns into spending.
+      final august = (await expenses.getTransactionsForMonth(
+        const Month(2026, 8),
+      )).dataOrNull!;
+      expect(august.single.category.id, ExpenseCategory.incomeFallbackId);
+      expect(august.single.isIncome, isTrue);
+    },
+  );
+
+  test(
+    'month totals count spending only, income-only months included',
+    () async {
+      await expenses.addExpense(
+        amount: 2000,
+        categoryId: 'cat_salary',
+        date: DateTime(2026, 8, 1),
+      );
+      await expenses.addExpense(
+        amount: 30,
+        categoryId: 'cat_food',
+        date: DateTime(2026, 8, 2),
+      );
+      await expenses.addExpense(
+        amount: 500,
+        categoryId: 'cat_freelance',
+        date: DateTime(2026, 9, 1),
+      );
+
+      final summaries = (await expenses.getMonthlySummaries()).dataOrNull!;
+
+      expect(summaries.map((row) => (row.month, row.total, row.expenseCount)), [
+        (const Month(2026, 9), 0.0, 0),
+        (const Month(2026, 8), 30.0, 1),
+      ]);
+    },
+  );
+
+  test('refuses to delete either fallback category', () async {
+    final all = (await categories.getCategories()).dataOrNull!;
+    final otherIncome = all.firstWhere(
+      (category) => category.id == ExpenseCategory.incomeFallbackId,
+    );
+
+    final result = await DeleteCategory(categories)(otherIncome);
+
+    expect(result.failureOrNull, isA<ValidationFailure>());
+    expect((await categories.getCategories()).dataOrNull, hasLength(13));
   });
 
   test('refuses to delete the fallback category', () async {
@@ -149,7 +228,7 @@ void main() {
     final result = await DeleteCategory(categories)(other);
 
     expect(result.failureOrNull, isA<ValidationFailure>());
-    expect((await categories.getCategories()).dataOrNull, hasLength(8));
+    expect((await categories.getCategories()).dataOrNull, hasLength(13));
   });
 
   test('deleting an expense removes it from its month', () async {
@@ -162,7 +241,7 @@ void main() {
     await expenses.deleteExpense(created.id);
 
     expect(
-      (await expenses.getExpensesForMonth(const Month(2026, 8))).dataOrNull,
+      (await expenses.getTransactionsForMonth(const Month(2026, 8))).dataOrNull,
       isEmpty,
     );
   });
@@ -217,5 +296,145 @@ void main() {
 
     expect(result, isA<ResultFailure<dynamic>>());
     expect(result.failureOrNull, isA<DatabaseFailure>());
+  });
+
+  group('search', () {
+    setUp(() async {
+      Future<void> add(
+        double amount,
+        String categoryId,
+        DateTime date, [
+        String? note,
+      ]) => expenses.addExpense(
+        amount: amount,
+        categoryId: categoryId,
+        date: date,
+        description: note,
+      );
+
+      await add(12.5, 'cat_food', DateTime(2026, 6, 3), 'Lunch with Sara');
+      await add(80, 'cat_bills', DateTime(2026, 7, 15), 'Internet');
+      await add(3000, 'cat_salary', DateTime(2026, 7, 28), 'July salary');
+      await add(40, 'cat_food', DateTime(2026, 8, 2), 'Кафе');
+      await add(15, 'cat_shopping', DateTime(2026, 8, 20), '100% cotton');
+      await add(80, 'cat_transport', DateTime(2026, 8, 21));
+    });
+
+    Future<List<String?>> notes(TransactionSearch search) async => [
+      for (final expense in (await expenses.searchTransactions(
+        search,
+        limit: 200,
+      )).dataOrNull!)
+        expense.description,
+    ];
+
+    test('finds notes in every month, ignoring case, newest first', () async {
+      expect(await notes(const TransactionSearch(text: 'SALARY')), [
+        'July salary',
+      ]);
+      expect(await notes(const TransactionSearch(text: 'N')), [
+        '100% cotton',
+        'Internet',
+        'Lunch with Sara',
+      ]);
+    });
+
+    test('ignores the case of any alphabet, not only English', () async {
+      expect(await notes(const TransactionSearch(text: 'кафе')), ['Кафе']);
+    });
+
+    test('takes % and _ in the text literally', () async {
+      expect(await notes(const TransactionSearch(text: '0%')), ['100% cotton']);
+      expect(await notes(const TransactionSearch(text: '_')), isEmpty);
+    });
+
+    test('finds an amount typed either way', () async {
+      expect(await notes(const TransactionSearch(text: '80')), [
+        null,
+        'Internet',
+      ]);
+      expect(await notes(const TransactionSearch(text: '12,5')), [
+        'Lunch with Sara',
+      ]);
+    });
+
+    test('filters by type, category and dates, all at once', () async {
+      expect(
+        await notes(const TransactionSearch(type: TransactionType.income)),
+        ['July salary'],
+      );
+      expect(await notes(const TransactionSearch(categoryIds: {'cat_food'})), [
+        'Кафе',
+        'Lunch with Sara',
+      ]);
+      expect(
+        await notes(
+          TransactionSearch(
+            type: TransactionType.expense,
+            from: DateTime(2026, 7, 15),
+            to: DateTime(2026, 8, 2),
+          ),
+        ),
+        // Both ends are included, whatever the time of day.
+        ['Кафе', 'Internet'],
+      );
+    });
+
+    test('skips deleted transactions', () async {
+      final month = (await expenses.getTransactionsForMonth(
+        const Month(2026, 7),
+      )).dataOrNull!;
+      await expenses.deleteExpense(
+        month.firstWhere((expense) => expense.description == 'Internet').id,
+      );
+
+      expect(await notes(const TransactionSearch(text: 'internet')), isEmpty);
+    });
+
+    test('stops at the limit', () async {
+      final found = await expenses.searchTransactions(
+        const TransactionSearch(type: TransactionType.expense),
+        limit: 2,
+      );
+      expect(found.dataOrNull, hasLength(2));
+    });
+  });
+
+  group('the language preference', () {
+    test('keeps any translated language across restarts', () async {
+      final settings = SettingsRepositoryImpl(
+        SettingsLocalDataSourceImpl(database),
+      );
+      await settings.saveLanguage(AppLanguage.ukrainian);
+
+      final reopened = SettingsRepositoryImpl(
+        SettingsLocalDataSourceImpl(database),
+      );
+      expect(
+        (await reopened.loadSettings()).dataOrNull!.language,
+        AppLanguage.ukrainian,
+      );
+    });
+
+    test('reads a language this version does not know as the device '
+        'setting', () async {
+      // As a newer app version might have left it, e.g. through a restore.
+      await SettingsLocalDataSourceImpl(database).write('language', 'klingon');
+
+      final settings = SettingsRepositoryImpl(
+        SettingsLocalDataSourceImpl(database),
+      );
+      expect(
+        (await settings.loadSettings()).dataOrNull!.language,
+        AppLanguage.system,
+      );
+    });
+
+    test('keeps the names older versions stored', () {
+      // Stored by name: renaming one would silently reset users to "system".
+      expect(AppLanguage.english.name, 'english');
+      expect(AppLanguage.arabic.name, 'arabic');
+      expect(AppLanguage.system.name, 'system');
+    });
   });
 }

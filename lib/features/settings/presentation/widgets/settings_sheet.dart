@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/error/failures.dart';
 import '../../../../core/l10n/app_strings.dart';
+import '../../../app_lock/presentation/widgets/app_lock_section.dart';
+import '../../../auth/domain/entities/app_user.dart';
+import '../../../auth/presentation/cubit/account_cubit.dart';
+import '../../../auth/presentation/cubit/account_state.dart';
+import '../../../auth/presentation/pages/sign_in_page.dart';
+import '../../../data_management/presentation/widgets/data_management_section.dart';
+import '../../../reminders/presentation/widgets/reminder_section.dart';
+import '../../../sync/presentation/widgets/backup_section.dart';
 import '../../domain/entities/app_settings.dart';
 import '../../domain/usecases/save_currency_symbol.dart';
 import '../cubit/settings_cubit.dart';
 import '../cubit/settings_state.dart';
 
-/// Appearance, language and currency. Everything stays on the device.
+/// Account and cloud backup, files kept on the phone, appearance, language,
+/// currency, the daily reminder and the app lock.
 class SettingsSheet extends StatelessWidget {
   const SettingsSheet({super.key});
 
@@ -46,6 +56,14 @@ class SettingsSheet extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
+              Text(strings.account, style: theme.textTheme.labelLarge),
+              const SizedBox(height: 10),
+              const _AccountSection(),
+              const SizedBox(height: 24),
+              Text(strings.dataManagement, style: theme.textTheme.labelLarge),
+              const SizedBox(height: 6),
+              const DataManagementSection(),
+              const SizedBox(height: 24),
               Text(strings.appearance, style: theme.textTheme.labelLarge),
               const SizedBox(height: 10),
               const _ThemeModeSelector(),
@@ -57,17 +75,169 @@ class SettingsSheet extends StatelessWidget {
               Text(strings.currency, style: theme.textTheme.labelLarge),
               const SizedBox(height: 10),
               const _CurrencyField(),
-              const SizedBox(height: 20),
-              Text(
-                strings.storedOnThisDevice,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
+              const ReminderSection(),
+              const AppLockSection(),
+              const _GuestStorageNote(),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Who is signed in, or a way to sign in. Signing in is optional.
+class _AccountSection extends StatelessWidget {
+  const _AccountSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = context.strings;
+
+    return BlocSelector<AccountCubit, AccountState, AppUser?>(
+      selector: (state) => switch (state) {
+        SignedIn(:final user) => user,
+        SignedOut() => null,
+      },
+      builder: (context, user) => switch (user) {
+        null => SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            icon: const Icon(Icons.login_rounded),
+            label: Text(strings.signIn),
+            onPressed: () => Navigator.of(context).push(SignInPage.route()),
+          ),
+        ),
+        final user => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const CircleAvatar(child: Icon(Icons.person_rounded)),
+              title: Text(user.email, overflow: TextOverflow.ellipsis),
+              subtitle: Text(strings.signedIn),
+              trailing: TextButton(
+                onPressed: () => context.read<AccountCubit>().signOut(),
+                child: Text(strings.signOut),
+              ),
+            ),
+            const SizedBox(height: 8),
+            const BackupSection(),
+            const SizedBox(height: 12),
+            const _DeleteAccountButton(),
+          ],
+        ),
+      },
+    );
+  }
+}
+
+/// Google Play requires a way to delete the account from inside any app that
+/// lets people create one.
+class _DeleteAccountButton extends StatelessWidget {
+  const _DeleteAccountButton();
+
+  Future<void> _confirmAndDelete(BuildContext context) async {
+    final strings = context.strings;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(strings.deleteAccountTitle),
+        content: Text(strings.deleteAccountBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(strings.cancel),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(dialogContext).colorScheme.error,
+            ),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(strings.delete),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final deleted = await context.read<AccountCubit>().deleteAccount();
+    if (!deleted) return;
+
+    // Close the sheet so the confirmation shows on the home screen.
+    navigator.pop();
+    messenger.showSnackBar(SnackBar(content: Text(strings.accountDeleted)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = context.strings;
+    final errorColor = Theme.of(context).colorScheme.error;
+
+    return BlocSelector<AccountCubit, AccountState, (bool, FailureCode?)>(
+      selector: (state) => switch (state) {
+        SignedIn(:final isDeleting, :final deleteError) => (
+          isDeleting,
+          deleteError,
+        ),
+        SignedOut() => (false, null),
+      },
+      builder: (context, status) {
+        final (isDeleting, error) = status;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (isDeleting)
+              Row(
+                children: [
+                  const SizedBox.square(
+                    dimension: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(strings.deletingAccount),
+                ],
+              )
+            else
+              TextButton.icon(
+                style: TextButton.styleFrom(foregroundColor: errorColor),
+                icon: const Icon(Icons.delete_forever_outlined),
+                label: Text(strings.deleteAccount),
+                onPressed: () => _confirmAndDelete(context),
+              ),
+            if (error != null)
+              Text(strings.failure(error), style: TextStyle(color: errorColor)),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Where a guest's data lives. A signed-in user sees the backup controls
+/// instead.
+class _GuestStorageNote extends StatelessWidget {
+  const _GuestStorageNote();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return BlocSelector<AccountCubit, AccountState, bool>(
+      selector: (state) => state is SignedOut,
+      builder: (context, isGuest) => isGuest
+          ? Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Text(
+                context.strings.storedOnThisDevice,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            )
+          : const SizedBox.shrink(),
     );
   }
 }
@@ -108,35 +278,44 @@ class _ThemeModeSelector extends StatelessWidget {
   }
 }
 
-/// Language names are always written in their own language, so the option is
-/// readable even when the app is currently in the other one.
+/// Offers the device setting, English and the device's own language — not
+/// every translation. Language names are always written in their own
+/// language, so each option is readable whatever the app is currently in.
 class _LanguageSelector extends StatelessWidget {
   const _LanguageSelector();
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<SettingsCubit, SettingsState, AppLanguage>(
-      selector: (state) => state.settings.language,
-      builder: (context, language) => SegmentedButton<AppLanguage>(
-        segments: [
-          ButtonSegment(
-            value: AppLanguage.system,
-            label: Text(context.strings.languageSystem),
-          ),
-          const ButtonSegment(
-            value: AppLanguage.english,
-            label: Text('English'),
-          ),
-          const ButtonSegment(
-            value: AppLanguage.arabic,
-            label: Text('العربية'),
-          ),
-        ],
-        selected: {language},
-        showSelectedIcon: false,
-        onSelectionChanged: (selection) =>
-            context.read<SettingsCubit>().setLanguage(selection.first),
-      ),
+    // The options depend only on these two, and enums compare by value.
+    return BlocSelector<
+      SettingsCubit,
+      SettingsState,
+      (AppLanguage, AppLanguage?)
+    >(
+      selector: (state) => (state.settings.language, state.deviceLanguage),
+      builder: (context, selection) {
+        final (language, _) = selection;
+        final options = context.read<SettingsCubit>().state.pickerLanguages;
+        return SegmentedButton<AppLanguage>(
+          segments: [
+            for (final option in options)
+              ButtonSegment(
+                value: option,
+                label: Text(
+                  option == AppLanguage.system
+                      ? context.strings.languageSystem
+                      : option.nativeName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+          ],
+          selected: {language},
+          showSelectedIcon: false,
+          onSelectionChanged: (selection) =>
+              context.read<SettingsCubit>().setLanguage(selection.first),
+        );
+      },
     );
   }
 }

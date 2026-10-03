@@ -32,10 +32,11 @@ class SettingsLocalDataSourceImpl implements SettingsLocalDataSource {
   Future<void> write(String key, String value) async {
     try {
       final db = await _appDatabase.database;
-      await db.insert('settings', {
-        'key': key,
-        'value': value,
-      }, conflictAlgorithm: ConflictAlgorithm.replace);
+      await db.insert(
+        'settings',
+        AppDatabase.changed({'key': key, 'value': value}),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
     } on DatabaseException catch (error) {
       throw DatabaseFailure('write setting: $error');
     }

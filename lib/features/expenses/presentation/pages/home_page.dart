@@ -4,7 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/app_formats.dart';
 import '../../../../core/utils/ui_notice.dart';
+import '../../../budgets/presentation/widgets/budget_card.dart';
 import '../../../categories/presentation/pages/categories_page.dart';
+import '../../../recurring/presentation/pages/recurring_page.dart';
+import '../../../recurring/presentation/widgets/recurring_due_card.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../../settings/presentation/widgets/settings_sheet.dart';
 import '../../domain/entities/expense.dart';
@@ -15,10 +18,12 @@ import '../cubit/home_cubit.dart';
 import '../cubit/home_state.dart';
 import '../widgets/expense_tile.dart';
 import '../widgets/month_picker_sheet.dart';
-import '../widgets/month_total_card.dart';
+import '../widgets/month_summary_card.dart';
 import 'expense_form_page.dart';
+import 'search_page.dart';
 
-/// The month at a glance: what it cost, where it went, and what was spent.
+/// The month at a glance: what came in, what it cost, what is left, where
+/// the spending went, and everything recorded.
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -32,6 +37,16 @@ class HomePage extends StatelessWidget {
         title: const _MonthTitleButton(),
         actions: [
           IconButton(
+            tooltip: strings.search,
+            icon: const Icon(Icons.search_rounded),
+            onPressed: () => Navigator.of(context).push(SearchPage.route()),
+          ),
+          IconButton(
+            tooltip: strings.recurringPayments,
+            icon: const Icon(Icons.event_repeat_rounded),
+            onPressed: () => Navigator.of(context).push(RecurringPage.route()),
+          ),
+          IconButton(
             tooltip: strings.categories,
             icon: const Icon(Icons.label_outline_rounded),
             onPressed: () => Navigator.of(context).push(CategoriesPage.route()),
@@ -44,11 +59,6 @@ class HomePage extends StatelessWidget {
           const SizedBox(width: 4),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _openForm(context),
-        icon: const Icon(Icons.add_rounded),
-        label: Text(strings.add),
-      ),
       body: BlocConsumer<HomeCubit, HomeState>(
         listenWhen: (previous, current) =>
             current is HomeReady && current.notice != null,
@@ -58,7 +68,9 @@ class HomePage extends StatelessWidget {
           // Undo belongs to the delete notice only — a later error snackbar
           // must not offer to restore an unrelated expense.
           final canUndo =
-              ready.canUndoDelete && notice.code == NoticeCode.expenseDeleted;
+              ready.canUndoDelete &&
+              (notice.code == NoticeCode.expenseDeleted ||
+                  notice.code == NoticeCode.incomeDeleted);
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
@@ -95,6 +107,22 @@ class HomePage extends StatelessWidget {
     ).push(ExpenseFormPage.route(existing: existing));
     if (saved ?? false) await cubit.refresh();
   }
+}
+
+/// Records a new expense, or income from the form's toggle.
+///
+/// The app shell's scaffold hosts it rather than [HomePage]'s own: snackbars
+/// appear on the outermost scaffold, and only a button on that same scaffold
+/// is lifted clear of them instead of being covered.
+class AddExpenseButton extends StatelessWidget {
+  const AddExpenseButton({super.key});
+
+  @override
+  Widget build(BuildContext context) => FloatingActionButton.extended(
+    onPressed: () => HomePage._openForm(context),
+    icon: const Icon(Icons.add_rounded),
+    label: Text(context.strings.add),
+  );
 }
 
 /// Tapping the month name opens the month switcher.
@@ -177,9 +205,20 @@ class _MonthView extends StatelessWidget {
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             sliver: SliverToBoxAdapter(
-              child: MonthTotalCard(overview: overview, formats: formats),
+              child: MonthSummaryCard(overview: overview, formats: formats),
             ),
           ),
+          const SliverPadding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
+            sliver: SliverToBoxAdapter(child: BudgetCard()),
+          ),
+          // Reminders are about today, so they are asked about in the
+          // current month only, not while looking back at another.
+          if (overview.month.isCurrent)
+            const SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              sliver: SliverToBoxAdapter(child: RecurringDueCard()),
+            ),
           if (overview.isEmpty)
             const SliverFillRemaining(
               hasScrollBody: false,
@@ -189,7 +228,7 @@ class _MonthView extends StatelessWidget {
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 96),
               sliver: _ExpenseSliver(
-                expenses: overview.expenses,
+                expenses: overview.transactions,
                 formats: formats,
               ),
             ),
@@ -227,7 +266,10 @@ class _ExpenseSliver extends StatelessWidget {
         if (!startsNewDay) return tile;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [_DayHeader(date: expense.date, formats: formats), tile],
+          children: [
+            _DayHeader(date: expense.date, formats: formats),
+            tile,
+          ],
         );
       },
     );

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_expense_widget_label">Быстрый расход</string>
+    <string name="quick_expense_widget_description">Добавьте расход в два касания.</string>
+
+    <string name="quick_expense_title">Быстрый расход</string>
+    <string name="quick_expense_add">Добавить расход</string>
+</resources>

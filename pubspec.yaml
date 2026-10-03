@@ -1,5 +1,5 @@
 name: my_budget
-description: "Offline personal expense tracker. All data stays on the device."
+description: "Local-first expense and income tracker with optional cloud backup."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -43,6 +43,18 @@ dependencies:
   sqflite_common_ffi: ^2.3.7+1
   flutter_localizations:
     sdk: flutter
+  supabase_flutter: ^2.17.2
+  http: ^1.6.0
+  share_plus: ^12.0.2
+  file_picker: ^11.0.3
+  pdf: ^3.12.0
+  path_provider: ^2.1.5
+  flutter_local_notifications: ^20.1.0
+  timezone: ^0.10.1
+  flutter_timezone: ^5.1.0
+  local_auth: ^3.0.1
+  local_auth_android: ^2.0.8
+  local_auth_darwin: ^2.0.1
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +66,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  change_app_package_name: ^1.5.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -65,6 +78,15 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Embedded in exported PDF reports: IBM Plex Sans Arabic has Latin and
+  # every Arabic, Persian and Urdu presentation form the PDF layout draws
+  # joined Arabic with; IBM Plex Sans adds Latin Extended and Cyrillic for the
+  # other translated languages (SIL OFL, see assets/pdf_fonts/OFL.txt).
+  # Chinese, Japanese and Korean reports are written in English instead of
+  # bundling their multi-megabyte fonts.
+  assets:
+    - assets/pdf_fonts/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

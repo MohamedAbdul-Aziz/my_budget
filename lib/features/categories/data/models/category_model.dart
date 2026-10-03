@@ -1,4 +1,5 @@
 import '../../domain/entities/expense_category.dart';
+import '../../domain/entities/transaction_type.dart';
 
 /// Maps a `categories` row to the domain entity and back.
 class CategoryModel extends ExpenseCategory {
@@ -7,6 +8,7 @@ class CategoryModel extends ExpenseCategory {
     required super.name,
     required super.iconName,
     required super.colorValue,
+    super.type,
     super.isDefault,
     super.sortOrder,
   });
@@ -16,6 +18,7 @@ class CategoryModel extends ExpenseCategory {
     name: map['name']! as String,
     iconName: map['icon_name']! as String,
     colorValue: (map['color_value']! as num).toInt(),
+    type: TransactionType.fromStorageKey(map['type']),
     isDefault: (map['is_default'] as num?)?.toInt() == 1,
     sortOrder: (map['sort_order'] as num?)?.toInt() ?? 0,
   );
@@ -25,6 +28,7 @@ class CategoryModel extends ExpenseCategory {
     name: category.name,
     iconName: category.iconName,
     colorValue: category.colorValue,
+    type: category.type,
     isDefault: category.isDefault,
     sortOrder: category.sortOrder,
   );
@@ -34,6 +38,7 @@ class CategoryModel extends ExpenseCategory {
     'name': name,
     'icon_name': iconName,
     'color_value': colorValue,
+    'type': type.storageKey,
     'is_default': isDefault ? 1 : 0,
     'sort_order': sortOrder,
   };

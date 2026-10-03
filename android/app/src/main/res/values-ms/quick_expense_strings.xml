@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_expense_widget_label">Perbelanjaan pantas</string>
+    <string name="quick_expense_widget_description">Tambah perbelanjaan dengan dua ketikan.</string>
+
+    <string name="quick_expense_title">Perbelanjaan pantas</string>
+    <string name="quick_expense_add">Tambah perbelanjaan</string>
+</resources>

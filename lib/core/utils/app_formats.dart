@@ -37,6 +37,13 @@ class AppFormats {
       dayMonth: DateFormat.MMMd(dateLocale),
       weekdayDayMonth: DateFormat.MMMEd(dateLocale),
       dayMonthYear: DateFormat.yMMMd(dateLocale),
+      time: DateFormat.jm(dateLocale),
+      shortMonth: DateFormat.MMM(dateLocale),
+      monthName: DateFormat.MMMM(dateLocale),
+      weekday: DateFormat.EEEE(dateLocale),
+      shortWeekday: DateFormat.E(dateLocale),
+      percent: NumberFormat.percentPattern(numberLocale),
+      integer: NumberFormat.decimalPattern(numberLocale),
     );
   }
 
@@ -65,12 +72,26 @@ class AppFormats {
     required DateFormat dayMonth,
     required DateFormat weekdayDayMonth,
     required DateFormat dayMonthYear,
+    required DateFormat time,
+    required DateFormat shortMonth,
+    required DateFormat monthName,
+    required DateFormat weekday,
+    required DateFormat shortWeekday,
+    required NumberFormat percent,
+    required NumberFormat integer,
   }) : _full = full,
        _whole = whole,
        _monthYear = monthYear,
        _dayMonth = dayMonth,
        _weekdayDayMonth = weekdayDayMonth,
-       _dayMonthYear = dayMonthYear;
+       _dayMonthYear = dayMonthYear,
+       _time = time,
+       _shortMonth = shortMonth,
+       _monthName = monthName,
+       _weekday = weekday,
+       _shortWeekday = shortWeekday,
+       _percent = percent,
+       _integer = integer;
 
   final String localeName;
   final String symbol;
@@ -80,6 +101,13 @@ class AppFormats {
   final DateFormat _dayMonth;
   final DateFormat _weekdayDayMonth;
   final DateFormat _dayMonthYear;
+  final DateFormat _time;
+  final DateFormat _shortMonth;
+  final DateFormat _monthName;
+  final DateFormat _weekday;
+  final DateFormat _shortWeekday;
+  final NumberFormat _percent;
+  final NumberFormat _integer;
 
   /// `$12.50` — always two decimals.
   String money(double amount) => _full.format(amount);
@@ -103,6 +131,41 @@ class AppFormats {
         ? _weekdayDayMonth.format(date)
         : _dayMonthYear.format(date);
   }
+
+  /// `12 Aug 2026`: a full date with the year, for reports.
+  String fullDate(DateTime date) => _dayMonthYear.format(date);
+
+  /// `2:05 PM`, or the local equivalent.
+  String time(DateTime date) => _time.format(date);
+
+  /// [time] for a time of day with no date attached, such as the reminder's.
+  String timeOfDay(int hour, int minute) =>
+      _time.format(DateTime(2000, 1, 1, hour, minute));
+
+  /// `Aug`.
+  String shortMonth(Month month) => _shortMonth.format(month.start);
+
+  /// `25%` for 0.25.
+  String percent(double fraction) => _percent.format(fraction);
+
+  /// `15`, in the language's own digits.
+  String number(int value) => _integer.format(value);
+
+  /// `March` for 3.
+  String monthName(int month) => _monthName.format(DateTime(2024, month));
+
+  /// `Friday` for 5, counting from Monday as 1 like [DateTime.weekday].
+  /// 1 January 2024 was a Monday.
+  String weekdayName(int weekday) =>
+      _weekday.format(DateTime(2024, 1, weekday));
+
+  /// `Fri` for 5.
+  String shortWeekdayName(int weekday) =>
+      _shortWeekday.format(DateTime(2024, 1, weekday));
+
+  /// `10 Mar` for a day of the year; 2024 has a 29 February.
+  String dayOfYear(int month, int day) =>
+      _dayMonth.format(DateTime(2024, month, day));
 
   /// 0 for today, 1 for yesterday, and so on.
   static int daysAgo(DateTime date, {DateTime? now}) =>

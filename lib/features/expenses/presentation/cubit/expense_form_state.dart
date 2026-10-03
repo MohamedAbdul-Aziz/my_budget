@@ -1,26 +1,32 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/error/failures.dart';
+import '../../../budgets/domain/entities/budget_alert.dart';
 import '../../../categories/domain/entities/expense_category.dart';
+import '../../../categories/domain/entities/transaction_type.dart';
 
 enum ExpenseFormStatus { editing, submitting, success, failure }
 
-/// Holds only what the form cannot keep in a widget: the chosen category, the
-/// date, and the submission status. The amount and description live in
-/// `TextEditingController`s owned by the page's `State`.
+/// Holds only what the form cannot keep in a widget: expense or income, the
+/// chosen category, the date, and the submission status. The amount and
+/// description live in `TextEditingController`s owned by the page's `State`.
 class ExpenseFormState extends Equatable {
   const ExpenseFormState({
     required this.date,
+    this.type = TransactionType.expense,
     this.expenseId,
     this.category,
     this.status = ExpenseFormStatus.editing,
     this.error,
+    this.budgetAlerts = const [],
   });
 
-  factory ExpenseFormState.initial() =>
-      ExpenseFormState(date: DateTime.now());
+  factory ExpenseFormState.initial() => ExpenseFormState(date: DateTime.now());
 
   final String? expenseId;
+
+  /// Always the type of [category] once one is chosen.
+  final TransactionType type;
   final ExpenseCategory? category;
   final DateTime date;
   final ExpenseFormStatus status;
@@ -28,7 +34,13 @@ class ExpenseFormState extends Equatable {
   /// Why the last submit failed; the UI turns it into a sentence.
   final FailureCode? error;
 
+  /// Budgets the saved expense pushed past 80% or 100%. Set only with
+  /// [ExpenseFormStatus.success].
+  final List<BudgetAlert> budgetAlerts;
+
   bool get isEditing => expenseId != null;
+
+  bool get isIncome => type == TransactionType.income;
 
   bool get isSubmitting => status == ExpenseFormStatus.submitting;
 
@@ -40,21 +52,28 @@ class ExpenseFormState extends Equatable {
     DateTime? date,
     ExpenseFormStatus? status,
     FailureCode? error,
+    List<BudgetAlert>? budgetAlerts,
   }) => ExpenseFormState(
     expenseId: expenseId ?? this.expenseId,
+    // The category decides the type, so the two always change together.
+    type: category?.type ?? type,
     category: category ?? this.category,
     date: date ?? this.date,
     status: status ?? this.status,
-    // Cleared unless explicitly carried over, so a stale error never sticks.
+    // Cleared unless explicitly carried over, so a stale error or alert
+    // never sticks.
     error: error,
+    budgetAlerts: budgetAlerts ?? const [],
   );
 
   @override
   List<Object?> get props => [
     expenseId,
+    type,
     category,
     date,
     status,
     error,
+    budgetAlerts,
   ];
 }

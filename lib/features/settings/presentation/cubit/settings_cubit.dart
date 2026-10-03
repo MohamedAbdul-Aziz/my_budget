@@ -70,9 +70,9 @@ class SettingsCubit extends Cubit<SettingsState> {
   static String formatsLocaleFor(AppLanguage language, String systemLocale) =>
       switch (language) {
         AppLanguage.english => 'en_US',
-        AppLanguage.arabic => 'ar',
-        AppLanguage.system when systemLocale.startsWith('ar') => systemLocale,
-        AppLanguage.system when systemLocale.startsWith('en') => systemLocale,
+        AppLanguage.system when AppLanguage.fromCode(systemLocale) != null =>
+          systemLocale,
         AppLanguage.system => 'en_US',
+        _ => language.languageCode!,
       };
 }

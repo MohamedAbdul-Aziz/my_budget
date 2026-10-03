@@ -3,6 +3,7 @@ import 'package:sqflite/sqflite.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/expense_category.dart';
+import '../../domain/entities/transaction_type.dart';
 import '../models/category_model.dart';
 
 abstract interface class CategoryLocalDataSource {
@@ -12,7 +13,8 @@ abstract interface class CategoryLocalDataSource {
 
   Future<CategoryModel> updateCategory(CategoryModel category);
 
-  /// Returns how many expenses were moved to the fallback category.
+  /// Returns how many transactions were moved to the fallback category of
+  /// the same type.
   Future<int> deleteCategory(String id);
 }
 
@@ -27,7 +29,10 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
       final db = await _appDatabase.database;
       final rows = await db.query(
         'categories',
-        orderBy: 'sort_order ASC, name COLLATE NOCASE ASC',
+        where: 'deleted_at IS NULL',
+        // Spending categories first ('expense' sorts before 'income'), each
+        // type in the user's order.
+        orderBy: 'type ASC, sort_order ASC, name COLLATE NOCASE ASC',
       );
       return rows.map(CategoryModel.fromMap).toList();
     } on DatabaseException catch (error) {
@@ -41,7 +46,7 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
       final db = await _appDatabase.database;
       await db.insert(
         'categories',
-        category.toMap(),
+        AppDatabase.changed(category.toMap()),
         conflictAlgorithm: ConflictAlgorithm.abort,
       );
       return category;
@@ -56,8 +61,8 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
       final db = await _appDatabase.database;
       final count = await db.update(
         'categories',
-        category.toMap(),
-        where: 'id = ?',
+        AppDatabase.changed(category.toMap()),
+        where: 'id = ? AND deleted_at IS NULL',
         whereArgs: [category.id],
       );
       if (count == 0) {
@@ -74,17 +79,44 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
     try {
       final db = await _appDatabase.database;
       return db.transaction((txn) async {
-        // Re-home the expenses first: the FK is ON DELETE RESTRICT, so nothing
-        // is ever silently dropped along with the category.
+        final rows = await txn.query(
+          'categories',
+          columns: ['type'],
+          where: 'id = ? AND deleted_at IS NULL',
+          whereArgs: [id],
+          limit: 1,
+        );
+        if (rows.isEmpty) {
+          throw const NotFoundFailure('category missing');
+        }
+        // Spending moves to Other and income to Other income, so a delete
+        // never turns one into the other.
+        final fallbackId = ExpenseCategory.fallbackIdFor(
+          TransactionType.fromStorageKey(rows.first['type']),
+        );
+
+        // Re-home the transactions first, so nothing is ever silently
+        // dropped along with the category. Each move is a change of its own
+        // that the next backup carries to the cloud.
         final moved = await txn.update(
           'expenses',
-          {'category_id': ExpenseCategory.fallbackId},
-          where: 'category_id = ?',
+          AppDatabase.changed({'category_id': fallbackId}),
+          where: 'category_id = ? AND deleted_at IS NULL',
           whereArgs: [id],
         );
-        final deleted = await txn.delete(
+        // Recurring payments follow, so the ones they log land there too.
+        await txn.update(
+          'recurring_expenses',
+          AppDatabase.changed({'category_id': fallbackId}),
+          where: 'category_id = ? AND deleted_at IS NULL',
+          whereArgs: [id],
+        );
+        // Kept as a marked row rather than deleted, so the delete can sync.
+        final now = AppDatabase.nowMillis();
+        final deleted = await txn.update(
           'categories',
-          where: 'id = ?',
+          {'deleted_at': now, 'updated_at': now, 'dirty': 1},
+          where: 'id = ? AND deleted_at IS NULL',
           whereArgs: [id],
         );
         if (deleted == 0) {

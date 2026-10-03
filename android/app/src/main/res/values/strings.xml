@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The name under the launcher icon; each values-<lang> folder has the
+         app's own translation of it (AppStrings.appTitle). -->
+    <string name="app_name">My Budget</string>
+</resources>
