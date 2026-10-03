@@ -1,0 +1,12 @@
+Duża aktualizacja:
+• Śledzenie przychodów obok wydatków
+• Budżety miesięczne i dla kategorii z ostrzeżeniami
+• Płatności i przychody cykliczne
+• Osoby i długi, z rozliczaniem
+• Analizy z wykresami
+• Wyszukiwanie we wszystkich miesiącach
+• Opcjonalna kopia w chmurze z kontem e-mail
+• Eksport kopii, CSV i PDF
+• Blokada aplikacji i codzienne przypomnienie
+• 20 języków
+• Nowa ikona

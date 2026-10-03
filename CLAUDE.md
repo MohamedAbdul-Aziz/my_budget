@@ -17,8 +17,12 @@ flutter run                 # desktop works too (FFI SQLite)
 flutter analyze             # must stay clean
 flutter test                # all tests
 flutter test test/domain/add_expense_test.dart   # single file
-./scripts/release_to_drive.sh   # builds the release appbundle and uploads it to Drive
+./scripts/release_to_drive.sh   # manual fallback: builds the release appbundle and copies it to Drive
+./scripts/store_screenshots.sh [locale…]   # Play screenshots on a running emulator
+bundle exec fastlane validate   # needs PLAY_JSON_KEY_PATH; checks listing + bundle against Play
 ```
+- **Releases go through CI**: bump `version:` in `pubspec.yaml` (the `+N` build number is the Play versionCode and must increase), add `fastlane/metadata/android/<locale>/changelogs/<N>.txt`, merge to `main`, push tag `v<version name>`. `.github/workflows/release.yml` builds, signs (secrets) and uploads to production.
+- **Store listing lives in `fastlane/metadata/android/<locale>/`** (20 Play locales). When user-facing features change, update the descriptions there in every language (title ≤30, short ≤80, full ≤4000, changelog ≤500 chars). Never claim anything the app does not do: it has an optional account and cloud backup, so the listing, `docs/privacy-policy.html` and Play's Data safety form must say so.
 
 ## 2) Where Things Live
 ```
@@ -63,6 +67,10 @@ android/app/src/main/kotlin/.../  MainActivity (a FlutterFragmentActivity, for l
                                   QuickExpenseWidgetProvider, QuickExpenseChannel
                                   (styles use AppCompat parents: local_auth needs them)
 supabase/migrations/   server-side SQL
+.github/workflows/     ci.yml (analyze + test), release.yml (tag → Play), store-listing.yml
+fastlane/              Fastfile lanes (validate, metadata, deploy) + metadata/android/<locale>/ store listing
+integration_test/      store_screenshots_test.dart (driven by test_driver/ + scripts/store_screenshots.sh)
+docs/                  GitHub Pages: privacy-policy.html, delete-account.html (linked from Play)
 assets/pdf_fonts/      IBM Plex Sans Arabic for PDF export
 test/{core,data,domain,presentation}/
 ```

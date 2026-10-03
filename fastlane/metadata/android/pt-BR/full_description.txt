@@ -1,0 +1,46 @@
+Meu Orçamento é um jeito simples e privado de saber para onde vai o seu dinheiro. Registre gastos e receitas em segundos, defina orçamentos, acompanhe contas e dívidas compartilhadas e veja gráficos claros, tudo no seu celular. Funciona totalmente offline e não precisa de conta.
+
+GASTOS E RECEITAS
+• Adicione uma transação em segundos: valor, categoria, data e uma nota opcional
+• Veja de relance as receitas, os gastos e o saldo do mês
+• Use as categorias prontas ou crie as suas com um ícone e uma cor
+• Pesquise em todos os meses por nota ou valor, e filtre por tipo, categoria e datas
+• Apagou algo por engano? Desfaça na hora
+
+ORÇAMENTOS
+• Defina um orçamento mensal e limites por categoria
+• Uma barra de progresso mostra quanto falta, e você recebe um aviso ao se aproximar ou passar de um limite
+
+PAGAMENTOS E RECEITAS RECORRENTES
+• Aluguel, contas, assinaturas ou seu salário: semanal, mensal ou anual
+• Lançados automaticamente no vencimento, ou com um lembrete para marcar como pagos
+• Veja de relance o que está pago, o que vem por aí e o que está atrasado
+
+PESSOAS E DÍVIDAS
+• Acompanhe o dinheiro que você empresta e pega emprestado com amigos e família
+• Saiba quem deve a você e a quem você deve
+• Acerte as contas com um toque, com o histórico completo de cada alteração
+
+ANÁLISES
+• Compare este mês com o mês passado
+• Gastos por dia, por categoria e nos últimos seis meses
+• Saldo líquido e taxa de poupança
+
+WIDGET DA TELA INICIAL
+Veja o total do mês na tela inicial e adicione um gasto das categorias que você mais usa sem abrir o app.
+
+BACKUP E EXPORTAÇÃO
+• Backup opcional na nuvem: entre com seu e-mail para fazer backup dos dados e restaurá-los em qualquer celular, manual ou automaticamente
+• Exporte um arquivo de backup, uma planilha CSV ou um relatório em PDF, e importe um backup de novo
+
+PRIVADO E SEGURO
+• Seus dados ficam no seu celular. Só saem dele se você escolher fazer backup na sua própria conta
+• Sem anúncios, sem análises, sem rastreadores
+• Bloqueie o app com sua digital, seu rosto ou o bloqueio de tela
+• Exclua sua conta e o backup na nuvem quando quiser, nas Configurações
+
+FEITO PARA VOCÊ
+• 20 idiomas, com suporte completo da direita para a esquerda para árabe, persa e urdu
+• O símbolo de moeda que você preferir
+• Temas claro e escuro
+• Um lembrete diário opcional para registrar seus gastos

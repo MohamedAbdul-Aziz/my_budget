@@ -1,0 +1,46 @@
+Anggaranku adalah cara sederhana dan pribadi untuk tahu ke mana uangmu pergi. Catat pengeluaran dan pemasukan dalam hitungan detik, atur anggaran, pantau tagihan dan utang bersama, serta lihat grafik yang jelas, semuanya di ponselmu. Aplikasi ini berfungsi sepenuhnya offline dan tidak memerlukan akun.
+
+PENGELUARAN DAN PEMASUKAN
+• Tambahkan transaksi dalam hitungan detik: jumlah, kategori, tanggal, dan catatan opsional
+• Lihat pemasukan, pengeluaran, dan saldo bulan ini sekilas
+• Gunakan kategori bawaan atau buat sendiri dengan ikon dan warna
+• Cari di semua bulan berdasarkan catatan atau jumlah, lalu saring menurut jenis, kategori, dan tanggal
+• Terhapus tidak sengaja? Langsung batalkan
+
+ANGGARAN
+• Tetapkan anggaran bulanan dan batas untuk kategori tertentu
+• Bilah kemajuan menunjukkan sisa anggaran, dan kamu diperingatkan saat mendekati atau melewati batas
+
+PEMBAYARAN DAN PEMASUKAN BERULANG
+• Sewa, tagihan, langganan, atau gajimu: mingguan, bulanan, atau tahunan
+• Ditambahkan otomatis pada tanggal jatuh tempo, atau diingatkan untuk ditandai sudah dibayar
+• Lihat sekilas mana yang sudah dibayar, akan datang, atau terlambat
+
+ORANG DAN UTANG
+• Catat uang yang kamu pinjamkan dan pinjam dari teman dan keluarga
+• Lihat siapa yang berutang padamu dan kepada siapa kamu berutang
+• Lunasi dengan satu ketukan, lengkap dengan riwayat setiap perubahan
+
+ANALISIS
+• Bandingkan bulan ini dengan bulan lalu
+• Pengeluaran harian, pengeluaran per kategori, dan enam bulan terakhir
+• Saldo bersih dan tingkat tabungan
+
+WIDGET LAYAR UTAMA
+Lihat total bulan ini di layar utama dan tambahkan pengeluaran dari kategori yang paling sering dipakai tanpa membuka aplikasi.
+
+CADANGAN DAN EKSPOR
+• Cadangan cloud opsional: masuk dengan email untuk mencadangkan data dan memulihkannya di ponsel mana pun, secara manual atau otomatis
+• Ekspor file cadangan, lembar CSV, atau laporan PDF, lalu impor cadangan kembali
+
+PRIBADI DAN AMAN
+• Datamu disimpan di ponselmu dan hanya keluar dari sana jika kamu memilih mencadangkannya ke akunmu sendiri
+• Tanpa iklan, tanpa analitik, tanpa pelacak
+• Kunci aplikasi dengan sidik jari, wajah, atau kunci layar
+• Hapus akun dan cadangan cloud-nya kapan saja dari Pengaturan
+
+DIBUAT UNTUKMU
+• 20 bahasa, dengan dukungan penuh kanan-ke-kiri untuk Arab, Persia, dan Urdu
+• Simbol mata uang pilihanmu
+• Tema terang dan gelap
+• Pengingat harian opsional untuk mencatat pengeluaran

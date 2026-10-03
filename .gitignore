@@ -52,3 +52,10 @@ key.properties
 
 # Supabase CLI cache
 supabase/.temp/
+
+# Fastlane / Bundler. The Play service account key is never committed.
+/.bundle/
+/vendor/bundle/
+/fastlane/report.xml
+/fastlane/README.md
+*play-service-account*.json

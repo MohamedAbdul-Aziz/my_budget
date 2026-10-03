@@ -1,0 +1,12 @@
+Ein großes Update:
+• Einnahmen neben Ausgaben erfassen
+• Monats- und Kategoriebudgets mit Warnungen
+• Wiederkehrende Zahlungen und Einnahmen
+• Personen und Schulden, mit Ausgleichen
+• Auswertungen mit Diagrammen
+• Suche über alle Monate
+• Optionale Cloud-Sicherung mit E-Mail-Konto
+• Export als Sicherung, CSV und PDF
+• App-Sperre und tägliche Erinnerung
+• 20 Sprachen
+• Neues Symbol

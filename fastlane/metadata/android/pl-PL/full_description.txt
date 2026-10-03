@@ -1,0 +1,46 @@
+Mój Budżet to prosty i prywatny sposób, by wiedzieć, na co idą Twoje pieniądze. Zapisuj wydatki i przychody w kilka sekund, ustalaj budżety, pilnuj rachunków i wspólnych długów oraz śledź przejrzyste wykresy, wszystko na telefonie. Aplikacja działa całkowicie offline i nie wymaga konta.
+
+WYDATKI I PRZYCHODY
+• Dodaj transakcję w kilka sekund: kwota, kategoria, data i opcjonalna notatka
+• Zobacz od razu przychody, wydatki i saldo miesiąca
+• Korzystaj z gotowych kategorii lub twórz własne z ikoną i kolorem
+• Przeszukuj wszystkie miesiące po notatce lub kwocie i filtruj według typu, kategorii i dat
+• Coś usunięte przez pomyłkę? Cofnij to od razu
+
+BUDŻETY
+• Ustal budżet miesięczny i limity dla poszczególnych kategorii
+• Pasek postępu pokazuje, ile zostało, a gdy zbliżasz się do limitu lub go przekraczasz, dostajesz ostrzeżenie
+
+PŁATNOŚCI I PRZYCHODY CYKLICZNE
+• Czynsz, rachunki, subskrypcje lub pensja: co tydzień, co miesiąc lub co rok
+• Dodawane automatycznie w dniu płatności lub z przypomnieniem, by oznaczyć je jako opłacone
+• Zobacz od razu, co jest opłacone, co nadchodzi, a co jest zaległe
+
+OSOBY I DŁUGI
+• Zapisuj pieniądze, które pożyczasz znajomym i rodzinie albo od nich
+• Zobacz, kto jest Ci winien, a komu Ty jesteś winien
+• Rozlicz się jednym dotknięciem, z pełną historią każdej zmiany
+
+ANALIZY
+• Porównaj ten miesiąc z poprzednim
+• Wydatki dzienne, według kategorii i z ostatnich sześciu miesięcy
+• Saldo netto i stopa oszczędności
+
+WIDŻET NA EKRANIE GŁÓWNYM
+Zobacz sumę z bieżącego miesiąca na ekranie głównym i dodaj wydatek w najczęściej używanych kategoriach bez otwierania aplikacji.
+
+KOPIA ZAPASOWA I EKSPORT
+• Opcjonalna kopia w chmurze: zaloguj się e-mailem, aby zapisać dane i przywrócić je na dowolnym telefonie, ręcznie lub automatycznie
+• Eksportuj plik kopii zapasowej, arkusz CSV lub raport PDF i importuj kopię ponownie
+
+PRYWATNIE I BEZPIECZNIE
+• Twoje dane są zapisane na telefonie. Opuszczają go tylko wtedy, gdy zdecydujesz się zapisać kopię na swoim koncie
+• Bez reklam, bez analityki, bez śledzenia
+• Zablokuj aplikację odciskiem palca, twarzą lub blokadą ekranu
+• Usuń konto i jego kopię w chmurze w dowolnej chwili w Ustawieniach
+
+STWORZONA DLA CIEBIE
+• 20 języków z pełną obsługą zapisu od prawej do lewej dla arabskiego, perskiego i urdu
+• Twój własny symbol waluty
+• Jasny i ciemny motyw
+• Opcjonalne codzienne przypomnienie o zapisaniu wydatków

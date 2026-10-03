@@ -1,0 +1,12 @@
+A big update:
+• Track income as well as expenses
+• Monthly and category budgets with warnings
+• Recurring payments and income
+• People and debts, with settle-up
+• Analyses with charts
+• Search across all months
+• Optional cloud backup with an email account
+• Backup file, CSV and PDF export
+• App lock and a daily reminder
+• 20 languages
+• A new icon

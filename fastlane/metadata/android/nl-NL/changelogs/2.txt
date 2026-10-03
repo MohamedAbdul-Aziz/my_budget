@@ -1,0 +1,12 @@
+Een grote update:
+• Houd naast uitgaven ook inkomsten bij
+• Maand- en categoriebudgetten met waarschuwingen
+• Terugkerende betalingen en inkomsten
+• Personen en schulden, met afrekenen
+• Analyses met grafieken
+• Zoeken in alle maanden
+• Optionele cloudback-up met een e-mailaccount
+• Export als back-up, CSV en PDF
+• App-vergrendeling en dagelijkse herinnering
+• 20 talen
+• Nieuw icoon

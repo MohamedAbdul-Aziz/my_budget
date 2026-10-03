@@ -1,0 +1,46 @@
+Bütçem, paranın nereye gittiğini görmenin basit ve gizli bir yolu. Harcama ve gelirlerini saniyeler içinde kaydet, bütçe belirle, faturaları ve ortak borçları takip et, net grafiklerle izle; hepsi telefonunda. Uygulama tamamen çevrimdışı çalışır ve hesap gerektirmez.
+
+HARCAMALAR VE GELİRLER
+• Saniyeler içinde işlem ekle: tutar, kategori, tarih ve isteğe bağlı not
+• Ayın gelirini, giderini ve bakiyesini tek bakışta gör
+• Hazır kategorileri kullan ya da simge ve renkle kendi kategorilerini oluştur
+• Tüm aylarda not veya tutara göre ara; türe, kategoriye ve tarihe göre filtrele
+• Yanlışlıkla mı sildin? Hemen geri al
+
+BÜTÇELER
+• Aylık bütçe ve kategorilere özel limitler belirle
+• İlerleme çubuğu kalan tutarı gösterir; limite yaklaştığında ya da aştığında uyarı alırsın
+
+DÜZENLİ ÖDEMELER VE GELİRLER
+• Kira, faturalar, abonelikler ya da maaşın: haftalık, aylık veya yıllık
+• Vade gününde otomatik eklenir ya da ödendi olarak işaretlemen için hatırlatılır
+• Neyin ödendiğini, yaklaştığını veya geciktiğini tek bakışta gör
+
+KİŞİLER VE BORÇLAR
+• Arkadaşlarına ve ailene verdiğin ya da onlardan aldığın borçları takip et
+• Kimin sana, senin kime borçlu olduğunu gör
+• Tek dokunuşla hesaplaş; her değişikliğin tam geçmişi saklanır
+
+ANALİZLER
+• Bu ayı geçen ayla karşılaştır
+• Günlük harcama, kategoriye göre harcama ve son altı ay
+• Net bakiye ve tasarruf oranı
+
+ANA EKRAN WIDGET'I
+Ayın toplamını ana ekranında gör ve en çok kullandığın kategorilerden uygulamayı açmadan harcama ekle.
+
+YEDEKLEME VE DIŞA AKTARMA
+• İsteğe bağlı bulut yedeği: verilerini yedeklemek ve herhangi bir telefonda geri yüklemek için e-postanla giriş yap; elle veya otomatik
+• Yedek dosyası, CSV tablosu veya PDF raporu olarak dışa aktar ve yedeği yeniden içe aktar
+
+GİZLİ VE GÜVENLİ
+• Verilerin telefonunda saklanır. Yalnızca kendi hesabına yedeklemeyi seçersen telefondan çıkar
+• Reklam yok, analiz yok, izleyici yok
+• Uygulamayı parmak izi, yüz veya ekran kilidiyle kilitle
+• Hesabını ve bulut yedeğini istediğin zaman Ayarlar'dan sil
+
+SANA GÖRE
+• 20 dil; Arapça, Farsça ve Urduca için tam sağdan sola desteği
+• Kendi para birimi simgen
+• Açık ve koyu tema
+• Harcamalarını kaydetmen için isteğe bağlı günlük hatırlatma

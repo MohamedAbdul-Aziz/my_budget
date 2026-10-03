@@ -1,0 +1,46 @@
+Mijn Budget laat je eenvoudig en privé zien waar je geld naartoe gaat. Noteer uitgaven en inkomsten in een paar seconden, stel budgetten in, houd rekeningen en gedeelde schulden bij en volg duidelijke grafieken, allemaal op je telefoon. De app werkt volledig offline en heeft geen account nodig.
+
+UITGAVEN EN INKOMSTEN
+• Voeg in een paar seconden een transactie toe: bedrag, categorie, datum en een optionele notitie
+• Zie in één oogopslag de inkomsten, uitgaven en het saldo van de maand
+• Gebruik de standaardcategorieën of maak je eigen met een icoon en een kleur
+• Zoek in alle maanden op notitie of bedrag en filter op type, categorie en datum
+• Per ongeluk iets verwijderd? Maak het meteen ongedaan
+
+BUDGETTEN
+• Stel een maandbudget en limieten per categorie in
+• Een voortgangsbalk toont wat er over is, en je krijgt een waarschuwing als je een limiet nadert of overschrijdt
+
+TERUGKERENDE BETALINGEN EN INKOMSTEN
+• Huur, rekeningen, abonnementen of je salaris: wekelijks, maandelijks of jaarlijks
+• Automatisch toegevoegd op de vervaldatum, of met een herinnering om ze als betaald te markeren
+• Zie in één oogopslag wat betaald, binnenkort of te laat is
+
+PERSONEN EN SCHULDEN
+• Houd bij wat je uitleent aan en leent van vrienden en familie
+• Zie wie jou iets schuldig is en aan wie jij iets schuldig bent
+• Reken af met één tik, met een volledige geschiedenis van elke wijziging
+
+ANALYSES
+• Vergelijk deze maand met vorige maand
+• Uitgaven per dag, per categorie en over de laatste zes maanden
+• Nettosaldo en spaarpercentage
+
+WIDGET VOOR HET STARTSCHERM
+Zie het totaal van de maand op je startscherm en voeg een uitgave toe in je meestgebruikte categorieën zonder de app te openen.
+
+BACK-UP EN EXPORT
+• Optionele cloudback-up: log in met je e-mail om je gegevens te back-uppen en op elke telefoon terug te zetten, handmatig of automatisch
+• Exporteer een back-upbestand, een CSV-bestand of een PDF-rapport, en importeer een back-up opnieuw
+
+PRIVÉ EN VEILIG
+• Je gegevens staan op je telefoon. Ze verlaten die alleen als je ervoor kiest ze in je eigen account te back-uppen
+• Geen advertenties, geen analyses, geen trackers
+• Vergrendel de app met je vingerafdruk, gezicht of schermvergrendeling
+• Verwijder je account en de cloudback-up op elk moment via Instellingen
+
+GEMAAKT VOOR JOU
+• 20 talen, met volledige ondersteuning voor rechts-naar-links in het Arabisch, Perzisch en Urdu
+• Je eigen valutasymbool
+• Licht en donker thema
+• Een optionele dagelijkse herinnering om je uitgaven te noteren

@@ -1,0 +1,46 @@
+Ngân sách của tôi là cách đơn giản và riêng tư để biết tiền của bạn đi đâu. Ghi chi tiêu và thu nhập trong vài giây, đặt ngân sách, theo dõi hóa đơn và các khoản nợ chung, xem biểu đồ rõ ràng, tất cả ngay trên điện thoại. Ứng dụng hoạt động hoàn toàn ngoại tuyến và không cần tài khoản.
+
+CHI TIÊU VÀ THU NHẬP
+• Thêm giao dịch trong vài giây: số tiền, danh mục, ngày và ghi chú tùy chọn
+• Xem nhanh thu nhập, chi tiêu và số dư của tháng
+• Dùng danh mục có sẵn hoặc tự tạo với biểu tượng và màu sắc
+• Tìm trong mọi tháng theo ghi chú hoặc số tiền, lọc theo loại, danh mục và ngày
+• Lỡ xóa nhầm? Hoàn tác ngay
+
+NGÂN SÁCH
+• Đặt ngân sách hằng tháng và hạn mức cho từng danh mục
+• Thanh tiến độ cho biết phần còn lại, và bạn được cảnh báo khi sắp chạm hoặc vượt hạn mức
+
+KHOẢN CHI VÀ THU ĐỊNH KỲ
+• Tiền thuê nhà, hóa đơn, gói đăng ký hay tiền lương: hằng tuần, hằng tháng hoặc hằng năm
+• Tự động ghi vào ngày đến hạn, hoặc nhắc bạn đánh dấu đã thanh toán
+• Xem nhanh khoản nào đã trả, sắp đến hạn hoặc quá hạn
+
+MỌI NGƯỜI VÀ KHOẢN NỢ
+• Theo dõi tiền bạn cho bạn bè, gia đình vay hoặc vay từ họ
+• Biết ai đang nợ bạn và bạn đang nợ ai
+• Tất toán chỉ với một lần chạm, kèm lịch sử đầy đủ của mọi thay đổi
+
+PHÂN TÍCH
+• So sánh tháng này với tháng trước
+• Chi tiêu theo ngày, theo danh mục và trong sáu tháng gần nhất
+• Số dư ròng và tỷ lệ tiết kiệm
+
+TIỆN ÍCH MÀN HÌNH CHÍNH
+Xem tổng chi tháng này ngay trên màn hình chính và thêm khoản chi từ các danh mục hay dùng mà không cần mở ứng dụng.
+
+SAO LƯU VÀ XUẤT DỮ LIỆU
+• Sao lưu đám mây tùy chọn: đăng nhập bằng email để sao lưu dữ liệu và khôi phục trên bất kỳ điện thoại nào, thủ công hoặc tự động
+• Xuất tệp sao lưu, bảng tính CSV hoặc báo cáo PDF, và nhập lại bản sao lưu
+
+RIÊNG TƯ VÀ AN TOÀN
+• Dữ liệu được lưu trên điện thoại của bạn và chỉ rời khỏi đó khi bạn chọn sao lưu vào tài khoản của mình
+• Không quảng cáo, không phân tích, không theo dõi
+• Khóa ứng dụng bằng vân tay, khuôn mặt hoặc khóa màn hình
+• Xóa tài khoản và bản sao lưu đám mây bất cứ lúc nào trong Cài đặt
+
+DÀNH CHO BẠN
+• 20 ngôn ngữ, hỗ trợ đầy đủ viết từ phải sang trái cho tiếng Ả Rập, tiếng Ba Tư và tiếng Urdu
+• Ký hiệu tiền tệ của riêng bạn
+• Giao diện sáng và tối
+• Lời nhắc hằng ngày tùy chọn để ghi lại chi tiêu

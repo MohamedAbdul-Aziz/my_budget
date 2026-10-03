@@ -1,0 +1,12 @@
+Uma grande atualização:
+• Controle de receitas além dos gastos
+• Orçamentos mensais e por categoria com avisos
+• Pagamentos e receitas recorrentes
+• Pessoas e dívidas, com acerto de contas
+• Análises com gráficos
+• Pesquisa em todos os meses
+• Backup opcional na nuvem com conta de e-mail
+• Exportação de backup, CSV e PDF
+• Bloqueio do app e lembrete diário
+• 20 idiomas
+• Novo ícone

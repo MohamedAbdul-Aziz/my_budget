@@ -1,0 +1,1 @@
+Gestisci spese, entrate, budget e debiti. Funziona offline, senza account.
