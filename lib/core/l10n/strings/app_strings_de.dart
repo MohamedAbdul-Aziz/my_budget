@@ -704,6 +704,8 @@ class AppStringsDe extends AppStrings {
       'Dein Konto konnte nicht gelöscht werden. Versuch es noch einmal.',
     FailureCode.backupNotRecognized =>
       'Diese Datei ist keine Sicherung von Mein Budget.',
+    FailureCode.pastedNotRecognized =>
+      'Der eingefügte Text sind keine Daten, die die App lesen kann. Kopiere die ganze Antwort der KI und versuche es erneut, oder bitte die KI, sie zu korrigieren.',
     FailureCode.backupTooNew =>
       'Diese Sicherung stammt aus einer neueren Version von Mein Budget. '
           'Aktualisiere die App und versuch es noch einmal.',
@@ -1275,4 +1277,45 @@ class AppStringsDe extends AppStrings {
     one: '$count Person',
     other: '$count Personen',
   );
+
+  @override
+  String get importFromAi => 'Aus einer anderen App';
+
+  @override
+  String get importFromAiHint =>
+      'Wandle deine Daten mit ChatGPT, Gemini, Claude oder einer anderen KI um';
+
+  @override
+  String get aiImportTitle => 'Aus einer anderen App importieren';
+
+  @override
+  String get aiImportIntro =>
+      'Ein KI-Chat kann Daten aus einer anderen App oder Tabelle in eine Datei umwandeln, die My Budget importieren kann.';
+
+  @override
+  String get aiImportStep1 => 'Kopiere den Prompt.';
+
+  @override
+  String get aiImportStep2 =>
+      'Füge ihn in ChatGPT, Gemini, Claude oder eine andere KI ein und hänge deine Daten an oder füge sie ein.';
+
+  @override
+  String get aiImportStep3 =>
+      'Kopiere die Antwort der KI und füge sie hier ein, oder speichere sie als Datei und wähle sie aus.';
+
+  @override
+  String get copyPrompt => 'Prompt kopieren';
+
+  @override
+  String get pasteAnswer => 'Antwort einfügen';
+
+  @override
+  String get chooseFile => 'Datei wählen';
+
+  @override
+  String get aiImportPrivacy =>
+      'Deine Daten gehen an den KI-Dienst deiner Wahl. Du siehst, was importiert wird, bevor sich etwas ändert.';
+
+  @override
+  String get promptCopied => 'Prompt kopiert';
 }

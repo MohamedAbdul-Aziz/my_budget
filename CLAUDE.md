@@ -60,7 +60,10 @@ lib/
                      (AppLockCubit + AppLockGate above the navigator)
     sync/            cloud backup and restore (SyncCubit), optional automatic backup on leaving
                      the app (AutoBackupCubit for the switch, AutoBackupBridge for the trigger)
-    data_management/ JSON backup, CSV and PDF export, import, share and save files (DataManagementCubit)
+    data_management/ JSON backup, CSV and PDF export, import, share and save files (DataManagementCubit);
+                     import from another app through an AI chat: the prompt (presentation/import_prompt.dart)
+                     + AssistedImport (codecs/assisted_import.dart), which completes the AI's answer before
+                     BackupCodec checks it
     quick_expense/   Android widget data publishing + quick-add dialog
     shell/           AppShell (tabs / navigation)
 android/app/src/main/kotlin/.../  MainActivity (a FlutterFragmentActivity, for local_auth), QuickAddActivity,
@@ -98,7 +101,7 @@ Data lives in **three places**: the SQLite DB on the phone, the Supabase cloud t
 | 4 | Bulk read/write shared by sync and import | `lib/core/database/local_records.dart`, `record_batch.dart` |
 | 5 | Cloud sync: upload + download (a new table needs its own upsert and read, plus `dirty` handling) | `features/sync/data/datasources/sync_remote_data_source.dart`, `sync_local_data_source.dart` |
 | 6 | **Supabase migration**: a new timestamped SQL file (`add column if not exists` / new table + RLS policies on `user_id`). Without it, uploads fail | `supabase/migrations/YYYYMMDDHHMMSS_<name>.sql` |
-| 7 | Backup file: add the field or table, and bump `schemaVersion` if the format changed. Older files must still import (give missing fields defaults) | `features/data_management/data/codecs/backup_codec.dart` |
+| 7 | Backup file: add the field or table, and bump `schemaVersion` if the format changed. Older files must still import (give missing fields defaults). If expenses or categories change, update the AI import prompt and `AssistedImport` too (`assisted_import_test.dart` imports the prompt's example) | `features/data_management/data/codecs/backup_codec.dart`, `codecs/assisted_import.dart`, `presentation/import_prompt.dart` |
 | 8 | CSV and PDF export, if the data is user-visible | `codecs/csv_export.dart`, `codecs/pdf_report.dart`, `models/export_texts.dart` |
 | 9 | After a restore or import, reload the cubits that show this data | `_reloadData` in `lib/app.dart` |
 | 10 | Tests | `test/data/migration_test.dart`, `sync_test.dart`, `data_management_test.dart`, `local_storage_test.dart` |

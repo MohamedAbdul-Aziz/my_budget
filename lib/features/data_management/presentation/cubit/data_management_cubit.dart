@@ -8,6 +8,7 @@ import '../../domain/entities/share_anchor.dart';
 import '../../domain/usecases/choose_backup.dart';
 import '../../domain/usecases/export_data.dart';
 import '../../domain/usecases/import_backup.dart';
+import '../../domain/usecases/preview_pasted_backup.dart';
 import '../../domain/usecases/save_files.dart';
 import '../../domain/usecases/share_files.dart';
 import 'data_management_state.dart';
@@ -20,11 +21,13 @@ class DataManagementCubit extends Cubit<DataManagementState> {
     required ShareFiles shareFiles,
     required SaveFiles saveFiles,
     required ChooseBackup chooseBackup,
+    required PreviewPastedBackup previewPastedBackup,
     required ImportBackup importBackup,
   }) : _exportData = exportData,
        _shareFiles = shareFiles,
        _saveFiles = saveFiles,
        _chooseBackup = chooseBackup,
+       _previewPastedBackup = previewPastedBackup,
        _importBackup = importBackup,
        super(const DataIdle());
 
@@ -32,6 +35,7 @@ class DataManagementCubit extends Cubit<DataManagementState> {
   final ShareFiles _shareFiles;
   final SaveFiles _saveFiles;
   final ChooseBackup _chooseBackup;
+  final PreviewPastedBackup _previewPastedBackup;
   final ImportBackup _importBackup;
 
   Future<void> export(ExportFormat format, ExportLocale locale) async {
@@ -85,6 +89,19 @@ class DataManagementCubit extends Cubit<DataManagementState> {
       Success(data: final backup?) => DataImportReview(backup),
       // Cancelled: not an error.
       Success() => const DataIdle(),
+      ResultFailure(:final failure) => DataFailed(failure.code),
+    });
+  }
+
+  /// Checks pasted text, such as an AI chat's reply to the import prompt,
+  /// and asks for the same confirmation as a chosen file.
+  Future<void> pasteBackup(String text) async {
+    if (state.isBusy) return;
+
+    emit(const DataWorking(DataTask.import));
+    final result = await _previewPastedBackup(text);
+    emit(switch (result) {
+      Success(:final data) => DataImportReview(data),
       ResultFailure(:final failure) => DataFailed(failure.code),
     });
   }

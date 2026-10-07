@@ -696,6 +696,8 @@ class AppStringsNl extends AppStrings {
       'Je account kon niet worden verwijderd. Probeer het opnieuw.',
     FailureCode.backupNotRecognized =>
       'Dit bestand is geen back-up van Mijn Budget.',
+    FailureCode.pastedNotRecognized =>
+      'De geplakte tekst zijn geen gegevens die de app kan lezen. Kopieer het hele antwoord van de AI en probeer opnieuw, of vraag de AI het te verbeteren.',
     FailureCode.backupTooNew =>
       'Deze back-up komt uit een nieuwere versie van Mijn Budget. Werk de '
           'app bij en probeer het opnieuw.',
@@ -1264,4 +1266,45 @@ class AppStringsNl extends AppStrings {
     one: '$count persoon',
     other: '$count personen',
   );
+
+  @override
+  String get importFromAi => 'Uit een andere app';
+
+  @override
+  String get importFromAiHint =>
+      'Zet je gegevens om met ChatGPT, Gemini, Claude of een andere AI';
+
+  @override
+  String get aiImportTitle => 'Importeren uit een andere app';
+
+  @override
+  String get aiImportIntro =>
+      'Een AI-chat kan gegevens uit een andere app of spreadsheet omzetten in een bestand dat My Budget kan importeren.';
+
+  @override
+  String get aiImportStep1 => 'Kopieer de prompt.';
+
+  @override
+  String get aiImportStep2 =>
+      'Plak hem in ChatGPT, Gemini, Claude of een andere AI en voeg je gegevens toe of plak ze.';
+
+  @override
+  String get aiImportStep3 =>
+      'Kopieer het antwoord van de AI en plak het hier, of bewaar het als bestand en kies het.';
+
+  @override
+  String get copyPrompt => 'Prompt kopiëren';
+
+  @override
+  String get pasteAnswer => 'Antwoord plakken';
+
+  @override
+  String get chooseFile => 'Bestand kiezen';
+
+  @override
+  String get aiImportPrivacy =>
+      'Je gegevens gaan naar de AI-dienst die je kiest. Je ziet wat er wordt geïmporteerd voordat er iets verandert.';
+
+  @override
+  String get promptCopied => 'Prompt gekopieerd';
 }

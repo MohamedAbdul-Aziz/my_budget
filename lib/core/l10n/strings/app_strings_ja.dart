@@ -644,6 +644,8 @@ class AppStringsJa extends AppStrings {
     FailureCode.syncFailed => 'アカウントと同期できませんでした。もう一度お試しください。',
     FailureCode.accountDeletionFailed => 'アカウントを削除できませんでした。もう一度お試しください。',
     FailureCode.backupNotRecognized => 'このファイルはマイ予算のバックアップではありません。',
+    FailureCode.pastedNotRecognized =>
+      '貼り付けたテキストはアプリで読み込めるデータではありません。AI の回答全体をコピーして再試行するか、AI に修正を頼んでください。',
     FailureCode.backupTooNew =>
       'このバックアップは新しいバージョンのマイ予算で作成されました。アプリを更新してからお試しください。',
     FailureCode.backupDamaged => 'バックアップファイルが壊れているため、何も読み込まれませんでした。',
@@ -1157,4 +1159,42 @@ class AppStringsJa extends AppStrings {
 
   @override
   String personCount(int count) => '$count 人';
+
+  @override
+  String get importFromAi => '他のアプリから';
+
+  @override
+  String get importFromAiHint => 'ChatGPT、Gemini、Claude などの AI でデータを変換';
+
+  @override
+  String get aiImportTitle => '他のアプリから読み込む';
+
+  @override
+  String get aiImportIntro =>
+      'AI チャットを使うと、他のアプリや表計算のデータを My Budget で読み込めるファイルに変換できます。';
+
+  @override
+  String get aiImportStep1 => 'プロンプトをコピーします。';
+
+  @override
+  String get aiImportStep2 =>
+      'ChatGPT、Gemini、Claude などの AI に貼り付け、データを添付するか貼り付けます。';
+
+  @override
+  String get aiImportStep3 => 'AI の回答をコピーしてここに貼り付けるか、ファイルとして保存して選びます。';
+
+  @override
+  String get copyPrompt => 'プロンプトをコピー';
+
+  @override
+  String get pasteAnswer => '回答を貼り付け';
+
+  @override
+  String get chooseFile => 'ファイルを選択';
+
+  @override
+  String get aiImportPrivacy => 'データは選んだ AI サービスに送られます。変更前に読み込まれる内容を確認できます。';
+
+  @override
+  String get promptCopied => 'プロンプトをコピーしました';
 }

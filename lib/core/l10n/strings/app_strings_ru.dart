@@ -696,6 +696,8 @@ class AppStringsRu extends AppStrings {
       'Не удалось удалить аккаунт. Попробуйте ещё раз.',
     FailureCode.backupNotRecognized =>
       'Этот файл не является копией «Моего бюджета».',
+    FailureCode.pastedNotRecognized =>
+      'Вставленный текст — не данные, которые может прочитать приложение. Скопируйте весь ответ ИИ и попробуйте снова или попросите ИИ исправить его.',
     FailureCode.backupTooNew =>
       'Эта копия создана в более новой версии «Моего бюджета». Обновите '
           'приложение и попробуйте ещё раз.',
@@ -1266,4 +1268,45 @@ class AppStringsRu extends AppStrings {
     many: '$count человек',
     other: '$count человека',
   );
+
+  @override
+  String get importFromAi => 'Из другого приложения';
+
+  @override
+  String get importFromAiHint =>
+      'Преобразуйте данные с ChatGPT, Gemini, Claude или другим ИИ';
+
+  @override
+  String get aiImportTitle => 'Импорт из другого приложения';
+
+  @override
+  String get aiImportIntro =>
+      'ИИ-чат может превратить данные из другого приложения или таблицы в файл, который My Budget сможет импортировать.';
+
+  @override
+  String get aiImportStep1 => 'Скопируйте промпт.';
+
+  @override
+  String get aiImportStep2 =>
+      'Вставьте его в ChatGPT, Gemini, Claude или другой ИИ и прикрепите или вставьте свои данные.';
+
+  @override
+  String get aiImportStep3 =>
+      'Скопируйте ответ ИИ и вставьте его сюда или сохраните как файл и выберите его.';
+
+  @override
+  String get copyPrompt => 'Копировать промпт';
+
+  @override
+  String get pasteAnswer => 'Вставить ответ';
+
+  @override
+  String get chooseFile => 'Выбрать файл';
+
+  @override
+  String get aiImportPrivacy =>
+      'Ваши данные уйдут в выбранный вами ИИ-сервис. Перед изменениями вы увидите, что будет импортировано.';
+
+  @override
+  String get promptCopied => 'Промпт скопирован';
 }

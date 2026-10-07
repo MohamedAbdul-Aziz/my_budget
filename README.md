@@ -67,6 +67,14 @@ restore on any phone.
   automatically** (off by default, a choice of this phone only) uploads new
   changes whenever you leave the app, and once when it opens; it never
   downloads anything.
+- **Import from another app** — Settings → Data management → *From another
+  app* hands out a ready prompt that lists your own categories. Paste it with
+  your data (a CSV, a spreadsheet, another app's export) into ChatGPT, Gemini,
+  Claude or any AI chat, then paste the answer back or pick it as a file. The
+  app never talks to the AI itself. `AssistedImport` fills in what the prompt
+  leaves out (epoch dates, `month_key`, sync stamps, empty tables), and the
+  file is then checked, previewed and merged exactly like a backup. Each
+  prompt carries its own id prefix, so two imports never overwrite each other.
 - **Settings** — light/dark/system theme, the language, and the currency
   symbol. The app is translated into 20 languages (English, Arabic, Chinese,
   Spanish, French, Portuguese, Russian, German, Japanese, Korean, Turkish,

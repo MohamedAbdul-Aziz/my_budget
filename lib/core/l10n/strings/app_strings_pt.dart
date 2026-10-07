@@ -693,6 +693,8 @@ class AppStringsPt extends AppStrings {
       'Não foi possível excluir sua conta. Tente de novo.',
     FailureCode.backupNotRecognized =>
       'Este arquivo não é um backup do Meu Orçamento.',
+    FailureCode.pastedNotRecognized =>
+      'O texto colado não são dados que o app consiga ler. Copie a resposta inteira da IA e tente de novo, ou peça para ela corrigir.',
     FailureCode.backupTooNew =>
       'Este backup é de uma versão mais nova do Meu Orçamento. Atualize o '
           'app e tente de novo.',
@@ -1259,4 +1261,45 @@ class AppStringsPt extends AppStrings {
     one: '$count pessoa',
     other: '$count pessoas',
   );
+
+  @override
+  String get importFromAi => 'De outro app';
+
+  @override
+  String get importFromAiHint =>
+      'Converta seus dados com ChatGPT, Gemini, Claude ou outra IA';
+
+  @override
+  String get aiImportTitle => 'Importar de outro app';
+
+  @override
+  String get aiImportIntro =>
+      'Um chat de IA pode transformar dados de outro app ou de uma planilha num arquivo que o My Budget importa.';
+
+  @override
+  String get aiImportStep1 => 'Copie o prompt.';
+
+  @override
+  String get aiImportStep2 =>
+      'Cole-o no ChatGPT, Gemini, Claude ou outra IA e anexe ou cole seus dados.';
+
+  @override
+  String get aiImportStep3 =>
+      'Copie a resposta da IA e cole aqui, ou salve como arquivo e escolha-o.';
+
+  @override
+  String get copyPrompt => 'Copiar prompt';
+
+  @override
+  String get pasteAnswer => 'Colar resposta';
+
+  @override
+  String get chooseFile => 'Escolher arquivo';
+
+  @override
+  String get aiImportPrivacy =>
+      'Seus dados vão para o serviço de IA que você escolher. Você verá o que será importado antes de qualquer mudança.';
+
+  @override
+  String get promptCopied => 'Prompt copiado';
 }

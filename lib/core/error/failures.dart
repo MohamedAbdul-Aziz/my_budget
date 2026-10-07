@@ -27,6 +27,9 @@ enum FailureCode {
   syncFailed,
   accountDeletionFailed,
   backupNotRecognized,
+
+  /// Pasted text (an AI chat's answer) that is not importable data.
+  pastedNotRecognized,
   backupTooNew,
   backupDamaged,
   fileUnavailable,

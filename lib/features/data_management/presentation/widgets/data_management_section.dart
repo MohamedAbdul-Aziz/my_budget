@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/app_formats.dart';
+import '../../../categories/presentation/cubit/categories_cubit.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../domain/entities/backup_preview.dart';
 import '../../domain/entities/export_format.dart';
@@ -11,6 +13,7 @@ import '../../domain/entities/import_mode.dart';
 import '../../domain/entities/share_anchor.dart';
 import '../cubit/data_management_cubit.dart';
 import '../cubit/data_management_state.dart';
+import 'assisted_import_sheet.dart';
 
 /// Files the user keeps themselves: a restorable backup, spreadsheets and a
 /// report to share or save, and importing a backup. Shown to everyone,
@@ -131,6 +134,12 @@ class _Actions extends StatelessWidget {
               subtitle: strings.importDataHint,
               onTap: isBusy ? null : cubit.chooseBackup,
             ),
+            _ActionTile(
+              icon: Icons.auto_awesome_outlined,
+              title: strings.importFromAi,
+              subtitle: strings.importFromAiHint,
+              onTap: isBusy ? null : () => _importWithAi(context),
+            ),
           ],
         );
       },
@@ -145,6 +154,31 @@ class _Actions extends StatelessWidget {
       formatsLocale: settings.formats.localeName,
       currencySymbol: settings.formats.symbol,
     );
+  }
+}
+
+/// Another app's data, rewritten by an AI chat from the import prompt. The
+/// answer comes back pasted or as a file, and is then checked and confirmed
+/// exactly like a backup.
+Future<void> _importWithAi(BuildContext context) async {
+  final cubit = context.read<DataManagementCubit>();
+  final source = await showModalBottomSheet<AssistedImportSource>(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    builder: (_) => BlocProvider.value(
+      value: context.read<CategoriesCubit>(),
+      child: const AssistedImportSheet(),
+    ),
+  );
+  switch (source) {
+    case AssistedImportSource.paste:
+      final pasted = await Clipboard.getData(Clipboard.kTextPlain);
+      await cubit.pasteBackup(pasted?.text ?? '');
+    case AssistedImportSource.file:
+      await cubit.chooseBackup();
+    case null:
+      break;
   }
 }
 

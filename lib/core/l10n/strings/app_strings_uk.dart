@@ -695,6 +695,8 @@ class AppStringsUk extends AppStrings {
     FailureCode.accountDeletionFailed =>
       'Не вдалося видалити обліковий запис. Спробуйте ще раз.',
     FailureCode.backupNotRecognized => 'Цей файл не є копією «Мого бюджету».',
+    FailureCode.pastedNotRecognized =>
+      'Вставлений текст — не дані, які може прочитати застосунок. Скопіюйте всю відповідь ШІ та спробуйте ще раз або попросіть ШІ виправити її.',
     FailureCode.backupTooNew =>
       'Цю копію створено в новішій версії «Мого бюджету». Оновіть '
           'застосунок і спробуйте ще раз.',
@@ -1265,4 +1267,45 @@ class AppStringsUk extends AppStrings {
     many: '$count людей',
     other: '$count людини',
   );
+
+  @override
+  String get importFromAi => 'З іншого застосунку';
+
+  @override
+  String get importFromAiHint =>
+      'Перетворіть дані за допомогою ChatGPT, Gemini, Claude чи іншого ШІ';
+
+  @override
+  String get aiImportTitle => 'Імпорт з іншого застосунку';
+
+  @override
+  String get aiImportIntro =>
+      'ШІ-чат може перетворити дані з іншого застосунку чи таблиці на файл, який My Budget зможе імпортувати.';
+
+  @override
+  String get aiImportStep1 => 'Скопіюйте промпт.';
+
+  @override
+  String get aiImportStep2 =>
+      'Вставте його в ChatGPT, Gemini, Claude чи інший ШІ та додайте або вставте свої дані.';
+
+  @override
+  String get aiImportStep3 =>
+      'Скопіюйте відповідь ШІ та вставте її сюди або збережіть як файл і виберіть його.';
+
+  @override
+  String get copyPrompt => 'Копіювати промпт';
+
+  @override
+  String get pasteAnswer => 'Вставити відповідь';
+
+  @override
+  String get chooseFile => 'Вибрати файл';
+
+  @override
+  String get aiImportPrivacy =>
+      'Ваші дані підуть до обраного вами ШІ-сервісу. Перед змінами ви побачите, що буде імпортовано.';
+
+  @override
+  String get promptCopied => 'Промпт скопійовано';
 }

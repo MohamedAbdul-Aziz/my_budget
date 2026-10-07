@@ -273,6 +273,20 @@ abstract class AppStrings {
   String get exportPdfHint;
   String get importData;
   String get importDataHint;
+
+  // Importing another app's data through an AI chat
+  String get importFromAi;
+  String get importFromAiHint;
+  String get aiImportTitle;
+  String get aiImportIntro;
+  String get aiImportStep1;
+  String get aiImportStep2;
+  String get aiImportStep3;
+  String get copyPrompt;
+  String get pasteAnswer;
+  String get chooseFile;
+  String get aiImportPrivacy;
+  String get promptCopied;
   String get preparingFile;
   String get importingData;
   String get fileSaved;

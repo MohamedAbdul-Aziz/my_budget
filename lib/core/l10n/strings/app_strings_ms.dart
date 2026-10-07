@@ -686,6 +686,8 @@ class AppStringsMs extends AppStrings {
     FailureCode.accountDeletionFailed =>
       'Tidak dapat memadam akaun anda. Cuba lagi.',
     FailureCode.backupNotRecognized => 'Fail ini bukan sandaran Bajet Saya.',
+    FailureCode.pastedNotRecognized =>
+      'Teks yang ditampal bukan data yang boleh dibaca aplikasi. Salin keseluruhan jawapan AI dan cuba lagi, atau minta AI membetulkannya.',
     FailureCode.backupTooNew =>
       'Sandaran ini daripada versi Bajet Saya yang lebih baharu. Kemas kini '
           'aplikasi, kemudian cuba lagi.',
@@ -1234,4 +1236,45 @@ class AppStringsMs extends AppStrings {
 
   @override
   String personCount(int count) => '$count orang';
+
+  @override
+  String get importFromAi => 'Dari aplikasi lain';
+
+  @override
+  String get importFromAiHint =>
+      'Tukar data anda dengan ChatGPT, Gemini, Claude atau AI lain';
+
+  @override
+  String get aiImportTitle => 'Import dari aplikasi lain';
+
+  @override
+  String get aiImportIntro =>
+      'Sembang AI boleh menukar data daripada aplikasi lain atau hamparan kepada fail yang boleh diimport oleh My Budget.';
+
+  @override
+  String get aiImportStep1 => 'Salin prompt.';
+
+  @override
+  String get aiImportStep2 =>
+      'Tampalkan dalam ChatGPT, Gemini, Claude atau AI lain, kemudian lampirkan atau tampal data anda.';
+
+  @override
+  String get aiImportStep3 =>
+      'Salin jawapan AI dan tampal di sini, atau simpan sebagai fail dan pilihnya.';
+
+  @override
+  String get copyPrompt => 'Salin prompt';
+
+  @override
+  String get pasteAnswer => 'Tampal jawapan';
+
+  @override
+  String get chooseFile => 'Pilih fail';
+
+  @override
+  String get aiImportPrivacy =>
+      'Data anda dihantar kepada perkhidmatan AI yang anda pilih. Anda akan melihat apa yang diimport sebelum apa-apa berubah.';
+
+  @override
+  String get promptCopied => 'Prompt disalin';
 }

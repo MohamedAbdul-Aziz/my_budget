@@ -676,6 +676,8 @@ class AppStringsVi extends AppStrings {
       'Không xóa được tài khoản. Hãy thử lại.',
     FailureCode.backupNotRecognized =>
       'Tệp này không phải bản sao lưu của Ngân sách của tôi.',
+    FailureCode.pastedNotRecognized =>
+      'Văn bản đã dán không phải dữ liệu ứng dụng đọc được. Hãy sao chép toàn bộ câu trả lời của AI và thử lại, hoặc nhờ AI sửa lại.',
     FailureCode.backupTooNew =>
       'Bản sao lưu này đến từ phiên bản mới hơn của Ngân sách của tôi. Hãy '
           'cập nhật ứng dụng rồi thử lại.',
@@ -1215,4 +1217,45 @@ class AppStringsVi extends AppStrings {
 
   @override
   String personCount(int count) => '$count người';
+
+  @override
+  String get importFromAi => 'Từ ứng dụng khác';
+
+  @override
+  String get importFromAiHint =>
+      'Chuyển đổi dữ liệu bằng ChatGPT, Gemini, Claude hoặc AI khác';
+
+  @override
+  String get aiImportTitle => 'Nhập từ ứng dụng khác';
+
+  @override
+  String get aiImportIntro =>
+      'Trò chuyện AI có thể chuyển dữ liệu từ ứng dụng khác hoặc bảng tính thành tệp mà My Budget nhập được.';
+
+  @override
+  String get aiImportStep1 => 'Sao chép câu lệnh (prompt).';
+
+  @override
+  String get aiImportStep2 =>
+      'Dán vào ChatGPT, Gemini, Claude hoặc AI khác, rồi đính kèm hoặc dán dữ liệu của bạn.';
+
+  @override
+  String get aiImportStep3 =>
+      'Sao chép câu trả lời của AI và dán vào đây, hoặc lưu thành tệp rồi chọn tệp đó.';
+
+  @override
+  String get copyPrompt => 'Sao chép prompt';
+
+  @override
+  String get pasteAnswer => 'Dán câu trả lời';
+
+  @override
+  String get chooseFile => 'Chọn tệp';
+
+  @override
+  String get aiImportPrivacy =>
+      'Dữ liệu của bạn được gửi tới dịch vụ AI bạn chọn. Bạn sẽ thấy những gì được nhập trước khi có thay đổi.';
+
+  @override
+  String get promptCopied => 'Đã sao chép prompt';
 }

@@ -681,6 +681,8 @@ class AppStringsUr extends AppStrings {
     FailureCode.accountDeletionFailed =>
       'اکاؤنٹ حذف نہیں ہو سکا۔ دوبارہ کوشش کریں۔',
     FailureCode.backupNotRecognized => 'یہ فائل میرا بجٹ کا بیک اپ نہیں۔',
+    FailureCode.pastedNotRecognized =>
+      'پیسٹ کیا گیا متن ایسا ڈیٹا نہیں جسے ایپ پڑھ سکے۔ AI کا پورا جواب کاپی کر کے دوبارہ کوشش کریں، یا AI سے اسے درست کرنے کو کہیں۔',
     FailureCode.backupTooNew =>
       'یہ بیک اپ میرا بجٹ کے نئے ورژن کا ہے۔ ایپ اپ ڈیٹ کر کے دوبارہ کوشش '
           'کریں۔',
@@ -1232,4 +1234,45 @@ class AppStringsUr extends AppStrings {
     one: '$count شخص',
     other: '$count افراد',
   );
+
+  @override
+  String get importFromAi => 'کسی اور ایپ سے';
+
+  @override
+  String get importFromAiHint =>
+      'اپنا ڈیٹا ChatGPT، Gemini، Claude یا کسی بھی AI سے تبدیل کریں';
+
+  @override
+  String get aiImportTitle => 'کسی اور ایپ سے درآمد';
+
+  @override
+  String get aiImportIntro =>
+      'AI چیٹ کسی اور ایپ یا اسپریڈشیٹ کے ڈیٹا کو ایسی فائل میں بدل سکتی ہے جسے My Budget درآمد کر سکے۔';
+
+  @override
+  String get aiImportStep1 => 'پرامپٹ کاپی کریں۔';
+
+  @override
+  String get aiImportStep2 =>
+      'اسے ChatGPT، Gemini، Claude یا کسی بھی AI میں پیسٹ کریں، پھر اپنا ڈیٹا منسلک یا پیسٹ کریں۔';
+
+  @override
+  String get aiImportStep3 =>
+      'AI کا جواب کاپی کر کے یہاں پیسٹ کریں، یا اسے فائل کے طور پر محفوظ کر کے منتخب کریں۔';
+
+  @override
+  String get copyPrompt => 'پرامپٹ کاپی';
+
+  @override
+  String get pasteAnswer => 'جواب پیسٹ کریں';
+
+  @override
+  String get chooseFile => 'فائل منتخب کریں';
+
+  @override
+  String get aiImportPrivacy =>
+      'آپ کا ڈیٹا آپ کی منتخب کردہ AI سروس کو جائے گا۔ کچھ بھی بدلنے سے پہلے آپ دیکھیں گے کہ کیا درآمد ہوگا۔';
+
+  @override
+  String get promptCopied => 'پرامپٹ کاپی ہو گیا';
 }

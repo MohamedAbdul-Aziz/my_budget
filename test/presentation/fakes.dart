@@ -868,6 +868,15 @@ class FakeDataManagementRepository implements DataManagementRepository {
     return Success(preview);
   }
 
+  /// Text handed to [previewText], newest last.
+  final List<String> pasted = [];
+
+  @override
+  Future<ApiResult<BackupPreview>> previewText(String text) async {
+    pasted.add(text);
+    return previewBackup('/tmp/imports/pasted.mybudget.json');
+  }
+
   @override
   Future<ApiResult<int>> importBackup(
     String path,

@@ -679,6 +679,8 @@ class AppStringsId extends AppStrings {
     FailureCode.syncFailed => 'Gagal sinkron dengan akunmu. Coba lagi.',
     FailureCode.accountDeletionFailed => 'Gagal menghapus akunmu. Coba lagi.',
     FailureCode.backupNotRecognized => 'File ini bukan cadangan Anggaranku.',
+    FailureCode.pastedNotRecognized =>
+      'Teks yang ditempel bukan data yang bisa dibaca aplikasi. Salin seluruh jawaban AI dan coba lagi, atau minta AI memperbaikinya.',
     FailureCode.backupTooNew =>
       'Cadangan ini berasal dari versi Anggaranku yang lebih baru. Perbarui '
           'aplikasi, lalu coba lagi.',
@@ -1223,4 +1225,45 @@ class AppStringsId extends AppStrings {
 
   @override
   String personCount(int count) => '$count orang';
+
+  @override
+  String get importFromAi => 'Dari aplikasi lain';
+
+  @override
+  String get importFromAiHint =>
+      'Ubah datamu dengan ChatGPT, Gemini, Claude, atau AI lain';
+
+  @override
+  String get aiImportTitle => 'Impor dari aplikasi lain';
+
+  @override
+  String get aiImportIntro =>
+      'Chat AI bisa mengubah data dari aplikasi lain atau spreadsheet menjadi file yang bisa diimpor My Budget.';
+
+  @override
+  String get aiImportStep1 => 'Salin prompt.';
+
+  @override
+  String get aiImportStep2 =>
+      'Tempelkan ke ChatGPT, Gemini, Claude, atau AI lain, lalu lampirkan atau tempel datamu.';
+
+  @override
+  String get aiImportStep3 =>
+      'Salin jawaban AI dan tempel di sini, atau simpan sebagai file lalu pilih.';
+
+  @override
+  String get copyPrompt => 'Salin prompt';
+
+  @override
+  String get pasteAnswer => 'Tempel jawaban';
+
+  @override
+  String get chooseFile => 'Pilih file';
+
+  @override
+  String get aiImportPrivacy =>
+      'Datamu dikirim ke layanan AI yang kamu pilih. Kamu akan melihat apa yang diimpor sebelum ada perubahan.';
+
+  @override
+  String get promptCopied => 'Prompt disalin';
 }

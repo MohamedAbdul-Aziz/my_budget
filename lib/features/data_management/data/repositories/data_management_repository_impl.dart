@@ -7,6 +7,7 @@ import '../../../../core/database/record_batch.dart';
 import '../../../../core/error/api_result.dart';
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/app_formats.dart';
+import '../../../../core/utils/category_icons.dart';
 import '../../../budgets/data/models/budget_keys.dart';
 import '../../../budgets/domain/entities/budget_limits.dart';
 import '../../../recurring/domain/entities/recurrence_frequency.dart';
@@ -17,6 +18,7 @@ import '../../domain/entities/exported_file.dart';
 import '../../domain/entities/import_mode.dart';
 import '../../domain/entities/share_anchor.dart';
 import '../../domain/repositories/data_management_repository.dart';
+import '../codecs/assisted_import.dart';
 import '../codecs/backup_codec.dart';
 import '../codecs/csv_export.dart';
 import '../codecs/debt_rows.dart';
@@ -107,6 +109,15 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
       });
 
   @override
+  Future<ApiResult<BackupPreview>> previewText(String text) async {
+    final written = await ApiResult.guard(() => _files.writeImport(text));
+    return switch (written) {
+      Success(data: final path) => previewBackup(path),
+      ResultFailure(:final failure) => ResultFailure(failure),
+    };
+  }
+
+  @override
   Future<ApiResult<int>> importBackup(
     String path,
     ImportMode mode, {
@@ -129,7 +140,7 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
   });
 
   Future<DecodedBackup> _readBackup(String path) async =>
-      _decodeInBackground(await _files.readText(path));
+      _decodeInBackground(await _files.readText(path), _clock());
 
   Future<ExportedFile> _writeBackup(
     RecordBatch records,
@@ -225,8 +236,22 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
     () => utf8.encode(BackupCodec.encode(records, exportedAt: now)),
   );
 
-  static Future<DecodedBackup> _decodeInBackground(String text) =>
-      Isolate.run(() => BackupCodec.decode(text));
+  /// Our own backups and files an AI wrote from the import prompt alike:
+  /// [AssistedImport] completes the latter, then the codec checks both the
+  /// same strict way.
+  static final Set<String> _iconNames = CategoryIcons.names.toSet();
+
+  static Future<DecodedBackup> _decodeInBackground(String text, DateTime now) =>
+      Isolate.run(
+        () => BackupCodec.decodeJson(
+          AssistedImport.prepare(
+            text,
+            now: now,
+            iconNames: _iconNames,
+            palette: CategoryColors.palette,
+          ),
+        ),
+      );
 
   /// Each sheet by the name its file carries. A sheet about something the
   /// user does not use (recurring payments, people, budgets) is left out:

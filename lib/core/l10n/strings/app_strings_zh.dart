@@ -639,6 +639,8 @@ class AppStringsZh extends AppStrings {
     FailureCode.syncFailed => '无法与账户同步，请重试。',
     FailureCode.accountDeletionFailed => '无法删除账户，请重试。',
     FailureCode.backupNotRecognized => '此文件不是“我的预算”备份。',
+    FailureCode.pastedNotRecognized =>
+      '粘贴的文本不是应用能读取的数据。请复制 AI 的完整回复后重试，或让 AI 修正。',
     FailureCode.backupTooNew => '此备份来自更新版本的“我的预算”。请更新应用后重试。',
     FailureCode.backupDamaged => '备份文件已损坏，因此没有导入任何内容。',
     FailureCode.fileUnavailable => '无法打开该文件，请重新选择。',
@@ -1151,4 +1153,40 @@ class AppStringsZh extends AppStrings {
 
   @override
   String personCount(int count) => '$count 人';
+
+  @override
+  String get importFromAi => '从其他应用导入';
+
+  @override
+  String get importFromAiHint => '用 ChatGPT、Gemini、Claude 或任意 AI 转换你的数据';
+
+  @override
+  String get aiImportTitle => '从其他应用导入';
+
+  @override
+  String get aiImportIntro => 'AI 聊天可以把其他应用或表格中的数据转换成 My Budget 能导入的文件。';
+
+  @override
+  String get aiImportStep1 => '复制提示词。';
+
+  @override
+  String get aiImportStep2 => '把它粘贴到 ChatGPT、Gemini、Claude 或任意 AI，并附上或粘贴你的数据。';
+
+  @override
+  String get aiImportStep3 => '复制 AI 的回复并粘贴到这里，或保存为文件后选择该文件。';
+
+  @override
+  String get copyPrompt => '复制提示词';
+
+  @override
+  String get pasteAnswer => '粘贴回复';
+
+  @override
+  String get chooseFile => '选择文件';
+
+  @override
+  String get aiImportPrivacy => '你的数据会发送给你选择的 AI 服务。在任何更改之前，你会先看到将要导入的内容。';
+
+  @override
+  String get promptCopied => '已复制提示词';
 }

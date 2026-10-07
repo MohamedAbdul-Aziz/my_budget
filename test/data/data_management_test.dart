@@ -925,6 +925,56 @@ void main() {
     });
   });
 
+  group('an AI chat\'s answer to the import prompt', () {
+    const answer = """
+Sure! Here is your data converted:
+```json
+{
+  "format": "my_budget_backup",
+  "categories": [{"id": "imp_x_cat_1", "name": "Coffee", "type": "expense"}],
+  "expenses": [
+    {"id": "imp_x_1", "amount": 4.5, "category_id": "imp_x_cat_1", "date": "2026-08-14", "description": "Latte"},
+    {"id": "imp_x_2", "amount": "-30", "category_id": "cat_food", "date": "2026-08-15"},
+    {"id": "imp_x_3", "amount": 900, "category_id": "cat_salary", "date": "2026-08-01"}
+  ]
+}
+```""";
+
+    test('pasted, previewed and merged like any backup', () async {
+      final preview = (await phoneA.repository.previewText(answer)).dataOrNull!;
+      expect(preview.expenses, 3);
+      expect(preview.categories, 1);
+
+      final changes = await phoneA.repository.importBackup(
+        preview.path,
+        ImportMode.merge,
+      );
+      expect(changes.dataOrNull, greaterThan(0));
+
+      final august = (await phoneA.expenses.getTransactionsForMonth(
+        const Month(2026, 8),
+      )).dataOrNull!;
+      expect(august, hasLength(3));
+      final latte = august.firstWhere((e) => e.id == 'imp_x_1');
+      expect(latte.category.name, 'Coffee');
+      expect(latte.date, DateTime(2026, 8, 14, 12));
+      expect(august.firstWhere((e) => e.id == 'imp_x_2').amount, 30);
+      expect(august.firstWhere((e) => e.id == 'imp_x_3').isIncome, isTrue);
+    });
+
+    test('importing the same answer twice adds nothing new', () async {
+      final preview = (await phoneA.repository.previewText(answer)).dataOrNull!;
+      await phoneA.repository.importBackup(preview.path, ImportMode.merge);
+      final again = (await phoneA.repository.previewText(answer)).dataOrNull!;
+      await phoneA.repository.importBackup(again.path, ImportMode.merge);
+
+      final august = (await phoneA.expenses.getTransactionsForMonth(
+        const Month(2026, 8),
+      )).dataOrNull!;
+      expect(august, hasLength(3));
+    });
+  });
+
   group('the file chooser and share sheet', () {
     test('cancelling the chooser is not an error', () async {
       phoneB.files.pickResult = null;
@@ -1180,6 +1230,14 @@ class FakeDeviceFiles implements DeviceFilesDataSource {
   @override
   Future<String> readText(String path) =>
       const DeviceFilesDataSourceImpl().readText(path);
+
+  @override
+  Future<String> writeImport(String text) async {
+    await folder.create(recursive: true);
+    final file = File(p.join(folder.path, 'pasted.mybudget.json'));
+    await file.writeAsString(text);
+    return file.path;
+  }
 
   @override
   Future<void> share(List<ExportedFile> files, {ShareAnchor? anchor}) async {

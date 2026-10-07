@@ -26,6 +26,10 @@ abstract interface class DeviceFilesDataSource {
 
   Future<String> readText(String path);
 
+  /// Keeps pasted text as a file to import, replacing the last one, and
+  /// returns its path.
+  Future<String> writeImport(String text);
+
   Future<void> share(List<ExportedFile> files, {ShareAnchor? anchor});
 
   /// False when the user cancels.
@@ -67,6 +71,26 @@ class DeviceFilesDataSourceImpl implements DeviceFilesDataSource {
         error.osError?.errorCode == _noSpaceLeft
             ? FailureCode.storageFull
             : FailureCode.exportFailed,
+        '$error',
+      );
+    }
+  }
+
+  @override
+  Future<String> writeImport(String text) async {
+    try {
+      final directory = Directory(
+        p.join((await getTemporaryDirectory()).path, 'imports'),
+      );
+      await directory.create(recursive: true);
+      final file = File(p.join(directory.path, 'pasted.mybudget.json'));
+      await file.writeAsString(text, flush: true);
+      return file.path;
+    } on FileSystemException catch (error) {
+      throw FileFailure(
+        error.osError?.errorCode == _noSpaceLeft
+            ? FailureCode.storageFull
+            : FailureCode.fileUnavailable,
         '$error',
       );
     }

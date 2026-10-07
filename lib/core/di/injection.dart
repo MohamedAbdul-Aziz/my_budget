@@ -18,6 +18,7 @@ import '../../features/data_management/domain/repositories/data_management_repos
 import '../../features/data_management/domain/usecases/choose_backup.dart';
 import '../../features/data_management/domain/usecases/export_data.dart';
 import '../../features/data_management/domain/usecases/import_backup.dart';
+import '../../features/data_management/domain/usecases/preview_pasted_backup.dart';
 import '../../features/data_management/domain/usecases/save_files.dart';
 import '../../features/data_management/domain/usecases/share_files.dart';
 import '../../features/data_management/presentation/cubit/data_management_cubit.dart';
@@ -485,6 +486,7 @@ void _registerDataManagement() {
     ..registerLazySingleton(() => ShareFiles(sl()))
     ..registerLazySingleton(() => SaveFiles(sl()))
     ..registerLazySingleton(() => ChooseBackup(sl()))
+    ..registerLazySingleton(() => PreviewPastedBackup(sl()))
     ..registerLazySingleton(() => ImportBackup(sl()))
     // Shared, so an export or import keeps running and reporting when the
     // settings sheet is closed and reopened.
@@ -494,6 +496,7 @@ void _registerDataManagement() {
         shareFiles: sl(),
         saveFiles: sl(),
         chooseBackup: sl(),
+        previewPastedBackup: sl(),
         importBackup: sl(),
       ),
     );

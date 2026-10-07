@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_budget/core/di/injection.dart';
 import 'package:my_budget/core/error/failures.dart';
@@ -204,5 +205,77 @@ void main() {
     expect(find.text('Back up now'), findsOneWidget);
     await tester.ensureVisible(find.text('Back up my data'));
     expect(find.text('Back up my data'), findsOneWidget);
+  });
+
+  testWidgets('another app\'s data comes in through an AI chat', (
+    tester,
+  ) async {
+    final harness = await bootApp(tester);
+    // The phone's clipboard, faked.
+    String? clipboard;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        switch (call.method) {
+          case 'Clipboard.setData':
+            clipboard = (call.arguments as Map)['text'] as String?;
+          case 'Clipboard.getData':
+            return {'text': clipboard};
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    await openSettings(tester);
+
+    await tapText(tester, 'From another app');
+    expect(find.text('Import from another app'), findsOneWidget);
+
+    await tapText(tester, 'Copy prompt');
+    expect(find.text('Prompt copied'), findsOneWidget);
+    expect(clipboard, contains('"format": "my_budget_backup"'));
+    // The user's own categories, so the AI reuses them.
+    expect(clipboard, contains('- cat_food | Food | expense'));
+    expect(clipboard, contains('- cat_salary | Salary | income'));
+
+    // The AI's answer, copied from the chat.
+    clipboard = '{"expenses": []}';
+    await tapText(tester, 'Paste answer');
+
+    expect(harness.files.pasted, ['{"expenses": []}']);
+    expect(find.text('Import this backup?'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Merge'));
+    await tester.pumpAndSettle();
+    expect(harness.files.imports, [ImportMode.merge]);
+  });
+
+  testWidgets('pasting something that is not data says so plainly', (
+    tester,
+  ) async {
+    final harness = await bootApp(tester);
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async =>
+          call.method == 'Clipboard.getData' ? {'text': '   '} : null,
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    await openSettings(tester);
+
+    await tapText(tester, 'From another app');
+    await tapText(tester, 'Paste answer');
+
+    expect(harness.files.pasted, isEmpty);
+    expect(find.textContaining("The pasted text isn't data"), findsOneWidget);
+    expect(find.text('Import this backup?'), findsNothing);
   });
 }

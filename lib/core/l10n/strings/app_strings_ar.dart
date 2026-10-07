@@ -675,6 +675,8 @@ class AppStringsAr extends AppStrings {
     FailureCode.accountDeletionFailed => 'تعذّر حذف حسابك. حاول مرة أخرى.',
     FailureCode.backupNotRecognized =>
       'هذا الملف ليس نسخة احتياطية من ميزانيتي.',
+    FailureCode.pastedNotRecognized =>
+      'النص الملصوق ليس بيانات يستطيع التطبيق قراءتها. انسخ رد الذكاء الاصطناعي كاملًا وحاول مجددًا، أو اطلب منه تصحيحه.',
     FailureCode.backupTooNew =>
       'هذه النسخة من إصدار أحدث من ميزانيتي. حدّث التطبيق ثم حاول مرة أخرى.',
     FailureCode.backupDamaged =>
@@ -1226,4 +1228,45 @@ class AppStringsAr extends AppStrings {
     >= 3 && <= 10 => '$count أشخاص',
     _ => '$count شخصًا',
   };
+
+  @override
+  String get importFromAi => 'من تطبيق آخر';
+
+  @override
+  String get importFromAiHint =>
+      'حوّل بياناتك باستخدام ChatGPT أو Gemini أو Claude أو أي ذكاء اصطناعي';
+
+  @override
+  String get aiImportTitle => 'الاستيراد من تطبيق آخر';
+
+  @override
+  String get aiImportIntro =>
+      'يمكن لمحادثة ذكاء اصطناعي تحويل بيانات من تطبيق آخر أو جدول بيانات إلى ملف يستطيع My Budget استيراده.';
+
+  @override
+  String get aiImportStep1 => 'انسخ النص الجاهز (البرومبت).';
+
+  @override
+  String get aiImportStep2 =>
+      'الصقه في ChatGPT أو Gemini أو Claude أو أي ذكاء اصطناعي، ثم أرفق بياناتك أو الصقها.';
+
+  @override
+  String get aiImportStep3 =>
+      'انسخ رد الذكاء الاصطناعي والصقه هنا، أو احفظه كملف واختره.';
+
+  @override
+  String get copyPrompt => 'نسخ البرومبت';
+
+  @override
+  String get pasteAnswer => 'لصق الرد';
+
+  @override
+  String get chooseFile => 'اختيار ملف';
+
+  @override
+  String get aiImportPrivacy =>
+      'ستُرسل بياناتك إلى خدمة الذكاء الاصطناعي التي تختارها. سترى ما سيتم استيراده قبل أي تغيير.';
+
+  @override
+  String get promptCopied => 'تم نسخ البرومبت';
 }

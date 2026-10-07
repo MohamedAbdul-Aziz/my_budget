@@ -644,6 +644,8 @@ class AppStringsKo extends AppStrings {
     FailureCode.syncFailed => '계정과 동기화하지 못했어요. 다시 시도해 주세요.',
     FailureCode.accountDeletionFailed => '계정을 삭제하지 못했어요. 다시 시도해 주세요.',
     FailureCode.backupNotRecognized => '이 파일은 내 예산 백업이 아니에요.',
+    FailureCode.pastedNotRecognized =>
+      '붙여넣은 텍스트는 앱이 읽을 수 있는 데이터가 아니에요. AI의 답변 전체를 복사해 다시 시도하거나 AI에게 고쳐 달라고 하세요.',
     FailureCode.backupTooNew =>
       '이 백업은 더 새로운 버전의 내 예산에서 만들어졌어요. 앱을 업데이트한 뒤 다시 시도해 주세요.',
     FailureCode.backupDamaged => '백업 파일이 손상되어 아무것도 가져오지 않았어요.',
@@ -1159,4 +1161,43 @@ class AppStringsKo extends AppStrings {
 
   @override
   String personCount(int count) => '$count명';
+
+  @override
+  String get importFromAi => '다른 앱에서';
+
+  @override
+  String get importFromAiHint => 'ChatGPT, Gemini, Claude 등 AI로 데이터를 변환하세요';
+
+  @override
+  String get aiImportTitle => '다른 앱에서 가져오기';
+
+  @override
+  String get aiImportIntro =>
+      'AI 채팅으로 다른 앱이나 스프레드시트의 데이터를 My Budget이 가져올 수 있는 파일로 바꿀 수 있어요.';
+
+  @override
+  String get aiImportStep1 => '프롬프트를 복사하세요.';
+
+  @override
+  String get aiImportStep2 =>
+      'ChatGPT, Gemini, Claude 등 AI에 붙여넣고 데이터를 첨부하거나 붙여넣으세요.';
+
+  @override
+  String get aiImportStep3 => 'AI의 답변을 복사해 여기에 붙여넣거나, 파일로 저장한 뒤 선택하세요.';
+
+  @override
+  String get copyPrompt => '프롬프트 복사';
+
+  @override
+  String get pasteAnswer => '답변 붙여넣기';
+
+  @override
+  String get chooseFile => '파일 선택';
+
+  @override
+  String get aiImportPrivacy =>
+      '데이터는 선택한 AI 서비스로 전송돼요. 변경 전에 가져올 내용을 먼저 확인할 수 있어요.';
+
+  @override
+  String get promptCopied => '프롬프트를 복사했어요';
 }

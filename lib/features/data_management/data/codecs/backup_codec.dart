@@ -53,14 +53,20 @@ abstract final class BackupCodec {
   /// Throws a [FileFailure] unless [text] is a complete, well-formed backup
   /// this version of the app can read. Nothing is half-accepted: one bad
   /// record rejects the whole file.
-  static DecodedBackup decode(String text) {
-    final Object? json;
+  static DecodedBackup decode(String text) => decodeJson(parse(text));
+
+  /// [text] as JSON, or a [FileFailure] when it is not JSON at all.
+  static Object? parse(String text) {
     try {
       // A byte order mark is harmless but not valid JSON.
-      json = jsonDecode(text.startsWith('﻿') ? text.substring(1) : text);
+      return jsonDecode(text.startsWith('﻿') ? text.substring(1) : text);
     } on FormatException catch (error) {
       throw FileFailure(FailureCode.backupNotRecognized, '$error');
     }
+  }
+
+  /// [decode] for text already parsed, e.g. by [AssistedImport].
+  static DecodedBackup decodeJson(Object? json) {
     if (json is! Map<String, dynamic> || json['format'] != format) {
       throw const FileFailure(
         FailureCode.backupNotRecognized,

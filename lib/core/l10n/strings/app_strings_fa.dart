@@ -669,6 +669,8 @@ class AppStringsFa extends AppStrings {
     FailureCode.syncFailed => 'همگام‌سازی با حساب ممکن نشد. دوباره تلاش کنید.',
     FailureCode.accountDeletionFailed => 'حذف حساب ممکن نشد. دوباره تلاش کنید.',
     FailureCode.backupNotRecognized => 'این فایل پشتیبان بودجه من نیست.',
+    FailureCode.pastedNotRecognized =>
+      'متن چسبانده‌شده داده‌ای نیست که برنامه بتواند بخواند. کل پاسخ هوش مصنوعی را کپی کن و دوباره امتحان کن، یا از آن بخواه درستش کند.',
     FailureCode.backupTooNew =>
       'این پشتیبان از نسخه جدیدتر بودجه من است. برنامه را به‌روز کنید و '
           'دوباره تلاش کنید.',
@@ -1204,4 +1206,45 @@ class AppStringsFa extends AppStrings {
 
   @override
   String personCount(int count) => '$count نفر';
+
+  @override
+  String get importFromAi => 'از برنامهٔ دیگر';
+
+  @override
+  String get importFromAiHint =>
+      'داده‌هایت را با ChatGPT، Gemini، Claude یا هر هوش مصنوعی تبدیل کن';
+
+  @override
+  String get aiImportTitle => 'وارد کردن از برنامهٔ دیگر';
+
+  @override
+  String get aiImportIntro =>
+      'یک گفت‌وگوی هوش مصنوعی می‌تواند داده‌های برنامهٔ دیگر یا یک صفحه‌گسترده را به فایلی تبدیل کند که My Budget وارد می‌کند.';
+
+  @override
+  String get aiImportStep1 => 'دستور (پرامپت) را کپی کن.';
+
+  @override
+  String get aiImportStep2 =>
+      'آن را در ChatGPT، Gemini، Claude یا هر هوش مصنوعی بچسبان و داده‌هایت را پیوست کن یا بچسبان.';
+
+  @override
+  String get aiImportStep3 =>
+      'پاسخ هوش مصنوعی را کپی کن و اینجا بچسبان، یا آن را به‌صورت فایل ذخیره و انتخاب کن.';
+
+  @override
+  String get copyPrompt => 'کپی پرامپت';
+
+  @override
+  String get pasteAnswer => 'چسباندن پاسخ';
+
+  @override
+  String get chooseFile => 'انتخاب فایل';
+
+  @override
+  String get aiImportPrivacy =>
+      'داده‌هایت به سرویس هوش مصنوعی‌ای که انتخاب می‌کنی فرستاده می‌شود. پیش از هر تغییری، آنچه وارد می‌شود را می‌بینی.';
+
+  @override
+  String get promptCopied => 'پرامپت کپی شد';
 }

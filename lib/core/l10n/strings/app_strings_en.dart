@@ -672,6 +672,8 @@ class AppStringsEn extends AppStrings {
     FailureCode.accountDeletionFailed =>
       "Couldn't delete your account. Try again.",
     FailureCode.backupNotRecognized => "This file isn't a My Budget backup.",
+    FailureCode.pastedNotRecognized =>
+      "The pasted text isn't data My Budget can read. Copy the AI's whole answer and try again, or ask the AI to fix it.",
     FailureCode.backupTooNew =>
       'This backup comes from a newer version of My Budget. Update the app, '
           'then try again.',
@@ -1211,4 +1213,45 @@ class AppStringsEn extends AppStrings {
 
   @override
   String personCount(int count) => count == 1 ? '1 person' : '$count people';
+
+  @override
+  String get importFromAi => 'From another app';
+
+  @override
+  String get importFromAiHint =>
+      'Convert your data with ChatGPT, Gemini, Claude or any AI';
+
+  @override
+  String get aiImportTitle => 'Import from another app';
+
+  @override
+  String get aiImportIntro =>
+      'An AI chat can turn data from another app or a spreadsheet into a file My Budget can import.';
+
+  @override
+  String get aiImportStep1 => 'Copy the prompt.';
+
+  @override
+  String get aiImportStep2 =>
+      'Paste it into ChatGPT, Gemini, Claude or any AI, then attach or paste your data.';
+
+  @override
+  String get aiImportStep3 =>
+      'Copy the AI’s answer and paste it here, or save it as a file and choose it.';
+
+  @override
+  String get copyPrompt => 'Copy prompt';
+
+  @override
+  String get pasteAnswer => 'Paste answer';
+
+  @override
+  String get chooseFile => 'Choose file';
+
+  @override
+  String get aiImportPrivacy =>
+      'Your data goes to the AI service you choose. You will see what will be imported before anything changes.';
+
+  @override
+  String get promptCopied => 'Prompt copied';
 }

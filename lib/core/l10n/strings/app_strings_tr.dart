@@ -677,6 +677,8 @@ class AppStringsTr extends AppStrings {
     FailureCode.accountDeletionFailed =>
       'Hesabınız silinemedi. Tekrar deneyin.',
     FailureCode.backupNotRecognized => 'Bu dosya bir Bütçem yedeği değil.',
+    FailureCode.pastedNotRecognized =>
+      'Yapıştırılan metin uygulamanın okuyabileceği bir veri değil. Yapay zekânın cevabının tamamını kopyalayıp tekrar dene ya da düzeltmesini iste.',
     FailureCode.backupTooNew =>
       'Bu yedek Bütçem’in daha yeni bir sürümünden. Uygulamayı güncelleyip '
           'tekrar deneyin.',
@@ -1214,4 +1216,45 @@ class AppStringsTr extends AppStrings {
 
   @override
   String personCount(int count) => '$count kişi';
+
+  @override
+  String get importFromAi => 'Başka bir uygulamadan';
+
+  @override
+  String get importFromAiHint =>
+      'Verilerini ChatGPT, Gemini, Claude veya başka bir yapay zekâ ile dönüştür';
+
+  @override
+  String get aiImportTitle => 'Başka uygulamadan içe aktar';
+
+  @override
+  String get aiImportIntro =>
+      'Bir yapay zekâ sohbeti, başka bir uygulamadaki ya da tablodaki verileri My Budget’ın içe aktarabileceği bir dosyaya çevirebilir.';
+
+  @override
+  String get aiImportStep1 => 'İstemi (prompt) kopyala.';
+
+  @override
+  String get aiImportStep2 =>
+      'ChatGPT, Gemini, Claude veya başka bir yapay zekâya yapıştır, sonra verilerini ekle ya da yapıştır.';
+
+  @override
+  String get aiImportStep3 =>
+      'Yapay zekânın cevabını kopyalayıp buraya yapıştır ya da dosya olarak kaydedip seç.';
+
+  @override
+  String get copyPrompt => 'İstemi kopyala';
+
+  @override
+  String get pasteAnswer => 'Cevabı yapıştır';
+
+  @override
+  String get chooseFile => 'Dosya seç';
+
+  @override
+  String get aiImportPrivacy =>
+      'Verilerin seçtiğin yapay zekâ hizmetine gider. Bir şey değişmeden önce neyin içe aktarılacağını görürsün.';
+
+  @override
+  String get promptCopied => 'İstem kopyalandı';
 }

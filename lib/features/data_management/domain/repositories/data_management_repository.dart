@@ -35,6 +35,11 @@ abstract interface class DataManagementRepository {
   /// Reads and checks a backup without changing anything.
   Future<ApiResult<BackupPreview>> previewBackup(String path);
 
+  /// [previewBackup] for text the user pasted, such as an AI chat's reply to
+  /// the import prompt. It is kept as a file so [importBackup] can read it
+  /// again.
+  Future<ApiResult<BackupPreview>> previewText(String text);
+
   /// Checks the backup again, then applies it in a single transaction.
   /// Returns how many records changed.
   Future<ApiResult<int>> importBackup(
