@@ -1,0 +1,1 @@
+Novedad: trae tus datos desde otra app o una hoja de cálculo. En Ajustes → Gestión de datos, copia el prompt listo, pégalo con tus datos en ChatGPT, Gemini, Claude u otra IA y pega la respuesta para importarla.

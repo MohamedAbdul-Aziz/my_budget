@@ -1,0 +1,1 @@
+Mới: chuyển dữ liệu từ ứng dụng khác hoặc bảng tính. Trong Cài đặt → Quản lý dữ liệu, sao chép prompt có sẵn, dán cùng dữ liệu vào ChatGPT, Gemini, Claude hoặc AI khác, rồi dán câu trả lời lại để nhập.

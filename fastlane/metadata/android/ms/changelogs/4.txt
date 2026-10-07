@@ -1,0 +1,1 @@
+Baharu: bawa data anda daripada aplikasi lain atau hamparan. Dalam Tetapan → Pengurusan data, salin prompt sedia, tampalkan bersama data anda dalam ChatGPT, Gemini, Claude atau AI lain, kemudian tampal jawapan untuk diimport.

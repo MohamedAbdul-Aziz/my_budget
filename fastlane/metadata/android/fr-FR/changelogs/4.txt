@@ -1,0 +1,1 @@
+Nouveau : importez vos données depuis une autre app ou un tableur. Dans Réglages → Gestion des données, copiez le prompt prêt à l’emploi, collez-le avec vos données dans ChatGPT, Gemini, Claude ou une autre IA, puis collez la réponse pour l’importer.

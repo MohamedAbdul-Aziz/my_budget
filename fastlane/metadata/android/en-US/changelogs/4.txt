@@ -1,0 +1,1 @@
+New: bring in your data from another app or a spreadsheet. In Settings → Data management, copy a ready prompt, paste it with your data into ChatGPT, Gemini, Claude or any AI, then paste the answer back to import it.

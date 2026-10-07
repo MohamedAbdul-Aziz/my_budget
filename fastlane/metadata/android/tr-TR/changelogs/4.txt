@@ -1,0 +1,1 @@
+Yeni: verilerini başka bir uygulamadan veya tablodan getir. Ayarlar → Veri yönetimi’nde hazır istemi kopyala, verilerinle birlikte ChatGPT, Gemini, Claude veya başka bir yapay zekâya yapıştır, cevabı geri yapıştırıp içe aktar.

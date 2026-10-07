@@ -1,0 +1,1 @@
+Baru: bawa datamu dari aplikasi lain atau spreadsheet. Di Pengaturan → Kelola data, salin prompt siap pakai, tempel bersama datamu ke ChatGPT, Gemini, Claude, atau AI lain, lalu tempel jawabannya untuk diimpor.

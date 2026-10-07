@@ -1,0 +1,1 @@
+Nowość: przenieś dane z innej aplikacji lub arkusza. W Ustawieniach → Zarządzanie danymi skopiuj gotowy prompt, wklej go z danymi do ChatGPT, Gemini, Claude lub innej AI, a odpowiedź wklej z powrotem, aby ją zaimportować.

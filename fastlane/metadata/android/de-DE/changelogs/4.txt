@@ -1,0 +1,1 @@
+Neu: Übernimm deine Daten aus einer anderen App oder Tabelle. Kopiere unter Einstellungen → Datenverwaltung den fertigen Prompt, füge ihn mit deinen Daten in ChatGPT, Gemini, Claude oder eine andere KI ein und füge die Antwort zum Import wieder ein.

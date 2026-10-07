@@ -1,0 +1,1 @@
+Nieuw: haal je gegevens uit een andere app of spreadsheet. Kopieer bij Instellingen → Gegevensbeheer de kant-en-klare prompt, plak hem met je gegevens in ChatGPT, Gemini, Claude of een andere AI en plak het antwoord terug om te importeren.
