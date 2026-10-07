@@ -1258,9 +1258,6 @@ class AppStringsTr extends AppStrings {
   String get askTopIncome => 'En büyük gelir';
 
   @override
-  String get compareWith => 'Karşılaştır';
-
-  @override
   String get otherCategories => 'Diğer';
 
   @override

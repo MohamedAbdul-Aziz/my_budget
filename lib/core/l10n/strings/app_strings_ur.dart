@@ -1276,9 +1276,6 @@ class AppStringsUr extends AppStrings {
   String get askTopIncome => 'سب سے بڑی آمدنی';
 
   @override
-  String get compareWith => 'موازنہ کریں';
-
-  @override
   String get otherCategories => 'دیگر';
 
   @override

@@ -1312,9 +1312,6 @@ class AppStringsPl extends AppStrings {
   String get askTopIncome => 'Główny przychód';
 
   @override
-  String get compareWith => 'Porównaj z';
-
-  @override
   String get otherCategories => 'Inne';
 
   @override

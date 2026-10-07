@@ -1278,9 +1278,6 @@ class AppStringsMs extends AppStrings {
   String get askTopIncome => 'Pendapatan utama';
 
   @override
-  String get compareWith => 'Banding dengan';
-
-  @override
   String get otherCategories => 'Lain-lain';
 
   @override

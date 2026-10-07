@@ -1308,9 +1308,6 @@ class AppStringsNl extends AppStrings {
   String get askTopIncome => 'Grootste inkomen';
 
   @override
-  String get compareWith => 'Vergelijk met';
-
-  @override
   String get otherCategories => 'Overige';
 
   @override

@@ -1259,9 +1259,6 @@ class AppStringsVi extends AppStrings {
   String get askTopIncome => 'Thu nhập chính';
 
   @override
-  String get compareWith => 'So sánh với';
-
-  @override
   String get otherCategories => 'Khác';
 
   @override

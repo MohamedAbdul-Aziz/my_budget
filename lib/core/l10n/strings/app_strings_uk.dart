@@ -1309,9 +1309,6 @@ class AppStringsUk extends AppStrings {
   String get askTopIncome => 'Головний дохід';
 
   @override
-  String get compareWith => 'Порівняти з';
-
-  @override
   String get otherCategories => 'Інші';
 
   @override

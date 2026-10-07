@@ -245,7 +245,6 @@ abstract class AppStrings {
   String get askHighestLowest;
   String get askCount;
   String get askTopIncome;
-  String get compareWith;
 
   /// The bar that gathers the smaller categories in the comparison chart.
   String get otherCategories;

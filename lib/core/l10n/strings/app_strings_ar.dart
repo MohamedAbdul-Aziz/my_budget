@@ -1270,9 +1270,6 @@ class AppStringsAr extends AppStrings {
   String get askTopIncome => 'أكبر دخل';
 
   @override
-  String get compareWith => 'قارن مع';
-
-  @override
   String get otherCategories => 'أخرى';
 
   @override

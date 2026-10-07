@@ -1310,9 +1310,6 @@ class AppStringsRu extends AppStrings {
   String get askTopIncome => 'Главный доход';
 
   @override
-  String get compareWith => 'Сравнить с';
-
-  @override
   String get otherCategories => 'Другие';
 
   @override

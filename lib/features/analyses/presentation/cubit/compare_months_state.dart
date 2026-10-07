@@ -20,7 +20,7 @@ final class CompareMonthsReady extends CompareMonthsState {
 
   final MonthComparison comparison;
 
-  /// Months the user can compare with, newest first.
+  /// Months the user can pick on either side, newest first.
   final List<Month> choices;
 
   @override

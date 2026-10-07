@@ -4,6 +4,7 @@ import 'package:my_budget/core/di/injection.dart';
 import 'package:my_budget/features/analyses/presentation/cubit/analyses_cubit.dart';
 import 'package:my_budget/features/budgets/presentation/cubit/budget_cubit.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
+import 'package:my_budget/features/settings/presentation/cubit/settings_cubit.dart';
 
 import 'app_harness.dart';
 
@@ -62,6 +63,9 @@ void main() {
       find.text(r'Most went to Bills: $50 (63% of the month).'),
       findsOneWidget,
     );
+    // Each slice of the answer's ring shows its share.
+    expect(find.text('63%'), findsWidgets);
+    expect(find.text('38%'), findsWidgets);
 
     await ask(tester, 'Did I save?');
     expect(
@@ -81,10 +85,29 @@ void main() {
 
     await ask(tester, 'Compare months');
 
-    expect(find.text('Compare with'), findsOneWidget);
     expect(find.textContaining(r'You spent $60 more in'), findsOneWidget);
     expect(find.textContaining('Biggest rise: Bills'), findsOneWidget);
-    expect(find.byType(DropdownButton<Month>), findsOneWidget);
+    expect(find.byType(DropdownButton<Month>), findsNWidgets(2));
+  });
+
+  testWidgets('either month can be changed', (tester) async {
+    await bootWithSpending(tester);
+    await ask(tester, 'Compare months');
+
+    // Putting last month first swaps the two sides.
+    await tester.tap(find.byType(DropdownButton<Month>).first);
+    await tester.pumpAndSettle();
+    final formats = sl<SettingsCubit>().state.formats;
+    await tester.tap(find.text(formats.monthLabel(month.previous)).last);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        'You spent \$60 less in ${formats.monthLabel(month.previous)} '
+        'than in ${formats.monthLabel(month)} (−75%).',
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('the questions speak Arabic', (tester) async {

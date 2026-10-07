@@ -1315,9 +1315,6 @@ class AppStringsFr extends AppStrings {
   String get askTopIncome => 'Revenu principal';
 
   @override
-  String get compareWith => 'Comparer avec';
-
-  @override
   String get otherCategories => 'Autres';
 
   @override

@@ -6,7 +6,7 @@ import '../../../expenses/domain/usecases/get_monthly_summaries.dart';
 import '../../domain/usecases/compare_months.dart';
 import 'compare_months_state.dart';
 
-/// One month set against another the user picks. Lives only while the
+/// Any two months the user picks, set against each other. Lives only while the
 /// "compare months" answer is open.
 class CompareMonthsCubit extends Cubit<CompareMonthsState> {
   CompareMonthsCubit({
@@ -19,10 +19,42 @@ class CompareMonthsCubit extends Cubit<CompareMonthsState> {
   final CompareMonths _compareMonths;
   final GetMonthlySummaries _getMonthlySummaries;
 
-  /// Compares [month] with [other], or with the month before it the first
-  /// time. Reloading keeps whichever month the user already picked.
-  Future<void> load(Month month, {Month? other}) async {
+  /// The month the page shows; the comparison starts from it.
+  Month? _pageMonth;
+
+  /// Compares [pageMonth] with the month before it. Called again with the
+  /// same month (a logged expense, say), it keeps the two months the user
+  /// picked and only refreshes the figures.
+  Future<void> load(Month pageMonth) async {
     final current = state;
+    final samePage = _pageMonth == pageMonth;
+    _pageMonth = pageMonth;
+    if (samePage && current is CompareMonthsReady) {
+      await _compare(current.comparison.first, current.comparison.second);
+    } else {
+      await _compare(pageMonth, pageMonth.previous);
+    }
+  }
+
+  /// Changes either side of the comparison. Picking the month already on
+  /// the other side swaps the two, so they can never be the same.
+  Future<void> pick({Month? first, Month? second}) async {
+    final current = state;
+    if (current is! CompareMonthsReady) return;
+    final was = current.comparison;
+    var newFirst = first ?? was.first;
+    var newSecond = second ?? was.second;
+    if (newFirst == newSecond) {
+      if (first != null) {
+        newSecond = was.first;
+      } else {
+        newFirst = was.second;
+      }
+    }
+    await _compare(newFirst, newSecond);
+  }
+
+  Future<void> _compare(Month first, Month second) async {
     final summaries = await _getMonthlySummaries();
     if (isClosed) return;
     if (summaries case ResultFailure(:final failure)) {
@@ -30,22 +62,18 @@ class CompareMonthsCubit extends Cubit<CompareMonthsState> {
       return;
     }
 
-    // Months with spending, plus the one before [month] so there is always
-    // something to pick even in a first month.
+    // Months with spending, plus the page's month and the one before it so
+    // there is always something to pick, even in a first month.
+    final pageMonth = _pageMonth ?? first;
     final choices = {
-      month.previous,
+      pageMonth,
+      pageMonth.previous,
+      first,
+      second,
       for (final summary in summaries.dataOrNull!) summary.month,
-    }.where((m) => m != month).toList()..sort((a, b) => b.compareTo(a));
+    }.toList()..sort((a, b) => b.compareTo(a));
 
-    final picked =
-        other ??
-        (current is CompareMonthsReady &&
-                current.comparison.second != month &&
-                choices.contains(current.comparison.second)
-            ? current.comparison.second
-            : month.previous);
-
-    final result = await _compareMonths(month, picked);
+    final result = await _compareMonths(first, second);
     if (isClosed) return;
     switch (result) {
       case Success(:final data):

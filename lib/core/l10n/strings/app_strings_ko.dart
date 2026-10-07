@@ -1203,9 +1203,6 @@ class AppStringsKo extends AppStrings {
   String get askTopIncome => '가장 큰 수입';
 
   @override
-  String get compareWith => '비교 대상';
-
-  @override
   String get otherCategories => '기타';
 
   @override

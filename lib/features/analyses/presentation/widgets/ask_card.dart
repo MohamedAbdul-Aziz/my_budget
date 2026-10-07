@@ -17,6 +17,7 @@ import '../../domain/entities/month_comparison.dart';
 import '../cubit/compare_months_cubit.dart';
 import '../cubit/compare_months_state.dart';
 import 'ask_answers.dart';
+import 'category_slice_label.dart';
 import 'charts.dart';
 import 'section_card.dart';
 
@@ -134,11 +135,21 @@ class _Answer extends StatelessWidget {
     switch (question) {
       case AnalysisQuestion.topCategory when analysis.breakdown.isNotEmpty:
         return DonutChart(
-          size: 120,
+          size: 180,
           slices: [
             for (final item in analysis.breakdown)
               (value: item.total, color: Color(item.category.colorValue)),
           ],
+          labels: [
+            for (final item in analysis.breakdown)
+              CategorySliceLabel(item, formats),
+          ],
+          center: Text(
+            formats.moneyTight(analysis.total),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+          ),
         );
       case AnalysisQuestion.weekday when analysis.busiestWeekday != null:
         final busiest = analysis.busiestWeekday! + 1;
@@ -301,31 +312,34 @@ class _Comparison extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Either month can be changed; each picker carries the colour of
+        // its bars in the chart below.
         Row(
           children: [
-            Flexible(
-              child: Text(
-                strings.compareWith,
-                style: theme.textTheme.labelLarge,
+            Expanded(
+              child: _MonthPicker(
+                value: comparison.first,
+                choices: choices,
+                color: theme.colorScheme.primary,
+                onPicked: (month) =>
+                    context.read<CompareMonthsCubit>().pick(first: month),
               ),
             ),
-            const SizedBox(width: 12),
-            DropdownButton<Month>(
-              value: comparison.second,
-              onChanged: (month) {
-                if (month == null) return;
-                context.read<CompareMonthsCubit>().load(
-                  comparison.first,
-                  other: month,
-                );
-              },
-              items: [
-                for (final month in choices)
-                  DropdownMenuItem(
-                    value: month,
-                    child: Text(formats.monthLabel(month)),
-                  ),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Icon(
+                Icons.compare_arrows_rounded,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            Expanded(
+              child: _MonthPicker(
+                value: comparison.second,
+                choices: choices,
+                color: theme.colorScheme.primary.withValues(alpha: 0.35),
+                onPicked: (month) =>
+                    context.read<CompareMonthsCubit>().pick(second: month),
+              ),
             ),
           ],
         ),
@@ -368,6 +382,60 @@ class _Comparison extends StatelessWidget {
             ],
           ),
         ],
+      ],
+    );
+  }
+}
+
+/// One side of the comparison: a month dropdown led by its bars' colour.
+class _MonthPicker extends StatelessWidget {
+  const _MonthPicker({
+    required this.value,
+    required this.choices,
+    required this.color,
+    required this.onPicked,
+  });
+
+  final Month value;
+  final List<Month> choices;
+  final Color color;
+  final ValueChanged<Month> onPicked;
+
+  @override
+  Widget build(BuildContext context) {
+    final formats = context.select<SettingsCubit, AppFormats>(
+      (cubit) => cubit.state.formats,
+    );
+    return Row(
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: DropdownButton<Month>(
+            value: value,
+            isExpanded: true,
+            onChanged: (month) {
+              if (month != null && month != value) onPicked(month);
+            },
+            items: [
+              for (final month in choices)
+                DropdownMenuItem(
+                  value: month,
+                  child: Text(
+                    formats.monthLabel(month),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+            ],
+          ),
+        ),
       ],
     );
   }

@@ -1201,9 +1201,6 @@ class AppStringsJa extends AppStrings {
   String get askTopIncome => '最大の収入';
 
   @override
-  String get compareWith => '比較する月';
-
-  @override
   String get otherCategories => 'その他';
 
   @override

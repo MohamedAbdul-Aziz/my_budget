@@ -1303,9 +1303,6 @@ class AppStringsPt extends AppStrings {
   String get askTopIncome => 'Maior receita';
 
   @override
-  String get compareWith => 'Comparar com';
-
-  @override
   String get otherCategories => 'Outras';
 
   @override

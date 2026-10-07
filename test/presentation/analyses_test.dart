@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_budget/core/di/injection.dart';
+import 'package:my_budget/core/utils/category_icons.dart';
 
 import 'app_harness.dart';
 
@@ -52,7 +53,9 @@ void main() {
 
     expect(find.text('Spending by category'), findsOneWidget);
     expect(find.text('Nothing spent this month yet.'), findsNothing);
-    expect(find.text('100%'), findsOneWidget);
+    // Once on the ring's only slice and once in the list under it.
+    expect(find.text('100%'), findsNWidgets(2));
+    expect(find.byIcon(CategoryIcons.resolve('restaurant')), findsWidgets);
     expect(find.text('Food'), findsWidgets);
   });
 

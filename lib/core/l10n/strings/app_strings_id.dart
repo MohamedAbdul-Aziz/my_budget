@@ -1267,9 +1267,6 @@ class AppStringsId extends AppStrings {
   String get askTopIncome => 'Pemasukan terbesar';
 
   @override
-  String get compareWith => 'Bandingkan dengan';
-
-  @override
   String get otherCategories => 'Lainnya';
 
   @override

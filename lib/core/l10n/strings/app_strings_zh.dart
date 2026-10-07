@@ -1195,9 +1195,6 @@ class AppStringsZh extends AppStrings {
   String get askTopIncome => '最大收入';
 
   @override
-  String get compareWith => '比较对象';
-
-  @override
   String get otherCategories => '其他';
 
   @override

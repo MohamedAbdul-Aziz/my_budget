@@ -12,6 +12,7 @@ import '../../domain/entities/month_analysis.dart';
 import '../cubit/analyses_cubit.dart';
 import '../cubit/analyses_state.dart';
 import '../widgets/ask_card.dart';
+import '../widgets/category_slice_label.dart';
 import '../widgets/charts.dart';
 import '../widgets/section_card.dart';
 
@@ -233,6 +234,10 @@ class _CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final strings = context.strings;
     final breakdown = analysis.breakdown;
+    final theme = Theme.of(context);
+    final formats = context.select<SettingsCubit, AppFormats>(
+      (cubit) => cubit.state.formats,
+    );
 
     return SectionCard(
       title: strings.byCategory,
@@ -247,6 +252,7 @@ class _CategoryCard extends StatelessWidget {
           : Column(
               children: [
                 DonutChart(
+                  size: 220,
                   slices: [
                     for (final item in breakdown)
                       (
@@ -254,6 +260,18 @@ class _CategoryCard extends StatelessWidget {
                         color: Color(item.category.colorValue),
                       ),
                   ],
+                  // Each slice carries its category's icon and share, so the
+                  // ring reads without looking down at the list.
+                  labels: [
+                    for (final item in breakdown)
+                      CategorySliceLabel(item, formats),
+                  ],
+                  center: Text(
+                    formats.moneyTight(analysis.total),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 for (final item in breakdown) _CategoryRow(item),

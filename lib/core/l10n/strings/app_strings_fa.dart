@@ -1248,9 +1248,6 @@ class AppStringsFa extends AppStrings {
   String get askTopIncome => 'بیشترین درآمد';
 
   @override
-  String get compareWith => 'مقایسه با';
-
-  @override
   String get otherCategories => 'سایر';
 
   @override

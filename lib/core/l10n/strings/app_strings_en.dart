@@ -1255,9 +1255,6 @@ class AppStringsEn extends AppStrings {
   String get askTopIncome => 'Top income';
 
   @override
-  String get compareWith => 'Compare with';
-
-  @override
   String get otherCategories => 'Others';
 
   @override
