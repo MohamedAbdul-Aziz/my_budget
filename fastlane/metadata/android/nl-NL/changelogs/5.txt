@@ -1,0 +1,4 @@
+Nieuw bij Analyses:
+• Tik op een kant-en-klare vraag (topcategorie, grootste uitgave, duurste weekdag, schatting maandeinde, sparen, budget over en meer) voor direct antwoord
+• Vergelijk twee maanden naast elkaar, met een grafiek
+• De categorieënring toont nu het pictogram en aandeel van elke categorie

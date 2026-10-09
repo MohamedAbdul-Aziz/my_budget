@@ -1,0 +1,4 @@
+Novidades em Análises:
+• Toque numa pergunta pronta (categoria principal, maior despesa, dia de mais gasto, estimativa do mês, economia, orçamento restante e mais) para ver a resposta na hora
+• Compare dois meses lado a lado, com um gráfico
+• O anel de categorias agora mostra o ícone e a fatia de cada uma

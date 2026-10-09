@@ -1,0 +1,4 @@
+Novedades en Análisis:
+• Toca una pregunta lista (categoría principal, mayor gasto, día de más gasto, estimación de fin de mes, ahorro, presupuesto restante y más) para obtener la respuesta al instante
+• Compara dos meses cualesquiera, lado a lado y con un gráfico
+• El anillo de categorías muestra el icono y la parte de cada una

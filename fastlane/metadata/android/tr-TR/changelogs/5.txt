@@ -1,0 +1,4 @@
+Analiz sekmesinde yeni:
+• Hazır bir soruya dokun (en çok harcanan kategori, en büyük harcama, en yoğun gün, ay sonu tahmini, birikim, kalan bütçe ve dahası), cevabı anında gör
+• İki ayı grafikle yan yana karşılaştır
+• Kategori halkası artık her kategorinin simgesini ve payını gösteriyor

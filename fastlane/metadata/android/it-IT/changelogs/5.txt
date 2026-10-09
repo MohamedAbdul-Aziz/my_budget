@@ -1,0 +1,4 @@
+Novità in Analisi:
+• Tocca una domanda già pronta (categoria principale, spesa più alta, giorno con più spese, stima di fine mese, risparmio, budget rimasto e altro) per una risposta immediata
+• Confronta due mesi qualsiasi fianco a fianco, con un grafico
+• L’anello delle categorie mostra icona e quota di ciascuna

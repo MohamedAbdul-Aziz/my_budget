@@ -1,0 +1,4 @@
+Mới trong tab Phân tích:
+• Chạm vào câu hỏi có sẵn (danh mục chính, khoản chi lớn nhất, thứ chi nhiều nhất, ước tính cuối tháng, tiết kiệm, ngân sách còn lại và hơn thế) để có câu trả lời ngay
+• So sánh hai tháng bất kỳ bằng biểu đồ
+• Vòng danh mục giờ hiển thị biểu tượng và tỷ lệ của từng danh mục

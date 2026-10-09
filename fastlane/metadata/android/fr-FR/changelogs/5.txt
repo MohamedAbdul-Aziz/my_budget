@@ -1,0 +1,4 @@
+Nouveau dans l’onglet Analyses :
+• Touchez une question toute prête (catégorie principale, plus grosse dépense, jour le plus dépensier, estimation de fin de mois, épargne, budget restant…) pour une réponse immédiate
+• Comparez deux mois côte à côte, avec un graphique
+• L’anneau des catégories affiche l’icône et la part de chacune

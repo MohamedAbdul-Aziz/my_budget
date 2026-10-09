@@ -1,0 +1,4 @@
+New on the Analyses tab:
+• Tap a ready-made question (top category, biggest expense, busiest weekday, month-end estimate, savings, budget left and more) for an instant answer
+• Compare any two months side by side, with a chart
+• The category ring now shows each category’s icon and share

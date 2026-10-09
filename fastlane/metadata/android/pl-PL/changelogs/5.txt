@@ -1,0 +1,4 @@
+Nowości w Analizach:
+• Dotknij gotowego pytania (główna kategoria, największy wydatek, najdroższy dzień tygodnia, prognoza na koniec miesiąca, oszczędności, pozostały budżet i inne), by od razu zobaczyć odpowiedź
+• Porównaj dowolne dwa miesiące na wykresie
+• Pierścień kategorii pokazuje teraz ikonę i udział każdej
