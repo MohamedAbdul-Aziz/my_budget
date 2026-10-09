@@ -6,7 +6,9 @@ import '../../../../core/utils/app_formats.dart';
 import '../../../categories/presentation/category_label.dart';
 import '../../../categories/presentation/widgets/category_avatar.dart';
 import '../../../expenses/domain/entities/category_breakdown.dart';
+import '../../../expenses/domain/entities/month.dart';
 import '../../../expenses/domain/entities/monthly_summary.dart';
+import '../../../expenses/presentation/pages/search_page.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../domain/entities/month_analysis.dart';
 import '../cubit/analyses_cubit.dart';
@@ -274,17 +276,21 @@ class _CategoryCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                for (final item in breakdown) _CategoryRow(item),
+                for (final item in breakdown)
+                  _CategoryRow(item, month: analysis.month),
               ],
             ),
     );
   }
 }
 
+/// One category's share of the month. Tapping it lists the transactions
+/// behind the figure: that category over that month, in the search.
 class _CategoryRow extends StatelessWidget {
-  const _CategoryRow(this.item);
+  const _CategoryRow(this.item, {required this.month});
 
   final CategoryBreakdown item;
+  final Month month;
 
   @override
   Widget build(BuildContext context) {
@@ -293,49 +299,64 @@ class _CategoryRow extends StatelessWidget {
       (cubit) => cubit.state.formats,
     );
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: LayoutBuilder(
-        builder: (context, constraints) => Row(
-          children: [
-            CategoryAvatar(category: item.category, size: 32),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                categoryLabel(context.strings, item.category),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            // A large total in a long currency symbol scales down rather
-            // than pushing past the card; figures that fit are untouched.
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: constraints.maxWidth * 0.55,
-              ),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: AlignmentDirectional.centerEnd,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      formats.percent(item.share),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      formats.moneyTight(item.total),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: () => Navigator.of(context).push(
+        SearchPage.forCategory(
+          item.category.id,
+          from: month.start,
+          to: month.endExclusive.subtract(const Duration(days: 1)),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: LayoutBuilder(
+          builder: (context, constraints) => Row(
+            children: [
+              CategoryAvatar(category: item.category, size: 32),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  categoryLabel(context.strings, item.category),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-            ),
-          ],
+              // A large total in a long currency symbol scales down rather
+              // than pushing past the card; figures that fit are untouched.
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: constraints.maxWidth * 0.55,
+                ),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        formats.percent(item.share),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        formats.moneyTight(item.total),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 20,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ],
+          ),
         ),
       ),
     );

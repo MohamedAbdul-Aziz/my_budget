@@ -6,7 +6,9 @@ import '../../../../core/utils/app_formats.dart';
 import '../../../categories/domain/entities/transaction_type.dart';
 import '../../../categories/presentation/category_label.dart';
 import '../../domain/entities/category_breakdown.dart';
+import '../../domain/entities/period.dart';
 import '../../domain/entities/period_overview.dart';
+import '../pages/search_page.dart';
 
 /// The headline of the home screen: what the month brought in, what it cost,
 /// what is left, and how much of the income that is.
@@ -98,7 +100,10 @@ class MonthSummaryCard extends StatelessWidget {
               const SizedBox(height: 14),
               _BreakdownBar(breakdown: overview.breakdown),
               const SizedBox(height: 12),
-              _BreakdownLegend(breakdown: overview.breakdown),
+              _BreakdownLegend(
+                breakdown: overview.breakdown,
+                period: overview.period,
+              ),
             ],
           ],
         ),
@@ -265,10 +270,13 @@ class _BreakdownBar extends StatelessWidget {
   }
 }
 
+/// The largest categories by name. Tapping one lists its transactions over
+/// the same period, in the search.
 class _BreakdownLegend extends StatelessWidget {
-  const _BreakdownLegend({required this.breakdown});
+  const _BreakdownLegend({required this.breakdown, required this.period});
 
   final List<CategoryBreakdown> breakdown;
+  final Period period;
 
   @override
   Widget build(BuildContext context) {
@@ -282,26 +290,41 @@ class _BreakdownLegend extends StatelessWidget {
       runSpacing: 6,
       children: [
         for (final slice in top)
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: Color(slice.category.colorValue),
-                  shape: BoxShape.circle,
-                ),
+          InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () => Navigator.of(context).push(
+              SearchPage.forCategory(
+                slice.category.id,
+                from: period.start,
+                to: period.lastDay,
               ),
-              const SizedBox(width: 6),
-              Text(
-                '${categoryLabel(strings, slice.category)} · '
-                '${(slice.share * 100).round()}%',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: Color(slice.category.colorValue),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    '${categoryLabel(strings, slice.category)} · '
+                    '${(slice.share * 100).round()}%',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      decoration: TextDecoration.underline,
+                      decorationColor: theme.colorScheme.outlineVariant,
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
       ],
     );

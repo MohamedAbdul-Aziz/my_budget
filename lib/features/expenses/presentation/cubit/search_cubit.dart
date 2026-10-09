@@ -27,6 +27,13 @@ class SearchCubit extends Cubit<SearchState> {
   /// Counts searches, so that of two overlapping ones only the newer shows.
   int _runs = 0;
 
+  /// Opens on [search] already filled in, such as one category over one
+  /// month when a category is tapped elsewhere in the app.
+  Future<void> start(TransactionSearch search) {
+    _search = search;
+    return _run();
+  }
+
   void setText(String text) {
     _search = _search.copyWith(text: text);
     _typing?.cancel();

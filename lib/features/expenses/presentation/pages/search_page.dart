@@ -22,13 +22,33 @@ import 'expense_form_page.dart';
 /// Finds transactions in every month by their note or amount, narrowed down
 /// by type, category and date.
 class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+  const SearchPage({super.key, this.focusText = true});
 
-  static Route<void> route() => MaterialPageRoute<void>(
-    builder: (_) => BlocProvider(
-      create: (_) => sl<SearchCubit>(),
-      child: const SearchPage(),
-    ),
+  /// Whether the keyboard opens on the text field. Not when the page opens
+  /// on a filter already chosen: the results are what the user came for.
+  final bool focusText;
+
+  /// [initial] opens the page with those filters applied, such as one
+  /// category over one month from the analyses.
+  static Route<void> route({TransactionSearch? initial}) =>
+      MaterialPageRoute<void>(
+        builder: (_) => BlocProvider(
+          create: (_) {
+            final cubit = sl<SearchCubit>();
+            if (initial != null) cubit.start(initial);
+            return cubit;
+          },
+          child: SearchPage(focusText: initial == null),
+        ),
+      );
+
+  /// Every transaction in [categoryId] from [from] to [to], both included.
+  static Route<void> forCategory(
+    String categoryId, {
+    required DateTime from,
+    required DateTime to,
+  }) => route(
+    initial: TransactionSearch(categoryIds: {categoryId}, from: from, to: to),
   );
 
   @override
@@ -64,7 +84,7 @@ class _SearchPageState extends State<SearchPage> {
         titleSpacing: 0,
         title: TextField(
           controller: _textController,
-          autofocus: true,
+          autofocus: widget.focusText,
           textInputAction: TextInputAction.search,
           onChanged: context.read<SearchCubit>().setText,
           decoration: InputDecoration(
