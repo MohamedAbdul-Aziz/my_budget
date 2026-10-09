@@ -392,32 +392,37 @@ class _SubmitBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<ExpenseFormCubit, ExpenseFormState, (bool, bool)>(
-      selector: (state) => (state.isSubmitting, state.isIncome),
-      // Scaffold already lifts its bottomNavigationBar above the keyboard, so
-      // adding the view inset here would push the button up twice.
-      builder: (context, flags) {
-        final (isSubmitting, isIncome) = flags;
-        return SafeArea(
-          minimum: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-          child: FilledButton.icon(
-            onPressed: isSubmitting ? null : onSubmit,
-            icon: isSubmitting
-                ? const SizedBox.square(
-                    dimension: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Icon(isEditing ? Icons.check_rounded : Icons.add_rounded),
-            label: Text(
-              isEditing
-                  ? context.strings.saveChanges
-                  : isIncome
-                  ? context.strings.addIncome
-                  : context.strings.addExpense,
+    // Scaffold shrinks its body for the keyboard but leaves the
+    // bottomNavigationBar at the foot of the screen, under the keyboard, so
+    // the button is lifted by the keyboard's height here. The safe area adds
+    // nothing while the keyboard is up: it already covers the system bar.
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: BlocSelector<ExpenseFormCubit, ExpenseFormState, (bool, bool)>(
+        selector: (state) => (state.isSubmitting, state.isIncome),
+        builder: (context, flags) {
+          final (isSubmitting, isIncome) = flags;
+          return SafeArea(
+            minimum: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+            child: FilledButton.icon(
+              onPressed: isSubmitting ? null : onSubmit,
+              icon: isSubmitting
+                  ? const SizedBox.square(
+                      dimension: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Icon(isEditing ? Icons.check_rounded : Icons.add_rounded),
+              label: Text(
+                isEditing
+                    ? context.strings.saveChanges
+                    : isIncome
+                    ? context.strings.addIncome
+                    : context.strings.addExpense,
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

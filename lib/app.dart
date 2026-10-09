@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/di/injection.dart';
 import 'core/l10n/app_strings.dart';
 import 'core/theme/app_theme.dart';
+import 'core/widgets/dismiss_keyboard.dart';
 import 'features/analyses/presentation/cubit/analyses_cubit.dart';
 import 'features/app_lock/presentation/cubit/app_lock_cubit.dart';
 import 'features/app_lock/presentation/widgets/app_lock_gate.dart';
@@ -153,7 +154,9 @@ class MyBudgetApp extends StatelessWidget {
               builder: (context, child) => AppLockGate(
                 child: QuickExpenseBridge(
                   child: AutoBackupBridge(
-                    child: child ?? const SizedBox.shrink(),
+                    child: DismissKeyboard(
+                      child: child ?? const SizedBox.shrink(),
+                    ),
                   ),
                 ),
               ),

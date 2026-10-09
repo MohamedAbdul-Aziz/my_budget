@@ -562,22 +562,27 @@ class _SubmitBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<RecurringFormCubit, RecurringFormState, bool>(
-      selector: (state) => state.isSubmitting,
-      builder: (context, isSubmitting) => SafeArea(
-        minimum: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-        child: FilledButton.icon(
-          onPressed: isSubmitting ? null : onSubmit,
-          icon: isSubmitting
-              ? const SizedBox.square(
-                  dimension: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : Icon(isEditing ? Icons.check_rounded : Icons.add_rounded),
-          label: Text(
-            isEditing
-                ? context.strings.saveChanges
-                : context.strings.addRecurring,
+    // Scaffold leaves its bottomNavigationBar under the keyboard; lifted by
+    // the keyboard's height so the button stays reachable while typing.
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: BlocSelector<RecurringFormCubit, RecurringFormState, bool>(
+        selector: (state) => state.isSubmitting,
+        builder: (context, isSubmitting) => SafeArea(
+          minimum: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+          child: FilledButton.icon(
+            onPressed: isSubmitting ? null : onSubmit,
+            icon: isSubmitting
+                ? const SizedBox.square(
+                    dimension: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Icon(isEditing ? Icons.check_rounded : Icons.add_rounded),
+            label: Text(
+              isEditing
+                  ? context.strings.saveChanges
+                  : context.strings.addRecurring,
+            ),
           ),
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import '../../../core/di/injection.dart';
 import '../../../core/l10n/app_strings.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/dismiss_keyboard.dart';
 import '../../categories/presentation/cubit/categories_cubit.dart';
 import '../../settings/presentation/cubit/settings_cubit.dart';
 import '../../settings/presentation/cubit/settings_state.dart';
@@ -45,6 +46,8 @@ class QuickAddApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
+            builder: (context, child) =>
+                DismissKeyboard(child: child ?? const SizedBox.shrink()),
             home: QuickAddScreen(categoryId: categoryId),
           );
         },
