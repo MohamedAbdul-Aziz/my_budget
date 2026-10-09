@@ -14,6 +14,10 @@ class DeviceSettings {
   static const String autoBackup = 'auto_backup';
   static const String appLock = 'app_lock';
 
+  /// Agreement to send a spending summary to the AI assistant: asked on each
+  /// phone, so a restore never turns it on for someone who did not agree.
+  static const String aiConsent = 'ai_consent';
+
   final AppDatabase _appDatabase;
 
   /// Off unless it was turned on on this phone.

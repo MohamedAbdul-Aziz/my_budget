@@ -31,6 +31,7 @@ ANALIZY
 • Saldo netto i stopa oszczędności
 • Gotowe pytania: główna kategoria, największy wydatek, prognoza na koniec miesiąca, oszczędności i więcej
 • Porównaj dowolne dwa miesiące na wykresie
+• Opcjonalny asystent AI: pytaj o swoje wydatki własnymi słowami (wymaga konta, 20 pytań dziennie)
 
 WIDŻET NA EKRANIE GŁÓWNYM
 Zobacz sumę z bieżącego miesiąca na ekranie głównym i dodaj wydatek w najczęściej używanych kategoriach bez otwierania aplikacji.
@@ -42,6 +43,7 @@ KOPIA ZAPASOWA I EKSPORT
 
 PRYWATNIE I BEZPIECZNIE
 • Twoje dane są zapisane na telefonie. Opuszczają go tylko wtedy, gdy zdecydujesz się zapisać kopię na swoim koncie
+• Asystent AI dostaje tylko podsumowanie Twoich sum, nigdy pojedynczych transakcji, notatek ani imion, i dopiero po Twojej zgodzie
 • Bez reklam, bez analityki, bez śledzenia
 • Zablokuj aplikację odciskiem palca, twarzą lub blokadą ekranu
 • Usuń konto i jego kopię w chmurze w dowolnej chwili w Ustawieniach

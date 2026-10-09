@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/app_formats.dart';
+import '../../../assistant/presentation/pages/assistant_page.dart';
 import '../../../budgets/domain/entities/budget_status.dart';
 import '../../../budgets/presentation/cubit/budget_cubit.dart';
 import '../../../budgets/presentation/cubit/budget_state.dart';
@@ -82,6 +83,18 @@ class _AskCardState extends State<AskCard> {
                     question: selected,
                     analysis: widget.analysis,
                   ),
+          ),
+          const SizedBox(height: 8),
+          // Anything the ready-made questions do not cover goes to the AI
+          // assistant, which needs an account and the user's agreement.
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: OutlinedButton.icon(
+              onPressed: () =>
+                  Navigator.of(context).push(AssistantPage.route()),
+              icon: const Icon(Icons.auto_awesome),
+              label: Text(strings.askAi),
+            ),
           ),
         ],
       ),

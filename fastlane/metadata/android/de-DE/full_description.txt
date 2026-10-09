@@ -31,6 +31,7 @@ AUSWERTUNGEN
 • Nettosaldo und Sparquote
 • Stelle fertige Fragen: Top-Kategorie, größte Ausgabe, Prognose zum Monatsende, Ersparnis und mehr
 • Vergleiche zwei beliebige Monate nebeneinander, mit Diagramm
+• Optionaler KI-Assistent: Frag in eigenen Worten nach deinen Ausgaben (Konto nötig, 20 Fragen pro Tag)
 
 STARTBILDSCHIRM-WIDGET
 Sieh die Monatssumme auf dem Startbildschirm und erfasse eine Ausgabe in deinen meistgenutzten Kategorien, ohne die App zu öffnen.
@@ -42,6 +43,7 @@ SICHERUNG UND EXPORT
 
 PRIVAT UND SICHER
 • Deine Daten werden auf deinem Handy gespeichert. Sie verlassen es nur, wenn du sie in deinem eigenen Konto sicherst
+• Der KI-Assistent erhält nur eine Zusammenfassung deiner Summen, nie einzelne Buchungen, Notizen oder Namen, und erst nach deiner Zustimmung
 • Keine Werbung, keine Analyse, keine Tracker
 • Sperre die App mit Fingerabdruck, Gesicht oder Displaysperre
 • Lösche dein Konto und seine Cloud-Sicherung jederzeit in den Einstellungen

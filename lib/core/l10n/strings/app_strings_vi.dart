@@ -725,6 +725,14 @@ class AppStringsVi extends AppStrings {
     FailureCode.nothingToSettle => 'Không có gì cần thanh toán.',
     FailureCode.settlementAlreadyLogged =>
       'Lần thanh toán này đã có trong ngân sách.',
+    FailureCode.questionRequired => 'Hãy nhập câu hỏi.',
+    FailureCode.questionTooLong => 'Câu hỏi phải ít hơn 500 ký tự.',
+    FailureCode.summaryTooLarge =>
+      'Dữ liệu của bạn quá lớn để tóm tắt cho trợ lý.',
+    FailureCode.aiUnavailable => 'Trợ lý hiện không khả dụng. Hãy thử lại sau.',
+    FailureCode.aiBusy => 'Trợ lý đang bận. Hãy thử lại sau một phút.',
+    FailureCode.aiDailyLimit =>
+      'Bạn đã hỏi đủ 20 câu hôm nay. Hãy thử lại vào ngày mai.',
   };
 
   @override
@@ -1322,6 +1330,50 @@ class AppStringsVi extends AppStrings {
 
   @override
   String get askTopIncome => 'Thu nhập chính';
+
+  @override
+  String get askAi => 'Hỏi AI';
+
+  @override
+  String get assistantTitle => 'Trợ lý AI';
+
+  @override
+  String get assistantEmpty =>
+      'Hỏi bất cứ điều gì về chi tiêu của bạn trong ba tháng qua.';
+
+  @override
+  String get assistantHint => 'Đặt câu hỏi';
+
+  @override
+  String get assistantSend => 'Gửi';
+
+  @override
+  String get assistantSignInBody =>
+      'Đăng nhập để dùng trợ lý AI. Mỗi tài khoản có thể hỏi 20 câu mỗi ngày.';
+
+  @override
+  String get assistantConsentTitle => 'Trước khi hỏi';
+
+  @override
+  String get assistantConsentBody =>
+      'Để trả lời, ứng dụng gửi câu hỏi của bạn, vài tin nhắn gần nhất và bản tóm tắt các khoản tổng trong ba tháng qua (theo danh mục, thu nhập, chi tiêu và ngân sách) qua máy chủ của chúng tôi đến nhà cung cấp AI Groq. Mô tả, ghi chú và tên người không bao giờ được gửi. Chúng tôi không lưu câu hỏi hay câu trả lời; máy chủ chỉ đếm số câu hỏi bạn đặt mỗi ngày. Bạn có thể ngừng chia sẻ bất cứ lúc nào.';
+
+  @override
+  String get assistantConsentAgree => 'Tôi đồng ý';
+
+  @override
+  String get assistantStopSharing => 'Ngừng chia sẻ';
+
+  @override
+  String get assistantDisclaimer =>
+      'Câu trả lời của AI có thể sai. Hãy kiểm tra các con số quan trọng.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'Tôi có thể tiết kiệm ở đâu?',
+    'Tháng này so với tháng trước thế nào?',
+    'Tôi có đang giữ đúng ngân sách không?',
+  ];
 
   @override
   String get otherCategories => 'Khác';

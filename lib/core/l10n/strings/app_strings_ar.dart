@@ -724,6 +724,12 @@ class AppStringsAr extends AppStrings {
     FailureCode.nothingToSettle => 'لا يوجد ما تتم تسويته.',
     FailureCode.settlementAlreadyLogged =>
       'هذه التسوية مسجّلة في ميزانيتك بالفعل.',
+    FailureCode.questionRequired => 'اكتب سؤالًا.',
+    FailureCode.questionTooLong => 'اجعل السؤال أقل من 500 حرف.',
+    FailureCode.summaryTooLarge => 'بياناتك كبيرة جدًا لتلخيصها للمساعد.',
+    FailureCode.aiUnavailable => 'المساعد غير متاح الآن. حاول لاحقًا.',
+    FailureCode.aiBusy => 'المساعد مشغول. حاول بعد دقيقة.',
+    FailureCode.aiDailyLimit => 'استخدمت أسئلتك العشرين لهذا اليوم. حاول غدًا.',
   };
 
   @override
@@ -1333,6 +1339,49 @@ class AppStringsAr extends AppStrings {
 
   @override
   String get askTopIncome => 'أكبر دخل';
+
+  @override
+  String get askAi => 'اسأل المساعد';
+
+  @override
+  String get assistantTitle => 'المساعد الذكي';
+
+  @override
+  String get assistantEmpty => 'اسأل أي سؤال عن مصروفاتك في آخر ثلاثة أشهر.';
+
+  @override
+  String get assistantHint => 'اكتب سؤالك';
+
+  @override
+  String get assistantSend => 'إرسال';
+
+  @override
+  String get assistantSignInBody =>
+      'سجّل الدخول لاستخدام المساعد الذكي. يمكن لكل حساب طرح 20 سؤالًا في اليوم.';
+
+  @override
+  String get assistantConsentTitle => 'قبل أن تسأل';
+
+  @override
+  String get assistantConsentBody =>
+      'للإجابة، يرسل التطبيق سؤالك وآخر رسائلك وملخصًا لإجمالياتك في آخر ثلاثة أشهر (حسب الفئة، والدخل، والمصروفات، والميزانيات) عبر خادمنا إلى مزوّد الذكاء الاصطناعي Groq. لا تُرسل الأوصاف أو الملاحظات أو أسماء الأشخاص أبدًا. لا نخزّن أسئلتك ولا الإجابات؛ خادمنا يحسب فقط عدد الأسئلة التي تطرحها كل يوم. يمكنك إيقاف المشاركة في أي وقت.';
+
+  @override
+  String get assistantConsentAgree => 'أوافق';
+
+  @override
+  String get assistantStopSharing => 'إيقاف المشاركة';
+
+  @override
+  String get assistantDisclaimer =>
+      'قد تكون إجابات الذكاء الاصطناعي خاطئة. تحقّق من الأرقام المهمة.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'أين يمكنني التوفير؟',
+    'كيف كان هذا الشهر مقارنة بالشهر الماضي؟',
+    'هل أنا ملتزم بميزانيتي؟',
+  ];
 
   @override
   String get otherCategories => 'أخرى';

@@ -722,6 +722,15 @@ class AppStringsEn extends AppStrings {
     FailureCode.nothingToSettle => "There's nothing to settle.",
     FailureCode.settlementAlreadyLogged =>
       'This settlement is already in your budget.',
+    FailureCode.questionRequired => 'Type a question.',
+    FailureCode.questionTooLong => 'Keep the question under 500 characters.',
+    FailureCode.summaryTooLarge =>
+      'Your data is too large to summarize for the assistant.',
+    FailureCode.aiUnavailable =>
+      "The assistant isn't available right now. Try again later.",
+    FailureCode.aiBusy => 'The assistant is busy. Try again in a minute.',
+    FailureCode.aiDailyLimit =>
+      "You've asked today's 20 questions. Try again tomorrow.",
   };
 
   @override
@@ -1319,6 +1328,50 @@ class AppStringsEn extends AppStrings {
 
   @override
   String get askTopIncome => 'Top income';
+
+  @override
+  String get askAi => 'Ask AI';
+
+  @override
+  String get assistantTitle => 'AI assistant';
+
+  @override
+  String get assistantEmpty =>
+      'Ask anything about your last three months of spending.';
+
+  @override
+  String get assistantHint => 'Ask a question';
+
+  @override
+  String get assistantSend => 'Send';
+
+  @override
+  String get assistantSignInBody =>
+      'Sign in to use the AI assistant. Each account can ask 20 questions a day.';
+
+  @override
+  String get assistantConsentTitle => 'Before you ask';
+
+  @override
+  String get assistantConsentBody =>
+      "To answer, the app sends your question, your last few messages and a summary of your totals for the last three months (by category, income, spending and budgets) through our server to the AI provider Groq. Descriptions, notes and people's names are never sent. We don't store your questions or the answers; our server only counts how many questions you ask each day. You can stop sharing at any time.";
+
+  @override
+  String get assistantConsentAgree => 'I agree';
+
+  @override
+  String get assistantStopSharing => 'Stop sharing';
+
+  @override
+  String get assistantDisclaimer =>
+      'AI answers can be wrong. Check important figures.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'Where can I save?',
+    'How does this month compare to last month?',
+    'Am I on track with my budget?',
+  ];
 
   @override
   String get otherCategories => 'Others';

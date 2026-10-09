@@ -744,6 +744,15 @@ class AppStringsRu extends AppStrings {
     FailureCode.nothingToSettle => 'Нечего закрывать.',
     FailureCode.settlementAlreadyLogged =>
       'Этот расчёт уже есть в вашем бюджете.',
+    FailureCode.questionRequired => 'Введите вопрос.',
+    FailureCode.questionTooLong => 'Вопрос должен быть короче 500 символов.',
+    FailureCode.summaryTooLarge =>
+      'Данных слишком много, чтобы составить сводку для помощника.',
+    FailureCode.aiUnavailable =>
+      'Помощник сейчас недоступен. Попробуйте позже.',
+    FailureCode.aiBusy => 'Помощник занят. Попробуйте через минуту.',
+    FailureCode.aiDailyLimit =>
+      'Вы уже задали 20 вопросов сегодня. Попробуйте завтра.',
   };
 
   @override
@@ -1372,6 +1381,50 @@ class AppStringsRu extends AppStrings {
 
   @override
   String get askTopIncome => 'Главный доход';
+
+  @override
+  String get askAi => 'Спросить ИИ';
+
+  @override
+  String get assistantTitle => 'ИИ-помощник';
+
+  @override
+  String get assistantEmpty =>
+      'Спросите что угодно о своих расходах за последние три месяца.';
+
+  @override
+  String get assistantHint => 'Задайте вопрос';
+
+  @override
+  String get assistantSend => 'Отправить';
+
+  @override
+  String get assistantSignInBody =>
+      'Войдите, чтобы пользоваться ИИ-помощником. Каждый аккаунт может задать 20 вопросов в день.';
+
+  @override
+  String get assistantConsentTitle => 'Прежде чем спросить';
+
+  @override
+  String get assistantConsentBody =>
+      'Чтобы ответить, приложение отправляет ваш вопрос, последние сообщения и сводку итогов за последние три месяца (по категориям, доходы, расходы и бюджеты) через наш сервер ИИ-провайдеру Groq. Описания, заметки и имена людей никогда не отправляются. Мы не храним ваши вопросы и ответы; наш сервер только считает, сколько вопросов вы задаёте за день. Вы можете прекратить передачу в любой момент.';
+
+  @override
+  String get assistantConsentAgree => 'Принимаю';
+
+  @override
+  String get assistantStopSharing => 'Прекратить передачу';
+
+  @override
+  String get assistantDisclaimer =>
+      'Ответы ИИ могут быть ошибочными. Проверяйте важные цифры.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'Где я могу сэкономить?',
+    'Как этот месяц в сравнении с прошлым?',
+    'Укладываюсь ли я в бюджет?',
+  ];
 
   @override
   String get otherCategories => 'Другие';

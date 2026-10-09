@@ -728,6 +728,15 @@ class AppStringsId extends AppStrings {
     FailureCode.nothingToSettle => 'Tidak ada yang perlu dilunasi.',
     FailureCode.settlementAlreadyLogged =>
       'Pelunasan ini sudah ada di anggaranmu.',
+    FailureCode.questionRequired => 'Ketik pertanyaan.',
+    FailureCode.questionTooLong => 'Pertanyaan harus kurang dari 500 karakter.',
+    FailureCode.summaryTooLarge =>
+      'Datamu terlalu besar untuk diringkas bagi asisten.',
+    FailureCode.aiUnavailable =>
+      'Asisten sedang tidak tersedia. Coba lagi nanti.',
+    FailureCode.aiBusy => 'Asisten sedang sibuk. Coba lagi dalam satu menit.',
+    FailureCode.aiDailyLimit =>
+      'Kamu sudah mengajukan 20 pertanyaan hari ini. Coba lagi besok.',
   };
 
   @override
@@ -1330,6 +1339,50 @@ class AppStringsId extends AppStrings {
 
   @override
   String get askTopIncome => 'Pemasukan terbesar';
+
+  @override
+  String get askAi => 'Tanya AI';
+
+  @override
+  String get assistantTitle => 'Asisten AI';
+
+  @override
+  String get assistantEmpty =>
+      'Tanyakan apa saja tentang pengeluaranmu dalam tiga bulan terakhir.';
+
+  @override
+  String get assistantHint => 'Ajukan pertanyaan';
+
+  @override
+  String get assistantSend => 'Kirim';
+
+  @override
+  String get assistantSignInBody =>
+      'Masuk untuk memakai asisten AI. Setiap akun bisa mengajukan 20 pertanyaan per hari.';
+
+  @override
+  String get assistantConsentTitle => 'Sebelum bertanya';
+
+  @override
+  String get assistantConsentBody =>
+      'Untuk menjawab, aplikasi mengirim pertanyaanmu, beberapa pesan terakhir, dan ringkasan total tiga bulan terakhir (per kategori, pemasukan, pengeluaran, dan anggaran) melalui server kami ke penyedia AI Groq. Deskripsi, catatan, dan nama orang tidak pernah dikirim. Kami tidak menyimpan pertanyaan maupun jawabannya; server kami hanya menghitung jumlah pertanyaanmu setiap hari. Kamu bisa berhenti berbagi kapan saja.';
+
+  @override
+  String get assistantConsentAgree => 'Saya setuju';
+
+  @override
+  String get assistantStopSharing => 'Berhenti berbagi';
+
+  @override
+  String get assistantDisclaimer =>
+      'Jawaban AI bisa salah. Periksa angka yang penting.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'Di mana saya bisa berhemat?',
+    'Bagaimana bulan ini dibanding bulan lalu?',
+    'Apakah anggaran saya aman?',
+  ];
 
   @override
   String get otherCategories => 'Lainnya';

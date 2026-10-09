@@ -682,6 +682,12 @@ class AppStringsZh extends AppStrings {
     FailureCode.transactionSettled => '已结清的交易无法修改。',
     FailureCode.nothingToSettle => '没有需要结清的内容。',
     FailureCode.settlementAlreadyLogged => '这次结算已记入预算。',
+    FailureCode.questionRequired => '请输入问题。',
+    FailureCode.questionTooLong => '问题请少于 500 个字符。',
+    FailureCode.summaryTooLarge => '你的数据太多，无法为助手汇总。',
+    FailureCode.aiUnavailable => '助手暂时不可用，请稍后再试。',
+    FailureCode.aiBusy => '助手正忙，请一分钟后再试。',
+    FailureCode.aiDailyLimit => '你今天的 20 个问题已用完，请明天再试。',
   };
 
   @override
@@ -1253,6 +1259,47 @@ class AppStringsZh extends AppStrings {
 
   @override
   String get askTopIncome => '最大收入';
+
+  @override
+  String get askAi => '问 AI';
+
+  @override
+  String get assistantTitle => 'AI 助手';
+
+  @override
+  String get assistantEmpty => '询问你最近三个月支出的任何问题。';
+
+  @override
+  String get assistantHint => '输入问题';
+
+  @override
+  String get assistantSend => '发送';
+
+  @override
+  String get assistantSignInBody => '登录后即可使用 AI 助手。每个账户每天可提问 20 次。';
+
+  @override
+  String get assistantConsentTitle => '提问之前';
+
+  @override
+  String get assistantConsentBody =>
+      '为了回答，应用会通过我们的服务器将你的问题、最近几条消息以及最近三个月的汇总数据（按类别、收入、支出和预算）发送给 AI 服务商 Groq。描述、备注和人名绝不会被发送。我们不会保存你的问题或回答；我们的服务器只统计你每天的提问次数。你可以随时停止共享。';
+
+  @override
+  String get assistantConsentAgree => '我同意';
+
+  @override
+  String get assistantStopSharing => '停止共享';
+
+  @override
+  String get assistantDisclaimer => 'AI 的回答可能有误，请核对重要数字。';
+
+  @override
+  List<String> get assistantSuggestions => [
+    '我可以在哪里省钱？',
+    '这个月和上个月相比如何？',
+    '我的预算执行得怎么样？',
+  ];
 
   @override
   String get otherCategories => '其他';

@@ -31,6 +31,7 @@ ANALISI
 • Saldo netto e tasso di risparmio
 • Fai domande già pronte: categoria principale, spesa più alta, stima di fine mese, risparmio e altro
 • Confronta due mesi qualsiasi fianco a fianco, con un grafico
+• Assistente IA facoltativo: chiedi delle tue spese con parole tue (serve un account, 20 domande al giorno)
 
 WIDGET DELLA SCHERMATA HOME
 Vedi il totale del mese nella schermata home e aggiungi una spesa dalle categorie che usi di più senza aprire l'app.
@@ -42,6 +43,7 @@ BACKUP ED ESPORTAZIONE
 
 PRIVATA E SICURA
 • I tuoi dati restano sul telefono. Escono solo se scegli di salvarli nel tuo account
+• L’assistente IA riceve solo un riepilogo dei tuoi totali, mai singole transazioni, note o nomi, e solo dopo il tuo consenso
 • Niente pubblicità, niente analisi, niente tracker
 • Blocca l'app con impronta, volto o blocco schermo
 • Elimina l'account e il suo backup nel cloud quando vuoi dalle Impostazioni

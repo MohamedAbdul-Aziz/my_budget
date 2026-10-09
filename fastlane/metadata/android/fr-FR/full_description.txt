@@ -31,6 +31,7 @@ ANALYSES
 • Solde net et taux d'épargne
 • Posez des questions toutes prêtes : catégorie principale, plus grosse dépense, estimation de fin de mois, épargne et plus
 • Comparez deux mois côte à côte, avec un graphique
+• Assistant IA facultatif : posez vos questions sur vos dépenses avec vos propres mots (compte requis, 20 questions par jour)
 
 WIDGET D'ÉCRAN D'ACCUEIL
 Affichez le total du mois sur votre écran d'accueil et ajoutez une dépense dans vos catégories favorites sans ouvrir l'application.
@@ -42,6 +43,7 @@ SAUVEGARDE ET EXPORT
 
 PRIVÉ ET SÉCURISÉ
 • Vos données sont stockées sur votre téléphone. Elles n'en sortent que si vous choisissez de les sauvegarder sur votre propre compte
+• L’assistant IA ne reçoit qu’un résumé de vos totaux, jamais une transaction, une note ou un nom, et seulement après votre accord
 • Pas de publicité, pas d'analyse, pas de traceurs
 • Verrouillez l'application avec votre empreinte, votre visage ou le verrouillage de l'écran
 • Supprimez votre compte et sa sauvegarde dans le cloud à tout moment depuis les Paramètres

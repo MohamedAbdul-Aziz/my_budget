@@ -744,6 +744,16 @@ class AppStringsUk extends AppStrings {
     FailureCode.nothingToSettle => 'Нічого закривати.',
     FailureCode.settlementAlreadyLogged =>
       'Цей розрахунок уже є у вашому бюджеті.',
+    FailureCode.questionRequired => 'Введіть запитання.',
+    FailureCode.questionTooLong =>
+      'Запитання має бути коротшим за 500 символів.',
+    FailureCode.summaryTooLarge =>
+      'Даних забагато, щоб скласти підсумок для помічника.',
+    FailureCode.aiUnavailable =>
+      'Помічник зараз недоступний. Спробуйте пізніше.',
+    FailureCode.aiBusy => 'Помічник зайнятий. Спробуйте за хвилину.',
+    FailureCode.aiDailyLimit =>
+      'Ви вже поставили 20 запитань сьогодні. Спробуйте завтра.',
   };
 
   @override
@@ -1372,6 +1382,50 @@ class AppStringsUk extends AppStrings {
 
   @override
   String get askTopIncome => 'Головний дохід';
+
+  @override
+  String get askAi => 'Запитати ШІ';
+
+  @override
+  String get assistantTitle => 'ШІ-помічник';
+
+  @override
+  String get assistantEmpty =>
+      'Запитайте будь-що про свої витрати за останні три місяці.';
+
+  @override
+  String get assistantHint => 'Поставте запитання';
+
+  @override
+  String get assistantSend => 'Надіслати';
+
+  @override
+  String get assistantSignInBody =>
+      'Увійдіть, щоб користуватися ШІ-помічником. Кожен акаунт може поставити 20 запитань на день.';
+
+  @override
+  String get assistantConsentTitle => 'Перш ніж запитати';
+
+  @override
+  String get assistantConsentBody =>
+      'Щоб відповісти, застосунок надсилає ваше запитання, останні повідомлення та підсумок ваших сум за останні три місяці (за категоріями, доходи, витрати й бюджети) через наш сервер ШІ-провайдеру Groq. Описи, нотатки та імена людей ніколи не надсилаються. Ми не зберігаємо ваші запитання та відповіді; наш сервер лише рахує, скільки запитань ви ставите щодня. Ви можете припинити передавання будь-коли.';
+
+  @override
+  String get assistantConsentAgree => 'Погоджуюся';
+
+  @override
+  String get assistantStopSharing => 'Припинити передавання';
+
+  @override
+  String get assistantDisclaimer =>
+      'Відповіді ШІ можуть бути помилковими. Перевіряйте важливі цифри.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'Де я можу заощадити?',
+    'Як цей місяць порівняно з минулим?',
+    'Чи вкладаюся я в бюджет?',
+  ];
 
   @override
   String get otherCategories => 'Інші';

@@ -40,6 +40,7 @@ ANALYSES
 • Net balance and savings rate
 • Ask ready-made questions: top category, biggest expense, month-end estimate, savings and more
 • Compare any two months side by side, with a chart
+• Optional AI assistant: ask about your spending in your own words (account needed, 20 questions a day)
 
 HOME SCREEN WIDGET
 See this month's total on your home screen and add an expense from your most-used categories without opening the app.
@@ -52,6 +53,7 @@ EXPORT YOUR DATA
 PRIVATE AND SECURE
 • No ads, no analytics, no trackers
 • Your records only leave your phone when you choose to back them up
+• The AI assistant only gets a summary of your totals, never single transactions, notes or names, and only after you agree
 • Lock the app with your fingerprint, face or screen lock
 • Delete your account and its cloud backup at any time from Settings
 

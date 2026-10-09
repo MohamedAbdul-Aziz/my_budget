@@ -718,6 +718,15 @@ class AppStringsFa extends AppStrings {
     FailureCode.nothingToSettle => 'چیزی برای تسویه نیست.',
     FailureCode.settlementAlreadyLogged =>
       'این تسویه قبلاً در بودجه شما ثبت شده.',
+    FailureCode.questionRequired => 'یک سؤال بنویس.',
+    FailureCode.questionTooLong => 'سؤال باید کمتر از ۵۰۰ نویسه باشد.',
+    FailureCode.summaryTooLarge =>
+      'داده‌هایت برای خلاصه کردن برای دستیار خیلی زیاد است.',
+    FailureCode.aiUnavailable =>
+      'دستیار الان در دسترس نیست. بعداً دوباره امتحان کن.',
+    FailureCode.aiBusy => 'دستیار مشغول است. یک دقیقه دیگر امتحان کن.',
+    FailureCode.aiDailyLimit =>
+      '۲۰ سؤال امروزت را پرسیده‌ای. فردا دوباره امتحان کن.',
   };
 
   @override
@@ -1311,6 +1320,50 @@ class AppStringsFa extends AppStrings {
 
   @override
   String get askTopIncome => 'بیشترین درآمد';
+
+  @override
+  String get askAi => 'از هوش مصنوعی بپرس';
+
+  @override
+  String get assistantTitle => 'دستیار هوشمند';
+
+  @override
+  String get assistantEmpty =>
+      'هر سؤالی درباره هزینه‌های سه ماه اخیرت داری بپرس.';
+
+  @override
+  String get assistantHint => 'سؤالت را بنویس';
+
+  @override
+  String get assistantSend => 'ارسال';
+
+  @override
+  String get assistantSignInBody =>
+      'برای استفاده از دستیار هوشمند وارد شو. هر حساب می‌تواند روزی ۲۰ سؤال بپرسد.';
+
+  @override
+  String get assistantConsentTitle => 'پیش از پرسیدن';
+
+  @override
+  String get assistantConsentBody =>
+      'برای پاسخ دادن، برنامه سؤالت، چند پیام آخرت و خلاصه‌ای از مجموع‌های سه ماه اخیرت (بر اساس دسته، درآمد، هزینه و بودجه) را از طریق سرور ما برای ارائه‌دهنده هوش مصنوعی Groq می‌فرستد. توضیحات، یادداشت‌ها و نام افراد هرگز فرستاده نمی‌شوند. ما سؤال‌ها و پاسخ‌هایت را نگه نمی‌داریم؛ سرور ما فقط تعداد سؤال‌های روزانه‌ات را می‌شمارد. هر وقت خواستی می‌توانی اشتراک‌گذاری را متوقف کنی.';
+
+  @override
+  String get assistantConsentAgree => 'موافقم';
+
+  @override
+  String get assistantStopSharing => 'توقف اشتراک‌گذاری';
+
+  @override
+  String get assistantDisclaimer =>
+      'پاسخ‌های هوش مصنوعی ممکن است اشتباه باشند. عددهای مهم را بررسی کن.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'کجا می‌توانم صرفه‌جویی کنم؟',
+    'این ماه در مقایسه با ماه قبل چطور بود؟',
+    'آیا در محدوده بودجه‌ام هستم؟',
+  ];
 
   @override
   String get otherCategories => 'سایر';

@@ -34,6 +34,17 @@ restore on any phone.
   small chart where it helps, is worked out on the phone from the month's own
   figures, with no network and no AI service. *Compare months* sets the month
   against any other you pick, category by category, in a paired bar chart.
+- **AI assistant** (optional) — *Ask AI* on the Analyses tab opens a chat
+  about your own money ("Where can I save?"). It needs an account and your
+  agreement first, and *Stop sharing* withdraws it. Before every question the
+  phone builds a fresh summary of totals only (three months by category,
+  income, budget limits, the six-month trend; at most 8 KB) with
+  `BuildSpendingSummary`; single transactions, notes, people and ids are never
+  sent. The `ai-assistant` Edge Function checks the session, counts 20
+  questions per account per UTC day (`ai_usage` table), adds the provider key
+  (a server secret) and asks an OpenAI-compatible model (Groq's free tier by
+  default). Nothing is stored except that daily count; the conversation lives
+  only while the screen is open.
 - **Budgets** — an optional monthly limit and optional per-category limits,
   repeating every month. The home screen card shows what is left, with a bar
   that turns from green to orange at 70% and red past 90%. Logging an expense
@@ -83,7 +94,7 @@ restore on any phone.
   app* hands out a ready prompt that lists your own categories. Paste it with
   your data (a CSV, a spreadsheet, another app's export) into ChatGPT, Gemini,
   Claude or any AI chat, then paste the answer back or pick it as a file. The
-  app never talks to the AI itself. `AssistedImport` fills in what the prompt
+  import never talks to the AI itself. `AssistedImport` fills in what the prompt
   leaves out (epoch dates, `month_key`, sync stamps, empty tables), and the
   file is then checked, previewed and merged exactly like a backup. Each
   prompt carries its own id prefix, so two imports never overwrite each other.
@@ -166,6 +177,7 @@ lib/
     reminders/     data · domain · presentation
     settings/      data · domain · presentation
     quick_expense/ data · domain · presentation
+    assistant/     data · domain · presentation (+ supabase/functions/ai-assistant)
 ```
 
 - **State** — Cubit/Bloc with `sealed` state classes and exhaustive `switch`.

@@ -729,6 +729,15 @@ class AppStringsUr extends AppStrings {
     FailureCode.transactionSettled => 'طے شدہ لین دین تبدیل نہیں ہو سکتا۔',
     FailureCode.nothingToSettle => 'طے کرنے کو کچھ نہیں۔',
     FailureCode.settlementAlreadyLogged => 'یہ حساب پہلے سے آپ کے بجٹ میں ہے۔',
+    FailureCode.questionRequired => 'سوال لکھیں۔',
+    FailureCode.questionTooLong => 'سوال 500 حروف سے کم رکھیں۔',
+    FailureCode.summaryTooLarge =>
+      'آپ کا ڈیٹا معاون کے لیے خلاصہ بنانے کے لیے بہت بڑا ہے۔',
+    FailureCode.aiUnavailable =>
+      'معاون ابھی دستیاب نہیں ہے۔ بعد میں دوبارہ کوشش کریں۔',
+    FailureCode.aiBusy => 'معاون مصروف ہے۔ ایک منٹ بعد کوشش کریں۔',
+    FailureCode.aiDailyLimit =>
+      'آپ آج کے 20 سوال پوچھ چکے ہیں۔ کل دوبارہ کوشش کریں۔',
   };
 
   @override
@@ -1339,6 +1348,50 @@ class AppStringsUr extends AppStrings {
 
   @override
   String get askTopIncome => 'سب سے بڑی آمدنی';
+
+  @override
+  String get askAi => 'AI سے پوچھیں';
+
+  @override
+  String get assistantTitle => 'AI معاون';
+
+  @override
+  String get assistantEmpty =>
+      'پچھلے تین مہینوں کے اپنے اخراجات کے بارے میں کچھ بھی پوچھیں۔';
+
+  @override
+  String get assistantHint => 'سوال لکھیں';
+
+  @override
+  String get assistantSend => 'بھیجیں';
+
+  @override
+  String get assistantSignInBody =>
+      'AI معاون استعمال کرنے کے لیے سائن ان کریں۔ ہر اکاؤنٹ روزانہ 20 سوال پوچھ سکتا ہے۔';
+
+  @override
+  String get assistantConsentTitle => 'پوچھنے سے پہلے';
+
+  @override
+  String get assistantConsentBody =>
+      'جواب دینے کے لیے ایپ آپ کا سوال، آپ کے آخری چند پیغامات اور پچھلے تین مہینوں کے آپ کے مجموعوں کا خلاصہ (زمرے کے لحاظ سے، آمدنی، اخراجات اور بجٹ) ہمارے سرور کے ذریعے AI فراہم کنندہ Groq کو بھیجتی ہے۔ تفصیلات، نوٹس اور لوگوں کے نام کبھی نہیں بھیجے جاتے۔ ہم آپ کے سوال اور جواب محفوظ نہیں کرتے؛ ہمارا سرور صرف یہ گنتا ہے کہ آپ روزانہ کتنے سوال پوچھتے ہیں۔ آپ کسی بھی وقت شیئر کرنا بند کر سکتے ہیں۔';
+
+  @override
+  String get assistantConsentAgree => 'میں متفق ہوں';
+
+  @override
+  String get assistantStopSharing => 'شیئر کرنا بند کریں';
+
+  @override
+  String get assistantDisclaimer =>
+      'AI کے جوابات غلط ہو سکتے ہیں۔ اہم اعداد کی جانچ کریں۔';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'میں کہاں بچت کر سکتا ہوں؟',
+    'یہ مہینہ پچھلے مہینے کے مقابلے میں کیسا رہا؟',
+    'کیا میں اپنے بجٹ میں ہوں؟',
+  ];
 
   @override
   String get otherCategories => 'دیگر';

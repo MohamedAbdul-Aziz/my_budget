@@ -31,6 +31,7 @@ ANALISIS
 • Baki bersih dan kadar simpanan
 • Tanya soalan sedia ada: kategori utama, perbelanjaan terbesar, anggaran hujung bulan, simpanan dan banyak lagi
 • Banding mana-mana dua bulan sebelah-menyebelah, dengan carta
+• Pembantu AI pilihan: tanya tentang perbelanjaan anda dengan kata-kata sendiri (perlu akaun, 20 soalan sehari)
 
 WIDGET SKRIN UTAMA
 Lihat jumlah bulan ini di skrin utama dan tambah perbelanjaan daripada kategori yang paling kerap digunakan tanpa membuka aplikasi.
@@ -42,6 +43,7 @@ SANDARAN DAN EKSPORT
 
 PERIBADI DAN SELAMAT
 • Data anda disimpan di telefon anda dan hanya keluar jika anda memilih untuk menyandarkannya ke akaun anda sendiri
+• Pembantu AI hanya menerima ringkasan jumlah anda, bukan transaksi individu, nota atau nama, dan hanya selepas anda bersetuju
 • Tiada iklan, tiada analitik, tiada penjejak
 • Kunci aplikasi dengan cap jari, wajah atau kunci skrin
 • Padam akaun dan sandaran awannya pada bila-bila masa dari Tetapan

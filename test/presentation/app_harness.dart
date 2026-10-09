@@ -5,6 +5,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:my_budget/app.dart';
 import 'package:my_budget/core/di/injection.dart';
 import 'package:my_budget/features/app_lock/domain/repositories/app_lock_repository.dart';
+import 'package:my_budget/features/assistant/domain/repositories/assistant_repository.dart';
 import 'package:my_budget/features/app_lock/presentation/cubit/app_lock_cubit.dart';
 import 'package:my_budget/features/auth/domain/repositories/auth_repository.dart';
 import 'package:my_budget/features/budgets/domain/repositories/budget_repository.dart';
@@ -45,6 +46,7 @@ class AppHarness {
     required this.people,
     required this.reminder,
     required this.appLock,
+    required this.assistant,
   });
 
   final FakeCategoryRepository categories;
@@ -59,6 +61,7 @@ class AppHarness {
   final FakePeopleRepository people;
   final FakeReminderRepository reminder;
   final FakeAppLockRepository appLock;
+  final FakeAssistantRepository assistant;
 }
 
 /// Boots the real widget tree and cubits over in-memory repositories.
@@ -116,6 +119,7 @@ Future<AppHarness> _bootDependencies(
   final people = FakePeopleRepository();
   final reminder = FakeReminderRepository();
   final appLock = FakeAppLockRepository();
+  final assistant = FakeAssistantRepository();
   final harness = AppHarness(
     categories: categories,
     expenses: expenses,
@@ -129,6 +133,7 @@ Future<AppHarness> _bootDependencies(
     people: people,
     reminder: reminder,
     appLock: appLock,
+    assistant: assistant,
   );
   before?.call(harness);
 
@@ -144,7 +149,8 @@ Future<AppHarness> _bootDependencies(
     ..registerLazySingleton<RecurringRepository>(() => recurring)
     ..registerLazySingleton<PeopleRepository>(() => people)
     ..registerLazySingleton<ReminderRepository>(() => reminder)
-    ..registerLazySingleton<AppLockRepository>(() => appLock);
+    ..registerLazySingleton<AppLockRepository>(() => appLock)
+    ..registerLazySingleton<AssistantRepository>(() => assistant);
   configureDependencies();
 
   // The same order as main.dart: due automatic payments first.

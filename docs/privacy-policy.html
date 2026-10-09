@@ -73,14 +73,15 @@
 <main>
 
   <h1>Privacy Policy for My Budget</h1>
-  <p class="meta">Last updated: 1 October 2026</p>
+  <p class="meta">Last updated: 9 October 2026</p>
 
   <div class="summary">
     <p><strong>The short version:</strong> My Budget keeps your records on your
     own phone and works without an account. Only if you choose to sign in and
     back up does a copy of your records go to your private cloud backup, which
-    you can delete at any time. There are no ads, no analytics and no
-    tracking.</p>
+    you can delete at any time. If you use the optional AI assistant, a
+        summary of your totals is sent to answer each question. There are no
+        ads, no analytics and no tracking.</p>
   </div>
 
   <h2>Who this covers</h2>
@@ -89,7 +90,7 @@
   information you enter into the app.</p>
 
   <h2>Using the app without an account</h2>
-  <p>You can use every feature except cloud backup without signing in. Your
+  <p>You can use every feature except cloud backup and the AI assistant without signing in. Your
   transactions, categories, budgets, recurring payments, people and debts, and
   settings are written to a private database inside the app's own storage on
   your device. Android isolates this storage so that other apps cannot read
@@ -119,7 +120,38 @@
   only your signed-in account read or change your rows. The developer does not
   sell, share or use it for anything else.</p>
   <p>Preferences that belong to one phone, such as the app lock and the
-  automatic backup switch, are never uploaded.</p>
+      automatic backup switch, are never uploaded.</p>
+
+      <h2>Optional AI assistant</h2>
+      <p>The AI assistant answers questions about your spending, such as
+      &ldquo;Where can I save?&rdquo;. It is off until you open it while
+      signed in and agree to what it sends. You can withdraw that agreement
+      at any time with <em>Stop sharing</em> on the assistant's screen.</p>
+      <p>Each time you ask a question, the app sends:</p>
+      <ul>
+        <li>Your question and up to six earlier messages from the same
+          conversation.</li>
+        <li>A summary of totals built on your phone for that question: for
+          the current month and the two before it, spending and income in
+          total and by category (by category name), daily average, the
+          costliest day's total, your budget limits for this month, and a
+          six-month spending trend, in your chosen currency.</li>
+      </ul>
+      <p>It never sends single transactions, notes or descriptions, the
+      people you track debts with, your email address, or record ids.</p>
+      <p>The request goes over HTTPS to the app's server at Supabase, which
+      checks that you are signed in and passes it to
+      <a href="https://groq.com/privacy-policy/">Groq</a>, the AI provider
+      that writes the answer. The app's server does not store your
+      questions, the summaries or the answers; it keeps only a count of how
+      many questions each account asked per day (up to 20), which is deleted
+      with your account. Groq processes the request under its own terms;
+      <a href="https://console.groq.com/docs/your-data">Groq states</a> that
+      it does not retain request content by default, apart from limited cases
+      such as investigating failures or abuse. The conversation is kept on
+      your phone only while the assistant's screen is open.</p>
+      <p>AI answers can be wrong. They are not financial, tax or legal
+      advice.</p>
 
   <h2>What the app does not collect</h2>
   <ul>
@@ -131,8 +163,8 @@
 
   <h2>Permissions</h2>
   <ul>
-    <li><strong>Internet</strong> &mdash; only for signing in and the cloud
-        backup.</li>
+    <li><strong>Internet</strong> &mdash; only for signing in, the cloud
+        backup and the optional AI assistant.</li>
     <li><strong>Biometrics</strong> &mdash; if you turn on the app lock, the
         app asks Android to check your fingerprint, face or screen lock.
         Android does the check; the app never receives biometric data.</li>
@@ -149,8 +181,8 @@
   <p>To bring in data from another app or a spreadsheet, the app can copy a
   ready-made prompt (instructions plus the names of your categories) to your
   clipboard. You then paste it, with your data, into an AI chat of your
-  choice, such as ChatGPT, Gemini or Claude. The app never contacts an AI
-  service itself and sends nothing to one: what you share there is between
+  choice, such as ChatGPT, Gemini or Claude. This import never contacts an AI service itself and sends nothing to
+      one: what you share there is between
   you and that service, under its own privacy policy. The answer you paste
   or pick as a file is read on your device, and nothing is imported until
   you confirm it.</p>

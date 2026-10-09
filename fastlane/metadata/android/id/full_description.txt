@@ -31,6 +31,7 @@ ANALISIS
 • Saldo bersih dan tingkat tabungan
 • Ajukan pertanyaan siap pakai: kategori teratas, pengeluaran terbesar, perkiraan akhir bulan, tabungan, dan lainnya
 • Bandingkan dua bulan mana pun berdampingan, lengkap dengan grafik
+• Asisten AI opsional: tanyakan pengeluaranmu dengan kata-katamu sendiri (perlu akun, 20 pertanyaan per hari)
 
 WIDGET LAYAR UTAMA
 Lihat total bulan ini di layar utama dan tambahkan pengeluaran dari kategori yang paling sering dipakai tanpa membuka aplikasi.
@@ -42,6 +43,7 @@ CADANGAN DAN EKSPOR
 
 PRIBADI DAN AMAN
 • Datamu disimpan di ponselmu dan hanya keluar dari sana jika kamu memilih mencadangkannya ke akunmu sendiri
+• Asisten AI hanya menerima ringkasan totalmu, tidak pernah transaksi satuan, catatan, atau nama, dan hanya setelah kamu setuju
 • Tanpa iklan, tanpa analitik, tanpa pelacak
 • Kunci aplikasi dengan sidik jari, wajah, atau kunci layar
 • Hapus akun dan cadangan cloud-nya kapan saja dari Pengaturan

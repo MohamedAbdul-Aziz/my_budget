@@ -31,6 +31,7 @@ ANALYSES
 • Nettosaldo en spaarpercentage
 • Stel kant-en-klare vragen: topcategorie, grootste uitgave, schatting voor het maandeinde, sparen en meer
 • Vergelijk twee maanden naast elkaar, met een grafiek
+• Optionele AI-assistent: vraag in je eigen woorden naar je uitgaven (account nodig, 20 vragen per dag)
 
 WIDGET VOOR HET STARTSCHERM
 Zie het totaal van de maand op je startscherm en voeg een uitgave toe in je meestgebruikte categorieën zonder de app te openen.
@@ -42,6 +43,7 @@ BACK-UP EN EXPORT
 
 PRIVÉ EN VEILIG
 • Je gegevens staan op je telefoon. Ze verlaten die alleen als je ervoor kiest ze in je eigen account te back-uppen
+• De AI-assistent krijgt alleen een overzicht van je totalen, nooit losse transacties, notities of namen, en pas nadat je akkoord gaat
 • Geen advertenties, geen analyses, geen trackers
 • Vergrendel de app met je vingerafdruk, gezicht of schermvergrendeling
 • Verwijder je account en de cloudback-up op elk moment via Instellingen

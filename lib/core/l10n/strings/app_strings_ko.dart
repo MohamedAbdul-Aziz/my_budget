@@ -688,6 +688,12 @@ class AppStringsKo extends AppStrings {
     FailureCode.transactionSettled => '정산된 거래는 바꿀 수 없어요.',
     FailureCode.nothingToSettle => '정산할 내용이 없어요.',
     FailureCode.settlementAlreadyLogged => '이 정산은 이미 예산에 기록되어 있어요.',
+    FailureCode.questionRequired => '질문을 입력하세요.',
+    FailureCode.questionTooLong => '질문은 500자 미만으로 해 주세요.',
+    FailureCode.summaryTooLarge => '데이터가 너무 많아 도우미용으로 요약할 수 없어요.',
+    FailureCode.aiUnavailable => '지금은 도우미를 사용할 수 없어요. 나중에 다시 시도하세요.',
+    FailureCode.aiBusy => '도우미가 바빠요. 1분 후에 다시 시도하세요.',
+    FailureCode.aiDailyLimit => '오늘 질문 20개를 모두 사용했어요. 내일 다시 시도하세요.',
   };
 
   @override
@@ -1264,6 +1270,48 @@ class AppStringsKo extends AppStrings {
 
   @override
   String get askTopIncome => '가장 큰 수입';
+
+  @override
+  String get askAi => 'AI에게 묻기';
+
+  @override
+  String get assistantTitle => 'AI 도우미';
+
+  @override
+  String get assistantEmpty => '최근 3개월 지출에 대해 무엇이든 물어보세요.';
+
+  @override
+  String get assistantHint => '질문을 입력하세요';
+
+  @override
+  String get assistantSend => '보내기';
+
+  @override
+  String get assistantSignInBody =>
+      'AI 도우미를 사용하려면 로그인하세요. 계정마다 하루 20개까지 질문할 수 있어요.';
+
+  @override
+  String get assistantConsentTitle => '질문하기 전에';
+
+  @override
+  String get assistantConsentBody =>
+      '답변을 위해 앱은 질문, 최근 메시지, 최근 3개월 합계 요약(카테고리별, 수입, 지출, 예산)을 저희 서버를 거쳐 AI 제공업체 Groq에 보냅니다. 설명, 메모, 사람 이름은 절대 보내지 않아요. 질문과 답변은 저장하지 않으며, 서버는 하루 질문 수만 셉니다. 언제든지 공유를 중지할 수 있어요.';
+
+  @override
+  String get assistantConsentAgree => '동의';
+
+  @override
+  String get assistantStopSharing => '공유 중지';
+
+  @override
+  String get assistantDisclaimer => 'AI 답변은 틀릴 수 있어요. 중요한 숫자는 확인하세요.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    '어디서 아낄 수 있을까요?',
+    '이번 달은 지난달과 비교해 어때요?',
+    '예산을 잘 지키고 있나요?',
+  ];
 
   @override
   String get otherCategories => '기타';

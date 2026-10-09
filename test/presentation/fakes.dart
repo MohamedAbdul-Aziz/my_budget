@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:my_budget/core/error/api_result.dart';
 import 'package:my_budget/features/app_lock/domain/entities/app_lock_prompt.dart';
 import 'package:my_budget/features/app_lock/domain/repositories/app_lock_repository.dart';
+import 'package:my_budget/features/assistant/domain/entities/assistant_message.dart';
+import 'package:my_budget/features/assistant/domain/entities/spending_summary.dart';
+import 'package:my_budget/features/assistant/domain/repositories/assistant_repository.dart';
 import 'package:my_budget/core/error/failures.dart';
 import 'package:my_budget/features/auth/domain/entities/app_user.dart';
 import 'package:my_budget/features/auth/domain/repositories/auth_repository.dart';
@@ -552,6 +555,60 @@ class FakeAppLockRepository implements AppLockRepository {
   Future<ApiResult<bool>> authenticate(AppLockPrompt prompt) async {
     prompts.add(prompt);
     return Success(answer);
+  }
+}
+
+/// The assistant's server, played in memory. Answers are queued by the
+/// test; every question asked is recorded with what was sent along.
+class FakeAssistantRepository implements AssistantRepository {
+  bool consent = false;
+
+  /// Replies to give, in order: a `String` answers, a [Failure] fails.
+  final List<Object> replies = [];
+
+  /// What reached the "server", one entry per question.
+  final List<
+    ({
+      String question,
+      SpendingSummary summary,
+      List<AssistantMessage> history,
+      String languageCode,
+    })
+  >
+  asked = [];
+
+  /// Lets a test hold the answer back, to see the page while it waits.
+  Completer<void>? gate;
+
+  @override
+  Future<ApiResult<String>> ask({
+    required String question,
+    required SpendingSummary summary,
+    required List<AssistantMessage> history,
+    required String languageCode,
+  }) async {
+    asked.add((
+      question: question,
+      summary: summary,
+      history: history,
+      languageCode: languageCode,
+    ));
+    await gate?.future;
+    final reply = replies.isEmpty ? 'OK' : replies.removeAt(0);
+    return switch (reply) {
+      final Failure failure => ResultFailure(failure),
+      final String answer => Success(answer),
+      _ => throw ArgumentError(reply),
+    };
+  }
+
+  @override
+  Future<ApiResult<bool>> hasConsent() async => Success(consent);
+
+  @override
+  Future<ApiResult<void>> setConsent({required bool granted}) async {
+    consent = granted;
+    return const Success(null);
   }
 }
 

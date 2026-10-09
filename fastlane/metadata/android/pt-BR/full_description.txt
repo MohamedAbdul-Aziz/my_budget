@@ -31,6 +31,7 @@ ANÁLISES
 • Saldo líquido e taxa de poupança
 • Faça perguntas prontas: categoria principal, maior despesa, estimativa do fim do mês, economia e mais
 • Compare dois meses lado a lado, com um gráfico
+• Assistente de IA opcional: pergunte sobre seus gastos com suas palavras (requer conta, 20 perguntas por dia)
 
 WIDGET DA TELA INICIAL
 Veja o total do mês na tela inicial e adicione um gasto das categorias que você mais usa sem abrir o app.
@@ -42,6 +43,7 @@ BACKUP E EXPORTAÇÃO
 
 PRIVADO E SEGURO
 • Seus dados ficam no seu celular. Só saem dele se você escolher fazer backup na sua própria conta
+• O assistente de IA recebe só um resumo dos seus totais, nunca transações avulsas, notas ou nomes, e só depois que você concordar
 • Sem anúncios, sem análises, sem rastreadores
 • Bloqueie o app com sua digital, seu rosto ou o bloqueio de tela
 • Exclua sua conta e o backup na nuvem quando quiser, nas Configurações

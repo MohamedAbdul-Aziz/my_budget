@@ -746,6 +746,14 @@ class AppStringsPl extends AppStrings {
     FailureCode.nothingToSettle => 'Nie ma nic do rozliczenia.',
     FailureCode.settlementAlreadyLogged =>
       'To rozliczenie jest już w Twoim budżecie.',
+    FailureCode.questionRequired => 'Wpisz pytanie.',
+    FailureCode.questionTooLong => 'Pytanie musi mieć mniej niż 500 znaków.',
+    FailureCode.summaryTooLarge =>
+      'Twoich danych jest za dużo, by je podsumować dla asystenta.',
+    FailureCode.aiUnavailable =>
+      'Asystent jest teraz niedostępny. Spróbuj później.',
+    FailureCode.aiBusy => 'Asystent jest zajęty. Spróbuj za minutę.',
+    FailureCode.aiDailyLimit => 'Zadano już dziś 20 pytań. Spróbuj jutro.',
   };
 
   @override
@@ -1374,6 +1382,50 @@ class AppStringsPl extends AppStrings {
 
   @override
   String get askTopIncome => 'Główny przychód';
+
+  @override
+  String get askAi => 'Zapytaj AI';
+
+  @override
+  String get assistantTitle => 'Asystent AI';
+
+  @override
+  String get assistantEmpty =>
+      'Zapytaj o cokolwiek dotyczącego wydatków z ostatnich trzech miesięcy.';
+
+  @override
+  String get assistantHint => 'Zadaj pytanie';
+
+  @override
+  String get assistantSend => 'Wyślij';
+
+  @override
+  String get assistantSignInBody =>
+      'Zaloguj się, aby korzystać z asystenta AI. Każde konto może zadać 20 pytań dziennie.';
+
+  @override
+  String get assistantConsentTitle => 'Zanim zapytasz';
+
+  @override
+  String get assistantConsentBody =>
+      'Aby odpowiedzieć, aplikacja wysyła Twoje pytanie, kilka ostatnich wiadomości i podsumowanie Twoich sum z ostatnich trzech miesięcy (według kategorii, dochody, wydatki i budżety) przez nasz serwer do dostawcy AI Groq. Opisy, notatki i imiona osób nigdy nie są wysyłane. Nie przechowujemy Twoich pytań ani odpowiedzi; nasz serwer liczy tylko, ile pytań zadajesz każdego dnia. W każdej chwili możesz przestać udostępniać dane.';
+
+  @override
+  String get assistantConsentAgree => 'Zgadzam się';
+
+  @override
+  String get assistantStopSharing => 'Przestań udostępniać';
+
+  @override
+  String get assistantDisclaimer =>
+      'Odpowiedzi AI mogą być błędne. Sprawdzaj ważne kwoty.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'Gdzie mogę oszczędzić?',
+    'Jak ten miesiąc wypada na tle poprzedniego?',
+    'Czy mieszczę się w budżecie?',
+  ];
 
   @override
   String get otherCategories => 'Inne';

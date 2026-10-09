@@ -724,6 +724,15 @@ class AppStringsTr extends AppStrings {
     FailureCode.transactionSettled => 'Kapatılan işlemler değiştirilemez.',
     FailureCode.nothingToSettle => 'Kapatılacak bir şey yok.',
     FailureCode.settlementAlreadyLogged => 'Bu hesaplaşma zaten bütçenizde.',
+    FailureCode.questionRequired => 'Bir soru yaz.',
+    FailureCode.questionTooLong => 'Soru 500 karakterden kısa olmalı.',
+    FailureCode.summaryTooLarge =>
+      'Verilerin asistan için özetlenemeyecek kadar büyük.',
+    FailureCode.aiUnavailable =>
+      'Asistan şu anda kullanılamıyor. Daha sonra tekrar dene.',
+    FailureCode.aiBusy => 'Asistan meşgul. Bir dakika sonra tekrar dene.',
+    FailureCode.aiDailyLimit =>
+      'Bugünkü 20 sorunu kullandın. Yarın tekrar dene.',
   };
 
   @override
@@ -1321,6 +1330,50 @@ class AppStringsTr extends AppStrings {
 
   @override
   String get askTopIncome => 'En büyük gelir';
+
+  @override
+  String get askAi => 'YZ’ye sor';
+
+  @override
+  String get assistantTitle => 'YZ asistanı';
+
+  @override
+  String get assistantEmpty =>
+      'Son üç ayki harcamaların hakkında her şeyi sor.';
+
+  @override
+  String get assistantHint => 'Bir soru sor';
+
+  @override
+  String get assistantSend => 'Gönder';
+
+  @override
+  String get assistantSignInBody =>
+      'YZ asistanını kullanmak için giriş yap. Her hesap günde 20 soru sorabilir.';
+
+  @override
+  String get assistantConsentTitle => 'Sormadan önce';
+
+  @override
+  String get assistantConsentBody =>
+      'Yanıt vermek için uygulama sorunu, son birkaç mesajını ve son üç aydaki toplamlarının özetini (kategoriye göre, gelir, harcama ve bütçeler) sunucumuz üzerinden YZ sağlayıcısı Groq’a gönderir. Açıklamalar, notlar ve kişi adları asla gönderilmez. Sorularını ve yanıtları saklamayız; sunucumuz yalnızca günde kaç soru sorduğunu sayar. Paylaşımı istediğin zaman durdurabilirsin.';
+
+  @override
+  String get assistantConsentAgree => 'Kabul ediyorum';
+
+  @override
+  String get assistantStopSharing => 'Paylaşımı durdur';
+
+  @override
+  String get assistantDisclaimer =>
+      'YZ yanıtları yanlış olabilir. Önemli rakamları kontrol et.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'Nerede tasarruf edebilirim?',
+    'Bu ay geçen aya göre nasıl?',
+    'Bütçeme uyuyor muyum?',
+  ];
 
   @override
   String get otherCategories => 'Diğer';

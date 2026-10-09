@@ -31,6 +31,7 @@ ANÁLISIS
 • Saldo neto y tasa de ahorro
 • Haz preguntas listas: categoría principal, mayor gasto, estimación de fin de mes, ahorro y más
 • Compara dos meses cualesquiera, lado a lado y con un gráfico
+• Asistente de IA opcional: pregunta por tus gastos con tus propias palabras (requiere cuenta, 20 preguntas al día)
 
 WIDGET DE PANTALLA DE INICIO
 Ve el total del mes en tu pantalla de inicio y añade un gasto de tus categorías más usadas sin abrir la app.
@@ -42,6 +43,7 @@ COPIA DE SEGURIDAD Y EXPORTACIÓN
 
 PRIVADA Y SEGURA
 • Tus datos se guardan en tu teléfono. Solo salen de él si decides hacer una copia en tu propia cuenta
+• El asistente de IA solo recibe un resumen de tus totales, nunca movimientos sueltos, notas ni nombres, y solo si aceptas
 • Sin anuncios, sin analíticas, sin rastreadores
 • Bloquea la app con tu huella, tu cara o el bloqueo de pantalla
 • Elimina tu cuenta y su copia en la nube cuando quieras desde Ajustes

@@ -744,6 +744,16 @@ class AppStringsEs extends AppStrings {
     FailureCode.nothingToSettle => 'No hay nada que saldar.',
     FailureCode.settlementAlreadyLogged =>
       'Esta liquidación ya está en tu presupuesto.',
+    FailureCode.questionRequired => 'Escribe una pregunta.',
+    FailureCode.questionTooLong =>
+      'La pregunta debe tener menos de 500 caracteres.',
+    FailureCode.summaryTooLarge =>
+      'Tus datos son demasiado grandes para resumirlos para el asistente.',
+    FailureCode.aiUnavailable =>
+      'El asistente no está disponible ahora. Inténtalo más tarde.',
+    FailureCode.aiBusy => 'El asistente está ocupado. Inténtalo en un minuto.',
+    FailureCode.aiDailyLimit =>
+      'Ya hiciste las 20 preguntas de hoy. Inténtalo mañana.',
   };
 
   @override
@@ -1362,6 +1372,50 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get askTopIncome => 'Mayor ingreso';
+
+  @override
+  String get askAi => 'Pregunta a la IA';
+
+  @override
+  String get assistantTitle => 'Asistente de IA';
+
+  @override
+  String get assistantEmpty =>
+      'Pregunta lo que quieras sobre tus gastos de los últimos tres meses.';
+
+  @override
+  String get assistantHint => 'Escribe una pregunta';
+
+  @override
+  String get assistantSend => 'Enviar';
+
+  @override
+  String get assistantSignInBody =>
+      'Inicia sesión para usar el asistente de IA. Cada cuenta puede hacer 20 preguntas al día.';
+
+  @override
+  String get assistantConsentTitle => 'Antes de preguntar';
+
+  @override
+  String get assistantConsentBody =>
+      'Para responder, la app envía tu pregunta, tus últimos mensajes y un resumen de tus totales de los últimos tres meses (por categoría, ingresos, gastos y presupuestos) a través de nuestro servidor al proveedor de IA Groq. Nunca se envían descripciones, notas ni nombres de personas. No guardamos tus preguntas ni las respuestas; nuestro servidor solo cuenta cuántas preguntas haces cada día. Puedes dejar de compartir en cualquier momento.';
+
+  @override
+  String get assistantConsentAgree => 'Acepto';
+
+  @override
+  String get assistantStopSharing => 'Dejar de compartir';
+
+  @override
+  String get assistantDisclaimer =>
+      'Las respuestas de la IA pueden ser incorrectas. Comprueba las cifras importantes.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    '¿Dónde puedo ahorrar?',
+    '¿Cómo va este mes frente al anterior?',
+    '¿Voy bien con mi presupuesto?',
+  ];
 
   @override
   String get otherCategories => 'Otras';

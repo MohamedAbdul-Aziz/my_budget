@@ -31,6 +31,7 @@ ANALİZLER
 • Net bakiye ve tasarruf oranı
 • Hazır sorular sor: en çok harcanan kategori, en büyük harcama, ay sonu tahmini, birikim ve dahası
 • İki ayı grafikle yan yana karşılaştır
+• İsteğe bağlı YZ asistanı: harcamalarını kendi sözlerinle sor (hesap gerekir, günde 20 soru)
 
 ANA EKRAN WIDGET'I
 Ayın toplamını ana ekranında gör ve en çok kullandığın kategorilerden uygulamayı açmadan harcama ekle.
@@ -42,6 +43,7 @@ YEDEKLEME VE DIŞA AKTARMA
 
 GİZLİ VE GÜVENLİ
 • Verilerin telefonunda saklanır. Yalnızca kendi hesabına yedeklemeyi seçersen telefondan çıkar
+• YZ asistanı yalnızca toplamlarının özetini alır, asla tek tek işlemleri, notları veya adları almaz ve yalnızca onay verdikten sonra çalışır
 • Reklam yok, analiz yok, izleyici yok
 • Uygulamayı parmak izi, yüz veya ekran kilidiyle kilitle
 • Hesabını ve bulut yedeğini istediğin zaman Ayarlar'dan sil

@@ -748,6 +748,15 @@ class AppStringsNl extends AppStrings {
     FailureCode.nothingToSettle => 'Er valt niets te verrekenen.',
     FailureCode.settlementAlreadyLogged =>
       'Deze verrekening staat al in je budget.',
+    FailureCode.questionRequired => 'Typ een vraag.',
+    FailureCode.questionTooLong => 'Houd de vraag onder 500 tekens.',
+    FailureCode.summaryTooLarge =>
+      'Je gegevens zijn te groot om samen te vatten voor de assistent.',
+    FailureCode.aiUnavailable =>
+      'De assistent is nu niet beschikbaar. Probeer het later.',
+    FailureCode.aiBusy => 'De assistent is bezet. Probeer het over een minuut.',
+    FailureCode.aiDailyLimit =>
+      'Je hebt vandaag al 20 vragen gesteld. Probeer het morgen.',
   };
 
   @override
@@ -1370,6 +1379,50 @@ class AppStringsNl extends AppStrings {
 
   @override
   String get askTopIncome => 'Grootste inkomen';
+
+  @override
+  String get askAi => 'Vraag AI';
+
+  @override
+  String get assistantTitle => 'AI-assistent';
+
+  @override
+  String get assistantEmpty =>
+      'Vraag alles over je uitgaven van de afgelopen drie maanden.';
+
+  @override
+  String get assistantHint => 'Stel een vraag';
+
+  @override
+  String get assistantSend => 'Versturen';
+
+  @override
+  String get assistantSignInBody =>
+      'Log in om de AI-assistent te gebruiken. Elk account kan 20 vragen per dag stellen.';
+
+  @override
+  String get assistantConsentTitle => 'Voordat je vraagt';
+
+  @override
+  String get assistantConsentBody =>
+      'Om te antwoorden stuurt de app je vraag, je laatste berichten en een overzicht van je totalen van de afgelopen drie maanden (per categorie, inkomsten, uitgaven en budgetten) via onze server naar AI-aanbieder Groq. Omschrijvingen, notities en namen van personen worden nooit verstuurd. We bewaren je vragen en de antwoorden niet; onze server telt alleen hoeveel vragen je per dag stelt. Je kunt het delen altijd stoppen.';
+
+  @override
+  String get assistantConsentAgree => 'Akkoord';
+
+  @override
+  String get assistantStopSharing => 'Delen stoppen';
+
+  @override
+  String get assistantDisclaimer =>
+      'AI-antwoorden kunnen fout zijn. Controleer belangrijke bedragen.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'Waar kan ik besparen?',
+    'Hoe verhoudt deze maand zich tot vorige maand?',
+    'Blijf ik binnen mijn budget?',
+  ];
 
   @override
   String get otherCategories => 'Overige';

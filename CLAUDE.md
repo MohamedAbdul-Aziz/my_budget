@@ -56,6 +56,10 @@ lib/
                      scheduled with flutter_local_notifications (ReminderCubit)
     auth/            Supabase email sign-up/sign-in, OTP confirm, password reset by code,
                      delete account (AccountCubit)
+    assistant/       optional AI chat about spending (AssistantCubit per screen): BuildSpendingSummary
+                     sends totals only (never transactions, notes, people), fresh per question; the
+                     ai-assistant Edge Function holds the provider key and a 20/day quota (ai_usage);
+                     consent is the phone-only `ai_consent` device setting
     app_lock/        optional lock screen (local_auth) at launch and after 1 min away
                      (AppLockCubit + AppLockGate above the navigator)
     sync/            cloud backup and restore (SyncCubit), optional automatic backup on leaving

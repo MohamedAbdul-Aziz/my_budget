@@ -12,6 +12,14 @@ import '../../features/app_lock/domain/usecases/unlock_app.dart';
 import '../../features/app_lock/presentation/cubit/app_lock_cubit.dart';
 import '../../features/analyses/presentation/cubit/analyses_cubit.dart';
 import '../../features/analyses/presentation/cubit/compare_months_cubit.dart';
+import '../../features/assistant/data/datasources/assistant_remote_data_source.dart';
+import '../../features/assistant/data/repositories/assistant_repository_impl.dart';
+import '../../features/assistant/domain/repositories/assistant_repository.dart';
+import '../../features/assistant/domain/usecases/ask_assistant.dart';
+import '../../features/assistant/domain/usecases/build_spending_summary.dart';
+import '../../features/assistant/domain/usecases/get_assistant_consent.dart';
+import '../../features/assistant/domain/usecases/set_assistant_consent.dart';
+import '../../features/assistant/presentation/cubit/assistant_cubit.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../features/data_management/data/datasources/device_files_data_source.dart';
 import '../../features/data_management/data/datasources/report_fonts_data_source.dart';
@@ -150,6 +158,7 @@ void configureDependencies({AppDatabase? database}) {
   _registerQuickExpense();
   _registerSync();
   _registerAnalyses();
+  _registerAssistant();
   _registerDataManagement();
 }
 
@@ -474,6 +483,32 @@ void _registerAnalyses() {
     ..registerLazySingleton(() => AnalysesCubit(getMonthAnalysis: sl()))
     ..registerFactory(
       () => CompareMonthsCubit(compareMonths: sl(), getMonthlySummaries: sl()),
+    );
+}
+
+void _registerAssistant() {
+  _registerRepository<AssistantRepository>(
+    () => AssistantRepositoryImpl(
+      remote: AssistantRemoteDataSourceImpl(sl<SupabaseClient>().functions),
+      deviceSettings: sl(),
+    ),
+  );
+  sl
+    ..registerLazySingleton(
+      () => BuildSpendingSummary(getMonthAnalysis: sl(), getBudgetStatus: sl()),
+    )
+    ..registerLazySingleton(
+      () => AskAssistant(repository: sl(), buildSummary: sl()),
+    )
+    ..registerLazySingleton(() => GetAssistantConsent(sl()))
+    ..registerLazySingleton(() => SetAssistantConsent(sl()))
+    ..registerFactory(
+      () => AssistantCubit(
+        getCurrentUser: sl(),
+        getConsent: sl(),
+        setConsent: sl(),
+        askAssistant: sl(),
+      ),
     );
 }
 

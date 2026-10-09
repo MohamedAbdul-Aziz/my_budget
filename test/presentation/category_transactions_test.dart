@@ -52,9 +52,11 @@ void main() {
     await tester.scrollUntilVisible(
       food,
       200,
+      // The page's list, found through the first card: the category card may
+      // be too far down to have been built yet.
       scrollable: find
           .ancestor(
-            of: find.text('Spending by category'),
+            of: find.text('Ask about your spending'),
             matching: find.byType(Scrollable),
           )
           .first,

@@ -31,6 +31,7 @@ PHÂN TÍCH
 • Số dư ròng và tỷ lệ tiết kiệm
 • Hỏi các câu có sẵn: danh mục chính, khoản chi lớn nhất, ước tính cuối tháng, tiết kiệm và hơn thế
 • So sánh hai tháng bất kỳ bằng biểu đồ
+• Trợ lý AI tùy chọn: hỏi về chi tiêu bằng lời của bạn (cần tài khoản, 20 câu mỗi ngày)
 
 TIỆN ÍCH MÀN HÌNH CHÍNH
 Xem tổng chi tháng này ngay trên màn hình chính và thêm khoản chi từ các danh mục hay dùng mà không cần mở ứng dụng.
@@ -42,6 +43,7 @@ SAO LƯU VÀ XUẤT DỮ LIỆU
 
 RIÊNG TƯ VÀ AN TOÀN
 • Dữ liệu được lưu trên điện thoại của bạn và chỉ rời khỏi đó khi bạn chọn sao lưu vào tài khoản của mình
+• Trợ lý AI chỉ nhận bản tóm tắt các khoản tổng, không bao giờ nhận từng giao dịch, ghi chú hay tên, và chỉ sau khi bạn đồng ý
 • Không quảng cáo, không phân tích, không theo dõi
 • Khóa ứng dụng bằng vân tay, khuôn mặt hoặc khóa màn hình
 • Xóa tài khoản và bản sao lưu đám mây bất cứ lúc nào trong Cài đặt

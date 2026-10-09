@@ -759,6 +759,17 @@ class AppStringsDe extends AppStrings {
     FailureCode.nothingToSettle => 'Es gibt nichts auszugleichen.',
     FailureCode.settlementAlreadyLogged =>
       'Dieser Ausgleich ist schon in deinem Budget.',
+    FailureCode.questionRequired => 'Gib eine Frage ein.',
+    FailureCode.questionTooLong =>
+      'Die Frage muss kürzer als 500 Zeichen sein.',
+    FailureCode.summaryTooLarge =>
+      'Deine Daten sind zu umfangreich für eine Zusammenfassung.',
+    FailureCode.aiUnavailable =>
+      'Der Assistent ist gerade nicht verfügbar. Versuch es später.',
+    FailureCode.aiBusy =>
+      'Der Assistent ist ausgelastet. Versuch es in einer Minute.',
+    FailureCode.aiDailyLimit =>
+      'Du hast heute schon 20 Fragen gestellt. Versuch es morgen.',
   };
 
   @override
@@ -1382,6 +1393,50 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get askTopIncome => 'Top-Einnahme';
+
+  @override
+  String get askAi => 'KI fragen';
+
+  @override
+  String get assistantTitle => 'KI-Assistent';
+
+  @override
+  String get assistantEmpty =>
+      'Frag alles zu deinen Ausgaben der letzten drei Monate.';
+
+  @override
+  String get assistantHint => 'Stell eine Frage';
+
+  @override
+  String get assistantSend => 'Senden';
+
+  @override
+  String get assistantSignInBody =>
+      'Melde dich an, um den KI-Assistenten zu nutzen. Jedes Konto kann 20 Fragen pro Tag stellen.';
+
+  @override
+  String get assistantConsentTitle => 'Bevor du fragst';
+
+  @override
+  String get assistantConsentBody =>
+      'Für die Antwort sendet die App deine Frage, deine letzten Nachrichten und eine Zusammenfassung deiner Summen der letzten drei Monate (nach Kategorie, Einnahmen, Ausgaben und Budgets) über unseren Server an den KI-Anbieter Groq. Beschreibungen, Notizen und Namen von Personen werden nie gesendet. Wir speichern weder deine Fragen noch die Antworten; unser Server zählt nur, wie viele Fragen du pro Tag stellst. Du kannst das Teilen jederzeit beenden.';
+
+  @override
+  String get assistantConsentAgree => 'Einverstanden';
+
+  @override
+  String get assistantStopSharing => 'Teilen beenden';
+
+  @override
+  String get assistantDisclaimer =>
+      'KI-Antworten können falsch sein. Prüfe wichtige Zahlen.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'Wo kann ich sparen?',
+    'Wie steht dieser Monat im Vergleich zum letzten?',
+    'Halte ich mein Budget ein?',
+  ];
 
   @override
   String get otherCategories => 'Andere';

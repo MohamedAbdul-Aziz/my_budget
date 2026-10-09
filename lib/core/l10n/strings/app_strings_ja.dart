@@ -688,6 +688,12 @@ class AppStringsJa extends AppStrings {
     FailureCode.transactionSettled => '精算済みの取引は変更できません。',
     FailureCode.nothingToSettle => '精算するものはありません。',
     FailureCode.settlementAlreadyLogged => 'この精算はすでに予算に記録されています。',
+    FailureCode.questionRequired => '質問を入力してください。',
+    FailureCode.questionTooLong => '質問は500文字未満にしてください。',
+    FailureCode.summaryTooLarge => 'データが多すぎてアシスタント用に要約できません。',
+    FailureCode.aiUnavailable => 'アシスタントは現在利用できません。後でもう一度お試しください。',
+    FailureCode.aiBusy => 'アシスタントが混み合っています。1分後にお試しください。',
+    FailureCode.aiDailyLimit => '今日の20回の質問を使い切りました。明日もう一度お試しください。',
   };
 
   @override
@@ -1261,6 +1267,48 @@ class AppStringsJa extends AppStrings {
 
   @override
   String get askTopIncome => '最大の収入';
+
+  @override
+  String get askAi => 'AIに聞く';
+
+  @override
+  String get assistantTitle => 'AIアシスタント';
+
+  @override
+  String get assistantEmpty => '過去3か月の支出について何でも聞いてください。';
+
+  @override
+  String get assistantHint => '質問を入力';
+
+  @override
+  String get assistantSend => '送信';
+
+  @override
+  String get assistantSignInBody =>
+      'AIアシスタントを使うにはサインインしてください。1アカウントにつき1日20回まで質問できます。';
+
+  @override
+  String get assistantConsentTitle => '質問する前に';
+
+  @override
+  String get assistantConsentBody =>
+      '回答のため、アプリはあなたの質問、直近のメッセージ、過去3か月の合計の要約（カテゴリ別、収入、支出、予算）を当社のサーバー経由でAIプロバイダーのGroqに送信します。説明、メモ、人の名前が送信されることはありません。質問や回答は保存しません。当社のサーバーは1日の質問回数だけを数えます。共有はいつでも停止できます。';
+
+  @override
+  String get assistantConsentAgree => '同意する';
+
+  @override
+  String get assistantStopSharing => '共有を停止';
+
+  @override
+  String get assistantDisclaimer => 'AIの回答は間違っていることがあります。重要な数字は確認してください。';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'どこで節約できますか？',
+    '今月は先月と比べてどうですか？',
+    '予算どおりに進んでいますか？',
+  ];
 
   @override
   String get otherCategories => 'その他';
