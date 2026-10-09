@@ -24,8 +24,26 @@ class AppStringsUk extends AppStrings {
   String get nothingRecordedYet => 'Поки нічого не записано';
 
   @override
-  String get emptyMonthHint =>
-      'Натисніть «Додати», щоб записати першу витрату чи дохід цього місяця.';
+  String get emptyPeriodHint =>
+      'Натисніть «Додати», щоб записати витрату чи дохід за цей період.';
+
+  @override
+  String get periodDay => 'День';
+
+  @override
+  String get periodWeek => 'Тиждень';
+
+  @override
+  String get periodMonth => 'Місяць';
+
+  @override
+  String get periodYear => 'Рік';
+
+  @override
+  String get previousPeriod => 'Назад';
+
+  @override
+  String get nextPeriod => 'Далі';
 
   @override
   String get yourMonths => 'Ваші місяці';

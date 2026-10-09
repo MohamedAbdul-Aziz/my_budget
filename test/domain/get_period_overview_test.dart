@@ -6,8 +6,11 @@ import 'package:my_budget/features/categories/domain/entities/transaction_type.d
 import 'package:my_budget/features/expenses/domain/entities/expense.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
 import 'package:my_budget/features/expenses/domain/entities/monthly_summary.dart';
+import 'package:my_budget/features/expenses/domain/entities/period.dart';
 import 'package:my_budget/features/expenses/domain/repositories/expense_repository.dart';
-import 'package:my_budget/features/expenses/domain/usecases/get_month_overview.dart';
+import 'package:my_budget/features/expenses/domain/usecases/get_period_overview.dart';
+
+import '../presentation/fakes.dart';
 
 const _food = ExpenseCategory(
   id: 'cat_food',
@@ -80,7 +83,7 @@ void main() {
   const month = Month(2026, 8);
 
   test('totals the month and ranks categories by spend', () async {
-    final useCase = GetMonthOverview(
+    final useCase = GetPeriodOverview(
       _StubRepository(
         Success([
           _expense(30, _food),
@@ -90,7 +93,7 @@ void main() {
       ),
     );
 
-    final result = await useCase(month);
+    final result = await useCase(Period.ofMonth(month));
     final overview = result.dataOrNull!;
 
     expect(overview.spent, 100);
@@ -102,9 +105,9 @@ void main() {
   });
 
   test('an empty month has a zero total and no breakdown', () async {
-    final useCase = GetMonthOverview(_StubRepository(const Success([])));
+    final useCase = GetPeriodOverview(_StubRepository(const Success([])));
 
-    final overview = (await useCase(month)).dataOrNull!;
+    final overview = (await useCase(Period.ofMonth(month))).dataOrNull!;
 
     expect(overview.isEmpty, isTrue);
     expect(overview.spent, 0);
@@ -112,7 +115,7 @@ void main() {
   });
 
   test('income is counted apart from spending', () async {
-    final useCase = GetMonthOverview(
+    final useCase = GetPeriodOverview(
       _StubRepository(
         Success([
           _expense(2000, _salary),
@@ -122,7 +125,7 @@ void main() {
       ),
     );
 
-    final overview = (await useCase(month)).dataOrNull!;
+    final overview = (await useCase(Period.ofMonth(month))).dataOrNull!;
 
     expect(overview.transactions, hasLength(3));
     expect(overview.income, 2000);
@@ -135,22 +138,22 @@ void main() {
   });
 
   test('spending more than came in gives a negative savings rate', () async {
-    final useCase = GetMonthOverview(
+    final useCase = GetPeriodOverview(
       _StubRepository(Success([_expense(400, _salary), _expense(500, _food)])),
     );
 
-    final overview = (await useCase(month)).dataOrNull!;
+    final overview = (await useCase(Period.ofMonth(month))).dataOrNull!;
 
     expect(overview.net, -100);
     expect(overview.savingsRate, -0.25);
   });
 
   test('there is no savings rate without income', () async {
-    final useCase = GetMonthOverview(
+    final useCase = GetPeriodOverview(
       _StubRepository(Success([_expense(40, _food)])),
     );
 
-    final overview = (await useCase(month)).dataOrNull!;
+    final overview = (await useCase(Period.ofMonth(month))).dataOrNull!;
 
     expect(overview.income, 0);
     expect(overview.net, -40);
@@ -158,12 +161,49 @@ void main() {
   });
 
   test('passes a repository failure straight through', () async {
-    final useCase = GetMonthOverview(
+    final useCase = GetPeriodOverview(
       _StubRepository(const ResultFailure(DatabaseFailure('disk full'))),
     );
 
-    final result = await useCase(month);
+    final result = await useCase(Period.ofMonth(month));
 
     expect(result.failureOrNull, isA<DatabaseFailure>());
+  });
+
+  group('any period', () {
+    test('a day or a week reads its dates; a month its month', () async {
+      final expenses = FakeExpenseRepository(FakeCategoryRepository());
+      final overview = GetPeriodOverview(expenses);
+      for (final day in [3, 9, 10, 31]) {
+        await expenses.addExpense(
+          amount: day.toDouble(),
+          categoryId: 'cat_food',
+          date: DateTime(2026, 8, day, 12),
+        );
+      }
+
+      Future<List<double>> amounts(Period period) async => [
+        for (final e in (await overview(period)).dataOrNull!.transactions)
+          e.amount,
+      ];
+
+      expect(await amounts(Period(PeriodKind.day, DateTime(2026, 8, 9))), [9]);
+      // Monday 3 to Sunday 9 August.
+      expect(await amounts(Period(PeriodKind.week, DateTime(2026, 8, 5))), [
+        9,
+        3,
+      ]);
+      expect(await amounts(Period(PeriodKind.month, DateTime(2026, 8, 20))), [
+        31,
+        10,
+        9,
+        3,
+      ]);
+      final year = (await overview(
+        Period(PeriodKind.year, DateTime(2026, 1, 1)),
+      )).dataOrNull!;
+      expect(year.spent, 53);
+      expect(year.period.kind, PeriodKind.year);
+    });
   });
 }

@@ -24,7 +24,25 @@ class AppStringsZh extends AppStrings {
   String get nothingRecordedYet => '还没有记录';
 
   @override
-  String get emptyMonthHint => '点按“添加”，记下本月第一笔支出或收入。';
+  String get emptyPeriodHint => '点按“添加”，记下这段时间的支出或收入。';
+
+  @override
+  String get periodDay => '日';
+
+  @override
+  String get periodWeek => '周';
+
+  @override
+  String get periodMonth => '月';
+
+  @override
+  String get periodYear => '年';
+
+  @override
+  String get previousPeriod => '上一个';
+
+  @override
+  String get nextPeriod => '下一个';
 
   @override
   String get yourMonths => '你的月份';

@@ -3,8 +3,9 @@ import 'package:equatable/equatable.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/utils/ui_notice.dart';
 import '../../domain/entities/month.dart';
-import '../../domain/entities/month_overview.dart';
 import '../../domain/entities/monthly_summary.dart';
+import '../../domain/entities/period.dart';
+import '../../domain/entities/period_overview.dart';
 
 sealed class HomeState extends Equatable {
   const HomeState();
@@ -34,8 +35,8 @@ final class HomeReady extends HomeState {
     this.notice,
   });
 
-  /// The selected month plus its expenses, total and category breakdown.
-  final MonthOverview overview;
+  /// The selected period plus its transactions, totals and breakdown.
+  final PeriodOverview overview;
 
   /// Every month that has spending, newest first.
   final List<MonthlySummary> months;
@@ -46,10 +47,13 @@ final class HomeReady extends HomeState {
   /// Set for one emission after a delete or an error.
   final UiNotice? notice;
 
-  Month get month => overview.month;
+  Period get period => overview.period;
+
+  /// The month budgets and analyses follow.
+  Month get month => overview.period.month;
 
   HomeReady copyWith({
-    MonthOverview? overview,
+    PeriodOverview? overview,
     List<MonthlySummary>? months,
     bool? canUndoDelete,
     UiNotice? notice,

@@ -25,8 +25,26 @@ class AppStringsVi extends AppStrings {
   String get nothingRecordedYet => 'Chưa có ghi chép nào';
 
   @override
-  String get emptyMonthHint =>
-      'Nhấn Thêm để ghi khoản chi hoặc khoản thu đầu tiên của tháng này.';
+  String get emptyPeriodHint =>
+      'Chạm Thêm để ghi khoản chi hoặc thu nhập cho khoảng thời gian này.';
+
+  @override
+  String get periodDay => 'Ngày';
+
+  @override
+  String get periodWeek => 'Tuần';
+
+  @override
+  String get periodMonth => 'Tháng';
+
+  @override
+  String get periodYear => 'Năm';
+
+  @override
+  String get previousPeriod => 'Trước';
+
+  @override
+  String get nextPeriod => 'Sau';
 
   @override
   String get yourMonths => 'Các tháng của bạn';

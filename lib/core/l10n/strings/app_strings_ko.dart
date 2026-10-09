@@ -24,7 +24,25 @@ class AppStringsKo extends AppStrings {
   String get nothingRecordedYet => '아직 기록이 없어요';
 
   @override
-  String get emptyMonthHint => '추가를 눌러 이번 달 첫 지출이나 수입을 기록하세요.';
+  String get emptyPeriodHint => '추가를 눌러 이 기간의 지출이나 수입을 기록하세요.';
+
+  @override
+  String get periodDay => '일';
+
+  @override
+  String get periodWeek => '주';
+
+  @override
+  String get periodMonth => '월';
+
+  @override
+  String get periodYear => '년';
+
+  @override
+  String get previousPeriod => '이전';
+
+  @override
+  String get nextPeriod => '다음';
 
   @override
   String get yourMonths => '월 목록';

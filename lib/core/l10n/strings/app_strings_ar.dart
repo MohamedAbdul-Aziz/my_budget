@@ -23,8 +23,26 @@ class AppStringsAr extends AppStrings {
   String get nothingRecordedYet => 'لا توجد مصروفات بعد';
 
   @override
-  String get emptyMonthHint =>
-      'اضغط "إضافة" لتسجيل أول مصروف أو دخل في هذا الشهر.';
+  String get emptyPeriodHint =>
+      'اضغط «إضافة» لتسجيل مصروف أو دخل في هذه الفترة.';
+
+  @override
+  String get periodDay => 'يوم';
+
+  @override
+  String get periodWeek => 'أسبوع';
+
+  @override
+  String get periodMonth => 'شهر';
+
+  @override
+  String get periodYear => 'سنة';
+
+  @override
+  String get previousPeriod => 'السابق';
+
+  @override
+  String get nextPeriod => 'التالي';
 
   @override
   String get yourMonths => 'شهورك';

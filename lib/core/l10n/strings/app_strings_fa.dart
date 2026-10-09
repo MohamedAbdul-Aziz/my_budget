@@ -25,8 +25,26 @@ class AppStringsFa extends AppStrings {
   String get nothingRecordedYet => 'هنوز چیزی ثبت نشده';
 
   @override
-  String get emptyMonthHint =>
-      'روی «افزودن» بزنید تا اولین هزینه یا درآمد این ماه را ثبت کنید.';
+  String get emptyPeriodHint =>
+      'برای ثبت هزینه یا درآمد در این بازه، روی «افزودن» بزن.';
+
+  @override
+  String get periodDay => 'روز';
+
+  @override
+  String get periodWeek => 'هفته';
+
+  @override
+  String get periodMonth => 'ماه';
+
+  @override
+  String get periodYear => 'سال';
+
+  @override
+  String get previousPeriod => 'قبلی';
+
+  @override
+  String get nextPeriod => 'بعدی';
 
   @override
   String get yourMonths => 'ماه‌های شما';

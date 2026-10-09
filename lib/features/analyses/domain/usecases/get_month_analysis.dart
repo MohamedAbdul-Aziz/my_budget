@@ -5,7 +5,7 @@ import '../../../expenses/domain/entities/expense.dart';
 import '../../../expenses/domain/entities/month.dart';
 import '../../../expenses/domain/entities/monthly_summary.dart';
 import '../../../expenses/domain/repositories/expense_repository.dart';
-import '../../../expenses/domain/usecases/get_month_overview.dart';
+import '../../../expenses/domain/usecases/get_period_overview.dart';
 import '../entities/month_analysis.dart';
 
 /// Builds the spending analyses for one month from the transactions already
@@ -34,8 +34,8 @@ class GetMonthAnalysis {
     }
 
     final expenses = current.dataOrNull!;
-    final (total, breakdown) = GetMonthOverview.breakdownOf(expenses);
-    final (previousTotal, previousBreakdown) = GetMonthOverview.breakdownOf(
+    final (total, breakdown) = GetPeriodOverview.breakdownOf(expenses);
+    final (previousTotal, previousBreakdown) = GetPeriodOverview.breakdownOf(
       previous.dataOrNull!,
     );
 
@@ -48,7 +48,7 @@ class GetMonthAnalysis {
         dailyAverage: total / daysCounted(month, now ?? DateTime.now()),
         topDay: topDayOf(expenses),
         trend: trendEndingAt(month, summaries.dataOrNull!),
-        income: GetMonthOverview.incomeOf(expenses),
+        income: GetPeriodOverview.incomeOf(expenses),
         incomeBreakdown: incomeBreakdownOf(expenses),
         previousBreakdown: previousBreakdown,
         largestExpense: largestExpenseOf(expenses),
@@ -105,7 +105,7 @@ class GetMonthAnalysis {
     return totals;
   }
 
-  /// Income split by category, the same way [GetMonthOverview.breakdownOf]
+  /// Income split by category, the same way [GetPeriodOverview.breakdownOf]
   /// splits spending.
   static List<CategoryBreakdown> incomeBreakdownOf(List<Expense> expenses) {
     final totals = <String, double>{};

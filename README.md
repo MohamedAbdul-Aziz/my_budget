@@ -8,16 +8,21 @@ restore on any phone.
 
 ## What it does
 
-- **Home** — the current month's total, a category breakdown bar, and the
-  month's expenses grouped by day. Swipe a row to delete it, with undo.
+- **Home** — pick a **day, week, month or year** at the top, then which one:
+  the arrows step back and forth (never past today) and tapping the date opens
+  a calendar, the month list or the years. A week starts on the day the
+  language starts it. The totals, the category breakdown bar and the
+  transactions grouped by day all follow the period; the budget and recurring
+  cards stay monthly and follow the month of the chosen day. Swipe a row to
+  delete it, with undo.
 - **Add expense** — amount, category, date and an optional note. The amount
   field is focused on open, a category is preselected and the date defaults to
   today, so the fast path is: type a number, tap Add.
 - **Categories** — eight built-in categories, plus your own with a custom icon
   and color. Deleting a category moves its expenses to *Other* instead of
   deleting them.
-- **Months** — every month with spending is listed with its total; tap the
-  month name in the app bar to switch.
+- **Months** — in *Month* view, tapping the month opens every month with
+  spending, each with its total.
 - **Search** — the magnifier on the home screen finds any transaction in
   any month by its note (any language, any case) or its amount, and narrows
   it down by type, categories and a date range. Results show how many were

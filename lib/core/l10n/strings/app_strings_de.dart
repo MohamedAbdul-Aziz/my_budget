@@ -24,9 +24,26 @@ class AppStringsDe extends AppStrings {
   String get nothingRecordedYet => 'Noch nichts erfasst';
 
   @override
-  String get emptyMonthHint =>
-      'Tippe auf Hinzufügen, um deine erste Ausgabe oder Einnahme in diesem '
-      'Monat zu erfassen.';
+  String get emptyPeriodHint =>
+      'Tippe auf Hinzufügen, um eine Ausgabe oder Einnahme für diesen Zeitraum zu erfassen.';
+
+  @override
+  String get periodDay => 'Tag';
+
+  @override
+  String get periodWeek => 'Woche';
+
+  @override
+  String get periodMonth => 'Monat';
+
+  @override
+  String get periodYear => 'Jahr';
+
+  @override
+  String get previousPeriod => 'Zurück';
+
+  @override
+  String get nextPeriod => 'Weiter';
 
   @override
   String get yourMonths => 'Deine Monate';

@@ -299,6 +299,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(BudgetProgressBar), findsOneWidget);
 
+      await tester.ensureVisible(find.byType(BudgetCard));
+      await tester.pumpAndSettle();
       await tester.tap(find.byType(BudgetCard));
       await tester.pumpAndSettle();
       expect(find.byType(BudgetProgressBar), findsNWidgets(4));

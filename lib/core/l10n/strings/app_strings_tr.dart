@@ -25,8 +25,26 @@ class AppStringsTr extends AppStrings {
   String get nothingRecordedYet => 'Henüz kayıt yok';
 
   @override
-  String get emptyMonthHint =>
-      'Bu ayın ilk gider ya da gelirini kaydetmek için Ekle’ye dokunun.';
+  String get emptyPeriodHint =>
+      'Bu döneme gider ya da gelir eklemek için Ekle’ye dokun.';
+
+  @override
+  String get periodDay => 'Gün';
+
+  @override
+  String get periodWeek => 'Hafta';
+
+  @override
+  String get periodMonth => 'Ay';
+
+  @override
+  String get periodYear => 'Yıl';
+
+  @override
+  String get previousPeriod => 'Önceki';
+
+  @override
+  String get nextPeriod => 'Sonraki';
 
   @override
   String get yourMonths => 'Aylarınız';

@@ -6,7 +6,7 @@ import '../../../../core/utils/app_formats.dart';
 import '../../../categories/domain/entities/transaction_type.dart';
 import '../../../categories/presentation/category_label.dart';
 import '../../domain/entities/category_breakdown.dart';
-import '../../domain/entities/month_overview.dart';
+import '../../domain/entities/period_overview.dart';
 
 /// The headline of the home screen: what the month brought in, what it cost,
 /// what is left, and how much of the income that is.
@@ -17,7 +17,7 @@ class MonthSummaryCard extends StatelessWidget {
     required this.formats,
   });
 
-  final MonthOverview overview;
+  final PeriodOverview overview;
   final AppFormats formats;
 
   @override

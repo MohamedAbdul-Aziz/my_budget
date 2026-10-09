@@ -42,6 +42,7 @@ class AppFormats {
       monthName: DateFormat.MMMM(dateLocale),
       weekday: DateFormat.EEEE(dateLocale),
       shortWeekday: DateFormat.E(dateLocale),
+      year: DateFormat.y(dateLocale),
       percent: NumberFormat.percentPattern(numberLocale),
       integer: NumberFormat.decimalPattern(numberLocale),
     );
@@ -77,6 +78,7 @@ class AppFormats {
     required DateFormat monthName,
     required DateFormat weekday,
     required DateFormat shortWeekday,
+    required DateFormat year,
     required NumberFormat percent,
     required NumberFormat integer,
   }) : _full = full,
@@ -90,6 +92,7 @@ class AppFormats {
        _monthName = monthName,
        _weekday = weekday,
        _shortWeekday = shortWeekday,
+       _year = year,
        _percent = percent,
        _integer = integer;
 
@@ -106,6 +109,7 @@ class AppFormats {
   final DateFormat _monthName;
   final DateFormat _weekday;
   final DateFormat _shortWeekday;
+  final DateFormat _year;
   final NumberFormat _percent;
   final NumberFormat _integer;
 
@@ -144,6 +148,9 @@ class AppFormats {
 
   /// `Aug`.
   String shortMonth(Month month) => _shortMonth.format(month.start);
+
+  /// `2026`, in the language's own digits.
+  String yearLabel(int year) => _year.format(DateTime(year));
 
   /// `25%` for 0.25.
   String percent(double fraction) => _percent.format(fraction);

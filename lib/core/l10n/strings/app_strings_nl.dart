@@ -24,9 +24,26 @@ class AppStringsNl extends AppStrings {
   String get nothingRecordedYet => 'Nog niets vastgelegd';
 
   @override
-  String get emptyMonthHint =>
-      'Tik op Toevoegen om je eerste uitgave of inkomsten van deze maand vast '
-      'te leggen.';
+  String get emptyPeriodHint =>
+      'Tik op Toevoegen om een uitgave of inkomen voor deze periode vast te leggen.';
+
+  @override
+  String get periodDay => 'Dag';
+
+  @override
+  String get periodWeek => 'Week';
+
+  @override
+  String get periodMonth => 'Maand';
+
+  @override
+  String get periodYear => 'Jaar';
+
+  @override
+  String get previousPeriod => 'Vorige';
+
+  @override
+  String get nextPeriod => 'Volgende';
 
   @override
   String get yourMonths => 'Je maanden';

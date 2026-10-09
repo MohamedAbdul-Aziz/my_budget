@@ -2,34 +2,34 @@ import 'package:equatable/equatable.dart';
 
 import 'category_breakdown.dart';
 import 'expense.dart';
-import 'month.dart';
+import 'period.dart';
 
-/// Everything the home screen shows for one month, assembled by the domain
-/// layer so the cubit only has to hold it.
-class MonthOverview extends Equatable {
-  const MonthOverview({
-    required this.month,
+/// Everything the home screen shows for one period (a day, week, month or
+/// year), assembled by the domain layer so the cubit only has to hold it.
+class PeriodOverview extends Equatable {
+  const PeriodOverview({
+    required this.period,
     required this.transactions,
     required this.income,
     required this.spent,
     required this.breakdown,
   });
 
-  const MonthOverview.empty(this.month)
+  const PeriodOverview.empty(this.period)
     : transactions = const [],
       income = 0,
       spent = 0,
       breakdown = const [];
 
-  final Month month;
+  final Period period;
 
   /// Spending and income together, newest first.
   final List<Expense> transactions;
 
-  /// Everything that came in this month.
+  /// Everything that came in this period.
   final double income;
 
-  /// Everything that went out this month.
+  /// Everything that went out this period.
   final double spent;
 
   /// Where the spending went, largest share first. Income is not in it.
@@ -37,7 +37,7 @@ class MonthOverview extends Equatable {
 
   bool get isEmpty => transactions.isEmpty;
 
-  /// Income minus spending. Negative when the month cost more than it
+  /// Income minus spending. Negative when the period cost more than it
   /// brought in.
   double get net => income - spent;
 
@@ -47,5 +47,5 @@ class MonthOverview extends Equatable {
   double? get savingsRate => income > 0 ? net / income : null;
 
   @override
-  List<Object?> get props => [month, transactions, income, spent, breakdown];
+  List<Object?> get props => [period, transactions, income, spent, breakdown];
 }

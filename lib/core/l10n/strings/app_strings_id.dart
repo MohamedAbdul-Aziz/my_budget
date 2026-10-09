@@ -25,9 +25,26 @@ class AppStringsId extends AppStrings {
   String get nothingRecordedYet => 'Belum ada catatan';
 
   @override
-  String get emptyMonthHint =>
-      'Ketuk Tambah untuk mencatat pengeluaran atau pemasukan pertama bulan '
-      'ini.';
+  String get emptyPeriodHint =>
+      'Ketuk Tambah untuk mencatat pengeluaran atau pemasukan di periode ini.';
+
+  @override
+  String get periodDay => 'Hari';
+
+  @override
+  String get periodWeek => 'Minggu';
+
+  @override
+  String get periodMonth => 'Bulan';
+
+  @override
+  String get periodYear => 'Tahun';
+
+  @override
+  String get previousPeriod => 'Sebelumnya';
+
+  @override
+  String get nextPeriod => 'Berikutnya';
 
   @override
   String get yourMonths => 'Bulan-bulanmu';

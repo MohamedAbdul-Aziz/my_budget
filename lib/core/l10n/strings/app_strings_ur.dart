@@ -24,8 +24,26 @@ class AppStringsUr extends AppStrings {
   String get nothingRecordedYet => 'ابھی تک کچھ درج نہیں';
 
   @override
-  String get emptyMonthHint =>
-      'اس مہینے کا پہلا خرچ یا آمدنی درج کرنے کے لیے "شامل کریں" پر ٹیپ کریں۔';
+  String get emptyPeriodHint =>
+      'اس مدت کا خرچ یا آمدنی درج کرنے کے لیے «شامل کریں» پر ٹیپ کریں۔';
+
+  @override
+  String get periodDay => 'دن';
+
+  @override
+  String get periodWeek => 'ہفتہ';
+
+  @override
+  String get periodMonth => 'مہینہ';
+
+  @override
+  String get periodYear => 'سال';
+
+  @override
+  String get previousPeriod => 'پچھلا';
+
+  @override
+  String get nextPeriod => 'اگلا';
 
   @override
   String get yourMonths => 'آپ کے مہینے';

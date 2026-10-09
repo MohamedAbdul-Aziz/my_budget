@@ -58,7 +58,7 @@ import '../../features/expenses/data/repositories/expense_repository_impl.dart';
 import '../../features/expenses/domain/repositories/expense_repository.dart';
 import '../../features/expenses/domain/usecases/add_expense.dart';
 import '../../features/expenses/domain/usecases/delete_expense.dart';
-import '../../features/expenses/domain/usecases/get_month_overview.dart';
+import '../../features/expenses/domain/usecases/get_period_overview.dart';
 import '../../features/expenses/domain/usecases/get_monthly_summaries.dart';
 import '../../features/expenses/domain/usecases/search_transactions.dart';
 import '../../features/expenses/domain/usecases/update_expense.dart';
@@ -234,7 +234,7 @@ void _registerExpenses() {
     ..registerLazySingleton<ExpenseLocalDataSource>(
       () => ExpenseLocalDataSourceImpl(sl()),
     )
-    ..registerLazySingleton(() => GetMonthOverview(sl()))
+    ..registerLazySingleton(() => GetPeriodOverview(sl()))
     ..registerLazySingleton(() => GetMonthlySummaries(sl()))
     ..registerLazySingleton(() => AddExpense(sl()))
     ..registerLazySingleton(() => UpdateExpense(sl()))
@@ -242,7 +242,7 @@ void _registerExpenses() {
     ..registerLazySingleton(() => SearchTransactions(sl()))
     ..registerLazySingleton(
       () => HomeCubit(
-        getMonthOverview: sl(),
+        getPeriodOverview: sl(),
         getMonthlySummaries: sl(),
         deleteExpense: sl(),
         addExpense: sl(),

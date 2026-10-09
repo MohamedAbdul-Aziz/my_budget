@@ -11,14 +11,12 @@ import '../../../recurring/presentation/widgets/recurring_due_card.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../../settings/presentation/widgets/settings_sheet.dart';
 import '../../domain/entities/expense.dart';
-import '../../domain/entities/month.dart';
-import '../../domain/entities/month_overview.dart';
-import '../../domain/entities/monthly_summary.dart';
+import '../../domain/entities/period_overview.dart';
 import '../cubit/home_cubit.dart';
 import '../cubit/home_state.dart';
 import '../widgets/expense_tile.dart';
-import '../widgets/month_picker_sheet.dart';
 import '../widgets/month_summary_card.dart';
+import '../widgets/period_bar.dart';
 import 'expense_form_page.dart';
 import 'search_page.dart';
 
@@ -33,8 +31,12 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 8,
-        title: const _MonthTitleButton(),
+        title: Text(
+          strings.appTitle,
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+        ),
         actions: [
           IconButton(
             tooltip: strings.search,
@@ -90,13 +92,14 @@ class HomePage extends StatelessWidget {
           HomeLoadFailure(:final failure) => _LoadFailure(
             message: strings.failure(failure.code),
           ),
-          HomeReady(:final overview) => _MonthView(overview: overview),
+          HomeReady(:final overview) => _PeriodView(overview: overview),
         },
       ),
     );
   }
 
-  /// Opens the add/edit screen and refreshes the month if something was saved.
+  /// Opens the add/edit screen and refreshes the period if something was
+  /// saved.
   static Future<void> _openForm(
     BuildContext context, {
     Expense? existing,
@@ -125,71 +128,11 @@ class AddExpenseButton extends StatelessWidget {
   );
 }
 
-/// Tapping the month name opens the month switcher.
-class _MonthTitleButton extends StatelessWidget {
-  const _MonthTitleButton();
+/// The chosen period: its totals, the monthly cards, and its transactions.
+class _PeriodView extends StatelessWidget {
+  const _PeriodView({required this.overview});
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(
-      buildWhen: (previous, current) =>
-          previous is! HomeReady ||
-          current is! HomeReady ||
-          previous.month != current.month ||
-          previous.months != current.months,
-      builder: (context, state) {
-        final (month, months) = switch (state) {
-          HomeReady(:final month, :final months) => (month, months),
-          _ => (Month.current(), const <MonthlySummary>[]),
-        };
-        final formats = context.select<SettingsCubit, AppFormats>(
-          (cubit) => cubit.state.formats,
-        );
-
-        return TextButton.icon(
-          onPressed: () => _pickMonth(
-            context,
-            month: month,
-            months: months,
-            formats: formats,
-          ),
-          iconAlignment: IconAlignment.end,
-          icon: const Icon(Icons.expand_more_rounded),
-          label: Text(
-            formats.monthLabel(month),
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-          ),
-          style: TextButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.onSurface,
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _pickMonth(
-    BuildContext context, {
-    required Month month,
-    required List<MonthlySummary> months,
-    required AppFormats formats,
-  }) async {
-    final cubit = context.read<HomeCubit>();
-    final picked = await MonthPickerSheet.show(
-      context,
-      months: months,
-      selected: month,
-      formats: formats,
-    );
-    if (picked != null) await cubit.selectMonth(picked);
-  }
-}
-
-class _MonthView extends StatelessWidget {
-  const _MonthView({required this.overview});
-
-  final MonthOverview overview;
+  final PeriodOverview overview;
 
   @override
   Widget build(BuildContext context) {
@@ -202,8 +145,12 @@ class _MonthView extends StatelessWidget {
       onRefresh: context.read<HomeCubit>().refresh,
       child: CustomScrollView(
         slivers: [
+          const SliverPadding(
+            padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
+            sliver: SliverToBoxAdapter(child: PeriodBar()),
+          ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             sliver: SliverToBoxAdapter(
               child: MonthSummaryCard(overview: overview, formats: formats),
             ),
@@ -212,9 +159,9 @@ class _MonthView extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
             sliver: SliverToBoxAdapter(child: BudgetCard()),
           ),
-          // Reminders are about today, so they are asked about in the
-          // current month only, not while looking back at another.
-          if (overview.month.isCurrent)
+          // Reminders are about today, so they are asked about only while
+          // the period holds today, not while looking back at another.
+          if (overview.period.contains(DateTime.now()))
             const SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverToBoxAdapter(child: RecurringDueCard()),
@@ -238,7 +185,7 @@ class _MonthView extends StatelessWidget {
   }
 }
 
-/// The month's expenses, newest first, with a small header whenever the day
+/// The period's transactions, newest first, with a small header whenever the day
 /// changes. The comparison is O(1) per row, so nothing is precomputed.
 class _ExpenseSliver extends StatelessWidget {
   const _ExpenseSliver({required this.expenses, required this.formats});
@@ -323,7 +270,7 @@ class _EmptyMonth extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              strings.emptyMonthHint,
+              strings.emptyPeriodHint,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,

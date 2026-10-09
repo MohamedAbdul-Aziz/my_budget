@@ -103,7 +103,13 @@ abstract class AppStrings {
   String get undo;
   String get tryAgain;
   String get nothingRecordedYet;
-  String get emptyMonthHint;
+  String get emptyPeriodHint;
+  String get periodDay;
+  String get periodWeek;
+  String get periodMonth;
+  String get periodYear;
+  String get previousPeriod;
+  String get nextPeriod;
   String get yourMonths;
   String spentIn(String month);
   String expenseCount(int count);

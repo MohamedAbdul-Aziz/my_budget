@@ -24,9 +24,26 @@ class AppStringsMs extends AppStrings {
   String get nothingRecordedYet => 'Belum ada rekod';
 
   @override
-  String get emptyMonthHint =>
-      'Ketik Tambah untuk merekod perbelanjaan atau pendapatan pertama bulan '
-      'ini.';
+  String get emptyPeriodHint =>
+      'Ketik Tambah untuk merekod perbelanjaan atau pendapatan bagi tempoh ini.';
+
+  @override
+  String get periodDay => 'Hari';
+
+  @override
+  String get periodWeek => 'Minggu';
+
+  @override
+  String get periodMonth => 'Bulan';
+
+  @override
+  String get periodYear => 'Tahun';
+
+  @override
+  String get previousPeriod => 'Sebelumnya';
+
+  @override
+  String get nextPeriod => 'Seterusnya';
 
   @override
   String get yourMonths => 'Bulan anda';

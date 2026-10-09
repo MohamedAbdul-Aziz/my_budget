@@ -137,6 +137,7 @@ void main() {
       ),
     );
 
+    await scrollHomeTo(tester, find.text('Mark as received'));
     await tester.tap(find.text('Mark as received'));
     await tester.pumpAndSettle();
 
@@ -154,12 +155,12 @@ void main() {
     final harness = await bootApp(tester, before: _seedDueToday);
     expect(find.text('Payments to confirm'), findsOneWidget);
 
-    await tester.tap(
-      find.descendant(
-        of: find.byType(RecurringDueCard),
-        matching: find.text('Mark as paid'),
-      ),
+    final markAsPaid = find.descendant(
+      of: find.byType(RecurringDueCard),
+      matching: find.text('Mark as paid'),
     );
+    await scrollHomeTo(tester, markAsPaid);
+    await tester.tap(markAsPaid);
     await tester.pumpAndSettle();
 
     final logged = harness.expenses.expenses.single;
@@ -167,6 +168,7 @@ void main() {
     expect(logged.month.isCurrent, isTrue);
     // Asked and answered: the card goes, and the transaction is listed.
     expect(find.text('Payments to confirm'), findsNothing);
+    await scrollHomeTo(tester, find.text('Rent'));
     expect(find.text('Rent'), findsOneWidget);
     expect(find.text('Rent marked as paid'), findsOneWidget);
   });
@@ -178,6 +180,7 @@ void main() {
     expect(find.text('Payments to confirm'), findsOneWidget);
     expect(find.textContaining('2 payments overdue since'), findsOneWidget);
 
+    await scrollHomeTo(tester, find.text('See all'));
     await tester.tap(find.text('See all'));
     await tester.pumpAndSettle();
     expect(find.byType(RecurringPage), findsOneWidget);
@@ -207,6 +210,7 @@ void main() {
     final logged = harness.expenses.expenses.single;
     expect(logged.description, 'Netflix');
     expect(logged.date, _today);
+    await scrollHomeTo(tester, find.text('Netflix'));
     expect(find.text('Netflix'), findsOneWidget);
     expect(
       find.text('1 recurring payment was logged automatically'),

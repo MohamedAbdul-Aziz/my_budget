@@ -24,9 +24,26 @@ class AppStringsPl extends AppStrings {
   String get nothingRecordedYet => 'Jeszcze nic nie zapisano';
 
   @override
-  String get emptyMonthHint =>
-      'Stuknij Dodaj, aby zapisać pierwszy wydatek lub przychód w tym '
-      'miesiącu.';
+  String get emptyPeriodHint =>
+      'Dotknij Dodaj, aby zapisać wydatek lub przychód w tym okresie.';
+
+  @override
+  String get periodDay => 'Dzień';
+
+  @override
+  String get periodWeek => 'Tydzień';
+
+  @override
+  String get periodMonth => 'Miesiąc';
+
+  @override
+  String get periodYear => 'Rok';
+
+  @override
+  String get previousPeriod => 'Wstecz';
+
+  @override
+  String get nextPeriod => 'Dalej';
 
   @override
   String get yourMonths => 'Twoje miesiące';

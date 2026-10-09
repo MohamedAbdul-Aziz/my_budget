@@ -9,6 +9,13 @@ abstract interface class ExpenseRepository {
   /// Everything recorded in [month], spending and income, newest first.
   Future<ApiResult<List<Expense>>> getTransactionsForMonth(Month month);
 
+  /// Transactions dated from [start] up to, not including, [endExclusive],
+  /// newest first.
+  Future<ApiResult<List<Expense>>> getTransactionsBetween(
+    DateTime start,
+    DateTime endExclusive,
+  );
+
   /// One row per month that has anything recorded, newest month first. The
   /// totals are spending only.
   Future<ApiResult<List<MonthlySummary>>> getMonthlySummaries();

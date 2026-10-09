@@ -159,6 +159,23 @@ class FakeExpenseRepository implements ExpenseRepository {
   }
 
   @override
+  Future<ApiResult<List<Expense>>> getTransactionsBetween(
+    DateTime start,
+    DateTime endExclusive,
+  ) async {
+    final matching =
+        expenses
+            .where(
+              (expense) =>
+                  !expense.date.isBefore(start) &&
+                  expense.date.isBefore(endExclusive),
+            )
+            .toList()
+          ..sort((a, b) => b.date.compareTo(a.date));
+    return Success(matching);
+  }
+
+  @override
   Future<ApiResult<List<MonthlySummary>>> getMonthlySummaries() async {
     // Spending only, as the real query counts it.
     final totals = <Month, (double, int)>{};

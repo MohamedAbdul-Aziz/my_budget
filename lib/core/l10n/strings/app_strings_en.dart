@@ -23,8 +23,26 @@ class AppStringsEn extends AppStrings {
   String get nothingRecordedYet => 'Nothing recorded yet';
 
   @override
-  String get emptyMonthHint =>
-      'Tap Add to record your first expense or income for this month.';
+  String get emptyPeriodHint =>
+      'Tap Add to record an expense or income for this period.';
+
+  @override
+  String get periodDay => 'Day';
+
+  @override
+  String get periodWeek => 'Week';
+
+  @override
+  String get periodMonth => 'Month';
+
+  @override
+  String get periodYear => 'Year';
+
+  @override
+  String get previousPeriod => 'Previous';
+
+  @override
+  String get nextPeriod => 'Next';
 
   @override
   String get yourMonths => 'Your months';

@@ -24,7 +24,25 @@ class AppStringsJa extends AppStrings {
   String get nothingRecordedYet => 'まだ記録がありません';
 
   @override
-  String get emptyMonthHint => '「追加」をタップして、今月最初の支出や収入を記録しましょう。';
+  String get emptyPeriodHint => '「追加」をタップして、この期間の支出や収入を記録しましょう。';
+
+  @override
+  String get periodDay => '日';
+
+  @override
+  String get periodWeek => '週';
+
+  @override
+  String get periodMonth => '月';
+
+  @override
+  String get periodYear => '年';
+
+  @override
+  String get previousPeriod => '前へ';
+
+  @override
+  String get nextPeriod => '次へ';
 
   @override
   String get yourMonths => '月一覧';

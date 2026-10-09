@@ -2,27 +2,34 @@ import '../../../../core/error/api_result.dart';
 import '../../../categories/domain/entities/expense_category.dart';
 import '../entities/category_breakdown.dart';
 import '../entities/expense.dart';
-import '../entities/month.dart';
-import '../entities/month_overview.dart';
+import '../entities/period.dart';
+import '../entities/period_overview.dart';
 import '../repositories/expense_repository.dart';
 
-/// Loads a month's transactions and derives its income, its spending, and
+/// Loads a period's transactions and derives its income, its spending, and
 /// where the spending went.
-class GetMonthOverview {
-  const GetMonthOverview(this._repository);
+class GetPeriodOverview {
+  const GetPeriodOverview(this._repository);
 
   final ExpenseRepository _repository;
 
-  Future<ApiResult<MonthOverview>> call(Month month) async {
-    final result = await _repository.getTransactionsForMonth(month);
-    return result.map((transactions) => _overviewFrom(month, transactions));
+  /// A month is read by its stored month, like the budgets and analyses, so
+  /// all three agree on what belongs to it; any other period by its dates.
+  Future<ApiResult<PeriodOverview>> call(Period period) async {
+    final result = period.kind == PeriodKind.month
+        ? await _repository.getTransactionsForMonth(period.month)
+        : await _repository.getTransactionsBetween(
+            period.start,
+            period.endExclusive,
+          );
+    return result.map((transactions) => _overviewFrom(period, transactions));
   }
 
-  MonthOverview _overviewFrom(Month month, List<Expense> transactions) {
-    if (transactions.isEmpty) return MonthOverview.empty(month);
+  PeriodOverview _overviewFrom(Period period, List<Expense> transactions) {
+    if (transactions.isEmpty) return PeriodOverview.empty(period);
     final (spent, breakdown) = breakdownOf(transactions);
-    return MonthOverview(
-      month: month,
+    return PeriodOverview(
+      period: period,
       transactions: transactions,
       income: incomeOf(transactions),
       spent: spent,

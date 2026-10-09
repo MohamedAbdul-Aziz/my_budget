@@ -21,6 +21,15 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
       ApiResult.guard(() async => await _localDataSource.getTransactionsForMonth(month));
 
   @override
+  Future<ApiResult<List<Expense>>> getTransactionsBetween(
+    DateTime start,
+    DateTime endExclusive,
+  ) => ApiResult.guard(
+    () async =>
+        await _localDataSource.getTransactionsBetween(start, endExclusive),
+  );
+
+  @override
   Future<ApiResult<List<MonthlySummary>>> getMonthlySummaries() =>
       ApiResult.guard(() async => await _localDataSource.getMonthlySummaries());
 

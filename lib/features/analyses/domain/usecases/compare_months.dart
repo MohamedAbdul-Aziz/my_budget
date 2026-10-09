@@ -4,7 +4,7 @@ import '../../../../core/error/api_result.dart';
 import '../../../categories/domain/entities/expense_category.dart';
 import '../../../expenses/domain/entities/month.dart';
 import '../../../expenses/domain/repositories/expense_repository.dart';
-import '../../../expenses/domain/usecases/get_month_overview.dart';
+import '../../../expenses/domain/usecases/get_period_overview.dart';
 import '../entities/month_comparison.dart';
 
 /// Sets one month's spending against another's, category by category.
@@ -24,10 +24,10 @@ class CompareMonths {
       return ResultFailure(failure);
     }
 
-    final (firstTotal, firstBreakdown) = GetMonthOverview.breakdownOf(
+    final (firstTotal, firstBreakdown) = GetPeriodOverview.breakdownOf(
       firstResult.dataOrNull!,
     );
-    final (secondTotal, secondBreakdown) = GetMonthOverview.breakdownOf(
+    final (secondTotal, secondBreakdown) = GetPeriodOverview.breakdownOf(
       secondResult.dataOrNull!,
     );
 

@@ -24,9 +24,26 @@ class AppStringsPt extends AppStrings {
   String get nothingRecordedYet => 'Nada registrado ainda';
 
   @override
-  String get emptyMonthHint =>
-      'Toque em Adicionar para registrar sua primeira despesa ou receita '
-      'deste mês.';
+  String get emptyPeriodHint =>
+      'Toque em Adicionar para registrar uma despesa ou receita neste período.';
+
+  @override
+  String get periodDay => 'Dia';
+
+  @override
+  String get periodWeek => 'Semana';
+
+  @override
+  String get periodMonth => 'Mês';
+
+  @override
+  String get periodYear => 'Ano';
+
+  @override
+  String get previousPeriod => 'Anterior';
+
+  @override
+  String get nextPeriod => 'Próximo';
 
   @override
   String get yourMonths => 'Seus meses';

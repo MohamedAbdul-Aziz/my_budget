@@ -189,3 +189,20 @@ List<String> recordPlatformCalls(WidgetTester tester) {
   );
   return calls;
 }
+
+/// Scrolls the home screen until [finder] shows. The period bar and the
+/// summary cards come first, so on the 800 × 600 test screen the cards and
+/// transactions below them start out of view.
+Future<void> scrollHomeTo(WidgetTester tester, Finder finder) async {
+  await tester.scrollUntilVisible(
+    finder,
+    150,
+    scrollable: find
+        .descendant(
+          of: find.byType(CustomScrollView),
+          matching: find.byType(Scrollable),
+        )
+        .first,
+  );
+  await tester.pumpAndSettle();
+}

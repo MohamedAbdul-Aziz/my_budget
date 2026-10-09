@@ -12,6 +12,11 @@ import '../models/expense_model.dart';
 abstract interface class ExpenseLocalDataSource {
   Future<List<ExpenseModel>> getTransactionsForMonth(Month month);
 
+  Future<List<ExpenseModel>> getTransactionsBetween(
+    DateTime start,
+    DateTime endExclusive,
+  );
+
   Future<List<MonthlySummary>> getMonthlySummaries();
 
   Future<List<ExpenseModel>> search(TransactionSearch search, {int limit});
@@ -45,6 +50,25 @@ class ExpenseLocalDataSourceImpl implements ExpenseLocalDataSource {
       return rows.map(ExpenseModel.fromJoinedMap).toList();
     } on DatabaseException catch (error) {
       throw DatabaseFailure('load month: $error');
+    }
+  }
+
+  @override
+  Future<List<ExpenseModel>> getTransactionsBetween(
+    DateTime start,
+    DateTime endExclusive,
+  ) async {
+    try {
+      final db = await _appDatabase.database;
+      final rows = await db.rawQuery(
+        '${ExpenseModel.selectJoin} '
+        'WHERE e.date >= ? AND e.date < ? AND e.deleted_at IS NULL '
+        'ORDER BY e.date DESC, e.created_at DESC',
+        [start.millisecondsSinceEpoch, endExclusive.millisecondsSinceEpoch],
+      );
+      return rows.map(ExpenseModel.fromJoinedMap).toList();
+    } on DatabaseException catch (error) {
+      throw DatabaseFailure('load period: $error');
     }
   }
 

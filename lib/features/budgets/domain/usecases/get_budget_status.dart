@@ -4,7 +4,7 @@ import '../../../categories/domain/repositories/category_repository.dart';
 import '../../../expenses/domain/entities/expense.dart';
 import '../../../expenses/domain/entities/month.dart';
 import '../../../expenses/domain/repositories/expense_repository.dart';
-import '../../../expenses/domain/usecases/get_month_overview.dart';
+import '../../../expenses/domain/usecases/get_period_overview.dart';
 import '../entities/budget_limits.dart';
 import '../entities/budget_line.dart';
 import '../entities/budget_status.dart';
@@ -72,7 +72,7 @@ class GetBudgetStatus {
     required List<ExpenseCategory> categories,
   }) {
     // The same totals the home screen and the analyses show.
-    final (spent, breakdown) = GetMonthOverview.breakdownOf(expenses);
+    final (spent, breakdown) = GetPeriodOverview.breakdownOf(expenses);
     final spentById = {
       for (final slice in breakdown) slice.category.id: slice.total,
     };

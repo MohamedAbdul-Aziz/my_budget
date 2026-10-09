@@ -4,37 +4,42 @@ import '../../../../core/error/api_result.dart';
 import '../../../../core/utils/ui_notice.dart';
 import '../../domain/entities/expense.dart';
 import '../../domain/entities/month.dart';
+import '../../domain/entities/period.dart';
 import '../../domain/usecases/add_expense.dart';
 import '../../domain/usecases/delete_expense.dart';
-import '../../domain/usecases/get_month_overview.dart';
 import '../../domain/usecases/get_monthly_summaries.dart';
+import '../../domain/usecases/get_period_overview.dart';
 import 'home_state.dart';
 
-/// Drives the home screen: the selected month, its expenses and totals, and
-/// the list of months the user can switch to.
+/// Drives the home screen: the selected period (a day, week, month or year),
+/// its transactions and totals, and the list of months with spending.
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit({
-    required GetMonthOverview getMonthOverview,
+    required GetPeriodOverview getPeriodOverview,
     required GetMonthlySummaries getMonthlySummaries,
     required DeleteExpense deleteExpense,
     required AddExpense addExpense,
-  }) : _getMonthOverview = getMonthOverview,
+  }) : _getPeriodOverview = getPeriodOverview,
        _getMonthlySummaries = getMonthlySummaries,
        _deleteExpense = deleteExpense,
        _addExpense = addExpense,
        super(const HomeLoading());
 
-  final GetMonthOverview _getMonthOverview;
+  final GetPeriodOverview _getPeriodOverview;
   final GetMonthlySummaries _getMonthlySummaries;
   final DeleteExpense _deleteExpense;
   final AddExpense _addExpense;
 
-  Month _month = Month.current();
+  /// Opens on this month, around today.
+  Period _period = Period(PeriodKind.month, DateTime.now());
 
   /// Kept only until the undo snackbar disappears.
   Expense? _lastDeleted;
 
-  Month get selectedMonth => _month;
+  Period get period => _period;
+
+  /// The month budgets and analyses follow: the one the picked day is in.
+  Month get selectedMonth => _period.month;
 
   /// First load — shows the spinner. Later calls should use [refresh].
   Future<void> load() async {
@@ -42,9 +47,41 @@ class HomeCubit extends Cubit<HomeState> {
     await _fetch();
   }
 
-  Future<void> selectMonth(Month month) async {
-    if (month == _month) return;
-    _month = month;
+  /// Shows [month] as a whole, around today when it is this month.
+  Future<void> selectMonth(Month month) => _select(
+    Period(
+      PeriodKind.month,
+      month == Month.current() ? DateTime.now() : month.start,
+      firstWeekday: _period.firstWeekday,
+    ),
+  );
+
+  /// The same day seen as a day, a week, a month or a year. [firstWeekday]
+  /// is when the user's weeks start (`DateTime.monday` … `sunday`).
+  Future<void> selectKind(PeriodKind kind, {int? firstWeekday}) => _select(
+    Period(
+      kind,
+      _period.anchor,
+      firstWeekday: firstWeekday ?? _period.firstWeekday,
+    ),
+  );
+
+  /// The period [by] steps earlier or later. Never past the period holding
+  /// today: there is nothing to see in the future.
+  Future<void> shift(int by, {DateTime? now}) async {
+    if (by > 0 && !_period.endsBefore(now ?? DateTime.now())) return;
+    await _select(_period.shift(by));
+  }
+
+  /// The period of the same kind holding [day] (today at the latest).
+  Future<void> selectDay(DateTime day, {DateTime? now}) {
+    final today = now ?? DateTime.now();
+    return _select(_period.at(day.isAfter(today) ? today : day));
+  }
+
+  Future<void> _select(Period period) async {
+    if (period == _period) return;
+    _period = period;
     _lastDeleted = null;
     await _fetch();
   }
@@ -97,7 +134,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> _fetch({UiNotice? notice}) async {
-    final overviewResult = await _getMonthOverview(_month);
+    final overviewResult = await _getPeriodOverview(_period);
     if (overviewResult case ResultFailure(:final failure)) {
       emit(HomeLoadFailure(failure));
       return;

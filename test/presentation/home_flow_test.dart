@@ -39,6 +39,7 @@ void main() {
     expect(find.text('New expense'), findsNothing);
     expect(find.text(r'$25'), findsOneWidget);
     expect(find.text('1 transaction'), findsOneWidget);
+    await scrollHomeTo(tester, find.text('Food'));
     expect(find.text('Food'), findsWidgets);
   });
 
@@ -79,6 +80,7 @@ void main() {
     expect(find.text('75%'), findsOneWidget);
     expect(find.text('2 transactions'), findsOneWidget);
     // Income is listed with a plus.
+    await scrollHomeTo(tester, find.text(r'+$2,000.00'));
     expect(find.text(r'+$2,000.00'), findsOneWidget);
   });
 

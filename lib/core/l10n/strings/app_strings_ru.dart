@@ -24,9 +24,26 @@ class AppStringsRu extends AppStrings {
   String get nothingRecordedYet => 'Пока ничего не записано';
 
   @override
-  String get emptyMonthHint =>
-      'Нажмите «Добавить», чтобы записать первый расход или доход в этом '
-      'месяце.';
+  String get emptyPeriodHint =>
+      'Нажмите «Добавить», чтобы записать расход или доход за этот период.';
+
+  @override
+  String get periodDay => 'День';
+
+  @override
+  String get periodWeek => 'Неделя';
+
+  @override
+  String get periodMonth => 'Месяц';
+
+  @override
+  String get periodYear => 'Год';
+
+  @override
+  String get previousPeriod => 'Назад';
+
+  @override
+  String get nextPeriod => 'Вперёд';
 
   @override
   String get yourMonths => 'Ваши месяцы';
