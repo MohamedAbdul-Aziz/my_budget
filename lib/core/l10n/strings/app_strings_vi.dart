@@ -154,6 +154,9 @@ class AppStringsVi extends AppStrings {
   String get currencySymbolHint => 'Hiển thị cạnh mỗi số tiền';
 
   @override
+  String get currencyOther => 'Khác';
+
+  @override
   String get reminders => 'Lời nhắc';
 
   @override
@@ -1400,4 +1403,47 @@ class AppStringsVi extends AppStrings {
   @override
   String answerTopIncome(String category, String amount, String percent) =>
       'Thu nhập chủ yếu từ $category: $amount ($percent).';
+
+  @override
+  String? currencyName(String code) => switch (code) {
+    'EGP' => 'Bảng Ai Cập',
+    'USD' => 'Đô la Mỹ',
+    'EUR' => 'Euro',
+    'SAR' => 'Riyal Ả Rập Xê Út',
+    'AED' => 'Dirham UAE',
+    'KWD' => 'Dinar Kuwait',
+    'QAR' => 'Rial Qatar',
+    'BHD' => 'Dinar Bahrain',
+    'OMR' => 'Rial Oman',
+    'JOD' => 'Dinar Jordan',
+    'IQD' => 'Dinar Iraq',
+    'LBP' => 'Bảng Li-băng',
+    'SYP' => 'Bảng Syria',
+    'YER' => 'Rial Yemen',
+    'SDG' => 'Bảng Sudan',
+    'LYD' => 'Dinar Libya',
+    'MAD' => 'Dirham Ma-rốc',
+    'TND' => 'Dinar Tunisia',
+    'DZD' => 'Dinar Algeria',
+    'GBP' => 'Bảng Anh',
+    'TRY' => 'Lia Thổ Nhĩ Kỳ',
+    'IRR' => 'Rial Iran',
+    'PKR' => 'Rupee Pakistan',
+    'INR' => 'Rupee Ấn Độ',
+    'RUB' => 'Rúp Nga',
+    'UAH' => 'Hryvnia Ukraina',
+    'PLN' => 'Zloty Ba Lan',
+    'CHF' => 'Franc Thụy Sĩ',
+    'BRL' => 'Real Brazil',
+    'CAD' => 'Đô la Canada',
+    'AUD' => 'Đô la Úc',
+    'CNY' => 'Nhân dân tệ',
+    'JPY' => 'Yên Nhật',
+    'KRW' => 'Won Hàn Quốc',
+    'IDR' => 'Rupiah Indonesia',
+    'MYR' => 'Ringgit Malaysia',
+    'VND' => 'Đồng Việt Nam',
+    'NGN' => 'Naira Nigeria',
+    _ => null,
+  };
 }

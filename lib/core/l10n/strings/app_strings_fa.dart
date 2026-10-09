@@ -153,6 +153,9 @@ class AppStringsFa extends AppStrings {
   String get currencySymbolHint => 'کنار هر مبلغ نمایش داده می‌شود';
 
   @override
+  String get currencyOther => 'سایر';
+
+  @override
   String get reminders => 'یادآورها';
 
   @override
@@ -1388,4 +1391,47 @@ class AppStringsFa extends AppStrings {
   @override
   String answerTopIncome(String category, String amount, String percent) =>
       'بیشتر درآمدت از $category بود: $amount ($percent).';
+
+  @override
+  String? currencyName(String code) => switch (code) {
+    'EGP' => 'پوند مصر',
+    'USD' => 'دلار آمریکا',
+    'EUR' => 'یورو',
+    'SAR' => 'ریال سعودی',
+    'AED' => 'درهم امارات',
+    'KWD' => 'دینار کویت',
+    'QAR' => 'ریال قطر',
+    'BHD' => 'دینار بحرین',
+    'OMR' => 'ریال عمان',
+    'JOD' => 'دینار اردن',
+    'IQD' => 'دینار عراق',
+    'LBP' => 'پوند لبنان',
+    'SYP' => 'پوند سوریه',
+    'YER' => 'ریال یمن',
+    'SDG' => 'پوند سودان',
+    'LYD' => 'دینار لیبی',
+    'MAD' => 'درهم مراکش',
+    'TND' => 'دینار تونس',
+    'DZD' => 'دینار الجزایر',
+    'GBP' => 'پوند انگلیس',
+    'TRY' => 'لیر ترکیه',
+    'IRR' => 'ریال ایران',
+    'PKR' => 'روپیه پاکستان',
+    'INR' => 'روپیه هند',
+    'RUB' => 'روبل روسیه',
+    'UAH' => 'گریونای اوکراین',
+    'PLN' => 'زلوتی لهستان',
+    'CHF' => 'فرانک سوئیس',
+    'BRL' => 'رئال برزیل',
+    'CAD' => 'دلار کانادا',
+    'AUD' => 'دلار استرالیا',
+    'CNY' => 'یوان چین',
+    'JPY' => 'ین ژاپن',
+    'KRW' => 'وون کره جنوبی',
+    'IDR' => 'روپیه اندونزی',
+    'MYR' => 'رینگیت مالزی',
+    'VND' => 'دانگ ویتنام',
+    'NGN' => 'نایرای نیجریه',
+    _ => null,
+  };
 }

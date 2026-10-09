@@ -152,6 +152,9 @@ class AppStringsEn extends AppStrings {
   String get currencySymbolHint => 'Shown next to every amount';
 
   @override
+  String get currencyOther => 'Other';
+
+  @override
   String get reminders => 'Reminders';
 
   @override
@@ -1397,4 +1400,47 @@ class AppStringsEn extends AppStrings {
   @override
   String answerTopIncome(String category, String amount, String percent) =>
       'Most income came from $category: $amount ($percent).';
+
+  @override
+  String? currencyName(String code) => switch (code) {
+    'EGP' => 'Egyptian Pound',
+    'USD' => 'US Dollar',
+    'EUR' => 'Euro',
+    'SAR' => 'Saudi Riyal',
+    'AED' => 'UAE Dirham',
+    'KWD' => 'Kuwaiti Dinar',
+    'QAR' => 'Qatari Riyal',
+    'BHD' => 'Bahraini Dinar',
+    'OMR' => 'Omani Rial',
+    'JOD' => 'Jordanian Dinar',
+    'IQD' => 'Iraqi Dinar',
+    'LBP' => 'Lebanese Pound',
+    'SYP' => 'Syrian Pound',
+    'YER' => 'Yemeni Rial',
+    'SDG' => 'Sudanese Pound',
+    'LYD' => 'Libyan Dinar',
+    'MAD' => 'Moroccan Dirham',
+    'TND' => 'Tunisian Dinar',
+    'DZD' => 'Algerian Dinar',
+    'GBP' => 'British Pound',
+    'TRY' => 'Turkish Lira',
+    'IRR' => 'Iranian Rial',
+    'PKR' => 'Pakistani Rupee',
+    'INR' => 'Indian Rupee',
+    'RUB' => 'Russian Ruble',
+    'UAH' => 'Ukrainian Hryvnia',
+    'PLN' => 'Polish Zloty',
+    'CHF' => 'Swiss Franc',
+    'BRL' => 'Brazilian Real',
+    'CAD' => 'Canadian Dollar',
+    'AUD' => 'Australian Dollar',
+    'CNY' => 'Chinese Yuan',
+    'JPY' => 'Japanese Yen',
+    'KRW' => 'South Korean Won',
+    'IDR' => 'Indonesian Rupiah',
+    'MYR' => 'Malaysian Ringgit',
+    'VND' => 'Vietnamese Dong',
+    'NGN' => 'Nigerian Naira',
+    _ => null,
+  };
 }

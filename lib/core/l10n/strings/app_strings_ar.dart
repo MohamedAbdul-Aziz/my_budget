@@ -158,6 +158,9 @@ class AppStringsAr extends AppStrings {
   String get currencySymbolHint => 'يظهر بجانب كل مبلغ';
 
   @override
+  String get currencyOther => 'أخرى';
+
+  @override
   String get reminders => 'التذكيرات';
 
   @override
@@ -1410,4 +1413,47 @@ class AppStringsAr extends AppStrings {
   @override
   String answerTopIncome(String category, String amount, String percent) =>
       'أغلب دخلك من $category: $amount ($percent).';
+
+  @override
+  String? currencyName(String code) => switch (code) {
+    'EGP' => 'جنيه مصري',
+    'USD' => 'دولار أمريكي',
+    'EUR' => 'يورو',
+    'SAR' => 'ريال سعودي',
+    'AED' => 'درهم إماراتي',
+    'KWD' => 'دينار كويتي',
+    'QAR' => 'ريال قطري',
+    'BHD' => 'دينار بحريني',
+    'OMR' => 'ريال عماني',
+    'JOD' => 'دينار أردني',
+    'IQD' => 'دينار عراقي',
+    'LBP' => 'ليرة لبنانية',
+    'SYP' => 'ليرة سورية',
+    'YER' => 'ريال يمني',
+    'SDG' => 'جنيه سوداني',
+    'LYD' => 'دينار ليبي',
+    'MAD' => 'درهم مغربي',
+    'TND' => 'دينار تونسي',
+    'DZD' => 'دينار جزائري',
+    'GBP' => 'جنيه إسترليني',
+    'TRY' => 'ليرة تركية',
+    'IRR' => 'ريال إيراني',
+    'PKR' => 'روبية باكستانية',
+    'INR' => 'روبية هندية',
+    'RUB' => 'روبل روسي',
+    'UAH' => 'هريفنيا أوكرانية',
+    'PLN' => 'زلوتي بولندي',
+    'CHF' => 'فرنك سويسري',
+    'BRL' => 'ريال برازيلي',
+    'CAD' => 'دولار كندي',
+    'AUD' => 'دولار أسترالي',
+    'CNY' => 'يوان صيني',
+    'JPY' => 'ين ياباني',
+    'KRW' => 'وون كوري جنوبي',
+    'IDR' => 'روبية إندونيسية',
+    'MYR' => 'رينغيت ماليزي',
+    'VND' => 'دونغ فيتنامي',
+    'NGN' => 'نيرة نيجيرية',
+    _ => null,
+  };
 }

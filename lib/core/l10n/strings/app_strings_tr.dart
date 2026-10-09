@@ -153,6 +153,9 @@ class AppStringsTr extends AppStrings {
   String get currencySymbolHint => 'Her tutarın yanında gösterilir';
 
   @override
+  String get currencyOther => 'Diğer';
+
+  @override
   String get reminders => 'Hatırlatıcılar';
 
   @override
@@ -1398,4 +1401,47 @@ class AppStringsTr extends AppStrings {
   @override
   String answerTopIncome(String category, String amount, String percent) =>
       'Gelirin çoğu $category kaynaklı: $amount ($percent).';
+
+  @override
+  String? currencyName(String code) => switch (code) {
+    'EGP' => 'Mısır Lirası',
+    'USD' => 'ABD Doları',
+    'EUR' => 'Euro',
+    'SAR' => 'Suudi Riyali',
+    'AED' => 'BAE Dirhemi',
+    'KWD' => 'Kuveyt Dinarı',
+    'QAR' => 'Katar Riyali',
+    'BHD' => 'Bahreyn Dinarı',
+    'OMR' => 'Umman Riyali',
+    'JOD' => 'Ürdün Dinarı',
+    'IQD' => 'Irak Dinarı',
+    'LBP' => 'Lübnan Lirası',
+    'SYP' => 'Suriye Lirası',
+    'YER' => 'Yemen Riyali',
+    'SDG' => 'Sudan Lirası',
+    'LYD' => 'Libya Dinarı',
+    'MAD' => 'Fas Dirhemi',
+    'TND' => 'Tunus Dinarı',
+    'DZD' => 'Cezayir Dinarı',
+    'GBP' => 'İngiliz Sterlini',
+    'TRY' => 'Türk Lirası',
+    'IRR' => 'İran Riyali',
+    'PKR' => 'Pakistan Rupisi',
+    'INR' => 'Hindistan Rupisi',
+    'RUB' => 'Rus Rublesi',
+    'UAH' => 'Ukrayna Grivnası',
+    'PLN' => 'Polonya Zlotisi',
+    'CHF' => 'İsviçre Frangı',
+    'BRL' => 'Brezilya Reali',
+    'CAD' => 'Kanada Doları',
+    'AUD' => 'Avustralya Doları',
+    'CNY' => 'Çin Yuanı',
+    'JPY' => 'Japon Yeni',
+    'KRW' => 'Güney Kore Wonu',
+    'IDR' => 'Endonezya Rupisi',
+    'MYR' => 'Malezya Ringgiti',
+    'VND' => 'Vietnam Dongu',
+    'NGN' => 'Nijerya Nairası',
+    _ => null,
+  };
 }

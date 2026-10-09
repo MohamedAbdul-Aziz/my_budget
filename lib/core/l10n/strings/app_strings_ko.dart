@@ -150,6 +150,9 @@ class AppStringsKo extends AppStrings {
   String get currencySymbolHint => '모든 금액 옆에 표시됩니다';
 
   @override
+  String get currencyOther => '기타';
+
+  @override
   String get reminders => '알림';
 
   @override
@@ -1339,4 +1342,47 @@ class AppStringsKo extends AppStrings {
   @override
   String answerTopIncome(String category, String amount, String percent) =>
       '수입은 주로 $category에서: $amount ($percent).';
+
+  @override
+  String? currencyName(String code) => switch (code) {
+    'EGP' => '이집트 파운드',
+    'USD' => '미국 달러',
+    'EUR' => '유로',
+    'SAR' => '사우디 리얄',
+    'AED' => '아랍에미리트 디르함',
+    'KWD' => '쿠웨이트 디나르',
+    'QAR' => '카타르 리얄',
+    'BHD' => '바레인 디나르',
+    'OMR' => '오만 리알',
+    'JOD' => '요르단 디나르',
+    'IQD' => '이라크 디나르',
+    'LBP' => '레바논 파운드',
+    'SYP' => '시리아 파운드',
+    'YER' => '예멘 리알',
+    'SDG' => '수단 파운드',
+    'LYD' => '리비아 디나르',
+    'MAD' => '모로코 디르함',
+    'TND' => '튀니지 디나르',
+    'DZD' => '알제리 디나르',
+    'GBP' => '영국 파운드',
+    'TRY' => '터키 리라',
+    'IRR' => '이란 리알',
+    'PKR' => '파키스탄 루피',
+    'INR' => '인도 루피',
+    'RUB' => '러시아 루블',
+    'UAH' => '우크라이나 흐리우냐',
+    'PLN' => '폴란드 즐로티',
+    'CHF' => '스위스 프랑',
+    'BRL' => '브라질 헤알',
+    'CAD' => '캐나다 달러',
+    'AUD' => '호주 달러',
+    'CNY' => '중국 위안',
+    'JPY' => '일본 엔',
+    'KRW' => '대한민국 원',
+    'IDR' => '인도네시아 루피아',
+    'MYR' => '말레이시아 링깃',
+    'VND' => '베트남 동',
+    'NGN' => '나이지리아 나이라',
+    _ => null,
+  };
 }

@@ -12,9 +12,9 @@ import '../../../data_management/presentation/widgets/data_management_section.da
 import '../../../reminders/presentation/widgets/reminder_section.dart';
 import '../../../sync/presentation/widgets/backup_section.dart';
 import '../../domain/entities/app_settings.dart';
-import '../../domain/usecases/save_currency_symbol.dart';
 import '../cubit/settings_cubit.dart';
 import '../cubit/settings_state.dart';
+import 'currency_picker.dart';
 
 /// Account and cloud backup, files kept on the phone, appearance, language,
 /// currency, the daily reminder and the app lock.
@@ -84,7 +84,7 @@ class SettingsSheet extends StatelessWidget {
               const SizedBox(height: 24),
               Text(strings.currency, style: theme.textTheme.labelLarge),
               const SizedBox(height: 10),
-              const _CurrencyField(),
+              const CurrencySelector(),
               const ReminderSection(),
               const AppLockSection(),
               const _GuestStorageNote(),
@@ -359,58 +359,5 @@ class _LanguageSelector extends StatelessWidget {
       ),
     );
     if (picked != null && picked != current) await cubit.setLanguage(picked);
-  }
-}
-
-class _CurrencyField extends StatefulWidget {
-  const _CurrencyField();
-
-  @override
-  State<_CurrencyField> createState() => _CurrencyFieldState();
-}
-
-class _CurrencyFieldState extends State<_CurrencyField> {
-  late final TextEditingController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(
-      text: context.read<SettingsCubit>().state.formats.symbol,
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _save() {
-    final text = _controller.text.trim();
-    if (text.isEmpty) return;
-    context.read<SettingsCubit>().setCurrencySymbol(text);
-    FocusScope.of(context).unfocus();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final strings = context.strings;
-
-    return TextField(
-      controller: _controller,
-      maxLength: SaveCurrencySymbol.maxSymbolLength,
-      textInputAction: TextInputAction.done,
-      onSubmitted: (_) => _save(),
-      decoration: InputDecoration(
-        labelText: strings.currencySymbol,
-        counterText: '',
-        helperText: strings.currencySymbolHint,
-        suffixIcon: IconButton(
-          icon: const Icon(Icons.check_rounded),
-          onPressed: _save,
-        ),
-      ),
-    );
   }
 }

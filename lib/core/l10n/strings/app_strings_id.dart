@@ -155,6 +155,9 @@ class AppStringsId extends AppStrings {
   String get currencySymbolHint => 'Ditampilkan di samping setiap jumlah';
 
   @override
+  String get currencyOther => 'Lainnya';
+
+  @override
   String get reminders => 'Pengingat';
 
   @override
@@ -1409,4 +1412,47 @@ class AppStringsId extends AppStrings {
   @override
   String answerTopIncome(String category, String amount, String percent) =>
       'Pemasukan terbesar dari $category: $amount ($percent).';
+
+  @override
+  String? currencyName(String code) => switch (code) {
+    'EGP' => 'Pound Mesir',
+    'USD' => 'Dolar AS',
+    'EUR' => 'Euro',
+    'SAR' => 'Riyal Saudi',
+    'AED' => 'Dirham UEA',
+    'KWD' => 'Dinar Kuwait',
+    'QAR' => 'Riyal Qatar',
+    'BHD' => 'Dinar Bahrain',
+    'OMR' => 'Rial Oman',
+    'JOD' => 'Dinar Yordania',
+    'IQD' => 'Dinar Irak',
+    'LBP' => 'Pound Lebanon',
+    'SYP' => 'Pound Suriah',
+    'YER' => 'Rial Yaman',
+    'SDG' => 'Pound Sudan',
+    'LYD' => 'Dinar Libya',
+    'MAD' => 'Dirham Maroko',
+    'TND' => 'Dinar Tunisia',
+    'DZD' => 'Dinar Aljazair',
+    'GBP' => 'Pound Inggris',
+    'TRY' => 'Lira Turki',
+    'IRR' => 'Rial Iran',
+    'PKR' => 'Rupee Pakistan',
+    'INR' => 'Rupee India',
+    'RUB' => 'Rubel Rusia',
+    'UAH' => 'Hryvnia Ukraina',
+    'PLN' => 'Zloty Polandia',
+    'CHF' => 'Franc Swiss',
+    'BRL' => 'Real Brasil',
+    'CAD' => 'Dolar Kanada',
+    'AUD' => 'Dolar Australia',
+    'CNY' => 'Yuan Tiongkok',
+    'JPY' => 'Yen Jepang',
+    'KRW' => 'Won Korea Selatan',
+    'IDR' => 'Rupiah Indonesia',
+    'MYR' => 'Ringgit Malaysia',
+    'VND' => 'Dong Vietnam',
+    'NGN' => 'Naira Nigeria',
+    _ => null,
+  };
 }

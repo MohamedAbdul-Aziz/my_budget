@@ -157,6 +157,9 @@ class AppStringsUr extends AppStrings {
   String get currencySymbolHint => 'ہر رقم کے ساتھ دکھائی جاتی ہے';
 
   @override
+  String get currencyOther => 'دیگر';
+
+  @override
   String get reminders => 'یاد دہانیاں';
 
   @override
@@ -1417,4 +1420,47 @@ class AppStringsUr extends AppStrings {
   @override
   String answerTopIncome(String category, String amount, String percent) =>
       'زیادہ تر آمدنی $category سے: $amount ($percent)۔';
+
+  @override
+  String? currencyName(String code) => switch (code) {
+    'EGP' => 'مصری پاؤنڈ',
+    'USD' => 'امریکی ڈالر',
+    'EUR' => 'یورو',
+    'SAR' => 'سعودی ریال',
+    'AED' => 'اماراتی درہم',
+    'KWD' => 'کویتی دینار',
+    'QAR' => 'قطری ریال',
+    'BHD' => 'بحرینی دینار',
+    'OMR' => 'عمانی ریال',
+    'JOD' => 'اردنی دینار',
+    'IQD' => 'عراقی دینار',
+    'LBP' => 'لبنانی پاؤنڈ',
+    'SYP' => 'شامی پاؤنڈ',
+    'YER' => 'یمنی ریال',
+    'SDG' => 'سوڈانی پاؤنڈ',
+    'LYD' => 'لیبیائی دینار',
+    'MAD' => 'مراکشی درہم',
+    'TND' => 'تیونسی دینار',
+    'DZD' => 'الجزائری دینار',
+    'GBP' => 'برطانوی پاؤنڈ',
+    'TRY' => 'ترک لیرا',
+    'IRR' => 'ایرانی ریال',
+    'PKR' => 'پاکستانی روپیہ',
+    'INR' => 'بھارتی روپیہ',
+    'RUB' => 'روسی روبل',
+    'UAH' => 'یوکرینی ہریونیا',
+    'PLN' => 'پولش زلوٹی',
+    'CHF' => 'سوئس فرانک',
+    'BRL' => 'برازیلی ریال',
+    'CAD' => 'کینیڈین ڈالر',
+    'AUD' => 'آسٹریلوی ڈالر',
+    'CNY' => 'چینی یوآن',
+    'JPY' => 'جاپانی ین',
+    'KRW' => 'جنوبی کوریائی وون',
+    'IDR' => 'انڈونیشیائی روپیہ',
+    'MYR' => 'ملائیشیائی رنگٹ',
+    'VND' => 'ویتنامی ڈونگ',
+    'NGN' => 'نائیجیرین نائرا',
+    _ => null,
+  };
 }

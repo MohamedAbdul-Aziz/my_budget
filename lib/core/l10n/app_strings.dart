@@ -153,6 +153,13 @@ abstract class AppStrings {
   String get currency;
   String get currencySymbol;
   String get currencySymbolHint;
+
+  /// Last in the currency list: type a symbol that is not offered.
+  String get currencyOther;
+
+  /// The name of the currency with ISO code [code], or null when the app
+  /// does not list it.
+  String? currencyName(String code);
   String get storedOnThisDevice;
 
   // Daily reminder

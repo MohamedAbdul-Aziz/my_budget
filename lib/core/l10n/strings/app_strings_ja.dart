@@ -150,6 +150,9 @@ class AppStringsJa extends AppStrings {
   String get currencySymbolHint => 'すべての金額の横に表示されます';
 
   @override
+  String get currencyOther => 'その他';
+
+  @override
   String get reminders => 'リマインダー';
 
   @override
@@ -1335,4 +1338,47 @@ class AppStringsJa extends AppStrings {
   @override
   String answerTopIncome(String category, String amount, String percent) =>
       '収入の多くは $category から：$amount（$percent）。';
+
+  @override
+  String? currencyName(String code) => switch (code) {
+    'EGP' => 'エジプト・ポンド',
+    'USD' => '米ドル',
+    'EUR' => 'ユーロ',
+    'SAR' => 'サウジ・リヤル',
+    'AED' => 'UAEディルハム',
+    'KWD' => 'クウェート・ディナール',
+    'QAR' => 'カタール・リヤル',
+    'BHD' => 'バーレーン・ディナール',
+    'OMR' => 'オマーン・リアル',
+    'JOD' => 'ヨルダン・ディナール',
+    'IQD' => 'イラク・ディナール',
+    'LBP' => 'レバノン・ポンド',
+    'SYP' => 'シリア・ポンド',
+    'YER' => 'イエメン・リアル',
+    'SDG' => 'スーダン・ポンド',
+    'LYD' => 'リビア・ディナール',
+    'MAD' => 'モロッコ・ディルハム',
+    'TND' => 'チュニジア・ディナール',
+    'DZD' => 'アルジェリア・ディナール',
+    'GBP' => '英国ポンド',
+    'TRY' => 'トルコ・リラ',
+    'IRR' => 'イラン・リアル',
+    'PKR' => 'パキスタン・ルピー',
+    'INR' => 'インド・ルピー',
+    'RUB' => 'ロシア・ルーブル',
+    'UAH' => 'ウクライナ・フリヴニャ',
+    'PLN' => 'ポーランド・ズウォティ',
+    'CHF' => 'スイス・フラン',
+    'BRL' => 'ブラジル・レアル',
+    'CAD' => 'カナダ・ドル',
+    'AUD' => 'オーストラリア・ドル',
+    'CNY' => '中国人民元',
+    'JPY' => '日本円',
+    'KRW' => '韓国ウォン',
+    'IDR' => 'インドネシア・ルピア',
+    'MYR' => 'マレーシア・リンギット',
+    'VND' => 'ベトナム・ドン',
+    'NGN' => 'ナイジェリア・ナイラ',
+    _ => null,
+  };
 }

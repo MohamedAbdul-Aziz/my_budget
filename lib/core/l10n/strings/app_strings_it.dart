@@ -158,6 +158,9 @@ class AppStringsIt extends AppStrings {
   String get currencySymbolHint => 'Mostrato accanto a ogni importo';
 
   @override
+  String get currencyOther => 'Altra';
+
+  @override
   String get reminders => 'Promemoria';
 
   @override
@@ -1445,4 +1448,47 @@ class AppStringsIt extends AppStrings {
   @override
   String answerTopIncome(String category, String amount, String percent) =>
       'La maggior parte delle entrate da $category: $amount ($percent).';
+
+  @override
+  String? currencyName(String code) => switch (code) {
+    'EGP' => 'Sterlina egiziana',
+    'USD' => 'Dollaro statunitense',
+    'EUR' => 'Euro',
+    'SAR' => 'Riyal saudita',
+    'AED' => 'Dirham degli EAU',
+    'KWD' => 'Dinaro kuwaitiano',
+    'QAR' => 'Riyal qatariota',
+    'BHD' => 'Dinaro del Bahrein',
+    'OMR' => 'Rial dell’Oman',
+    'JOD' => 'Dinaro giordano',
+    'IQD' => 'Dinaro iracheno',
+    'LBP' => 'Lira libanese',
+    'SYP' => 'Lira siriana',
+    'YER' => 'Riyal yemenita',
+    'SDG' => 'Sterlina sudanese',
+    'LYD' => 'Dinaro libico',
+    'MAD' => 'Dirham marocchino',
+    'TND' => 'Dinaro tunisino',
+    'DZD' => 'Dinaro algerino',
+    'GBP' => 'Sterlina britannica',
+    'TRY' => 'Lira turca',
+    'IRR' => 'Rial iraniano',
+    'PKR' => 'Rupia pakistana',
+    'INR' => 'Rupia indiana',
+    'RUB' => 'Rublo russo',
+    'UAH' => 'Grivnia ucraina',
+    'PLN' => 'Złoty polacco',
+    'CHF' => 'Franco svizzero',
+    'BRL' => 'Real brasiliano',
+    'CAD' => 'Dollaro canadese',
+    'AUD' => 'Dollaro australiano',
+    'CNY' => 'Yuan cinese',
+    'JPY' => 'Yen giapponese',
+    'KRW' => 'Won sudcoreano',
+    'IDR' => 'Rupia indonesiana',
+    'MYR' => 'Ringgit malese',
+    'VND' => 'Dong vietnamita',
+    'NGN' => 'Naira nigeriana',
+    _ => null,
+  };
 }

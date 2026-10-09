@@ -159,6 +159,9 @@ class AppStringsNl extends AppStrings {
   String get currencySymbolHint => 'Staat naast elk bedrag';
 
   @override
+  String get currencyOther => 'Andere';
+
+  @override
   String get reminders => 'Herinneringen';
 
   @override
@@ -1449,4 +1452,47 @@ class AppStringsNl extends AppStrings {
   @override
   String answerTopIncome(String category, String amount, String percent) =>
       'Het meeste inkomen kwam van $category: $amount ($percent).';
+
+  @override
+  String? currencyName(String code) => switch (code) {
+    'EGP' => 'Egyptisch pond',
+    'USD' => 'Amerikaanse dollar',
+    'EUR' => 'Euro',
+    'SAR' => 'Saoedische riyal',
+    'AED' => 'VAE-dirham',
+    'KWD' => 'Koeweitse dinar',
+    'QAR' => 'Qatarese rial',
+    'BHD' => 'Bahreinse dinar',
+    'OMR' => 'Omaanse rial',
+    'JOD' => 'Jordaanse dinar',
+    'IQD' => 'Iraakse dinar',
+    'LBP' => 'Libanees pond',
+    'SYP' => 'Syrisch pond',
+    'YER' => 'Jemenitische rial',
+    'SDG' => 'Soedanees pond',
+    'LYD' => 'Libische dinar',
+    'MAD' => 'Marokkaanse dirham',
+    'TND' => 'Tunesische dinar',
+    'DZD' => 'Algerijnse dinar',
+    'GBP' => 'Brits pond',
+    'TRY' => 'Turkse lira',
+    'IRR' => 'Iraanse rial',
+    'PKR' => 'Pakistaanse roepie',
+    'INR' => 'Indiase roepie',
+    'RUB' => 'Russische roebel',
+    'UAH' => 'Oekraïense grivna',
+    'PLN' => 'Poolse zloty',
+    'CHF' => 'Zwitserse frank',
+    'BRL' => 'Braziliaanse real',
+    'CAD' => 'Canadese dollar',
+    'AUD' => 'Australische dollar',
+    'CNY' => 'Chinese yuan',
+    'JPY' => 'Japanse yen',
+    'KRW' => 'Zuid-Koreaanse won',
+    'IDR' => 'Indonesische roepia',
+    'MYR' => 'Maleisische ringgit',
+    'VND' => 'Vietnamese dong',
+    'NGN' => 'Nigeriaanse naira',
+    _ => null,
+  };
 }

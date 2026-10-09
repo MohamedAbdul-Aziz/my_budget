@@ -150,6 +150,9 @@ class AppStringsZh extends AppStrings {
   String get currencySymbolHint => '显示在每个金额旁边';
 
   @override
+  String get currencyOther => '其他';
+
+  @override
   String get reminders => '提醒';
 
   @override
@@ -1326,4 +1329,47 @@ class AppStringsZh extends AppStrings {
   @override
   String answerTopIncome(String category, String amount, String percent) =>
       '收入主要来自 $category：$amount（$percent）。';
+
+  @override
+  String? currencyName(String code) => switch (code) {
+    'EGP' => '埃及镑',
+    'USD' => '美元',
+    'EUR' => '欧元',
+    'SAR' => '沙特里亚尔',
+    'AED' => '阿联酋迪拉姆',
+    'KWD' => '科威特第纳尔',
+    'QAR' => '卡塔尔里亚尔',
+    'BHD' => '巴林第纳尔',
+    'OMR' => '阿曼里亚尔',
+    'JOD' => '约旦第纳尔',
+    'IQD' => '伊拉克第纳尔',
+    'LBP' => '黎巴嫩镑',
+    'SYP' => '叙利亚镑',
+    'YER' => '也门里亚尔',
+    'SDG' => '苏丹镑',
+    'LYD' => '利比亚第纳尔',
+    'MAD' => '摩洛哥迪拉姆',
+    'TND' => '突尼斯第纳尔',
+    'DZD' => '阿尔及利亚第纳尔',
+    'GBP' => '英镑',
+    'TRY' => '土耳其里拉',
+    'IRR' => '伊朗里亚尔',
+    'PKR' => '巴基斯坦卢比',
+    'INR' => '印度卢比',
+    'RUB' => '俄罗斯卢布',
+    'UAH' => '乌克兰格里夫纳',
+    'PLN' => '波兰兹罗提',
+    'CHF' => '瑞士法郎',
+    'BRL' => '巴西雷亚尔',
+    'CAD' => '加拿大元',
+    'AUD' => '澳大利亚元',
+    'CNY' => '人民币',
+    'JPY' => '日元',
+    'KRW' => '韩元',
+    'IDR' => '印度尼西亚盾',
+    'MYR' => '马来西亚林吉特',
+    'VND' => '越南盾',
+    'NGN' => '尼日利亚奈拉',
+    _ => null,
+  };
 }
