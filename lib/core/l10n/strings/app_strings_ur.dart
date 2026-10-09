@@ -661,6 +661,7 @@ class AppStringsUr extends AppStrings {
     FailureCode.amountInvalid => 'درست رقم درج کریں۔',
     FailureCode.categoryRequired => 'ایک زمرہ منتخب کریں۔',
     FailureCode.categoryNameRequired => 'زمرے کا نام رکھیں۔',
+    FailureCode.categoryNameTaken => 'اس نام کی کیٹیگری پہلے سے موجود ہے۔',
     FailureCode.categoryNameTooLong => 'نام 30 حروف سے کم رکھیں۔',
     FailureCode.categoryProtected => 'یہ زمرہ حذف نہیں ہو سکتا۔',
     FailureCode.currencySymbolInvalid => '1 سے 4 حروف استعمال کریں۔',

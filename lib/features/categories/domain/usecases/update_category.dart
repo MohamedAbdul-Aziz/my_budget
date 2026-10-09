@@ -12,6 +12,14 @@ class UpdateCategory {
     final failure = CreateCategory.validateName(category.name);
     if (failure != null) return ResultFailure(failure);
 
+    final taken = await CreateCategory.nameTakenIn(
+      _repository,
+      category.name.trim(),
+      category.type,
+      exceptId: category.id,
+    );
+    if (taken != null) return ResultFailure(taken);
+
     return _repository.updateCategory(
       category.copyWith(name: category.name.trim()),
     );

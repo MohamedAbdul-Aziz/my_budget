@@ -12,6 +12,9 @@ enum FailureCode {
   categoryRequired,
   categoryNameRequired,
   categoryNameTooLong,
+
+  /// Another category of the same type already has this name.
+  categoryNameTaken,
   categoryProtected,
   currencySymbolInvalid,
   network,

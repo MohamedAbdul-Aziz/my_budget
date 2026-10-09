@@ -678,6 +678,8 @@ class AppStringsFr extends AppStrings {
     FailureCode.amountInvalid => 'Saisissez un montant valide.',
     FailureCode.categoryRequired => 'Choisissez une catégorie.',
     FailureCode.categoryNameRequired => 'Donnez un nom à la catégorie.',
+    FailureCode.categoryNameTaken =>
+      'Vous avez déjà une catégorie portant ce nom.',
     FailureCode.categoryNameTooLong =>
       'Le nom doit faire moins de 30 caractères.',
     FailureCode.categoryProtected =>

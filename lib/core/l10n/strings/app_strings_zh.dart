@@ -624,6 +624,7 @@ class AppStringsZh extends AppStrings {
     FailureCode.amountInvalid => '请输入有效金额。',
     FailureCode.categoryRequired => '请选择类别。',
     FailureCode.categoryNameRequired => '请为类别命名。',
+    FailureCode.categoryNameTaken => '已有同名分类。',
     FailureCode.categoryNameTooLong => '名称不能超过 30 个字符。',
     FailureCode.categoryProtected => '此类别无法删除。',
     FailureCode.currencySymbolInvalid => '请使用 1 到 4 个字符。',

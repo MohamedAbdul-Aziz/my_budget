@@ -673,6 +673,7 @@ class AppStringsNl extends AppStrings {
     FailureCode.amountInvalid => 'Vul een geldig bedrag in.',
     FailureCode.categoryRequired => 'Kies een categorie.',
     FailureCode.categoryNameRequired => 'Geef de categorie een naam.',
+    FailureCode.categoryNameTaken => 'Je hebt al een categorie met deze naam.',
     FailureCode.categoryNameTooLong => 'Houd de naam korter dan 30 tekens.',
     FailureCode.categoryProtected =>
       'Deze categorie kan niet worden verwijderd.',

@@ -658,6 +658,7 @@ class AppStringsTr extends AppStrings {
     FailureCode.amountInvalid => 'Geçerli bir tutar girin.',
     FailureCode.categoryRequired => 'Bir kategori seçin.',
     FailureCode.categoryNameRequired => 'Kategoriye bir ad verin.',
+    FailureCode.categoryNameTaken => 'Bu adda bir kategorin zaten var.',
     FailureCode.categoryNameTooLong => 'Ad 30 karakterden kısa olmalı.',
     FailureCode.categoryProtected => 'Bu kategori silinemez.',
     FailureCode.currencySymbolInvalid => '1 ile 4 karakter kullanın.',

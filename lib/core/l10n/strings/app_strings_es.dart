@@ -668,6 +668,7 @@ class AppStringsEs extends AppStrings {
     FailureCode.amountInvalid => 'Escribe un importe válido.',
     FailureCode.categoryRequired => 'Elige una categoría.',
     FailureCode.categoryNameRequired => 'Ponle un nombre a la categoría.',
+    FailureCode.categoryNameTaken => 'Ya tienes una categoría con este nombre.',
     FailureCode.categoryNameTooLong =>
       'El nombre debe tener menos de 30 caracteres.',
     FailureCode.categoryProtected => 'Esta categoría no se puede eliminar.',

@@ -629,6 +629,7 @@ class AppStringsJa extends AppStrings {
     FailureCode.amountInvalid => '正しい金額を入力してください。',
     FailureCode.categoryRequired => 'カテゴリを選んでください。',
     FailureCode.categoryNameRequired => 'カテゴリに名前を付けてください。',
+    FailureCode.categoryNameTaken => '同じ名前のカテゴリがすでにあります。',
     FailureCode.categoryNameTooLong => '名前は 30 文字未満にしてください。',
     FailureCode.categoryProtected => 'このカテゴリは削除できません。',
     FailureCode.currencySymbolInvalid => '1〜4 文字で入力してください。',

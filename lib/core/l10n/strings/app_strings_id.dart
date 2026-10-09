@@ -661,6 +661,8 @@ class AppStringsId extends AppStrings {
     FailureCode.amountInvalid => 'Masukkan jumlah yang valid.',
     FailureCode.categoryRequired => 'Pilih kategori.',
     FailureCode.categoryNameRequired => 'Beri nama kategorinya.',
+    FailureCode.categoryNameTaken =>
+      'Kamu sudah punya kategori dengan nama ini.',
     FailureCode.categoryNameTooLong => 'Nama harus kurang dari 30 karakter.',
     FailureCode.categoryProtected => 'Kategori ini tidak bisa dihapus.',
     FailureCode.currencySymbolInvalid => 'Gunakan 1 sampai 4 karakter.',

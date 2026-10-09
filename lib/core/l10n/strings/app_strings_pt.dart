@@ -670,6 +670,7 @@ class AppStringsPt extends AppStrings {
     FailureCode.amountInvalid => 'Digite um valor válido.',
     FailureCode.categoryRequired => 'Escolha uma categoria.',
     FailureCode.categoryNameRequired => 'Dê um nome à categoria.',
+    FailureCode.categoryNameTaken => 'Você já tem uma categoria com este nome.',
     FailureCode.categoryNameTooLong =>
       'O nome deve ter menos de 30 caracteres.',
     FailureCode.categoryProtected => 'Esta categoria não pode ser excluída.',

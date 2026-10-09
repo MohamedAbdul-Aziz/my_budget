@@ -670,6 +670,7 @@ class AppStringsIt extends AppStrings {
     FailureCode.amountInvalid => 'Inserisci un importo valido.',
     FailureCode.categoryRequired => 'Scegli una categoria.',
     FailureCode.categoryNameRequired => 'Dai un nome alla categoria.',
+    FailureCode.categoryNameTaken => 'Hai già una categoria con questo nome.',
     FailureCode.categoryNameTooLong =>
       'Il nome deve avere meno di 30 caratteri.',
     FailureCode.categoryProtected =>

@@ -674,6 +674,7 @@ class AppStringsPl extends AppStrings {
     FailureCode.amountInvalid => 'Wpisz prawidłową kwotę.',
     FailureCode.categoryRequired => 'Wybierz kategorię.',
     FailureCode.categoryNameRequired => 'Nadaj kategorii nazwę.',
+    FailureCode.categoryNameTaken => 'Masz już kategorię o tej nazwie.',
     FailureCode.categoryNameTooLong => 'Nazwa musi mieć mniej niż 30 znaków.',
     FailureCode.categoryProtected => 'Tej kategorii nie można usunąć.',
     FailureCode.currencySymbolInvalid => 'Użyj od 1 do 4 znaków.',

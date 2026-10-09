@@ -652,6 +652,7 @@ class AppStringsFa extends AppStrings {
     FailureCode.amountInvalid => 'مبلغ معتبری وارد کنید.',
     FailureCode.categoryRequired => 'یک دسته انتخاب کنید.',
     FailureCode.categoryNameRequired => 'برای دسته نامی بگذارید.',
+    FailureCode.categoryNameTaken => 'از قبل دسته‌ای با این نام داری.',
     FailureCode.categoryNameTooLong => 'نام باید کمتر از ۳۰ نویسه باشد.',
     FailureCode.categoryProtected => 'این دسته قابل حذف نیست.',
     FailureCode.currencySymbolInvalid => 'از ۱ تا ۴ نویسه استفاده کنید.',

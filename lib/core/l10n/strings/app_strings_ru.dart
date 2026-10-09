@@ -674,6 +674,7 @@ class AppStringsRu extends AppStrings {
     FailureCode.amountInvalid => 'Введите правильную сумму.',
     FailureCode.categoryRequired => 'Выберите категорию.',
     FailureCode.categoryNameRequired => 'Дайте категории название.',
+    FailureCode.categoryNameTaken => 'Категория с таким названием уже есть.',
     FailureCode.categoryNameTooLong =>
       'Название должно быть короче 30 символов.',
     FailureCode.categoryProtected => 'Эту категорию нельзя удалить.',

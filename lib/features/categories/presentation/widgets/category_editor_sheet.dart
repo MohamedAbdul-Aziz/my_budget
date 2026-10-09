@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/error/failures.dart';
 
@@ -6,9 +7,12 @@ import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/category_icons.dart';
 import '../../../../core/widgets/pinned_action.dart';
 import '../../../expenses/presentation/widgets/transaction_type_toggle.dart';
+import '../../domain/entities/category_name.dart';
 import '../../domain/entities/transaction_type.dart';
 import '../../domain/usecases/create_category.dart';
 import '../category_label.dart';
+import '../cubit/categories_cubit.dart';
+import '../cubit/categories_state.dart';
 import '../../domain/entities/expense_category.dart';
 
 /// What the sheet hands back to its caller.
@@ -86,12 +90,36 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
     super.dispose();
   }
 
+  /// Checked here as well as by the use case so the sheet stays open with
+  /// the message under the field. Matches the stored name and the name on
+  /// screen, so typing "طعام" in Arabic finds the built-in Food category.
+  bool _isTaken(String name) {
+    final state = context.read<CategoriesCubit>().state;
+    if (state is! CategoriesReady) return false;
+    final strings = context.strings;
+    final others = state.categories.where(
+      (category) => category.id != widget.existing?.id,
+    );
+    return CategoryName.isTaken(name, _type, others) ||
+        CategoryName.isTaken(name, _type, [
+          for (final category in others)
+            category.copyWith(name: categoryLabel(strings, category)),
+        ]);
+  }
+
   void _submit() {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
       setState(
         () =>
             _error = context.strings.failure(FailureCode.categoryNameRequired),
+      );
+      _nameFocus.requestFocus();
+      return;
+    }
+    if (_isTaken(name)) {
+      setState(
+        () => _error = context.strings.failure(FailureCode.categoryNameTaken),
       );
       _nameFocus.requestFocus();
       return;

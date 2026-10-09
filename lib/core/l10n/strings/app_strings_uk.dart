@@ -674,6 +674,7 @@ class AppStringsUk extends AppStrings {
     FailureCode.amountInvalid => 'Введіть правильну суму.',
     FailureCode.categoryRequired => 'Виберіть категорію.',
     FailureCode.categoryNameRequired => 'Дайте категорії назву.',
+    FailureCode.categoryNameTaken => 'Категорія з такою назвою вже є.',
     FailureCode.categoryNameTooLong =>
       'Назва має бути коротшою за 30 символів.',
     FailureCode.categoryProtected => 'Цю категорію не можна видалити.',

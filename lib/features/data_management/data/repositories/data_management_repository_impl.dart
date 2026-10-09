@@ -11,6 +11,7 @@ import '../../../../core/utils/category_icons.dart';
 import '../../../budgets/data/models/budget_keys.dart';
 import '../../../budgets/domain/entities/budget_limits.dart';
 import '../../../recurring/domain/entities/recurrence_frequency.dart';
+import '../../../settings/domain/entities/app_settings.dart';
 import '../../domain/entities/backup_preview.dart';
 import '../../domain/entities/export_format.dart';
 import '../../domain/entities/export_locale.dart';
@@ -20,6 +21,7 @@ import '../../domain/entities/share_anchor.dart';
 import '../../domain/repositories/data_management_repository.dart';
 import '../codecs/assisted_import.dart';
 import '../codecs/backup_codec.dart';
+import '../codecs/category_merge.dart';
 import '../codecs/csv_export.dart';
 import '../codecs/debt_rows.dart';
 import '../codecs/pdf_report.dart';
@@ -127,17 +129,35 @@ class DataManagementRepositoryImpl implements DataManagementRepository {
     // Checked again rather than trusting the preview: the file could have
     // changed in between, and nothing unchecked may reach the database.
     final backup = await _readBackup(path);
+    // A category the user already has, under another id, is merged into
+    // theirs instead of being added a second time.
+    final records = CategoryMerge.apply(
+      backup.records,
+      existing: switch (mode) {
+        ImportMode.merge => (await _records.readAll()).categories,
+        ImportMode.replace => const [],
+      },
+      namesOf: _categoryNamesOf,
+    );
     onProgress?.call(0.5);
     final changes = switch (mode) {
-      ImportMode.merge => await _records.mergeNewest(
-        backup.records,
-        fromCloud: false,
-      ),
-      ImportMode.replace => await _records.replaceAll(backup.records),
+      ImportMode.merge => await _records.mergeNewest(records, fromCloud: false),
+      ImportMode.replace => await _records.replaceAll(records),
     };
     onProgress?.call(1);
     return changes;
   });
+
+  /// A category row's own name, and for a built-in one also its name in
+  /// every language the app speaks: an import may carry either.
+  static Set<String> _categoryNamesOf(Map<String, Object?> row) => {
+    row['name']! as String,
+    if (row['is_default'] == 1)
+      for (final language in AppLanguage.translated)
+        ?AppStrings.forLanguageCode(
+          language.languageCode,
+        ).defaultCategoryName(row['id']! as String),
+  };
 
   Future<DecodedBackup> _readBackup(String path) async =>
       _decodeInBackground(await _files.readText(path), _clock());

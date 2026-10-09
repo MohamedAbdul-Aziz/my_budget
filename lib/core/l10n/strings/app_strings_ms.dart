@@ -665,6 +665,8 @@ class AppStringsMs extends AppStrings {
     FailureCode.amountInvalid => 'Masukkan amaun yang sah.',
     FailureCode.categoryRequired => 'Pilih kategori.',
     FailureCode.categoryNameRequired => 'Beri nama kepada kategori.',
+    FailureCode.categoryNameTaken =>
+      'Anda sudah mempunyai kategori dengan nama ini.',
     FailureCode.categoryNameTooLong => 'Nama mesti kurang daripada 30 aksara.',
     FailureCode.categoryProtected => 'Kategori ini tidak boleh dipadam.',
     FailureCode.currencySymbolInvalid => 'Gunakan 1 hingga 4 aksara.',

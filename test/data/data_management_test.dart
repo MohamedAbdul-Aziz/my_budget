@@ -962,6 +962,50 @@ Sure! Here is your data converted:
       expect(august.firstWhere((e) => e.id == 'imp_x_3').isIncome, isTrue);
     });
 
+    test('a category the phone already has is merged, not added', () async {
+      const duplicates = """
+{
+  "categories": [
+    {"id": "imp_y_cat_1", "name": "food", "type": "expense"},
+    {"id": "imp_y_cat_2", "name": "طعام", "type": "expense"},
+    {"id": "imp_y_cat_3", "name": "Tips", "type": "income"},
+    {"id": "imp_y_cat_4", "name": " TIPS", "type": "income"},
+    {"id": "imp_y_cat_5", "name": "Food", "type": "income"}
+  ],
+  "expenses": [
+    {"id": "imp_y_1", "amount": 5, "category_id": "imp_y_cat_1", "date": "2026-08-02"},
+    {"id": "imp_y_2", "amount": 6, "category_id": "imp_y_cat_2", "date": "2026-08-03"},
+    {"id": "imp_y_3", "amount": 7, "category_id": "imp_y_cat_3", "date": "2026-08-04"},
+    {"id": "imp_y_4", "amount": 8, "category_id": "imp_y_cat_4", "date": "2026-08-05"},
+    {"id": "imp_y_5", "amount": 9, "category_id": "imp_y_cat_5", "date": "2026-08-06"}
+  ]
+}""";
+      final before = (await phoneA.categories.getCategories()).dataOrNull!;
+
+      final preview = (await phoneA.repository.previewText(
+        duplicates,
+      )).dataOrNull!;
+      await phoneA.repository.importBackup(preview.path, ImportMode.merge);
+
+      final after = (await phoneA.categories.getCategories()).dataOrNull!;
+      // Only Tips (income) and Food (income) are new.
+      expect(after, hasLength(before.length + 2));
+      final august = {
+        for (final e in (await phoneA.expenses.getTransactionsForMonth(
+          const Month(2026, 8),
+        )).dataOrNull!)
+          e.id: e.category.id,
+      };
+      // "food" and the Arabic "طعام" are the built-in Food.
+      expect(august['imp_y_1'], 'cat_food');
+      expect(august['imp_y_2'], 'cat_food');
+      // " TIPS" repeats "Tips" from the same file.
+      expect(august['imp_y_3'], 'imp_y_cat_3');
+      expect(august['imp_y_4'], 'imp_y_cat_3');
+      // The same name for income is a category of its own.
+      expect(august['imp_y_5'], 'imp_y_cat_5');
+    });
+
     test('importing the same answer twice adds nothing new', () async {
       final preview = (await phoneA.repository.previewText(answer)).dataOrNull!;
       await phoneA.repository.importBackup(preview.path, ImportMode.merge);

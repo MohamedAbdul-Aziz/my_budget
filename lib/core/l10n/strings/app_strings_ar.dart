@@ -659,6 +659,7 @@ class AppStringsAr extends AppStrings {
     FailureCode.amountInvalid => 'أدخل مبلغًا صحيحًا.',
     FailureCode.categoryRequired => 'اختر فئة.',
     FailureCode.categoryNameRequired => 'أدخل اسمًا للفئة.',
+    FailureCode.categoryNameTaken => 'لديك فئة بهذا الاسم بالفعل.',
     FailureCode.categoryNameTooLong => 'اجعل الاسم أقل من ٣٠ حرفًا.',
     FailureCode.categoryProtected => 'لا يمكن حذف هذه الفئة.',
     FailureCode.currencySymbolInvalid => 'استخدم من رمز إلى ٤ رموز.',

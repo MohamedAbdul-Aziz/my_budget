@@ -629,6 +629,7 @@ class AppStringsKo extends AppStrings {
     FailureCode.amountInvalid => '올바른 금액을 입력하세요.',
     FailureCode.categoryRequired => '카테고리를 선택하세요.',
     FailureCode.categoryNameRequired => '카테고리 이름을 입력하세요.',
+    FailureCode.categoryNameTaken => '이미 같은 이름의 카테고리가 있어요.',
     FailureCode.categoryNameTooLong => '이름은 30자 미만이어야 해요.',
     FailureCode.categoryProtected => '이 카테고리는 삭제할 수 없어요.',
     FailureCode.currencySymbolInvalid => '1~4자로 입력하세요.',

@@ -652,6 +652,8 @@ class AppStringsEn extends AppStrings {
     FailureCode.amountInvalid => 'Enter a valid amount.',
     FailureCode.categoryRequired => 'Pick a category.',
     FailureCode.categoryNameRequired => 'Give the category a name.',
+    FailureCode.categoryNameTaken =>
+      'You already have a category with this name.',
     FailureCode.categoryNameTooLong => 'Keep the name under 30 characters.',
     FailureCode.categoryProtected => 'This category cannot be deleted.',
     FailureCode.currencySymbolInvalid => 'Use 1 to 4 characters.',

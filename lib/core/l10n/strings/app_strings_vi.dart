@@ -657,6 +657,7 @@ class AppStringsVi extends AppStrings {
     FailureCode.amountInvalid => 'Nhập số tiền hợp lệ.',
     FailureCode.categoryRequired => 'Chọn một danh mục.',
     FailureCode.categoryNameRequired => 'Đặt tên cho danh mục.',
+    FailureCode.categoryNameTaken => 'Bạn đã có danh mục với tên này.',
     FailureCode.categoryNameTooLong => 'Tên phải ngắn hơn 30 ký tự.',
     FailureCode.categoryProtected => 'Không thể xóa danh mục này.',
     FailureCode.currencySymbolInvalid => 'Dùng từ 1 đến 4 ký tự.',

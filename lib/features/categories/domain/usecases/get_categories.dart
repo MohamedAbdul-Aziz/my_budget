@@ -7,5 +7,6 @@ class GetCategories {
 
   final CategoryRepository _repository;
 
-  Future<ApiResult<List<ExpenseCategory>>> call() => _repository.getCategories();
+  Future<ApiResult<List<ExpenseCategory>>> call() =>
+      _repository.getCategories();
 }
