@@ -1,4 +1,6 @@
-Mój Budżet to prosty i prywatny sposób, by wiedzieć, na co idą Twoje pieniądze. Zapisuj wydatki i przychody w kilka sekund, ustalaj budżety, pilnuj rachunków i wspólnych długów oraz śledź przejrzyste wykresy, wszystko na telefonie. Aplikacja działa całkowicie offline i nie wymaga konta.
+✓ Bez reklam   ✓ Działa offline   ✓ Bez konta
+
+Mój Budżet to prosty i prywatny sposób, by wiedzieć, na co idą Twoje pieniądze. Zapisuj wydatki i przychody w kilka sekund, ustalaj budżety, pilnuj rachunków i wspólnych długów oraz śledź przejrzyste wykresy, wszystko na telefonie. Aplikacja działa całkowicie offline; konto jest opcjonalne i służy do kopii zapasowej w chmurze oraz przywracania danych na dowolnym telefonie. Możesz też zapisać kopię zapasową na telefonie i przywrócić ją w dowolnej chwili, bez konta.
 
 WYDATKI I PRZYCHODY
 • Dodaj transakcję w kilka sekund: kwota, kategoria, data i opcjonalna notatka
@@ -36,6 +38,7 @@ Zobacz sumę z bieżącego miesiąca na ekranie głównym i dodaj wydatek w najc
 KOPIA ZAPASOWA I EKSPORT
 • Opcjonalna kopia w chmurze: zaloguj się e-mailem, aby zapisać dane i przywrócić je na dowolnym telefonie, ręcznie lub automatycznie
 • Eksportuj plik kopii zapasowej, arkusz CSV lub raport PDF i importuj kopię ponownie
+• Przechodzisz z innej aplikacji lub arkusza? Aplikacja da Ci gotowy prompt: wklej go z danymi do ChatGPT, Gemini, Claude lub innej AI, a odpowiedź wklej z powrotem, aby ją zaimportować
 
 PRYWATNIE I BEZPIECZNIE
 • Twoje dane są zapisane na telefonie. Opuszczają go tylko wtedy, gdy zdecydujesz się zapisać kopię na swoim koncie

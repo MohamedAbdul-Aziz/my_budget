@@ -1,4 +1,6 @@
-Meu Orçamento é um jeito simples e privado de saber para onde vai o seu dinheiro. Registre gastos e receitas em segundos, defina orçamentos, acompanhe contas e dívidas compartilhadas e veja gráficos claros, tudo no seu celular. Funciona totalmente offline e não precisa de conta.
+✓ Sem anúncios   ✓ Funciona offline   ✓ Sem conta
+
+Meu Orçamento é um jeito simples e privado de saber para onde vai o seu dinheiro. Registre gastos e receitas em segundos, defina orçamentos, acompanhe contas e dívidas compartilhadas e veja gráficos claros, tudo no seu celular. Funciona totalmente offline; criar uma conta é opcional, para fazer backup na nuvem e restaurar seus dados em qualquer celular. Você também pode salvar um backup no celular e restaurá-lo quando quiser, sem conta.
 
 GASTOS E RECEITAS
 • Adicione uma transação em segundos: valor, categoria, data e uma nota opcional
@@ -36,6 +38,7 @@ Veja o total do mês na tela inicial e adicione um gasto das categorias que voc�
 BACKUP E EXPORTAÇÃO
 • Backup opcional na nuvem: entre com seu e-mail para fazer backup dos dados e restaurá-los em qualquer celular, manual ou automaticamente
 • Exporte um arquivo de backup, uma planilha CSV ou um relatório em PDF, e importe um backup de novo
+• Vindo de outro app ou de uma planilha? O app dá um prompt pronto: cole-o com seus dados no ChatGPT, Gemini, Claude ou outra IA e cole a resposta para importar
 
 PRIVADO E SEGURO
 • Seus dados ficam no seu celular. Só saem dele se você escolher fazer backup na sua própria conta

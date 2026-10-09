@@ -1,4 +1,6 @@
-Bütçem, paranın nereye gittiğini görmenin basit ve gizli bir yolu. Harcama ve gelirlerini saniyeler içinde kaydet, bütçe belirle, faturaları ve ortak borçları takip et, net grafiklerle izle; hepsi telefonunda. Uygulama tamamen çevrimdışı çalışır ve hesap gerektirmez.
+✓ Reklamsız   ✓ Çevrimdışı çalışır   ✓ Hesap gerekmez
+
+Bütçem, paranın nereye gittiğini görmenin basit ve gizli bir yolu. Harcama ve gelirlerini saniyeler içinde kaydet, bütçe belirle, faturaları ve ortak borçları takip et, net grafiklerle izle; hepsi telefonunda. Uygulama tamamen çevrimdışı çalışır; hesap oluşturmak isteğe bağlıdır ve verilerini buluta yedekleyip herhangi bir telefonda geri yüklemek içindir. Ayrıca hesap olmadan telefonuna bir yedek dosyası kaydedip istediğin zaman geri yükleyebilirsin.
 
 HARCAMALAR VE GELİRLER
 • Saniyeler içinde işlem ekle: tutar, kategori, tarih ve isteğe bağlı not
@@ -36,6 +38,7 @@ Ayın toplamını ana ekranında gör ve en çok kullandığın kategorilerden u
 YEDEKLEME VE DIŞA AKTARMA
 • İsteğe bağlı bulut yedeği: verilerini yedeklemek ve herhangi bir telefonda geri yüklemek için e-postanla giriş yap; elle veya otomatik
 • Yedek dosyası, CSV tablosu veya PDF raporu olarak dışa aktar ve yedeği yeniden içe aktar
+• Başka bir uygulamadan veya tablodan mı geliyorsun? Uygulama hazır bir istem verir: verilerinle birlikte ChatGPT, Gemini, Claude veya başka bir yapay zekâya yapıştır, cevabı geri yapıştırıp içe aktar
 
 GİZLİ VE GÜVENLİ
 • Verilerin telefonunda saklanır. Yalnızca kendi hesabına yedeklemeyi seçersen telefondan çıkar

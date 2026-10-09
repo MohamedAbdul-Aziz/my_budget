@@ -1,4 +1,6 @@
-Anggaranku adalah cara sederhana dan pribadi untuk tahu ke mana uangmu pergi. Catat pengeluaran dan pemasukan dalam hitungan detik, atur anggaran, pantau tagihan dan utang bersama, serta lihat grafik yang jelas, semuanya di ponselmu. Aplikasi ini berfungsi sepenuhnya offline dan tidak memerlukan akun.
+✓ Tanpa iklan   ✓ Bisa offline   ✓ Tanpa akun
+
+Anggaranku adalah cara sederhana dan pribadi untuk tahu ke mana uangmu pergi. Catat pengeluaran dan pemasukan dalam hitungan detik, atur anggaran, pantau tagihan dan utang bersama, serta lihat grafik yang jelas, semuanya di ponselmu. Aplikasi ini berfungsi sepenuhnya offline; membuat akun bersifat opsional, untuk mencadangkan data ke cloud dan memulihkannya di ponsel mana pun. Kamu juga bisa menyimpan file cadangan di ponsel dan memulihkannya kapan saja, tanpa akun.
 
 PENGELUARAN DAN PEMASUKAN
 • Tambahkan transaksi dalam hitungan detik: jumlah, kategori, tanggal, dan catatan opsional
@@ -36,6 +38,7 @@ Lihat total bulan ini di layar utama dan tambahkan pengeluaran dari kategori yan
 CADANGAN DAN EKSPOR
 • Cadangan cloud opsional: masuk dengan email untuk mencadangkan data dan memulihkannya di ponsel mana pun, secara manual atau otomatis
 • Ekspor file cadangan, lembar CSV, atau laporan PDF, lalu impor cadangan kembali
+• Pindah dari aplikasi lain atau spreadsheet? Aplikasi memberi prompt siap pakai: tempel bersama datamu ke ChatGPT, Gemini, Claude, atau AI lain, lalu tempel jawabannya untuk diimpor
 
 PRIBADI DAN AMAN
 • Datamu disimpan di ponselmu dan hanya keluar dari sana jika kamu memilih mencadangkannya ke akunmu sendiri

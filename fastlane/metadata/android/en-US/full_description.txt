@@ -1,6 +1,8 @@
+✓ No ads   ✓ Works offline   ✓ No account needed
+
 My Budget shows you exactly where your money goes. Record expenses and income in seconds, set budgets, keep on top of bills and shared debts, and follow clear charts, all in one simple app.
 
-Your records live on your phone, and the app works fully offline with no account. Want them safe across phones? Sign in with your email to turn on cloud backup, and restore everything on any phone in a moment.
+Your records live on your phone, and the app works fully offline. Creating an account is optional: sign in with your email to turn on cloud backup and restore everything on any phone in a moment. You can also save a backup file on your phone and restore it any time, no account needed.
 
 CLOUD BACKUP, WHEN YOU WANT IT
 • Sign in with just your email and back up with one tap
@@ -12,7 +14,7 @@ CLOUD BACKUP, WHEN YOU WANT IT
 EXPENSES AND INCOME
 • Add a transaction in seconds: amount, category, date and an optional note
 • See the month's income, expenses, balance and savings rate at a glance
-• Use the built-in categories, or create your own with an icon and a colour
+• Use the built-in categories, or create your own with an icon and a color
 • Search every month by note or amount, and filter by type, category and dates
 • Deleted something by mistake? Undo it straight away
 • See a day, a week, a month or a year, and step back and forth
@@ -45,6 +47,7 @@ See this month's total on your home screen and add an expense from your most-use
 EXPORT YOUR DATA
 • Save a backup file, a CSV spreadsheet or a PDF report
 • Share it or keep it on your phone, and import a backup again any time
+• Coming from another app or a spreadsheet? The app gives you a ready prompt: paste it with your data into ChatGPT, Gemini, Claude or any AI, then paste the answer back to import it
 
 PRIVATE AND SECURE
 • No ads, no analytics, no trackers

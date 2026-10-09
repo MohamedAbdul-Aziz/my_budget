@@ -1,4 +1,6 @@
-Mon Budget est une façon simple et privée de savoir où va votre argent. Enregistrez dépenses et revenus en quelques secondes, fixez des budgets, gardez un œil sur vos factures et vos dettes partagées, et suivez des graphiques clairs, le tout sur votre téléphone. L'application fonctionne entièrement hors ligne et ne demande aucun compte.
+✓ Sans pub   ✓ Hors ligne   ✓ Sans compte
+
+Mon Budget est une façon simple et privée de savoir où va votre argent. Enregistrez dépenses et revenus en quelques secondes, fixez des budgets, gardez un œil sur vos factures et vos dettes partagées, et suivez des graphiques clairs, le tout sur votre téléphone. L'application fonctionne entièrement hors ligne ; créer un compte est facultatif, pour sauvegarder vos données dans le cloud et les restaurer sur n'importe quel téléphone. Vous pouvez aussi enregistrer une sauvegarde sur votre téléphone et la restaurer à tout moment, sans compte.
 
 DÉPENSES ET REVENUS
 • Ajoutez une opération en quelques secondes : montant, catégorie, date et note facultative
@@ -36,6 +38,7 @@ Affichez le total du mois sur votre écran d'accueil et ajoutez une dépense dan
 SAUVEGARDE ET EXPORT
 • Sauvegarde dans le cloud facultative : connectez-vous avec votre e-mail pour sauvegarder vos données et les restaurer sur n'importe quel téléphone, manuellement ou automatiquement
 • Exportez un fichier de sauvegarde, un tableau CSV ou un rapport PDF, et réimportez une sauvegarde
+• Vous venez d’une autre app ou d’un tableur ? L’app vous donne un prompt prêt à l’emploi : collez-le avec vos données dans ChatGPT, Gemini, Claude ou une autre IA, puis collez la réponse pour l’importer
 
 PRIVÉ ET SÉCURISÉ
 • Vos données sont stockées sur votre téléphone. Elles n'en sortent que si vous choisissez de les sauvegarder sur votre propre compte

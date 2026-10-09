@@ -1,4 +1,6 @@
-Mijn Budget laat je eenvoudig en privé zien waar je geld naartoe gaat. Noteer uitgaven en inkomsten in een paar seconden, stel budgetten in, houd rekeningen en gedeelde schulden bij en volg duidelijke grafieken, allemaal op je telefoon. De app werkt volledig offline en heeft geen account nodig.
+✓ Zonder advertenties   ✓ Werkt offline   ✓ Geen account nodig
+
+Mijn Budget laat je eenvoudig en privé zien waar je geld naartoe gaat. Noteer uitgaven en inkomsten in een paar seconden, stel budgetten in, houd rekeningen en gedeelde schulden bij en volg duidelijke grafieken, allemaal op je telefoon. De app werkt volledig offline; een account is optioneel, voor een back-up in de cloud en herstel op elke telefoon. Je kunt ook een back-upbestand op je telefoon bewaren en het altijd terugzetten, zonder account.
 
 UITGAVEN EN INKOMSTEN
 • Voeg in een paar seconden een transactie toe: bedrag, categorie, datum en een optionele notitie
@@ -36,6 +38,7 @@ Zie het totaal van de maand op je startscherm en voeg een uitgave toe in je mees
 BACK-UP EN EXPORT
 • Optionele cloudback-up: log in met je e-mail om je gegevens te back-uppen en op elke telefoon terug te zetten, handmatig of automatisch
 • Exporteer een back-upbestand, een CSV-bestand of een PDF-rapport, en importeer een back-up opnieuw
+• Kom je van een andere app of een spreadsheet? De app geeft je een kant-en-klare prompt: plak hem met je gegevens in ChatGPT, Gemini, Claude of een andere AI en plak het antwoord terug om te importeren
 
 PRIVÉ EN VEILIG
 • Je gegevens staan op je telefoon. Ze verlaten die alleen als je ervoor kiest ze in je eigen account te back-uppen

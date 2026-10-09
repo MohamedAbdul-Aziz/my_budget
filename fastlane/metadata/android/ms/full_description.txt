@@ -1,4 +1,6 @@
-Bajet Saya ialah cara mudah dan peribadi untuk mengetahui ke mana wang anda pergi. Rekod perbelanjaan dan pendapatan dalam beberapa saat, tetapkan bajet, pantau bil dan hutang bersama, dan ikuti carta yang jelas, semuanya di telefon anda. Aplikasi ini berfungsi sepenuhnya di luar talian dan tidak memerlukan akaun.
+✓ Tanpa iklan   ✓ Berfungsi luar talian   ✓ Tanpa akaun
+
+Bajet Saya ialah cara mudah dan peribadi untuk mengetahui ke mana wang anda pergi. Rekod perbelanjaan dan pendapatan dalam beberapa saat, tetapkan bajet, pantau bil dan hutang bersama, dan ikuti carta yang jelas, semuanya di telefon anda. Aplikasi ini berfungsi sepenuhnya di luar talian; akaun adalah pilihan, untuk menyandarkan data ke awan dan memulihkannya pada mana-mana telefon. Anda juga boleh menyimpan fail sandaran pada telefon dan memulihkannya bila-bila masa, tanpa akaun.
 
 PERBELANJAAN DAN PENDAPATAN
 • Tambah transaksi dalam beberapa saat: jumlah, kategori, tarikh dan nota pilihan
@@ -36,6 +38,7 @@ Lihat jumlah bulan ini di skrin utama dan tambah perbelanjaan daripada kategori 
 SANDARAN DAN EKSPORT
 • Sandaran awan pilihan: log masuk dengan e-mel untuk menyandarkan data dan memulihkannya pada mana-mana telefon, secara manual atau automatik
 • Eksport fail sandaran, hamparan CSV atau laporan PDF, dan import sandaran semula
+• Datang daripada aplikasi lain atau hamparan? Aplikasi memberi prompt sedia: tampalkan bersama data anda dalam ChatGPT, Gemini, Claude atau AI lain, kemudian tampal jawapan untuk diimport
 
 PERIBADI DAN SELAMAT
 • Data anda disimpan di telefon anda dan hanya keluar jika anda memilih untuk menyandarkannya ke akaun anda sendiri

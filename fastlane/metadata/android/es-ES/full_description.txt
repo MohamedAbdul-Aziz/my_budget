@@ -1,4 +1,6 @@
-Mi Presupuesto es una forma sencilla y privada de saber adónde va tu dinero. Registra gastos e ingresos en segundos, define presupuestos, controla facturas y deudas compartidas y consulta gráficos claros, todo en tu teléfono. Funciona totalmente sin conexión y no necesita cuenta.
+✓ Sin anuncios   ✓ Sin internet   ✓ Sin cuenta
+
+Mi Presupuesto es una forma sencilla y privada de saber adónde va tu dinero. Registra gastos e ingresos en segundos, define presupuestos, controla facturas y deudas compartidas y consulta gráficos claros, todo en tu teléfono. Funciona totalmente sin conexión; crear una cuenta es opcional, para guardar tus datos en la nube y restaurarlos en cualquier teléfono. También puedes guardar una copia de seguridad en tu teléfono y restaurarla cuando quieras, sin cuenta.
 
 GASTOS E INGRESOS
 • Añade un movimiento en segundos: importe, categoría, fecha y una nota opcional
@@ -36,6 +38,7 @@ Ve el total del mes en tu pantalla de inicio y añade un gasto de tus categoría
 COPIA DE SEGURIDAD Y EXPORTACIÓN
 • Copia de seguridad en la nube opcional: inicia sesión con tu correo para guardar tus datos y restaurarlos en cualquier teléfono, de forma manual o automática
 • Exporta un archivo de copia de seguridad, una hoja CSV o un informe PDF, e importa una copia de nuevo
+• ¿Vienes de otra app o de una hoja de cálculo? La app te da un prompt listo: pégalo con tus datos en ChatGPT, Gemini, Claude u otra IA y pega la respuesta para importarla
 
 PRIVADA Y SEGURA
 • Tus datos se guardan en tu teléfono. Solo salen de él si decides hacer una copia en tu propia cuenta

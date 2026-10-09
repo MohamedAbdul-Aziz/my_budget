@@ -1,4 +1,6 @@
-Il Mio Budget è un modo semplice e riservato per sapere dove vanno i tuoi soldi. Registra spese ed entrate in pochi secondi, imposta budget, tieni d'occhio bollette e debiti condivisi e segui grafici chiari, tutto sul tuo telefono. Funziona completamente offline e non richiede un account.
+✓ Senza pubblicità   ✓ Funziona offline   ✓ Senza account
+
+Il Mio Budget è un modo semplice e riservato per sapere dove vanno i tuoi soldi. Registra spese ed entrate in pochi secondi, imposta budget, tieni d'occhio bollette e debiti condivisi e segui grafici chiari, tutto sul tuo telefono. Funziona completamente offline; creare un account è facoltativo, per salvare i dati nel cloud e ripristinarli su qualsiasi telefono. Puoi anche salvare un backup sul telefono e ripristinarlo quando vuoi, senza account.
 
 SPESE ED ENTRATE
 • Aggiungi un movimento in pochi secondi: importo, categoria, data e una nota facoltativa
@@ -36,6 +38,7 @@ Vedi il totale del mese nella schermata home e aggiungi una spesa dalle categori
 BACKUP ED ESPORTAZIONE
 • Backup nel cloud facoltativo: accedi con la tua email per salvare i dati e ripristinarli su qualsiasi telefono, manualmente o in automatico
 • Esporta un file di backup, un foglio CSV o un report PDF, e importa di nuovo un backup
+• Arrivi da un’altra app o da un foglio di calcolo? L’app ti dà un prompt pronto: incollalo con i tuoi dati in ChatGPT, Gemini, Claude o un’altra IA, poi incolla la risposta per importarla
 
 PRIVATA E SICURA
 • I tuoi dati restano sul telefono. Escono solo se scegli di salvarli nel tuo account

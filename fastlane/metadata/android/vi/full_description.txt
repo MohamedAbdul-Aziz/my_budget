@@ -1,4 +1,6 @@
-Ngân sách của tôi là cách đơn giản và riêng tư để biết tiền của bạn đi đâu. Ghi chi tiêu và thu nhập trong vài giây, đặt ngân sách, theo dõi hóa đơn và các khoản nợ chung, xem biểu đồ rõ ràng, tất cả ngay trên điện thoại. Ứng dụng hoạt động hoàn toàn ngoại tuyến và không cần tài khoản.
+✓ Không quảng cáo   ✓ Dùng ngoại tuyến   ✓ Không cần tài khoản
+
+Ngân sách của tôi là cách đơn giản và riêng tư để biết tiền của bạn đi đâu. Ghi chi tiêu và thu nhập trong vài giây, đặt ngân sách, theo dõi hóa đơn và các khoản nợ chung, xem biểu đồ rõ ràng, tất cả ngay trên điện thoại. Ứng dụng hoạt động hoàn toàn ngoại tuyến; tạo tài khoản là tùy chọn, để sao lưu dữ liệu lên đám mây và khôi phục trên bất kỳ điện thoại nào. Bạn cũng có thể lưu tệp sao lưu ngay trên điện thoại và khôi phục bất cứ lúc nào, không cần tài khoản.
 
 CHI TIÊU VÀ THU NHẬP
 • Thêm giao dịch trong vài giây: số tiền, danh mục, ngày và ghi chú tùy chọn
@@ -36,6 +38,7 @@ Xem tổng chi tháng này ngay trên màn hình chính và thêm khoản chi t�
 SAO LƯU VÀ XUẤT DỮ LIỆU
 • Sao lưu đám mây tùy chọn: đăng nhập bằng email để sao lưu dữ liệu và khôi phục trên bất kỳ điện thoại nào, thủ công hoặc tự động
 • Xuất tệp sao lưu, bảng tính CSV hoặc báo cáo PDF, và nhập lại bản sao lưu
+• Chuyển từ ứng dụng khác hoặc bảng tính? Ứng dụng đưa sẵn một prompt: dán cùng dữ liệu vào ChatGPT, Gemini, Claude hoặc AI khác, rồi dán câu trả lời lại để nhập
 
 RIÊNG TƯ VÀ AN TOÀN
 • Dữ liệu được lưu trên điện thoại của bạn và chỉ rời khỏi đó khi bạn chọn sao lưu vào tài khoản của mình
