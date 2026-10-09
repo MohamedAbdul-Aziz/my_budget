@@ -22,6 +22,13 @@ restore on any phone.
   any month by its note (any language, any case) or its amount, and narrows
   it down by type, categories and a date range. Results show how many were
   found and what they add up to; tap one to edit it.
+- **Analyses** — the selected month against the one before, daily spending,
+  spending by category and the last six months. On top sits a row of
+  ready-made questions (top category, biggest expense, busiest weekday,
+  month-end estimate, savings, budget left, …): tap one and the answer, with a
+  small chart where it helps, is worked out on the phone from the month's own
+  figures, with no network and no AI service. *Compare months* sets the month
+  against any other you pick, category by category, in a paired bar chart.
 - **Budgets** — an optional monthly limit and optional per-category limits,
   repeating every month. The home screen card shows what is left, with a bar
   that turns from green to orange at 70% and red past 90%. Logging an expense

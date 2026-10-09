@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../features/analyses/domain/usecases/compare_months.dart';
 import '../../features/analyses/domain/usecases/get_month_analysis.dart';
 import '../../features/app_lock/data/datasources/device_auth_data_source.dart';
 import '../../features/app_lock/data/repositories/app_lock_repository_impl.dart';
@@ -10,6 +11,7 @@ import '../../features/app_lock/domain/usecases/set_app_lock.dart';
 import '../../features/app_lock/domain/usecases/unlock_app.dart';
 import '../../features/app_lock/presentation/cubit/app_lock_cubit.dart';
 import '../../features/analyses/presentation/cubit/analyses_cubit.dart';
+import '../../features/analyses/presentation/cubit/compare_months_cubit.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../features/data_management/data/datasources/device_files_data_source.dart';
 import '../../features/data_management/data/datasources/report_fonts_data_source.dart';
@@ -468,7 +470,11 @@ void _registerSync() {
 void _registerAnalyses() {
   sl
     ..registerLazySingleton(() => GetMonthAnalysis(sl()))
-    ..registerLazySingleton(() => AnalysesCubit(getMonthAnalysis: sl()));
+    ..registerLazySingleton(() => CompareMonths(sl()))
+    ..registerLazySingleton(() => AnalysesCubit(getMonthAnalysis: sl()))
+    ..registerFactory(
+      () => CompareMonthsCubit(compareMonths: sl(), getMonthlySummaries: sl()),
+    );
 }
 
 void _registerDataManagement() {

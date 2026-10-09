@@ -1197,4 +1197,141 @@ class AppStringsJa extends AppStrings {
 
   @override
   String get promptCopied => 'プロンプトをコピーしました';
+
+  @override
+  String get askTitle => '支出について質問';
+
+  @override
+  String get askHint => '質問をタップすると答えが表示されます。';
+
+  @override
+  String get askCompareMonths => '月を比較';
+
+  @override
+  String get askTopCategory => '最多カテゴリ';
+
+  @override
+  String get askVsLastMonth => '先月との比較';
+
+  @override
+  String get askBiggestExpense => '最大の支出';
+
+  @override
+  String get askTopDay => '最も高い日';
+
+  @override
+  String get askWeekday => '最も使う曜日';
+
+  @override
+  String get askMonthEnd => '月末の予測';
+
+  @override
+  String get askSaved => '貯金できた？';
+
+  @override
+  String get askBudgetLeft => '残りの予算';
+
+  @override
+  String get askHighestLowest => '最高と最低の月';
+
+  @override
+  String get askCount => '支出の件数';
+
+  @override
+  String get askTopIncome => '最大の収入';
+
+  @override
+  String get otherCategories => 'その他';
+
+  @override
+  String answerTopCategory(String category, String amount, String percent) =>
+      '最も使ったのは $category：$amount（今月の $percent）。';
+
+  @override
+  String answerSpentMore(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => '$month は $other より $amount 多く使いました（+$percent）。';
+
+  @override
+  String answerSpentLess(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => '$month は $other より $amount 少なく使いました（−$percent）。';
+
+  @override
+  String answerSpentSame(String month, String other) =>
+      '$month と $other の支出は同じです。';
+
+  @override
+  String answerNothingIn(String month) => '$month の支出はありません。';
+
+  @override
+  String answerRise(String category, String amount) =>
+      '最も増えた：$category（+$amount）。';
+
+  @override
+  String answerDrop(String category, String amount) =>
+      '最も減った：$category（−$amount）。';
+
+  @override
+  String answerBiggestExpense(String amount, String category, String date) =>
+      '最大の支出：$category で $amount（$date）。';
+
+  @override
+  String answerTopDay(String date, String amount) => '最も高い日：$date、$amount。';
+
+  @override
+  String answerWeekday(String weekday, String amount) =>
+      '最も使う曜日：$weekday（今月 $amount）。';
+
+  @override
+  String answerMonthEnd(String amount, String average) =>
+      'このペース（1日約 $average）だと、月末までに約 $amount になります。';
+
+  @override
+  String answerMonthTotal(String amount) => '今月は終了しました：合計 $amount。';
+
+  @override
+  String answerSaved(String amount, String income) =>
+      '収入 $income のうち $amount を貯金しました。';
+
+  @override
+  String answerOverspent(String amount) => '収入より $amount 多く使いました。';
+
+  @override
+  String get answerNoIncome => '今月の収入はありません。';
+
+  @override
+  String answerBudgetLeft(String amount, String percent) =>
+      '月の予算は残り $amount です（$percent 使用）。';
+
+  @override
+  String answerBudgetOver(String amount) => '月の予算を $amount 超えています。';
+
+  @override
+  String get answerNoBudget => '月の予算はまだ設定されていません。';
+
+  @override
+  String answerOverLimit(String names) => '上限超過：$names。';
+
+  @override
+  String answerHighestLowest(
+    String high,
+    String highAmount,
+    String low,
+    String lowAmount,
+  ) => '最高の月：$high（$highAmount）。最低：$low（$lowAmount）。';
+
+  @override
+  String answerCount(int count, String average) =>
+      '${expenseCount(count)}を記録、平均 $average。';
+
+  @override
+  String answerTopIncome(String category, String amount, String percent) =>
+      '収入の多くは $category から：$amount（$percent）。';
 }

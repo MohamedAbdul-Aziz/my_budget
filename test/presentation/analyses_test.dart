@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_budget/core/di/injection.dart';
+import 'package:my_budget/core/utils/category_icons.dart';
 
 import 'app_harness.dart';
 
@@ -12,11 +13,24 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  /// The page itself, not the row of questions that also scrolls.
+  Finder page() => find
+      .ancestor(
+        of: find.byType(ChoiceChip).first,
+        matching: find.byType(Scrollable),
+      )
+      .last;
+
   testWidgets('the analyses tab shows an empty month plainly', (tester) async {
     await bootApp(tester);
     await openAnalyses(tester);
 
     expect(find.text('Compared with last month'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Nothing spent this month yet.'),
+      200,
+      scrollable: page(),
+    );
     expect(find.text('Nothing spent this month yet.'), findsOneWidget);
     expect(find.text('No data last month'), findsOneWidget);
   });
@@ -31,10 +45,17 @@ void main() {
     await tester.pumpAndSettle();
 
     await openAnalyses(tester);
+    await tester.scrollUntilVisible(
+      find.text('Spending by category'),
+      200,
+      scrollable: page(),
+    );
 
     expect(find.text('Spending by category'), findsOneWidget);
     expect(find.text('Nothing spent this month yet.'), findsNothing);
-    expect(find.text('100%'), findsOneWidget);
+    // Once on the ring's only slice and once in the list under it.
+    expect(find.text('100%'), findsNWidgets(2));
+    expect(find.byIcon(CategoryIcons.resolve('restaurant')), findsWidgets);
     expect(find.text('Food'), findsWidgets);
   });
 

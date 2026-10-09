@@ -1266,4 +1266,145 @@ class AppStringsId extends AppStrings {
 
   @override
   String get promptCopied => 'Prompt disalin';
+
+  @override
+  String get askTitle => 'Tanya soal pengeluaran';
+
+  @override
+  String get askHint => 'Ketuk pertanyaan untuk melihat jawabannya.';
+
+  @override
+  String get askCompareMonths => 'Bandingkan bulan';
+
+  @override
+  String get askTopCategory => 'Kategori teratas';
+
+  @override
+  String get askVsLastMonth => 'vs bulan lalu';
+
+  @override
+  String get askBiggestExpense => 'Pengeluaran terbesar';
+
+  @override
+  String get askTopDay => 'Hari termahal';
+
+  @override
+  String get askWeekday => 'Hari tersibuk';
+
+  @override
+  String get askMonthEnd => 'Perkiraan akhir bulan';
+
+  @override
+  String get askSaved => 'Apakah saya hemat?';
+
+  @override
+  String get askBudgetLeft => 'Sisa anggaran';
+
+  @override
+  String get askHighestLowest => 'Bulan tertinggi & terendah';
+
+  @override
+  String get askCount => 'Berapa pengeluaran';
+
+  @override
+  String get askTopIncome => 'Pemasukan terbesar';
+
+  @override
+  String get otherCategories => 'Lainnya';
+
+  @override
+  String answerTopCategory(String category, String amount, String percent) =>
+      'Paling banyak untuk $category: $amount ($percent dari bulan ini).';
+
+  @override
+  String answerSpentMore(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => 'Pengeluaran $month lebih besar $amount dari $other (+$percent).';
+
+  @override
+  String answerSpentLess(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => 'Pengeluaran $month lebih kecil $amount dari $other (−$percent).';
+
+  @override
+  String answerSpentSame(String month, String other) =>
+      'Pengeluaran $month dan $other sama.';
+
+  @override
+  String answerNothingIn(String month) => 'Tidak ada pengeluaran di $month.';
+
+  @override
+  String answerRise(String category, String amount) =>
+      'Kenaikan terbesar: $category (+$amount).';
+
+  @override
+  String answerDrop(String category, String amount) =>
+      'Penurunan terbesar: $category (−$amount).';
+
+  @override
+  String answerBiggestExpense(String amount, String category, String date) =>
+      'Pengeluaran terbesar: $amount di $category ($date).';
+
+  @override
+  String answerTopDay(String date, String amount) =>
+      'Hari termahal: $date, dengan $amount.';
+
+  @override
+  String answerWeekday(String weekday, String amount) =>
+      'Hari tersibuk dalam seminggu: $weekday ($amount bulan ini).';
+
+  @override
+  String answerMonthEnd(String amount, String average) =>
+      'Dengan laju ini (sekitar $average per hari) kamu akan menghabiskan sekitar $amount di akhir bulan.';
+
+  @override
+  String answerMonthTotal(String amount) =>
+      'Bulan ini sudah selesai: total pengeluaranmu $amount.';
+
+  @override
+  String answerSaved(String amount, String income) =>
+      'Kamu menabung $amount dari pemasukan $income.';
+
+  @override
+  String answerOverspent(String amount) =>
+      'Kamu menghabiskan $amount lebih banyak dari pemasukanmu.';
+
+  @override
+  String get answerNoIncome => 'Tidak ada pemasukan bulan ini.';
+
+  @override
+  String answerBudgetLeft(String amount, String percent) =>
+      'Sisa anggaran bulanan $amount ($percent terpakai).';
+
+  @override
+  String answerBudgetOver(String amount) =>
+      'Kamu melebihi anggaran bulanan sebesar $amount.';
+
+  @override
+  String get answerNoBudget => 'Kamu belum menetapkan anggaran bulanan.';
+
+  @override
+  String answerOverLimit(String names) => 'Melewati batas: $names.';
+
+  @override
+  String answerHighestLowest(
+    String high,
+    String highAmount,
+    String low,
+    String lowAmount,
+  ) => 'Bulan tertinggi: $high ($highAmount). Terendah: $low ($lowAmount).';
+
+  @override
+  String answerCount(int count, String average) =>
+      'Kamu mencatat ${expenseCount(count)}, rata-rata $average.';
+
+  @override
+  String answerTopIncome(String category, String amount, String percent) =>
+      'Pemasukan terbesar dari $category: $amount ($percent).';
 }

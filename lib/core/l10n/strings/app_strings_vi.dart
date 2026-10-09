@@ -1258,4 +1258,145 @@ class AppStringsVi extends AppStrings {
 
   @override
   String get promptCopied => 'Đã sao chép prompt';
+
+  @override
+  String get askTitle => 'Hỏi về chi tiêu';
+
+  @override
+  String get askHint => 'Chạm vào câu hỏi để xem câu trả lời.';
+
+  @override
+  String get askCompareMonths => 'So sánh tháng';
+
+  @override
+  String get askTopCategory => 'Danh mục chính';
+
+  @override
+  String get askVsLastMonth => 'So với tháng trước';
+
+  @override
+  String get askBiggestExpense => 'Khoản chi lớn nhất';
+
+  @override
+  String get askTopDay => 'Ngày tốn nhất';
+
+  @override
+  String get askWeekday => 'Thứ chi nhiều nhất';
+
+  @override
+  String get askMonthEnd => 'Ước tính cuối tháng';
+
+  @override
+  String get askSaved => 'Có tiết kiệm không?';
+
+  @override
+  String get askBudgetLeft => 'Ngân sách còn lại';
+
+  @override
+  String get askHighestLowest => 'Tháng cao & thấp nhất';
+
+  @override
+  String get askCount => 'Bao nhiêu khoản chi';
+
+  @override
+  String get askTopIncome => 'Thu nhập chính';
+
+  @override
+  String get otherCategories => 'Khác';
+
+  @override
+  String answerTopCategory(String category, String amount, String percent) =>
+      'Chi nhiều nhất cho $category: $amount ($percent của tháng).';
+
+  @override
+  String answerSpentMore(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => '$month chi nhiều hơn $other $amount (+$percent).';
+
+  @override
+  String answerSpentLess(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => '$month chi ít hơn $other $amount (−$percent).';
+
+  @override
+  String answerSpentSame(String month, String other) =>
+      '$month và $other chi bằng nhau.';
+
+  @override
+  String answerNothingIn(String month) =>
+      'Không có khoản chi nào trong $month.';
+
+  @override
+  String answerRise(String category, String amount) =>
+      'Tăng nhiều nhất: $category (+$amount).';
+
+  @override
+  String answerDrop(String category, String amount) =>
+      'Giảm nhiều nhất: $category (−$amount).';
+
+  @override
+  String answerBiggestExpense(String amount, String category, String date) =>
+      'Khoản chi lớn nhất: $amount cho $category ($date).';
+
+  @override
+  String answerTopDay(String date, String amount) =>
+      'Ngày tốn nhất: $date, chi $amount.';
+
+  @override
+  String answerWeekday(String weekday, String amount) =>
+      'Ngày trong tuần chi nhiều nhất: $weekday ($amount tháng này).';
+
+  @override
+  String answerMonthEnd(String amount, String average) =>
+      'Với tốc độ này (khoảng $average mỗi ngày), đến cuối tháng bạn sẽ chi khoảng $amount.';
+
+  @override
+  String answerMonthTotal(String amount) =>
+      'Tháng này đã kết thúc: tổng chi $amount.';
+
+  @override
+  String answerSaved(String amount, String income) =>
+      'Bạn tiết kiệm được $amount trong $income thu nhập.';
+
+  @override
+  String answerOverspent(String amount) =>
+      'Bạn chi nhiều hơn thu nhập $amount.';
+
+  @override
+  String get answerNoIncome => 'Tháng này chưa có thu nhập.';
+
+  @override
+  String answerBudgetLeft(String amount, String percent) =>
+      'Ngân sách tháng còn $amount (đã dùng $percent).';
+
+  @override
+  String answerBudgetOver(String amount) => 'Bạn vượt ngân sách tháng $amount.';
+
+  @override
+  String get answerNoBudget => 'Bạn chưa đặt ngân sách tháng.';
+
+  @override
+  String answerOverLimit(String names) => 'Vượt giới hạn: $names.';
+
+  @override
+  String answerHighestLowest(
+    String high,
+    String highAmount,
+    String low,
+    String lowAmount,
+  ) => 'Tháng cao nhất: $high ($highAmount). Thấp nhất: $low ($lowAmount).';
+
+  @override
+  String answerCount(int count, String average) =>
+      'Bạn đã ghi ${expenseCount(count)}, trung bình $average mỗi khoản.';
+
+  @override
+  String answerTopIncome(String category, String amount, String percent) =>
+      'Thu nhập chủ yếu từ $category: $amount ($percent).';
 }

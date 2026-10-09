@@ -1307,4 +1307,145 @@ class AppStringsNl extends AppStrings {
 
   @override
   String get promptCopied => 'Prompt gekopieerd';
+
+  @override
+  String get askTitle => 'Vraag over je uitgaven';
+
+  @override
+  String get askHint => 'Tik op een vraag om het antwoord te zien.';
+
+  @override
+  String get askCompareMonths => 'Maanden vergelijken';
+
+  @override
+  String get askTopCategory => 'Topcategorie';
+
+  @override
+  String get askVsLastMonth => 'vs vorige maand';
+
+  @override
+  String get askBiggestExpense => 'Grootste uitgave';
+
+  @override
+  String get askTopDay => 'Duurste dag';
+
+  @override
+  String get askWeekday => 'Duurste weekdag';
+
+  @override
+  String get askMonthEnd => 'Schatting maandeinde';
+
+  @override
+  String get askSaved => 'Heb ik gespaard?';
+
+  @override
+  String get askBudgetLeft => 'Budget over';
+
+  @override
+  String get askHighestLowest => 'Hoogste & laagste maand';
+
+  @override
+  String get askCount => 'Hoeveel uitgaven';
+
+  @override
+  String get askTopIncome => 'Grootste inkomen';
+
+  @override
+  String get otherCategories => 'Overige';
+
+  @override
+  String answerTopCategory(String category, String amount, String percent) =>
+      'Het meest aan $category: $amount ($percent van de maand).';
+
+  @override
+  String answerSpentMore(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => 'Je gaf in $month $amount meer uit dan in $other (+$percent).';
+
+  @override
+  String answerSpentLess(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => 'Je gaf in $month $amount minder uit dan in $other (−$percent).';
+
+  @override
+  String answerSpentSame(String month, String other) =>
+      'Je gaf in $month en $other evenveel uit.';
+
+  @override
+  String answerNothingIn(String month) => 'Geen uitgaven in $month.';
+
+  @override
+  String answerRise(String category, String amount) =>
+      'Grootste stijging: $category (+$amount).';
+
+  @override
+  String answerDrop(String category, String amount) =>
+      'Grootste daling: $category (−$amount).';
+
+  @override
+  String answerBiggestExpense(String amount, String category, String date) =>
+      'Grootste uitgave: $amount in $category ($date).';
+
+  @override
+  String answerTopDay(String date, String amount) =>
+      'Duurste dag: $date, met $amount uitgegeven.';
+
+  @override
+  String answerWeekday(String weekday, String amount) =>
+      'Duurste weekdag: $weekday ($amount deze maand).';
+
+  @override
+  String answerMonthEnd(String amount, String average) =>
+      'In dit tempo (ongeveer $average per dag) geef je tegen het eind van de maand zo’n $amount uit.';
+
+  @override
+  String answerMonthTotal(String amount) =>
+      'Deze maand is voorbij: je gaf in totaal $amount uit.';
+
+  @override
+  String answerSaved(String amount, String income) =>
+      'Je spaarde $amount van je $income inkomen.';
+
+  @override
+  String answerOverspent(String amount) =>
+      'Je gaf $amount meer uit dan je verdiende.';
+
+  @override
+  String get answerNoIncome => 'Geen inkomen geregistreerd deze maand.';
+
+  @override
+  String answerBudgetLeft(String amount, String percent) =>
+      'Nog $amount over in je maandbudget ($percent gebruikt).';
+
+  @override
+  String answerBudgetOver(String amount) =>
+      'Je zit $amount boven je maandbudget.';
+
+  @override
+  String get answerNoBudget => 'Je hebt nog geen maandbudget ingesteld.';
+
+  @override
+  String answerOverLimit(String names) => 'Over de limiet: $names.';
+
+  @override
+  String answerHighestLowest(
+    String high,
+    String highAmount,
+    String low,
+    String lowAmount,
+  ) => 'Hoogste maand: $high ($highAmount). Laagste: $low ($lowAmount).';
+
+  @override
+  String answerCount(int count, String average) =>
+      'Je registreerde ${expenseCount(count)}, gemiddeld $average per stuk.';
+
+  @override
+  String answerTopIncome(String category, String amount, String percent) =>
+      'Het meeste inkomen kwam van $category: $amount ($percent).';
 }

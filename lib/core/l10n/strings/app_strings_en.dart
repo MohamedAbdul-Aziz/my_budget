@@ -1254,4 +1254,145 @@ class AppStringsEn extends AppStrings {
 
   @override
   String get promptCopied => 'Prompt copied';
+
+  @override
+  String get askTitle => 'Ask about your spending';
+
+  @override
+  String get askHint => 'Tap a question to see the answer.';
+
+  @override
+  String get askCompareMonths => 'Compare months';
+
+  @override
+  String get askTopCategory => 'Top category';
+
+  @override
+  String get askVsLastMonth => 'vs last month';
+
+  @override
+  String get askBiggestExpense => 'Biggest expense';
+
+  @override
+  String get askTopDay => 'Priciest day';
+
+  @override
+  String get askWeekday => 'Busiest weekday';
+
+  @override
+  String get askMonthEnd => 'Month-end estimate';
+
+  @override
+  String get askSaved => 'Did I save?';
+
+  @override
+  String get askBudgetLeft => 'Budget left';
+
+  @override
+  String get askHighestLowest => 'Highest & lowest month';
+
+  @override
+  String get askCount => 'How many expenses';
+
+  @override
+  String get askTopIncome => 'Top income';
+
+  @override
+  String get otherCategories => 'Others';
+
+  @override
+  String answerTopCategory(String category, String amount, String percent) =>
+      'Most went to $category: $amount ($percent of the month).';
+
+  @override
+  String answerSpentMore(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => 'You spent $amount more in $month than in $other (+$percent).';
+
+  @override
+  String answerSpentLess(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => 'You spent $amount less in $month than in $other (−$percent).';
+
+  @override
+  String answerSpentSame(String month, String other) =>
+      'You spent the same in $month and $other.';
+
+  @override
+  String answerNothingIn(String month) => 'Nothing was spent in $month.';
+
+  @override
+  String answerRise(String category, String amount) =>
+      'Biggest rise: $category (+$amount).';
+
+  @override
+  String answerDrop(String category, String amount) =>
+      'Biggest drop: $category (−$amount).';
+
+  @override
+  String answerBiggestExpense(String amount, String category, String date) =>
+      'Biggest expense: $amount in $category ($date).';
+
+  @override
+  String answerTopDay(String date, String amount) =>
+      'Priciest day: $date, with $amount spent.';
+
+  @override
+  String answerWeekday(String weekday, String amount) =>
+      'Busiest weekday: $weekday ($amount this month).';
+
+  @override
+  String answerMonthEnd(String amount, String average) =>
+      'At this pace (about $average a day) you will spend around $amount by the end of the month.';
+
+  @override
+  String answerMonthTotal(String amount) =>
+      'This month is over: you spent $amount in total.';
+
+  @override
+  String answerSaved(String amount, String income) =>
+      'You saved $amount of the $income you earned.';
+
+  @override
+  String answerOverspent(String amount) =>
+      'You spent $amount more than you earned.';
+
+  @override
+  String get answerNoIncome => 'No income recorded this month.';
+
+  @override
+  String answerBudgetLeft(String amount, String percent) =>
+      '$amount left in your monthly budget ($percent used).';
+
+  @override
+  String answerBudgetOver(String amount) =>
+      'You are $amount over your monthly budget.';
+
+  @override
+  String get answerNoBudget => 'You have not set a monthly budget yet.';
+
+  @override
+  String answerOverLimit(String names) => 'Over their limit: $names.';
+
+  @override
+  String answerHighestLowest(
+    String high,
+    String highAmount,
+    String low,
+    String lowAmount,
+  ) => 'Highest month: $high ($highAmount). Lowest: $low ($lowAmount).';
+
+  @override
+  String answerCount(int count, String average) =>
+      'You logged ${expenseCount(count)}, $average each on average.';
+
+  @override
+  String answerTopIncome(String category, String amount, String percent) =>
+      'Most income came from $category: $amount ($percent).';
 }

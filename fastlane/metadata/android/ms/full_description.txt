@@ -25,6 +25,8 @@ ANALISIS
 • Bandingkan bulan ini dengan bulan lepas
 • Perbelanjaan harian, perbelanjaan mengikut kategori dan enam bulan terakhir
 • Baki bersih dan kadar simpanan
+• Tanya soalan sedia ada: kategori utama, perbelanjaan terbesar, anggaran hujung bulan, simpanan dan banyak lagi
+• Banding mana-mana dua bulan sebelah-menyebelah, dengan carta
 
 WIDGET SKRIN UTAMA
 Lihat jumlah bulan ini di skrin utama dan tambah perbelanjaan daripada kategori yang paling kerap digunakan tanpa membuka aplikasi.

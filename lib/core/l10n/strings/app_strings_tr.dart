@@ -1257,4 +1257,144 @@ class AppStringsTr extends AppStrings {
 
   @override
   String get promptCopied => 'İstem kopyalandı';
+
+  @override
+  String get askTitle => 'Harcamalarını sor';
+
+  @override
+  String get askHint => 'Cevabı görmek için bir soruya dokun.';
+
+  @override
+  String get askCompareMonths => 'Ayları karşılaştır';
+
+  @override
+  String get askTopCategory => 'En çok kategori';
+
+  @override
+  String get askVsLastMonth => 'Geçen aya göre';
+
+  @override
+  String get askBiggestExpense => 'En büyük harcama';
+
+  @override
+  String get askTopDay => 'En pahalı gün';
+
+  @override
+  String get askWeekday => 'En yoğun gün';
+
+  @override
+  String get askMonthEnd => 'Ay sonu tahmini';
+
+  @override
+  String get askSaved => 'Biriktirdim mi?';
+
+  @override
+  String get askBudgetLeft => 'Kalan bütçe';
+
+  @override
+  String get askHighestLowest => 'En yüksek ve düşük ay';
+
+  @override
+  String get askCount => 'Kaç harcama';
+
+  @override
+  String get askTopIncome => 'En büyük gelir';
+
+  @override
+  String get otherCategories => 'Diğer';
+
+  @override
+  String answerTopCategory(String category, String amount, String percent) =>
+      'En çok harcama: $category, $amount (ayın $percent kadarı).';
+
+  @override
+  String answerSpentMore(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) =>
+      '$month ayında $other ayına göre $amount daha fazla harcadın (+$percent).';
+
+  @override
+  String answerSpentLess(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => '$month ayında $other ayına göre $amount daha az harcadın (−$percent).';
+
+  @override
+  String answerSpentSame(String month, String other) =>
+      '$month ve $other aylarında aynı tutarı harcadın.';
+
+  @override
+  String answerNothingIn(String month) => '$month ayında harcama yok.';
+
+  @override
+  String answerRise(String category, String amount) =>
+      'En büyük artış: $category (+$amount).';
+
+  @override
+  String answerDrop(String category, String amount) =>
+      'En büyük düşüş: $category (−$amount).';
+
+  @override
+  String answerBiggestExpense(String amount, String category, String date) =>
+      'En büyük harcama: $category, $amount ($date).';
+
+  @override
+  String answerTopDay(String date, String amount) =>
+      'En pahalı gün: $date, $amount harcandı.';
+
+  @override
+  String answerWeekday(String weekday, String amount) =>
+      'Haftanın en yoğun günü: $weekday (bu ay $amount).';
+
+  @override
+  String answerMonthEnd(String amount, String average) =>
+      'Bu hızla (günde yaklaşık $average) ay sonuna kadar yaklaşık $amount harcayacaksın.';
+
+  @override
+  String answerMonthTotal(String amount) =>
+      'Bu ay bitti: toplam $amount harcadın.';
+
+  @override
+  String answerSaved(String amount, String income) =>
+      '$income gelirinden $amount biriktirdin.';
+
+  @override
+  String answerOverspent(String amount) => 'Gelirinden $amount fazla harcadın.';
+
+  @override
+  String get answerNoIncome => 'Bu ay kayıtlı gelir yok.';
+
+  @override
+  String answerBudgetLeft(String amount, String percent) =>
+      'Aylık bütçende $amount kaldı ($percent kullanıldı).';
+
+  @override
+  String answerBudgetOver(String amount) => 'Aylık bütçeni $amount aştın.';
+
+  @override
+  String get answerNoBudget => 'Henüz aylık bütçe belirlemedin.';
+
+  @override
+  String answerOverLimit(String names) => 'Limiti aşanlar: $names.';
+
+  @override
+  String answerHighestLowest(
+    String high,
+    String highAmount,
+    String low,
+    String lowAmount,
+  ) => 'En yüksek ay: $high ($highAmount). En düşük: $low ($lowAmount).';
+
+  @override
+  String answerCount(int count, String average) =>
+      '${expenseCount(count)} kaydettin, ortalama $average.';
+
+  @override
+  String answerTopIncome(String category, String amount, String percent) =>
+      'Gelirin çoğu $category kaynaklı: $amount ($percent).';
 }

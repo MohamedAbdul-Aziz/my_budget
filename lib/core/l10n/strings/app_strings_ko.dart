@@ -1200,4 +1200,142 @@ class AppStringsKo extends AppStrings {
 
   @override
   String get promptCopied => '프롬프트를 복사했어요';
+
+  @override
+  String get askTitle => '지출에 대해 묻기';
+
+  @override
+  String get askHint => '질문을 누르면 답을 볼 수 있어요.';
+
+  @override
+  String get askCompareMonths => '월 비교';
+
+  @override
+  String get askTopCategory => '최다 카테고리';
+
+  @override
+  String get askVsLastMonth => '지난달 대비';
+
+  @override
+  String get askBiggestExpense => '가장 큰 지출';
+
+  @override
+  String get askTopDay => '가장 비싼 날';
+
+  @override
+  String get askWeekday => '가장 많이 쓴 요일';
+
+  @override
+  String get askMonthEnd => '월말 예상';
+
+  @override
+  String get askSaved => '저축했나요?';
+
+  @override
+  String get askBudgetLeft => '남은 예산';
+
+  @override
+  String get askHighestLowest => '최고·최저 달';
+
+  @override
+  String get askCount => '지출 건수';
+
+  @override
+  String get askTopIncome => '가장 큰 수입';
+
+  @override
+  String get otherCategories => '기타';
+
+  @override
+  String answerTopCategory(String category, String amount, String percent) =>
+      '가장 많이 쓴 곳은 $category: $amount (이번 달의 $percent).';
+
+  @override
+  String answerSpentMore(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => '$month에 $other보다 $amount 더 썼어요 (+$percent).';
+
+  @override
+  String answerSpentLess(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => '$month에 $other보다 $amount 덜 썼어요 (−$percent).';
+
+  @override
+  String answerSpentSame(String month, String other) =>
+      '$month와 $other의 지출이 같아요.';
+
+  @override
+  String answerNothingIn(String month) => '$month에는 지출이 없어요.';
+
+  @override
+  String answerRise(String category, String amount) =>
+      '가장 크게 늘어난 곳: $category (+$amount).';
+
+  @override
+  String answerDrop(String category, String amount) =>
+      '가장 크게 줄어든 곳: $category (−$amount).';
+
+  @override
+  String answerBiggestExpense(String amount, String category, String date) =>
+      '가장 큰 지출: $category에서 $amount ($date).';
+
+  @override
+  String answerTopDay(String date, String amount) =>
+      '가장 비싼 날: $date, $amount 지출.';
+
+  @override
+  String answerWeekday(String weekday, String amount) =>
+      '가장 많이 쓴 요일: $weekday (이번 달 $amount).';
+
+  @override
+  String answerMonthEnd(String amount, String average) =>
+      '이 속도라면 (하루 약 $average) 월말까지 약 $amount을 쓰게 돼요.';
+
+  @override
+  String answerMonthTotal(String amount) => '이번 달은 끝났어요: 총 $amount을 썼어요.';
+
+  @override
+  String answerSaved(String amount, String income) =>
+      '수입 $income 중 $amount을 저축했어요.';
+
+  @override
+  String answerOverspent(String amount) => '수입보다 $amount 더 썼어요.';
+
+  @override
+  String get answerNoIncome => '이번 달 기록된 수입이 없어요.';
+
+  @override
+  String answerBudgetLeft(String amount, String percent) =>
+      '월 예산이 $amount 남았어요 ($percent 사용).';
+
+  @override
+  String answerBudgetOver(String amount) => '월 예산을 $amount 초과했어요.';
+
+  @override
+  String get answerNoBudget => '아직 월 예산을 정하지 않았어요.';
+
+  @override
+  String answerOverLimit(String names) => '한도 초과: $names.';
+
+  @override
+  String answerHighestLowest(
+    String high,
+    String highAmount,
+    String low,
+    String lowAmount,
+  ) => '최고: $high ($highAmount). 최저: $low ($lowAmount).';
+
+  @override
+  String answerCount(int count, String average) =>
+      '${expenseCount(count)}을 기록했고 평균 $average예요.';
+
+  @override
+  String answerTopIncome(String category, String amount, String percent) =>
+      '수입은 주로 $category에서: $amount ($percent).';
 }

@@ -25,6 +25,8 @@ PHÂN TÍCH
 • So sánh tháng này với tháng trước
 • Chi tiêu theo ngày, theo danh mục và trong sáu tháng gần nhất
 • Số dư ròng và tỷ lệ tiết kiệm
+• Hỏi các câu có sẵn: danh mục chính, khoản chi lớn nhất, ước tính cuối tháng, tiết kiệm và hơn thế
+• So sánh hai tháng bất kỳ bằng biểu đồ
 
 TIỆN ÍCH MÀN HÌNH CHÍNH
 Xem tổng chi tháng này ngay trên màn hình chính và thêm khoản chi từ các danh mục hay dùng mà không cần mở ứng dụng.

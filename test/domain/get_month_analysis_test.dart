@@ -96,4 +96,50 @@ void main() {
     ]);
     expect(trend.map((m) => m.total), [0, 0, 0, 12, 0, 30]);
   });
+
+  test('answers the ready-made questions from the month', () async {
+    // 3 August 2026 is a Monday, 7 August a Friday.
+    await spend(30, DateTime(2026, 8, 3));
+    await spend(50, DateTime(2026, 8, 7), 'cat_bills');
+    await spend(20, DateTime(2026, 8, 7));
+    await spend(500, DateTime(2026, 8, 1), 'cat_salary');
+    await spend(10, DateTime(2026, 7, 2), 'cat_bills');
+    await spend(60, DateTime(2026, 7, 2));
+
+    final analysis = (await analyse(
+      august,
+      now: DateTime(2026, 8, 10),
+    )).dataOrNull!;
+
+    expect(analysis.income, 500);
+    expect(analysis.incomeBreakdown.single.category.id, 'cat_salary');
+    expect(analysis.expenseCount, 3);
+    expect(analysis.averageExpense, 100 / 3);
+    expect(analysis.largestExpense!.amount, 50);
+    expect(analysis.byWeekday[DateTime.monday - 1], 30);
+    expect(analysis.byWeekday[DateTime.friday - 1], 70);
+    expect(analysis.busiestWeekday, DateTime.friday - 1);
+    // Bills went from 10 to 50; Food fell from 60 to 50.
+    expect(analysis.biggestRise!.breakdown.category.id, 'cat_bills');
+    expect(analysis.biggestRise!.difference, 40);
+    // 100 over 10 days, so 10 a day for 31 days.
+    expect(analysis.projectedTotal(DateTime(2026, 8, 10)), 310);
+    expect(analysis.projectedTotal(DateTime(2026, 9, 1)), 100);
+    final (high, low) = analysis.highestAndLowest!;
+    expect(high.month, august);
+    expect(low.month, const Month(2026, 7));
+  });
+
+  test('an empty month has nothing to point at', () async {
+    final analysis = (await analyse(
+      august,
+      now: DateTime(2026, 8, 10),
+    )).dataOrNull!;
+
+    expect(analysis.largestExpense, isNull);
+    expect(analysis.busiestWeekday, isNull);
+    expect(analysis.biggestRise, isNull);
+    expect(analysis.highestAndLowest, isNull);
+    expect(analysis.averageExpense, 0);
+  });
 }

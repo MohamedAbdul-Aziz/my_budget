@@ -25,6 +25,8 @@ ANALIZY
 • Porównaj ten miesiąc z poprzednim
 • Wydatki dzienne, według kategorii i z ostatnich sześciu miesięcy
 • Saldo netto i stopa oszczędności
+• Gotowe pytania: główna kategoria, największy wydatek, prognoza na koniec miesiąca, oszczędności i więcej
+• Porównaj dowolne dwa miesiące na wykresie
 
 WIDŻET NA EKRANIE GŁÓWNYM
 Zobacz sumę z bieżącego miesiąca na ekranie głównym i dodaj wydatek w najczęściej używanych kategoriach bez otwierania aplikacji.

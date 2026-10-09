@@ -34,6 +34,8 @@ ANALYSES
 • Compare this month with last month
 • Daily spending, spending by category and your last six months
 • Net balance and savings rate
+• Ask ready-made questions: top category, biggest expense, month-end estimate, savings and more
+• Compare any two months side by side, with a chart
 
 HOME SCREEN WIDGET
 See this month's total on your home screen and add an expense from your most-used categories without opening the app.

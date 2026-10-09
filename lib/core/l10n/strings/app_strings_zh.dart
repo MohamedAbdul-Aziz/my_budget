@@ -1189,4 +1189,140 @@ class AppStringsZh extends AppStrings {
 
   @override
   String get promptCopied => '已复制提示词';
+
+  @override
+  String get askTitle => '问问你的支出';
+
+  @override
+  String get askHint => '点一个问题查看答案。';
+
+  @override
+  String get askCompareMonths => '比较月份';
+
+  @override
+  String get askTopCategory => '最多的分类';
+
+  @override
+  String get askVsLastMonth => '与上月相比';
+
+  @override
+  String get askBiggestExpense => '最大一笔支出';
+
+  @override
+  String get askTopDay => '花费最多的一天';
+
+  @override
+  String get askWeekday => '花费最多的星期';
+
+  @override
+  String get askMonthEnd => '月底预估';
+
+  @override
+  String get askSaved => '我存钱了吗？';
+
+  @override
+  String get askBudgetLeft => '剩余预算';
+
+  @override
+  String get askHighestLowest => '最高和最低月份';
+
+  @override
+  String get askCount => '支出笔数';
+
+  @override
+  String get askTopIncome => '最大收入';
+
+  @override
+  String get otherCategories => '其他';
+
+  @override
+  String answerTopCategory(String category, String amount, String percent) =>
+      '花费最多的是 $category：$amount（占本月 $percent）。';
+
+  @override
+  String answerSpentMore(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => '$month 比 $other 多花了 $amount（+$percent）。';
+
+  @override
+  String answerSpentLess(
+    String month,
+    String other,
+    String amount,
+    String percent,
+  ) => '$month 比 $other 少花了 $amount（−$percent）。';
+
+  @override
+  String answerSpentSame(String month, String other) => '$month 和 $other 花费相同。';
+
+  @override
+  String answerNothingIn(String month) => '$month 没有支出。';
+
+  @override
+  String answerRise(String category, String amount) =>
+      '增长最多：$category（+$amount）。';
+
+  @override
+  String answerDrop(String category, String amount) =>
+      '下降最多：$category（−$amount）。';
+
+  @override
+  String answerBiggestExpense(String amount, String category, String date) =>
+      '最大一笔支出：$category $amount（$date）。';
+
+  @override
+  String answerTopDay(String date, String amount) => '花费最多的一天：$date，共 $amount。';
+
+  @override
+  String answerWeekday(String weekday, String amount) =>
+      '花费最多的星期：$weekday（本月 $amount）。';
+
+  @override
+  String answerMonthEnd(String amount, String average) =>
+      '按此速度（每天约 $average），到月底将花费约 $amount。';
+
+  @override
+  String answerMonthTotal(String amount) => '本月已结束：共花费 $amount。';
+
+  @override
+  String answerSaved(String amount, String income) =>
+      '在 $income 收入中存下了 $amount。';
+
+  @override
+  String answerOverspent(String amount) => '支出比收入多 $amount。';
+
+  @override
+  String get answerNoIncome => '本月没有收入记录。';
+
+  @override
+  String answerBudgetLeft(String amount, String percent) =>
+      '月度预算还剩 $amount（已用 $percent）。';
+
+  @override
+  String answerBudgetOver(String amount) => '已超出月度预算 $amount。';
+
+  @override
+  String get answerNoBudget => '你还没有设置月度预算。';
+
+  @override
+  String answerOverLimit(String names) => '超出限额：$names。';
+
+  @override
+  String answerHighestLowest(
+    String high,
+    String highAmount,
+    String low,
+    String lowAmount,
+  ) => '最高月份：$high（$highAmount）。最低：$low（$lowAmount）。';
+
+  @override
+  String answerCount(int count, String average) =>
+      '你记录了 ${expenseCount(count)}，平均每笔 $average。';
+
+  @override
+  String answerTopIncome(String category, String amount, String percent) =>
+      '收入主要来自 $category：$amount（$percent）。';
 }

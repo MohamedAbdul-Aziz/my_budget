@@ -1,4 +1,6 @@
 import '../../../../core/error/api_result.dart';
+import '../../../categories/domain/entities/expense_category.dart';
+import '../../../expenses/domain/entities/category_breakdown.dart';
 import '../../../expenses/domain/entities/expense.dart';
 import '../../../expenses/domain/entities/month.dart';
 import '../../../expenses/domain/entities/monthly_summary.dart';
@@ -33,9 +35,8 @@ class GetMonthAnalysis {
 
     final expenses = current.dataOrNull!;
     final (total, breakdown) = GetMonthOverview.breakdownOf(expenses);
-    final previousTotal = previous.dataOrNull!.fold<double>(
-      0,
-      (sum, expense) => sum + expense.spending,
+    final (previousTotal, previousBreakdown) = GetMonthOverview.breakdownOf(
+      previous.dataOrNull!,
     );
 
     return Success(
@@ -47,6 +48,12 @@ class GetMonthAnalysis {
         dailyAverage: total / daysCounted(month, now ?? DateTime.now()),
         topDay: topDayOf(expenses),
         trend: trendEndingAt(month, summaries.dataOrNull!),
+        income: GetMonthOverview.incomeOf(expenses),
+        incomeBreakdown: incomeBreakdownOf(expenses),
+        previousBreakdown: previousBreakdown,
+        largestExpense: largestExpenseOf(expenses),
+        expenseCount: expenses.where((expense) => !expense.isIncome).length,
+        byWeekday: weekdayTotalsOf(expenses),
       ),
     );
   }
@@ -75,6 +82,50 @@ class GetMonthAnalysis {
     if (byDay.isEmpty) return null;
     final top = byDay.entries.reduce((a, b) => b.value > a.value ? b : a);
     return TopDay(date: top.key, total: top.value);
+  }
+
+  static Expense? largestExpenseOf(List<Expense> expenses) {
+    Expense? largest;
+    for (final expense in expenses) {
+      if (expense.isIncome) continue;
+      if (largest == null || expense.amount > largest.amount) {
+        largest = expense;
+      }
+    }
+    return largest;
+  }
+
+  /// Spending per weekday, Monday first.
+  static List<double> weekdayTotalsOf(List<Expense> expenses) {
+    final totals = List<double>.filled(DateTime.daysPerWeek, 0);
+    for (final expense in expenses) {
+      if (expense.isIncome) continue;
+      totals[expense.date.weekday - 1] += expense.amount;
+    }
+    return totals;
+  }
+
+  /// Income split by category, the same way [GetMonthOverview.breakdownOf]
+  /// splits spending.
+  static List<CategoryBreakdown> incomeBreakdownOf(List<Expense> expenses) {
+    final totals = <String, double>{};
+    final categories = <String, ExpenseCategory>{};
+    var total = 0.0;
+    for (final expense in expenses) {
+      if (!expense.isIncome) continue;
+      total += expense.amount;
+      final id = expense.category.id;
+      totals[id] = (totals[id] ?? 0) + expense.amount;
+      categories[id] = expense.category;
+    }
+    return [
+      for (final MapEntry(key: id, value: amount) in totals.entries)
+        CategoryBreakdown(
+          category: categories[id]!,
+          total: amount,
+          share: total == 0 ? 0 : amount / total,
+        ),
+    ]..sort((a, b) => b.total.compareTo(a.total));
   }
 
   static List<MonthlySummary> trendEndingAt(
