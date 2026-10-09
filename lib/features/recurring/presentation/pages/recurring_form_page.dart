@@ -6,6 +6,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/amount_input.dart';
 import '../../../../core/utils/app_formats.dart';
+import '../../../../core/widgets/keyboard_lifted_bar.dart';
 import '../../../categories/domain/entities/transaction_type.dart';
 import '../../../categories/presentation/cubit/categories_cubit.dart';
 import '../../../categories/presentation/cubit/categories_state.dart';
@@ -562,10 +563,7 @@ class _SubmitBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Scaffold leaves its bottomNavigationBar under the keyboard; lifted by
-    // the keyboard's height so the button stays reachable while typing.
-    return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+    return KeyboardLiftedBar(
       child: BlocSelector<RecurringFormCubit, RecurringFormState, bool>(
         selector: (state) => state.isSubmitting,
         builder: (context, isSubmitting) => SafeArea(

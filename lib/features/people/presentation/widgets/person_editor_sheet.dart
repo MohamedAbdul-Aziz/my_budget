@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/category_icons.dart';
+import '../../../../core/widgets/pinned_action.dart';
 import '../../domain/entities/person.dart';
 import '../../domain/usecases/add_person.dart';
 
@@ -115,8 +116,9 @@ class _PersonEditorSheetState extends State<PersonEditorSheet> {
         right: 20,
         bottom: MediaQuery.viewInsetsOf(context).bottom + 20,
       ),
-      child: SingleChildScrollView(
-        child: Column(
+      child: PinnedAction(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -171,12 +173,11 @@ class _PersonEditorSheetState extends State<PersonEditorSheet> {
               selected: _colorValue,
               onSelected: (value) => setState(() => _colorValue = value),
             ),
-            const SizedBox(height: 20),
-            FilledButton(
-              onPressed: _saving ? null : _submit,
-              child: Text(isEditing ? strings.saveChanges : strings.addPerson),
-            ),
           ],
+        ),
+        action: FilledButton(
+          onPressed: _saving ? null : _submit,
+          child: Text(isEditing ? strings.saveChanges : strings.addPerson),
         ),
       ),
     );

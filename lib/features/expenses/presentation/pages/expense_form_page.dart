@@ -6,6 +6,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/app_formats.dart';
+import '../../../../core/widgets/keyboard_lifted_bar.dart';
 import '../../../budgets/presentation/pages/budgets_page.dart';
 import '../../../budgets/presentation/widgets/budget_alert_messages.dart';
 import '../../../categories/domain/entities/transaction_type.dart';
@@ -392,12 +393,7 @@ class _SubmitBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Scaffold shrinks its body for the keyboard but leaves the
-    // bottomNavigationBar at the foot of the screen, under the keyboard, so
-    // the button is lifted by the keyboard's height here. The safe area adds
-    // nothing while the keyboard is up: it already covers the system bar.
-    return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+    return KeyboardLiftedBar(
       child: BlocSelector<ExpenseFormCubit, ExpenseFormState, (bool, bool)>(
         selector: (state) => (state.isSubmitting, state.isIncome),
         builder: (context, flags) {

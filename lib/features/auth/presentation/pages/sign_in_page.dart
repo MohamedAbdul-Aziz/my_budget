@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/l10n/app_strings.dart';
+import '../../../../core/widgets/pinned_action.dart';
 import '../cubit/account_cubit.dart';
 import '../cubit/account_state.dart';
 
@@ -164,55 +165,67 @@ class _CredentialsForm extends StatelessWidget {
     final strings = context.strings;
 
     return AutofillGroup(
-      child: ListView(
+      child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-        children: [
-          Text(
-            strings.accountOptional,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
+        // The submit button stays above the keyboard; the fields scroll.
+        child: PinnedAction(
+          spacing: 24,
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                strings.accountOptional,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 24),
+              TextField(
+                controller: emailController,
+                autofocus: true,
+                autocorrect: false,
+                enableSuggestions: false,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                autofillHints: const [AutofillHints.email],
+                onSubmitted: (_) => passwordFocus.requestFocus(),
+                decoration: InputDecoration(
+                  labelText: strings.email,
+                  prefixIcon: const Icon(Icons.alternate_email_rounded),
+                ),
+              ),
+              const SizedBox(height: 16),
+              _PasswordField(
+                controller: passwordController,
+                focusNode: passwordFocus,
+                isNewPassword: isSignUp,
+                onSubmitted: onSubmit,
+              ),
+            ],
           ),
-          const SizedBox(height: 24),
-          TextField(
-            controller: emailController,
-            autofocus: true,
-            autocorrect: false,
-            enableSuggestions: false,
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
-            autofillHints: const [AutofillHints.email],
-            onSubmitted: (_) => passwordFocus.requestFocus(),
-            decoration: InputDecoration(
-              labelText: strings.email,
-              prefixIcon: const Icon(Icons.alternate_email_rounded),
-            ),
+          action: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _SubmitButton(
+                label: isSignUp ? strings.createAccount : strings.signIn,
+                onPressed: onSubmit,
+              ),
+              const SizedBox(height: 8),
+              if (!isSignUp)
+                TextButton(
+                  onPressed: onForgotPassword,
+                  child: Text(strings.forgotPassword),
+                ),
+              TextButton(
+                onPressed: onToggleMode,
+                child: Text(
+                  isSignUp ? strings.haveAnAccount : strings.noAccountYet,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          _PasswordField(
-            controller: passwordController,
-            focusNode: passwordFocus,
-            isNewPassword: isSignUp,
-            onSubmitted: onSubmit,
-          ),
-          const SizedBox(height: 24),
-          _SubmitButton(
-            label: isSignUp ? strings.createAccount : strings.signIn,
-            onPressed: onSubmit,
-          ),
-          const SizedBox(height: 8),
-          if (!isSignUp)
-            TextButton(
-              onPressed: onForgotPassword,
-              child: Text(strings.forgotPassword),
-            ),
-          TextButton(
-            onPressed: onToggleMode,
-            child: Text(
-              isSignUp ? strings.haveAnAccount : strings.noAccountYet,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -262,45 +275,57 @@ class _CodeFormState extends State<_CodeForm> {
     final theme = Theme.of(context);
     final strings = context.strings;
 
-    return ListView(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-      children: [
-        Icon(
-          Icons.mark_email_unread_outlined,
-          size: 48,
-          color: theme.colorScheme.primary,
-        ),
-        const SizedBox(height: 16),
-        Text(
-          strings.codeSentTo(widget.email),
-          textAlign: TextAlign.center,
-          style: theme.textTheme.bodyLarge,
-        ),
-        const SizedBox(height: 24),
-        TextField(
-          controller: _codeController,
-          autofocus: true,
-          keyboardType: TextInputType.number,
-          textAlign: TextAlign.center,
-          textInputAction: TextInputAction.done,
-          autofillHints: const [AutofillHints.oneTimeCode],
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(10),
+      // The submit button stays above the keyboard; the fields scroll.
+      child: PinnedAction(
+        spacing: 24,
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Icon(
+              Icons.mark_email_unread_outlined,
+              size: 48,
+              color: theme.colorScheme.primary,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              strings.codeSentTo(widget.email),
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 24),
+            TextField(
+              controller: _codeController,
+              autofocus: true,
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.center,
+              textInputAction: TextInputAction.done,
+              autofillHints: const [AutofillHints.oneTimeCode],
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(10),
+              ],
+              style: theme.textTheme.headlineSmall?.copyWith(letterSpacing: 8),
+              onSubmitted: (_) => _confirm(),
+              decoration: InputDecoration(labelText: strings.confirmationCode),
+            ),
           ],
-          style: theme.textTheme.headlineSmall?.copyWith(letterSpacing: 8),
-          onSubmitted: (_) => _confirm(),
-          decoration: InputDecoration(labelText: strings.confirmationCode),
         ),
-        const SizedBox(height: 24),
-        _SubmitButton(label: strings.confirm, onPressed: _confirm),
-        const SizedBox(height: 8),
-        TextButton(onPressed: _resend, child: Text(strings.resendCode)),
-        TextButton(
-          onPressed: context.read<AccountCubit>().cancelConfirmation,
-          child: Text(strings.useDifferentEmail),
+        action: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _SubmitButton(label: strings.confirm, onPressed: _confirm),
+            const SizedBox(height: 8),
+            TextButton(onPressed: _resend, child: Text(strings.resendCode)),
+            TextButton(
+              onPressed: context.read<AccountCubit>().cancelConfirmation,
+              child: Text(strings.useDifferentEmail),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -358,53 +383,69 @@ class _ResetFormState extends State<_ResetForm> {
     final strings = context.strings;
 
     return AutofillGroup(
-      child: ListView(
+      child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-        children: [
-          Icon(
-            Icons.lock_reset_rounded,
-            size: 48,
-            color: theme.colorScheme.primary,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            strings.resetCodeSentTo(widget.email),
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyLarge,
-          ),
-          const SizedBox(height: 24),
-          TextField(
-            controller: _codeController,
-            autofocus: true,
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            textInputAction: TextInputAction.next,
-            autofillHints: const [AutofillHints.oneTimeCode],
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(10),
+        // The submit button stays above the keyboard; the fields scroll.
+        child: PinnedAction(
+          spacing: 24,
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Icon(
+                Icons.lock_reset_rounded,
+                size: 48,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                strings.resetCodeSentTo(widget.email),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyLarge,
+              ),
+              const SizedBox(height: 24),
+              TextField(
+                controller: _codeController,
+                autofocus: true,
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                textInputAction: TextInputAction.next,
+                autofillHints: const [AutofillHints.oneTimeCode],
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(10),
+                ],
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  letterSpacing: 8,
+                ),
+                onSubmitted: (_) => _passwordFocus.requestFocus(),
+                decoration: InputDecoration(
+                  labelText: strings.confirmationCode,
+                ),
+              ),
+              const SizedBox(height: 16),
+              _PasswordField(
+                controller: _passwordController,
+                focusNode: _passwordFocus,
+                isNewPassword: true,
+                label: strings.newPassword,
+                onSubmitted: _save,
+              ),
             ],
-            style: theme.textTheme.headlineSmall?.copyWith(letterSpacing: 8),
-            onSubmitted: (_) => _passwordFocus.requestFocus(),
-            decoration: InputDecoration(labelText: strings.confirmationCode),
           ),
-          const SizedBox(height: 16),
-          _PasswordField(
-            controller: _passwordController,
-            focusNode: _passwordFocus,
-            isNewPassword: true,
-            label: strings.newPassword,
-            onSubmitted: _save,
+          action: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _SubmitButton(label: strings.saveNewPassword, onPressed: _save),
+              const SizedBox(height: 8),
+              TextButton(onPressed: _resend, child: Text(strings.resendCode)),
+              TextButton(
+                onPressed: context.read<AccountCubit>().cancelConfirmation,
+                child: Text(strings.backToSignIn),
+              ),
+            ],
           ),
-          const SizedBox(height: 24),
-          _SubmitButton(label: strings.saveNewPassword, onPressed: _save),
-          const SizedBox(height: 8),
-          TextButton(onPressed: _resend, child: Text(strings.resendCode)),
-          TextButton(
-            onPressed: context.read<AccountCubit>().cancelConfirmation,
-            child: Text(strings.backToSignIn),
-          ),
-        ],
+        ),
       ),
     );
   }

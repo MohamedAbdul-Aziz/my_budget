@@ -4,6 +4,7 @@ import '../../../../core/error/failures.dart';
 
 import '../../../../core/l10n/app_strings.dart';
 import '../../../../core/utils/category_icons.dart';
+import '../../../../core/widgets/pinned_action.dart';
 import '../../../expenses/presentation/widgets/transaction_type_toggle.dart';
 import '../../domain/entities/transaction_type.dart';
 import '../../domain/usecases/create_category.dart';
@@ -115,8 +116,9 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
         right: 20,
         bottom: MediaQuery.viewInsetsOf(context).bottom + 20,
       ),
-      child: SingleChildScrollView(
-        child: Column(
+      child: PinnedAction(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -165,14 +167,11 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
               color: Color(_colorValue),
               onSelected: (name) => setState(() => _iconName = name),
             ),
-            const SizedBox(height: 20),
-            FilledButton(
-              onPressed: _submit,
-              child: Text(
-                isEditing ? strings.saveChanges : strings.addCategory,
-              ),
-            ),
           ],
+        ),
+        action: FilledButton(
+          onPressed: _submit,
+          child: Text(isEditing ? strings.saveChanges : strings.addCategory),
         ),
       ),
     );

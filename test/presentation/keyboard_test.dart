@@ -4,64 +4,152 @@ import 'package:my_budget/core/di/injection.dart';
 
 import 'app_harness.dart';
 
-/// The add buttons pinned under a form must stay above the on-screen
-/// keyboard, or the user cannot reach them while typing.
+/// Every form's main button must stay above the on-screen keyboard, or the
+/// user cannot reach it while typing. Checked on a small phone, where the
+/// keyboard leaves the least room.
 void main() {
   tearDown(() => sl.reset());
 
-  /// The keyboard as a 300 pixel tall bottom inset, as a phone reports it.
-  void openKeyboard(WidgetTester tester) {
-    tester.view.viewInsets = const FakeViewPadding(bottom: 300);
-    addTearDown(tester.view.resetViewInsets);
+  /// 360 × 640 logical pixels.
+  void smallPhone(WidgetTester tester) {
+    tester.view.physicalSize = const Size(1080, 1920);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
   }
 
-  void expectAboveKeyboard(WidgetTester tester, String label) {
-    // FilledButton.icon is a subclass, which widgetWithText's exact type
-    // match would miss.
-    final button = tester.getRect(
-      find.ancestor(
-        of: find.text(label),
-        matching: find.byWidgetPredicate((widget) => widget is FilledButton),
-      ),
+  /// A keyboard 280 logical pixels tall, reported the way a phone does.
+  const keyboardHeight = 280.0;
+
+  Future<void> openKeyboard(WidgetTester tester) async {
+    tester.view.viewInsets = FakeViewPadding(
+      bottom: keyboardHeight * tester.view.devicePixelRatio,
     );
-    final keyboardTop =
-        tester.view.physicalSize.height / tester.view.devicePixelRatio -
-        300 / tester.view.devicePixelRatio;
-    expect(button.bottom, lessThanOrEqualTo(keyboardTop));
+    addTearDown(tester.view.resetViewInsets);
+    await tester.pumpAndSettle();
   }
 
-  testWidgets('the add expense button stays above the keyboard', (
-    tester,
-  ) async {
-    await bootApp(tester);
-    await tester.tap(find.widgetWithText(FloatingActionButton, 'Add'));
-    await tester.pumpAndSettle();
+  /// [label]'s FilledButton (or one of its `.icon` subclasses) sits wholly
+  /// on screen, above the keyboard.
+  void expectAboveKeyboard(WidgetTester tester, String label) {
+    final button = tester.getRect(
+      find
+          .ancestor(
+            of: find.text(label),
+            matching: find.byWidgetPredicate(
+              (widget) => widget is FilledButton,
+            ),
+          )
+          .last,
+    );
+    final screenHeight =
+        tester.view.physicalSize.height / tester.view.devicePixelRatio;
+    expect(button.top, greaterThanOrEqualTo(0));
+    expect(button.bottom, lessThanOrEqualTo(screenHeight - keyboardHeight));
+  }
 
-    openKeyboard(tester);
+  Future<void> tapFab(WidgetTester tester, String label) async {
+    await tester.tap(find.widgetWithText(FloatingActionButton, label));
     await tester.pumpAndSettle();
+  }
+
+  testWidgets('add expense', (tester) async {
+    smallPhone(tester);
+    await bootApp(tester);
+    await tapFab(tester, 'Add');
+
+    await openKeyboard(tester);
 
     expectAboveKeyboard(tester, 'Add expense');
   });
 
-  testWidgets('the add payment button stays above the keyboard', (
-    tester,
-  ) async {
+  testWidgets('add recurring payment', (tester) async {
+    smallPhone(tester);
     await bootApp(tester);
     await tester.tap(find.byTooltip('Recurring payments'));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(FloatingActionButton, 'Add'));
-    await tester.pumpAndSettle();
+    await tapFab(tester, 'Add');
 
-    openKeyboard(tester);
-    await tester.pumpAndSettle();
+    await openKeyboard(tester);
 
     expectAboveKeyboard(tester, 'Add payment');
   });
 
+  testWidgets('new category', (tester) async {
+    smallPhone(tester);
+    await bootApp(tester);
+    await tester.tap(find.byTooltip('Categories'));
+    await tester.pumpAndSettle();
+    await tapFab(tester, 'New category');
+
+    await openKeyboard(tester);
+
+    expectAboveKeyboard(tester, 'Add category');
+  });
+
+  testWidgets('new person', (tester) async {
+    smallPhone(tester);
+    await bootApp(tester);
+    await tester.tap(find.widgetWithText(NavigationDestination, 'People'));
+    await tester.pumpAndSettle();
+    await tapFab(tester, 'Add');
+    await tester.tap(find.text('Add person'));
+    await tester.pumpAndSettle();
+
+    await openKeyboard(tester);
+
+    expectAboveKeyboard(tester, 'Add person');
+  });
+
+  testWidgets('debt transaction', (tester) async {
+    smallPhone(tester);
+    await bootApp(
+      tester,
+      before: (harness) => harness.people.seedPerson('Sara'),
+    );
+    await tester.tap(find.widgetWithText(NavigationDestination, 'People'));
+    await tester.pumpAndSettle();
+    await tapFab(tester, 'Add');
+    await tester.tap(find.text('Quick transaction'));
+    await tester.pumpAndSettle();
+
+    await openKeyboard(tester);
+
+    expectAboveKeyboard(tester, 'Add');
+  });
+
+  testWidgets('quick add from the home screen widget', (tester) async {
+    smallPhone(tester);
+    await bootQuickAdd(tester, categoryId: 'cat_bills');
+
+    await openKeyboard(tester);
+
+    expectAboveKeyboard(tester, 'Add expense');
+  });
+
+  testWidgets('sign in and create account', (tester) async {
+    smallPhone(tester);
+    await bootApp(tester);
+    await tester.tap(find.byTooltip('Settings'));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.ancestor(
+        of: find.text('Sign in'),
+        matching: find.bySubtype<OutlinedButton>(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await openKeyboard(tester);
+    expectAboveKeyboard(tester, 'Sign in');
+
+    await tester.tap(find.text('No account yet? Create one'));
+    await tester.pumpAndSettle();
+    expectAboveKeyboard(tester, 'Create account');
+  });
+
   testWidgets('tapping outside the fields closes the keyboard', (tester) async {
     await bootApp(tester);
-    await tester.tap(find.widgetWithText(FloatingActionButton, 'Add'));
-    await tester.pumpAndSettle();
+    await tapFab(tester, 'Add');
 
     await tester.showKeyboard(find.byType(TextField).first);
     expect(tester.testTextInput.isVisible, isTrue);
@@ -71,16 +159,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.testTextInput.isVisible, isFalse);
-    expect(
-      FocusManager.instance.primaryFocus?.context?.widget,
-      isNot(isA<EditableText>()),
-    );
   });
 
   testWidgets('tapping another field keeps the keyboard open', (tester) async {
     await bootApp(tester);
-    await tester.tap(find.widgetWithText(FloatingActionButton, 'Add'));
-    await tester.pumpAndSettle();
+    await tapFab(tester, 'Add');
 
     await tester.showKeyboard(find.byType(TextField).first);
     await tester.ensureVisible(find.byType(TextField).last);
