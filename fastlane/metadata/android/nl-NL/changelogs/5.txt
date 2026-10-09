@@ -1,4 +1,7 @@
-Nieuw bij Analyses:
-• Tik op een kant-en-klare vraag (topcategorie, grootste uitgave, duurste weekdag, schatting maandeinde, sparen, budget over en meer) voor direct antwoord
-• Vergelijk twee maanden naast elkaar, met een grafiek
-• De categorieënring toont nu het pictogram en aandeel van elke categorie
+Nieuw in deze versie:
+• Start: bekijk een dag, week, maand of jaar
+• Analyses: kant-en-klare vragen en twee maanden vergelijken met een grafiek
+• Tik op een categorie om de transacties achter het totaal te zien
+• Kies je valuta uit een lijst met zoeken en vlaggen
+• Een categorienaam kan niet meer dubbel worden toegevoegd
+• Het toetsenbord verbergt de opslagknoppen niet meer

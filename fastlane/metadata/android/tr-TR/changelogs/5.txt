@@ -1,4 +1,7 @@
-Analiz sekmesinde yeni:
-• Hazır bir soruya dokun (en çok harcanan kategori, en büyük harcama, en yoğun gün, ay sonu tahmini, birikim, kalan bütçe ve dahası), cevabı anında gör
-• İki ayı grafikle yan yana karşılaştır
-• Kategori halkası artık her kategorinin simgesini ve payını gösteriyor
+Bu sürümde yeni:
+• Ana sayfa: gün, hafta, ay veya yıl görünümü
+• Analiz: hazır sorular ve iki ayı grafikle karşılaştırma
+• Toplamın ardındaki işlemleri görmek için kategoriye dokun
+• Para birimini arama ve bayraklı listeden seç
+• Aynı adla ikinci bir kategori artık eklenemez
+• Klavye artık kaydet düğmelerini kapatmıyor

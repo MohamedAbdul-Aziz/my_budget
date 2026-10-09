@@ -1,4 +1,7 @@
-Nowości w Analizach:
-• Dotknij gotowego pytania (główna kategoria, największy wydatek, najdroższy dzień tygodnia, prognoza na koniec miesiąca, oszczędności, pozostały budżet i inne), by od razu zobaczyć odpowiedź
-• Porównaj dowolne dwa miesiące na wykresie
-• Pierścień kategorii pokazuje teraz ikonę i udział każdej
+Nowości:
+• Ekran główny: dzień, tydzień, miesiąc lub rok
+• Analizy: gotowe pytania i porównanie dwóch miesięcy na wykresie
+• Dotknij kategorii, by zobaczyć transakcje składające się na sumę
+• Wybierz walutę z listy z wyszukiwaniem i flagami
+• Nie można już dodać dwa razy kategorii o tej samej nazwie
+• Klawiatura nie zasłania już przycisków zapisu

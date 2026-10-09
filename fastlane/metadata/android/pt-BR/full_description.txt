@@ -6,6 +6,8 @@ GASTOS E RECEITAS
 • Use as categorias prontas ou crie as suas com um ícone e uma cor
 • Pesquise em todos os meses por nota ou valor, e filtre por tipo, categoria e datas
 • Apagou algo por engano? Desfaça na hora
+• Veja um dia, uma semana, um mês ou um ano, e navegue entre eles
+• Toque numa categoria para ver todas as transações por trás do total
 
 ORÇAMENTOS
 • Defina um orçamento mensal e limites por categoria

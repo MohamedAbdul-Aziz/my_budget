@@ -6,6 +6,8 @@ GASTOS E INGRESOS
 • Usa las categorías incluidas o crea las tuyas con un icono y un color
 • Busca en todos los meses por nota o importe, y filtra por tipo, categoría y fechas
 • ¿Borraste algo por error? Deshazlo al instante
+• Ve un día, una semana, un mes o un año, y muévete entre ellos
+• Toca una categoría para ver todos los movimientos detrás de su total
 
 PRESUPUESTOS
 • Define un presupuesto mensual y límites por categoría

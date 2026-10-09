@@ -15,6 +15,8 @@ EXPENSES AND INCOME
 • Use the built-in categories, or create your own with an icon and a colour
 • Search every month by note or amount, and filter by type, category and dates
 • Deleted something by mistake? Undo it straight away
+• See a day, a week, a month or a year, and step back and forth
+• Tap a category to see every transaction behind its total
 
 BUDGETS
 • Set a monthly budget and limits for individual categories

@@ -6,6 +6,8 @@ PERBELANJAAN DAN PENDAPATAN
 • Guna kategori sedia ada atau cipta kategori sendiri dengan ikon dan warna
 • Cari dalam semua bulan mengikut nota atau jumlah, dan tapis mengikut jenis, kategori dan tarikh
 • Terpadam secara tidak sengaja? Buat asal dengan segera
+• Lihat sehari, seminggu, sebulan atau setahun, dan gerak ke depan atau belakang
+• Ketik kategori untuk melihat semua transaksi di sebalik jumlahnya
 
 BAJET
 • Tetapkan bajet bulanan dan had untuk kategori tertentu

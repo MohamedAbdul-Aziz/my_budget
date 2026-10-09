@@ -6,6 +6,8 @@ SPESE ED ENTRATE
 • Usa le categorie predefinite o crea le tue con un'icona e un colore
 • Cerca in tutti i mesi per nota o importo e filtra per tipo, categoria e date
 • Hai eliminato qualcosa per errore? Annulla subito
+• Vedi un giorno, una settimana, un mese o un anno, e spostati avanti e indietro
+• Tocca una categoria per vedere tutte le operazioni dietro il totale
 
 BUDGET
 • Imposta un budget mensile e limiti per singola categoria

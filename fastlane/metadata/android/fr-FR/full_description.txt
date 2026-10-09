@@ -6,6 +6,8 @@ DÉPENSES ET REVENUS
 • Utilisez les catégories fournies ou créez les vôtres avec une icône et une couleur
 • Recherchez dans tous les mois par note ou montant, et filtrez par type, catégorie et dates
 • Supprimé par erreur ? Annulez tout de suite
+• Affichez un jour, une semaine, un mois ou une année, et naviguez de l’un à l’autre
+• Touchez une catégorie pour voir toutes les opérations derrière son total
 
 BUDGETS
 • Fixez un budget mensuel et des plafonds par catégorie

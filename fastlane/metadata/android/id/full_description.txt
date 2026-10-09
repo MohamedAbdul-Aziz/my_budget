@@ -6,6 +6,8 @@ PENGELUARAN DAN PEMASUKAN
 • Gunakan kategori bawaan atau buat sendiri dengan ikon dan warna
 • Cari di semua bulan berdasarkan catatan atau jumlah, lalu saring menurut jenis, kategori, dan tanggal
 • Terhapus tidak sengaja? Langsung batalkan
+• Lihat per hari, minggu, bulan, atau tahun, lalu geser maju mundur
+• Ketuk kategori untuk melihat semua transaksi di balik totalnya
 
 ANGGARAN
 • Tetapkan anggaran bulanan dan batas untuk kategori tertentu

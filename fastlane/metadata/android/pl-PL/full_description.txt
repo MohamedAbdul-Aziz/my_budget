@@ -6,6 +6,8 @@ WYDATKI I PRZYCHODY
 • Korzystaj z gotowych kategorii lub twórz własne z ikoną i kolorem
 • Przeszukuj wszystkie miesiące po notatce lub kwocie i filtruj według typu, kategorii i dat
 • Coś usunięte przez pomyłkę? Cofnij to od razu
+• Przeglądaj dzień, tydzień, miesiąc lub rok i przechodź wstecz i dalej
+• Dotknij kategorii, by zobaczyć wszystkie transakcje składające się na sumę
 
 BUDŻETY
 • Ustal budżet miesięczny i limity dla poszczególnych kategorii

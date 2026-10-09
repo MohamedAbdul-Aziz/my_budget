@@ -1,4 +1,7 @@
-New on the Analyses tab:
-• Tap a ready-made question (top category, biggest expense, busiest weekday, month-end estimate, savings, budget left and more) for an instant answer
-• Compare any two months side by side, with a chart
-• The category ring now shows each category’s icon and share
+New in this version:
+• Home: see a day, a week, a month or a year
+• Analyses: tap a ready-made question, and compare any two months with a chart
+• Tap a category to see the transactions behind its total
+• Pick your currency from a searchable list with flags
+• A category name can no longer be added twice
+• The keyboard no longer hides the save buttons

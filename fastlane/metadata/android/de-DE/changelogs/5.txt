@@ -1,4 +1,7 @@
-Neu unter Analysen:
-• Tippe auf eine fertige Frage (Top-Kategorie, größte Ausgabe, teuerster Wochentag, Prognose zum Monatsende, Ersparnis, Budget übrig und mehr) und erhalte sofort die Antwort
-• Vergleiche zwei beliebige Monate nebeneinander, mit Diagramm
-• Der Kategorienring zeigt jetzt Symbol und Anteil jeder Kategorie
+Neu in dieser Version:
+• Start: Tag, Woche, Monat oder Jahr anzeigen
+• Analysen: fertige Fragen und zwei Monate im Diagramm vergleichen
+• Tippe auf eine Kategorie, um die Buchungen hinter ihrer Summe zu sehen
+• Währung aus einer Liste mit Suche und Flaggen wählen
+• Kategorienamen lassen sich nicht mehr doppelt anlegen
+• Die Tastatur verdeckt die Speichern-Knöpfe nicht mehr

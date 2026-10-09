@@ -6,6 +6,8 @@ AUSGABEN UND EINNAHMEN
 • Nutze die vorhandenen Kategorien oder lege eigene mit Symbol und Farbe an
 • Durchsuche alle Monate nach Notiz oder Betrag und filtere nach Art, Kategorie und Zeitraum
 • Versehentlich gelöscht? Sofort rückgängig machen
+• Zeige einen Tag, eine Woche, einen Monat oder ein Jahr und blättere vor und zurück
+• Tippe auf eine Kategorie, um alle Buchungen hinter ihrer Summe zu sehen
 
 BUDGETS
 • Lege ein Monatsbudget und Limits für einzelne Kategorien fest

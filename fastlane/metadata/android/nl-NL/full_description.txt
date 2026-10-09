@@ -6,6 +6,8 @@ UITGAVEN EN INKOMSTEN
 • Gebruik de standaardcategorieën of maak je eigen met een icoon en een kleur
 • Zoek in alle maanden op notitie of bedrag en filter op type, categorie en datum
 • Per ongeluk iets verwijderd? Maak het meteen ongedaan
+• Bekijk een dag, week, maand of jaar en blader vooruit en terug
+• Tik op een categorie om alle transacties achter het totaal te zien
 
 BUDGETTEN
 • Stel een maandbudget en limieten per categorie in

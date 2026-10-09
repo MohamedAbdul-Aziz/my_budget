@@ -6,6 +6,8 @@ HARCAMALAR VE GELİRLER
 • Hazır kategorileri kullan ya da simge ve renkle kendi kategorilerini oluştur
 • Tüm aylarda not veya tutara göre ara; türe, kategoriye ve tarihe göre filtrele
 • Yanlışlıkla mı sildin? Hemen geri al
+• Gün, hafta, ay veya yıl görünümü; ileri geri kolayca geç
+• Toplamın ardındaki tüm işlemleri görmek için kategoriye dokun
 
 BÜTÇELER
 • Aylık bütçe ve kategorilere özel limitler belirle

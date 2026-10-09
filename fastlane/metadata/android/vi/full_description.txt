@@ -6,6 +6,8 @@ CHI TIÊU VÀ THU NHẬP
 • Dùng danh mục có sẵn hoặc tự tạo với biểu tượng và màu sắc
 • Tìm trong mọi tháng theo ghi chú hoặc số tiền, lọc theo loại, danh mục và ngày
 • Lỡ xóa nhầm? Hoàn tác ngay
+• Xem theo ngày, tuần, tháng hoặc năm và chuyển qua lại dễ dàng
+• Chạm vào danh mục để xem mọi giao dịch tạo nên tổng
 
 NGÂN SÁCH
 • Đặt ngân sách hằng tháng và hạn mức cho từng danh mục

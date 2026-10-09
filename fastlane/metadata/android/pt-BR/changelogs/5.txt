@@ -1,4 +1,7 @@
-Novidades em Análises:
-• Toque numa pergunta pronta (categoria principal, maior despesa, dia de mais gasto, estimativa do mês, economia, orçamento restante e mais) para ver a resposta na hora
-• Compare dois meses lado a lado, com um gráfico
-• O anel de categorias agora mostra o ícone e a fatia de cada uma
+Novidades:
+• Início: veja um dia, uma semana, um mês ou um ano
+• Análises: perguntas prontas e compare dois meses com um gráfico
+• Toque numa categoria para ver as transações por trás do total
+• Escolha sua moeda numa lista com busca e bandeiras
+• Não dá mais para criar duas categorias com o mesmo nome
+• O teclado não cobre mais os botões de salvar

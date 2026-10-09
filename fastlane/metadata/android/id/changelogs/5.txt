@@ -1,4 +1,7 @@
-Baru di tab Analisis:
-• Ketuk pertanyaan siap pakai (kategori teratas, pengeluaran terbesar, hari tersibuk, perkiraan akhir bulan, tabungan, sisa anggaran, dan lainnya) untuk jawaban instan
-• Bandingkan dua bulan mana pun berdampingan, lengkap dengan grafik
-• Lingkaran kategori kini menampilkan ikon dan porsi tiap kategori
+Baru di versi ini:
+• Beranda: lihat per hari, minggu, bulan, atau tahun
+• Analisis: pertanyaan siap pakai dan bandingkan dua bulan dengan grafik
+• Ketuk kategori untuk melihat transaksi di balik totalnya
+• Pilih mata uang dari daftar dengan pencarian dan bendera
+• Nama kategori yang sama tidak bisa ditambahkan dua kali
+• Keyboard tidak lagi menutupi tombol simpan

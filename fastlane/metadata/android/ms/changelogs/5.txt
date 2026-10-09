@@ -1,4 +1,7 @@
-Baharu dalam tab Analisis:
-• Ketik soalan sedia ada (kategori utama, perbelanjaan terbesar, hari paling sibuk, anggaran hujung bulan, simpanan, baki bajet dan banyak lagi) untuk jawapan segera
-• Banding mana-mana dua bulan sebelah-menyebelah, dengan carta
-• Gelang kategori kini menunjukkan ikon dan bahagian setiap kategori
+Baharu dalam versi ini:
+• Utama: lihat sehari, seminggu, sebulan atau setahun
+• Analisis: soalan sedia ada dan bandingkan dua bulan dengan carta
+• Ketik kategori untuk melihat transaksi di sebalik jumlahnya
+• Pilih mata wang daripada senarai dengan carian dan bendera
+• Nama kategori yang sama tidak lagi boleh ditambah dua kali
+• Papan kekunci tidak lagi menutup butang simpan
