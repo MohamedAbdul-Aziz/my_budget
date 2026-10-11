@@ -1,6 +1,12 @@
-✓ Tanpa iklan   ✓ Berfungsi luar talian   ✓ Tanpa akaun
+✓ Tanpa iklan   ✓ Berfungsi luar talian   ✓ Tanpa akaun   ✓ Pembantu AI
 
 Bajet Saya ialah cara mudah dan peribadi untuk mengetahui ke mana wang anda pergi. Rekod perbelanjaan dan pendapatan dalam beberapa saat, tetapkan bajet, pantau bil dan hutang bersama, dan ikuti carta yang jelas, semuanya di telefon anda. Aplikasi ini berfungsi sepenuhnya di luar talian; akaun adalah pilihan, untuk menyandarkan data ke awan dan memulihkannya pada mana-mana telefon. Anda juga boleh menyimpan fail sandaran pada telefon dan memulihkannya bila-bila masa, tanpa akaun.
+
+PEMBANTU AI
+• Tanya tentang wang anda dengan kata-kata sendiri: “Di mana saya boleh berjimat?” atau “Bagaimana bulan ini?”
+• Jawapan yang jelas, dengan cadangan soalan susulan untuk mengetahui lebih lanjut
+• Tanpa akaun: secara lalai ia hanya melihat ringkasan jumlah anda
+• Pilih tempoh dan apa lagi yang boleh dilihat; sembang anda kekal di telefon
 
 PERBELANJAAN DAN PENDAPATAN
 • Tambah transaksi dalam beberapa saat: jumlah, kategori, tarikh dan nota pilihan
@@ -31,7 +37,6 @@ ANALISIS
 • Baki bersih dan kadar simpanan
 • Tanya soalan sedia ada: kategori utama, perbelanjaan terbesar, anggaran hujung bulan, simpanan dan banyak lagi
 • Banding mana-mana dua bulan sebelah-menyebelah, dengan carta
-• Pembantu AI pilihan: tanya tentang perbelanjaan anda dengan kata-kata sendiri, tanpa akaun
 
 WIDGET SKRIN UTAMA
 Lihat jumlah bulan ini di skrin utama dan tambah perbelanjaan daripada kategori yang paling kerap digunakan tanpa membuka aplikasi.

@@ -1,6 +1,12 @@
-✓ Không quảng cáo   ✓ Dùng ngoại tuyến   ✓ Không cần tài khoản
+✓ Không quảng cáo   ✓ Dùng ngoại tuyến   ✓ Không cần tài khoản   ✓ Trợ lý AI
 
 Ngân sách của tôi là cách đơn giản và riêng tư để biết tiền của bạn đi đâu. Ghi chi tiêu và thu nhập trong vài giây, đặt ngân sách, theo dõi hóa đơn và các khoản nợ chung, xem biểu đồ rõ ràng, tất cả ngay trên điện thoại. Ứng dụng hoạt động hoàn toàn ngoại tuyến; tạo tài khoản là tùy chọn, để sao lưu dữ liệu lên đám mây và khôi phục trên bất kỳ điện thoại nào. Bạn cũng có thể lưu tệp sao lưu ngay trên điện thoại và khôi phục bất cứ lúc nào, không cần tài khoản.
+
+TRỢ LÝ AI
+• Hỏi về tiền của bạn bằng lời của mình: “Tôi có thể tiết kiệm ở đâu?” hay “Tháng này thế nào?”
+• Câu trả lời rõ ràng, kèm gợi ý câu hỏi tiếp theo để tìm hiểu sâu hơn
+• Không cần tài khoản: theo mặc định trợ lý chỉ xem bản tóm tắt các khoản tổng
+• Chọn khoảng thời gian và những gì khác trợ lý được xem; trò chuyện được lưu trên điện thoại
 
 CHI TIÊU VÀ THU NHẬP
 • Thêm giao dịch trong vài giây: số tiền, danh mục, ngày và ghi chú tùy chọn
@@ -31,7 +37,6 @@ PHÂN TÍCH
 • Số dư ròng và tỷ lệ tiết kiệm
 • Hỏi các câu có sẵn: danh mục chính, khoản chi lớn nhất, ước tính cuối tháng, tiết kiệm và hơn thế
 • So sánh hai tháng bất kỳ bằng biểu đồ
-• Trợ lý AI tùy chọn: hỏi về chi tiêu bằng lời của bạn, không cần tài khoản
 
 TIỆN ÍCH MÀN HÌNH CHÍNH
 Xem tổng chi tháng này ngay trên màn hình chính và thêm khoản chi từ các danh mục hay dùng mà không cần mở ứng dụng.

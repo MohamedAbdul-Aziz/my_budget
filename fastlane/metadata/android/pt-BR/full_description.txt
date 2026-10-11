@@ -1,6 +1,12 @@
-✓ Sem anúncios   ✓ Funciona offline   ✓ Sem conta
+✓ Sem anúncios   ✓ Funciona offline   ✓ Sem conta   ✓ Assistente de IA
 
 Meu Orçamento é um jeito simples e privado de saber para onde vai o seu dinheiro. Registre gastos e receitas em segundos, defina orçamentos, acompanhe contas e dívidas compartilhadas e veja gráficos claros, tudo no seu celular. Funciona totalmente offline; criar uma conta é opcional, para fazer backup na nuvem e restaurar seus dados em qualquer celular. Você também pode salvar um backup no celular e restaurá-lo quando quiser, sem conta.
+
+ASSISTENTE DE IA
+• Pergunte sobre seu dinheiro com suas palavras: “Onde posso economizar?” ou “Como foi este mês?”
+• Respostas claras, com perguntas de acompanhamento sugeridas para ir mais fundo
+• Sem conta: por padrão ele só vê um resumo dos seus totais
+• Escolha o período e o que mais ele pode ver; suas conversas ficam no celular
 
 GASTOS E RECEITAS
 • Adicione uma transação em segundos: valor, categoria, data e uma nota opcional
@@ -31,7 +37,6 @@ ANÁLISES
 • Saldo líquido e taxa de poupança
 • Faça perguntas prontas: categoria principal, maior despesa, estimativa do fim do mês, economia e mais
 • Compare dois meses lado a lado, com um gráfico
-• Assistente de IA opcional: pergunte sobre seus gastos com suas palavras, sem conta
 
 WIDGET DA TELA INICIAL
 Veja o total do mês na tela inicial e adicione um gasto das categorias que você mais usa sem abrir o app.

@@ -1,6 +1,12 @@
-✓ Zonder advertenties   ✓ Werkt offline   ✓ Geen account nodig
+✓ Zonder advertenties   ✓ Werkt offline   ✓ Geen account nodig   ✓ AI-assistent
 
 Mijn Budget laat je eenvoudig en privé zien waar je geld naartoe gaat. Noteer uitgaven en inkomsten in een paar seconden, stel budgetten in, houd rekeningen en gedeelde schulden bij en volg duidelijke grafieken, allemaal op je telefoon. De app werkt volledig offline; een account is optioneel, voor een back-up in de cloud en herstel op elke telefoon. Je kunt ook een back-upbestand op je telefoon bewaren en het altijd terugzetten, zonder account.
+
+AI-ASSISTENT
+• Vraag in je eigen woorden naar je geld: “Waar kan ik besparen?” of “Hoe ging deze maand?”
+• Duidelijke antwoorden, met voorgestelde vervolgvragen om verder te kijken
+• Geen account nodig: standaard ziet hij alleen een overzicht van je totalen
+• Kies de periode en wat hij verder mag zien; je chats blijven op je telefoon
 
 UITGAVEN EN INKOMSTEN
 • Voeg in een paar seconden een transactie toe: bedrag, categorie, datum en een optionele notitie
@@ -31,7 +37,6 @@ ANALYSES
 • Nettosaldo en spaarpercentage
 • Stel kant-en-klare vragen: topcategorie, grootste uitgave, schatting voor het maandeinde, sparen en meer
 • Vergelijk twee maanden naast elkaar, met een grafiek
-• Optionele AI-assistent: vraag in je eigen woorden naar je uitgaven, zonder account
 
 WIDGET VOOR HET STARTSCHERM
 Zie het totaal van de maand op je startscherm en voeg een uitgave toe in je meestgebruikte categorieën zonder de app te openen.

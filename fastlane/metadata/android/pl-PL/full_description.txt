@@ -1,6 +1,12 @@
-✓ Bez reklam   ✓ Działa offline   ✓ Bez konta
+✓ Bez reklam   ✓ Działa offline   ✓ Bez konta   ✓ Asystent AI
 
 Mój Budżet to prosty i prywatny sposób, by wiedzieć, na co idą Twoje pieniądze. Zapisuj wydatki i przychody w kilka sekund, ustalaj budżety, pilnuj rachunków i wspólnych długów oraz śledź przejrzyste wykresy, wszystko na telefonie. Aplikacja działa całkowicie offline; konto jest opcjonalne i służy do kopii zapasowej w chmurze oraz przywracania danych na dowolnym telefonie. Możesz też zapisać kopię zapasową na telefonie i przywrócić ją w dowolnej chwili, bez konta.
+
+ASYSTENT AI
+• Pytaj o pieniądze własnymi słowami: „Gdzie mogę zaoszczędzić?” albo „Jak minął ten miesiąc?”
+• Jasne odpowiedzi z proponowanymi pytaniami, by dowiedzieć się więcej
+• Bez konta: domyślnie widzi tylko podsumowanie Twoich sum
+• Wybierz okres i co jeszcze może widzieć; czaty zostają na telefonie
 
 WYDATKI I PRZYCHODY
 • Dodaj transakcję w kilka sekund: kwota, kategoria, data i opcjonalna notatka
@@ -31,7 +37,6 @@ ANALIZY
 • Saldo netto i stopa oszczędności
 • Gotowe pytania: główna kategoria, największy wydatek, prognoza na koniec miesiąca, oszczędności i więcej
 • Porównaj dowolne dwa miesiące na wykresie
-• Opcjonalny asystent AI: pytaj o swoje wydatki własnymi słowami, bez konta
 
 WIDŻET NA EKRANIE GŁÓWNYM
 Zobacz sumę z bieżącego miesiąca na ekranie głównym i dodaj wydatek w najczęściej używanych kategoriach bez otwierania aplikacji.

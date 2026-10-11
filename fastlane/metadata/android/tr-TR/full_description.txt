@@ -1,6 +1,12 @@
-✓ Reklamsız   ✓ Çevrimdışı çalışır   ✓ Hesap gerekmez
+✓ Reklamsız   ✓ Çevrimdışı çalışır   ✓ Hesap gerekmez   ✓ YZ asistanı
 
 Bütçem, paranın nereye gittiğini görmenin basit ve gizli bir yolu. Harcama ve gelirlerini saniyeler içinde kaydet, bütçe belirle, faturaları ve ortak borçları takip et, net grafiklerle izle; hepsi telefonunda. Uygulama tamamen çevrimdışı çalışır; hesap oluşturmak isteğe bağlıdır ve verilerini buluta yedekleyip herhangi bir telefonda geri yüklemek içindir. Ayrıca hesap olmadan telefonuna bir yedek dosyası kaydedip istediğin zaman geri yükleyebilirsin.
+
+YZ ASİSTANI
+• Paranı kendi sözlerinle sor: “Nerede tasarruf edebilirim?” ya da “Bu ay nasıl geçti?”
+• Net yanıtlar ve daha fazlası için önerilen devam soruları
+• Hesap gerekmez: varsayılan olarak yalnızca toplamlarının özetini görür
+• Dönemi ve başka neleri görebileceğini sen seç; sohbetlerin telefonunda kalır
 
 HARCAMALAR VE GELİRLER
 • Saniyeler içinde işlem ekle: tutar, kategori, tarih ve isteğe bağlı not
@@ -31,7 +37,6 @@ ANALİZLER
 • Net bakiye ve tasarruf oranı
 • Hazır sorular sor: en çok harcanan kategori, en büyük harcama, ay sonu tahmini, birikim ve dahası
 • İki ayı grafikle yan yana karşılaştır
-• İsteğe bağlı YZ asistanı: harcamalarını kendi sözlerinle sor, hesap gerekmez
 
 ANA EKRAN WIDGET'I
 Ayın toplamını ana ekranında gör ve en çok kullandığın kategorilerden uygulamayı açmadan harcama ekle.

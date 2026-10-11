@@ -1,6 +1,12 @@
-✓ Tanpa iklan   ✓ Bisa offline   ✓ Tanpa akun
+✓ Tanpa iklan   ✓ Bisa offline   ✓ Tanpa akun   ✓ Asisten AI
 
 Anggaranku adalah cara sederhana dan pribadi untuk tahu ke mana uangmu pergi. Catat pengeluaran dan pemasukan dalam hitungan detik, atur anggaran, pantau tagihan dan utang bersama, serta lihat grafik yang jelas, semuanya di ponselmu. Aplikasi ini berfungsi sepenuhnya offline; membuat akun bersifat opsional, untuk mencadangkan data ke cloud dan memulihkannya di ponsel mana pun. Kamu juga bisa menyimpan file cadangan di ponsel dan memulihkannya kapan saja, tanpa akun.
+
+ASISTEN AI
+• Tanyakan soal uangmu dengan kata-katamu: “Di mana saya bisa berhemat?” atau “Bagaimana bulan ini?”
+• Jawaban jelas, dengan saran pertanyaan lanjutan untuk menggali lebih dalam
+• Tanpa akun: secara bawaan hanya melihat ringkasan totalmu
+• Pilih periode dan apa lagi yang boleh dilihat; obrolanmu tetap di ponsel
 
 PENGELUARAN DAN PEMASUKAN
 • Tambahkan transaksi dalam hitungan detik: jumlah, kategori, tanggal, dan catatan opsional
@@ -31,7 +37,6 @@ ANALISIS
 • Saldo bersih dan tingkat tabungan
 • Ajukan pertanyaan siap pakai: kategori teratas, pengeluaran terbesar, perkiraan akhir bulan, tabungan, dan lainnya
 • Bandingkan dua bulan mana pun berdampingan, lengkap dengan grafik
-• Asisten AI opsional: tanyakan pengeluaranmu dengan kata-katamu sendiri, tanpa akun
 
 WIDGET LAYAR UTAMA
 Lihat total bulan ini di layar utama dan tambahkan pengeluaran dari kategori yang paling sering dipakai tanpa membuka aplikasi.

@@ -1,6 +1,12 @@
-✓ Ohne Werbung   ✓ Offline nutzbar   ✓ Ohne Konto
+✓ Ohne Werbung   ✓ Offline nutzbar   ✓ Ohne Konto   ✓ KI-Assistent
 
 Mein Budget zeigt dir einfach und privat, wohin dein Geld geht. Erfasse Ausgaben und Einnahmen in Sekunden, lege Budgets fest, behalte Rechnungen und geteilte Schulden im Blick und verfolge übersichtliche Diagramme, alles auf deinem Handy. Die App funktioniert komplett offline; ein Konto ist optional und dient der Cloud-Sicherung und Wiederherstellung auf jedem Handy. Du kannst auch eine Sicherung auf deinem Handy speichern und sie jederzeit wiederherstellen, ganz ohne Konto.
+
+KI-ASSISTENT
+• Frag in eigenen Worten nach deinem Geld: „Wo kann ich sparen?“ oder „Wie lief dieser Monat?“
+• Klare Antworten, mit vorgeschlagenen Folgefragen zum Nachhaken
+• Ohne Konto: standardmäßig sieht er nur eine Zusammenfassung deiner Summen
+• Wähle den Zeitraum und was er sonst sehen darf; deine Chats bleiben auf deinem Handy
 
 AUSGABEN UND EINNAHMEN
 • Buchung in Sekunden: Betrag, Kategorie, Datum und eine optionale Notiz
@@ -31,7 +37,6 @@ AUSWERTUNGEN
 • Nettosaldo und Sparquote
 • Stelle fertige Fragen: Top-Kategorie, größte Ausgabe, Prognose zum Monatsende, Ersparnis und mehr
 • Vergleiche zwei beliebige Monate nebeneinander, mit Diagramm
-• Optionaler KI-Assistent: Frag in eigenen Worten nach deinen Ausgaben, ganz ohne Konto
 
 STARTBILDSCHIRM-WIDGET
 Sieh die Monatssumme auf dem Startbildschirm und erfasse eine Ausgabe in deinen meistgenutzten Kategorien, ohne die App zu öffnen.

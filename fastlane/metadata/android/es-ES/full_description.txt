@@ -1,6 +1,12 @@
-✓ Sin anuncios   ✓ Sin internet   ✓ Sin cuenta
+✓ Sin anuncios   ✓ Sin internet   ✓ Sin cuenta   ✓ Asistente de IA
 
 Mi Presupuesto es una forma sencilla y privada de saber adónde va tu dinero. Registra gastos e ingresos en segundos, define presupuestos, controla facturas y deudas compartidas y consulta gráficos claros, todo en tu teléfono. Funciona totalmente sin conexión; crear una cuenta es opcional, para guardar tus datos en la nube y restaurarlos en cualquier teléfono. También puedes guardar una copia de seguridad en tu teléfono y restaurarla cuando quieras, sin cuenta.
+
+ASISTENTE DE IA
+• Pregunta por tu dinero con tus palabras: «¿Dónde puedo ahorrar?» o «¿Cómo fue este mes?»
+• Respuestas claras, con preguntas de seguimiento sugeridas para profundizar
+• Sin cuenta: por defecto solo ve un resumen de tus totales
+• Elige el período y qué más puede ver; tus chats se quedan en tu teléfono
 
 GASTOS E INGRESOS
 • Añade un movimiento en segundos: importe, categoría, fecha y una nota opcional
@@ -31,7 +37,6 @@ ANÁLISIS
 • Saldo neto y tasa de ahorro
 • Haz preguntas listas: categoría principal, mayor gasto, estimación de fin de mes, ahorro y más
 • Compara dos meses cualesquiera, lado a lado y con un gráfico
-• Asistente de IA opcional: pregunta por tus gastos con tus propias palabras, sin cuenta
 
 WIDGET DE PANTALLA DE INICIO
 Ve el total del mes en tu pantalla de inicio y añade un gasto de tus categorías más usadas sin abrir la app.

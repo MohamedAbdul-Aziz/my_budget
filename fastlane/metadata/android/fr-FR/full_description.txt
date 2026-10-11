@@ -1,6 +1,12 @@
-✓ Sans pub   ✓ Hors ligne   ✓ Sans compte
+✓ Sans pub   ✓ Hors ligne   ✓ Sans compte   ✓ Assistant IA
 
 Mon Budget est une façon simple et privée de savoir où va votre argent. Enregistrez dépenses et revenus en quelques secondes, fixez des budgets, gardez un œil sur vos factures et vos dettes partagées, et suivez des graphiques clairs, le tout sur votre téléphone. L'application fonctionne entièrement hors ligne ; créer un compte est facultatif, pour sauvegarder vos données dans le cloud et les restaurer sur n'importe quel téléphone. Vous pouvez aussi enregistrer une sauvegarde sur votre téléphone et la restaurer à tout moment, sans compte.
+
+ASSISTANT IA
+• Posez vos questions avec vos mots : « Où économiser ? », « Bilan du mois ? »
+• Des réponses claires et des questions de suivi suggérées
+• Sans compte : par défaut, il ne voit qu’un résumé de vos totaux
+• Choisissez la période et ce qu’il voit ; vos chats restent sur le téléphone
 
 DÉPENSES ET REVENUS
 • Ajoutez une opération en quelques secondes : montant, catégorie, date et note facultative
@@ -31,7 +37,6 @@ ANALYSES
 • Solde net et taux d'épargne
 • Posez des questions toutes prêtes : catégorie principale, plus grosse dépense, estimation de fin de mois, épargne et plus
 • Comparez deux mois côte à côte, avec un graphique
-• Assistant IA facultatif : posez vos questions sur vos dépenses avec vos propres mots, sans compte
 
 WIDGET D'ÉCRAN D'ACCUEIL
 Affichez le total du mois sur votre écran d'accueil et ajoutez une dépense dans vos catégories favorites sans ouvrir l'application.

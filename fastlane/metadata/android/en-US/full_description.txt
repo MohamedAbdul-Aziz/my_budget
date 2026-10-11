@@ -1,8 +1,14 @@
-✓ No ads   ✓ Works offline   ✓ No account needed
+✓ No ads   ✓ Works offline   ✓ No account needed   ✓ AI assistant
 
 My Budget shows you exactly where your money goes. Record expenses and income in seconds, set budgets, keep on top of bills and shared debts, and follow clear charts, all in one simple app.
 
 Your records live on your phone, and the app works fully offline. Creating an account is optional: sign in with your email to turn on cloud backup and restore everything on any phone in a moment. You can also save a backup file on your phone and restore it any time, no account needed.
+
+AI ASSISTANT
+• Ask about your money in your own words: “Where can I save?” or “How did this month go?”
+• Clear answers, with suggested follow-up questions to dig deeper
+• No account needed: by default it only sees a summary of your totals
+• Choose the period and what else it may see; your chats stay on your phone
 
 CLOUD BACKUP, WHEN YOU WANT IT
 • Sign in with just your email and back up with one tap
@@ -40,7 +46,6 @@ ANALYSES
 • Net balance and savings rate
 • Ask ready-made questions: top category, biggest expense, month-end estimate, savings and more
 • Compare any two months side by side, with a chart
-• Optional AI assistant: ask about your spending in your own words, no account needed
 
 HOME SCREEN WIDGET
 See this month's total on your home screen and add an expense from your most-used categories without opening the app.
