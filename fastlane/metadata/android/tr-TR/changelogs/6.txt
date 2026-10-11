@@ -1,0 +1,6 @@
+Bu sürümdeki yenilikler:
+• YZ asistanı: harcamalarını kendi sözlerinle sor, hesap gerekmez
+• Her yanıttan sonra önerilen devam soruları
+• Asistanın neleri göreceğini seç: dönemi ve istersen işlemleri, notları, düzenli ödemeleri veya kişileri
+• Sohbetlerin telefonunda saklanır: yenisini başlat ya da eskisini aç
+• Herhangi bir yanıtı kopyala veya paylaş

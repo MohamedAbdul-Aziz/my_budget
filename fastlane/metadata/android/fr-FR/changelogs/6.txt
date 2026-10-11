@@ -1,0 +1,6 @@
+Nouveautés de cette version :
+• Assistant IA : posez vos questions sur vos dépenses avec vos propres mots, sans compte
+• Des questions de suivi suggérées après chaque réponse
+• Choisissez ce que voit l’assistant : la période et, si vous le souhaitez, les transactions, notes, paiements récurrents ou personnes
+• Vos chats restent sur votre téléphone : démarrez-en un nouveau ou rouvrez un ancien
+• Copiez ou partagez n’importe quelle réponse

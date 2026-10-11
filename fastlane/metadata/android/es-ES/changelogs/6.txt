@@ -1,0 +1,6 @@
+Novedades de esta versión:
+• Asistente de IA: pregunta por tus gastos con tus propias palabras, sin cuenta
+• Preguntas de seguimiento sugeridas tras cada respuesta
+• Elige qué ve el asistente: el período y, si quieres, movimientos, notas, pagos recurrentes o personas
+• Tus chats se guardan en tu teléfono: empieza uno nuevo o abre uno anterior
+• Copia o comparte cualquier respuesta

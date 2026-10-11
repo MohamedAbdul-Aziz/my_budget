@@ -1,0 +1,6 @@
+Novità di questa versione:
+• Assistente IA: chiedi delle tue spese con parole tue, senza account
+• Domande di approfondimento suggerite dopo ogni risposta
+• Scegli cosa vede l’assistente: il periodo e, se vuoi, transazioni, note, pagamenti ricorrenti o persone
+• Le tue chat restano sul telefono: iniziane una nuova o riapri una vecchia
+• Copia o condividi qualsiasi risposta

@@ -1,0 +1,6 @@
+Nieuw in deze versie:
+• AI-assistent: vraag in je eigen woorden naar je uitgaven, zonder account
+• Voorgestelde vervolgvragen na elk antwoord
+• Kies wat de assistent ziet: de periode en desgewenst transacties, notities, terugkerende betalingen of personen
+• Je chats blijven op je telefoon: begin een nieuwe of open een oude
+• Kopieer of deel elk antwoord
