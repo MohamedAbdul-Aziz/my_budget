@@ -737,7 +737,7 @@ class AppStringsUr extends AppStrings {
       'معاون ابھی دستیاب نہیں ہے۔ بعد میں دوبارہ کوشش کریں۔',
     FailureCode.aiBusy => 'معاون مصروف ہے۔ ایک منٹ بعد کوشش کریں۔',
     FailureCode.aiDailyLimit =>
-      'آپ آج کے 20 سوال پوچھ چکے ہیں۔ کل دوبارہ کوشش کریں۔',
+      'آپ آج معاون کے استعمال کی حد تک پہنچ گئے ہیں۔ کل دوبارہ کوشش کریں۔',
   };
 
   @override
@@ -1366,15 +1366,11 @@ class AppStringsUr extends AppStrings {
   String get assistantSend => 'بھیجیں';
 
   @override
-  String get assistantSignInBody =>
-      'AI معاون استعمال کرنے کے لیے سائن ان کریں۔ ہر اکاؤنٹ روزانہ 20 سوال پوچھ سکتا ہے۔';
-
-  @override
   String get assistantConsentTitle => 'پوچھنے سے پہلے';
 
   @override
   String get assistantConsentBody =>
-      'جواب دینے کے لیے ایپ آپ کا سوال، آپ کے آخری چند پیغامات اور پچھلے تین مہینوں کے آپ کے مجموعوں کا خلاصہ (زمرے کے لحاظ سے، آمدنی، اخراجات اور بجٹ) ہمارے سرور کے ذریعے AI فراہم کنندہ Groq کو بھیجتی ہے۔ تفصیلات، نوٹس اور لوگوں کے نام کبھی نہیں بھیجے جاتے۔ ہم آپ کے سوال اور جواب محفوظ نہیں کرتے؛ ہمارا سرور صرف یہ گنتا ہے کہ آپ روزانہ کتنے سوال پوچھتے ہیں۔ آپ کسی بھی وقت شیئر کرنا بند کر سکتے ہیں۔';
+      'جواب دینے کے لیے ایپ آپ کا سوال، آپ کے آخری چند پیغامات اور آپ کے مجموعوں کا خلاصہ (زمرے کے لحاظ سے، آمدنی، اخراجات اور بجٹ، پچھلے تین مہینوں کا جب تک آپ کوئی اور مدت نہ چنیں) ہمارے سرور کے ذریعے AI فراہم کنندہ Groq کو بھیجتی ہے۔ ڈیفالٹ طور پر اور کچھ نہیں بھیجا جاتا: نہ الگ لین دین، نہ نوٹس، نہ لوگوں کے نام۔ آپ "کیا شیئر کریں" میں زیادہ شیئر کرنا چن سکتے ہیں۔ ہمارا سرور آپ کے سوال اور جواب محفوظ نہیں کرتا؛ وہ صرف یہ گنتا ہے کہ آپ روزانہ کتنے سوال پوچھتے ہیں۔ آپ کسی بھی وقت شیئر کرنا بند کر سکتے ہیں۔';
 
   @override
   String get assistantConsentAgree => 'میں متفق ہوں';
@@ -1392,6 +1388,91 @@ class AppStringsUr extends AppStrings {
     'یہ مہینہ پچھلے مہینے کے مقابلے میں کیسا رہا؟',
     'کیا میں اپنے بجٹ میں ہوں؟',
   ];
+
+  @override
+  String get assistantNewChat => 'نئی چیٹ';
+
+  @override
+  String get assistantHistory => 'چیٹ کی تاریخ';
+
+  @override
+  String get assistantNoChats =>
+      'ابھی کوئی محفوظ چیٹ نہیں۔ معاون کے ساتھ آپ کی چیٹس صرف اسی فون پر رکھی جاتی ہیں۔';
+
+  @override
+  String get assistantDeleteChatTitle => 'یہ چیٹ حذف کریں؟';
+
+  @override
+  String get assistantDeleteAll => 'تمام چیٹس حذف کریں';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'معاون کے ساتھ تمام محفوظ چیٹس اس فون سے حذف ہو جائیں گی۔';
+
+  @override
+  String get assistantSharingTitle => 'کیا شیئر کریں';
+
+  @override
+  String get assistantSharingIntro =>
+      'ہر سوال کے ساتھ آپ کے مجموعوں کا خلاصہ ہمیشہ جاتا ہے۔ جو کچھ اور آپ معاون کو دکھانا چاہیں اسے آن کریں۔';
+
+  @override
+  String get assistantPeriod => 'مدت';
+
+  @override
+  String get assistantRangeThisMonth => 'یہ مہینہ';
+
+  @override
+  String get assistantRangeLast3Months => '3 مہینے';
+
+  @override
+  String get assistantRangeLast6Months => '6 مہینے';
+
+  @override
+  String get assistantRangeThisYear => 'یہ سال';
+
+  @override
+  String get assistantRangeCustom => 'اپنی مرضی کی';
+
+  @override
+  String get assistantShareTransactions => 'لین دین';
+
+  @override
+  String get assistantShareTransactionsHint => 'ہر ایک: رقم، زمرہ اور تاریخ';
+
+  @override
+  String get assistantShareNotes => 'نوٹس';
+
+  @override
+  String get assistantShareNotesHint => 'جو آپ نے ہر لین دین کے ساتھ لکھا';
+
+  @override
+  String get assistantShareRecurring => 'بار بار کی ادائیگیاں';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'بل، سبسکرپشنز اور آمدنی، اور کیا واجب الادا ہے';
+
+  @override
+  String get assistantSharePeople => 'لوگ اور قرض';
+
+  @override
+  String get assistantSharePeopleHint => 'نام، اور کس کا کس پر قرض ہے';
+
+  @override
+  String get assistantSharingReset => 'صرف خلاصہ';
+
+  @override
+  String get assistantSharingMore => 'آپ خلاصے سے زیادہ شیئر کر رہے ہیں۔';
+
+  @override
+  String get assistantCopy => 'کاپی';
+
+  @override
+  String get assistantShare => 'شیئر';
+
+  @override
+  String get assistantCopied => 'جواب کاپی ہو گیا';
 
   @override
   String get otherCategories => 'دیگر';

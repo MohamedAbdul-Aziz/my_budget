@@ -3,11 +3,14 @@ import 'package:my_budget/core/error/api_result.dart';
 import 'package:my_budget/core/error/failures.dart';
 import 'package:my_budget/features/analyses/domain/usecases/get_month_analysis.dart';
 import 'package:my_budget/features/assistant/domain/entities/assistant_message.dart';
+import 'package:my_budget/features/assistant/domain/entities/assistant_reply.dart';
 import 'package:my_budget/features/assistant/domain/usecases/ask_assistant.dart';
 import 'package:my_budget/features/assistant/domain/usecases/build_spending_summary.dart';
 import 'package:my_budget/features/budgets/domain/usecases/get_budget_status.dart';
 import 'package:my_budget/features/expenses/domain/entities/expense.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
+import 'package:my_budget/features/people/domain/usecases/get_people.dart';
+import 'package:my_budget/features/recurring/domain/usecases/get_recurring_overview.dart';
 
 import '../presentation/fakes.dart';
 
@@ -36,10 +39,15 @@ void main() {
         expenseRepository: expenses,
         categoryRepository: categories,
       ),
+      expenseRepository: expenses,
+      getRecurringOverview: GetRecurringOverview(
+        FakeRecurringRepository(categories, expenses),
+      ),
+      getPeople: GetPeople(FakePeopleRepository()),
     ),
   );
 
-  Future<ApiResult<String>> send(
+  Future<ApiResult<AssistantReply>> send(
     String question, {
     List<AssistantMessage> history = const [],
   }) => ask(
@@ -83,7 +91,7 @@ void main() {
 
     final result = await send('  Where can I save?  ');
 
-    expect(result.dataOrNull, 'Spend less on food.');
+    expect(result.dataOrNull?.answer, 'Spend less on food.');
     final sent = assistant.asked.single;
     expect(sent.question, 'Where can I save?');
     expect(sent.languageCode, 'ar');

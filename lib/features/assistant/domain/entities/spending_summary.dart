@@ -177,10 +177,143 @@ class SummaryBudget extends Equatable {
   List<Object?> get props => [period, spent, monthlyLimit, categories];
 }
 
-/// What the assistant is told about the user's money: totals only, rebuilt
-/// from the phone's own data before every question. It deliberately has no
-/// room for descriptions, ids, people or single transactions, so none can
-/// leak into a request.
+/// Totals for a custom range, which need not start or end on a month's
+/// edge.
+class SummaryRange extends Equatable {
+  const SummaryRange({
+    required this.from,
+    required this.to,
+    required this.spent,
+    required this.income,
+    required this.spendingByCategory,
+  });
+
+  /// `yyyy-MM-dd`, both included.
+  final String from;
+  final String to;
+  final double spent;
+  final double income;
+  final List<SummaryCategory> spendingByCategory;
+
+  Map<String, Object?> toJson() => {
+    'from': from,
+    'to': to,
+    'spent': roundMoney(spent),
+    'income': roundMoney(income),
+    'net': roundMoney(income - spent),
+    'spendingByCategory': [for (final c in spendingByCategory) c.toJson()],
+  };
+
+  @override
+  List<Object?> get props => [from, to, spent, income, spendingByCategory];
+}
+
+/// One transaction, sent only when the user shares transactions. No id; the
+/// note only when the user shares notes too.
+class SummaryTransaction extends Equatable {
+  const SummaryTransaction({
+    required this.date,
+    required this.amount,
+    required this.isIncome,
+    required this.category,
+    this.note,
+  });
+
+  /// `yyyy-MM-dd`.
+  final String date;
+  final double amount;
+  final bool isIncome;
+  final String category;
+  final String? note;
+
+  Map<String, Object?> toJson() => {
+    'date': date,
+    'type': isIncome ? 'income' : 'expense',
+    'amount': roundMoney(amount),
+    'category': category,
+    if (note case final note? when note.isNotEmpty) 'note': note,
+  };
+
+  @override
+  List<Object?> get props => [date, amount, isIncome, category, note];
+}
+
+/// A recurring payment or income, sent only when the user shares them.
+class SummaryRecurring extends Equatable {
+  const SummaryRecurring({
+    required this.title,
+    required this.amount,
+    required this.isIncome,
+    required this.frequency,
+    required this.status,
+    required this.nextDue,
+  });
+
+  final String title;
+  final double amount;
+  final bool isIncome;
+
+  /// `weekly`, `monthly` or `yearly`.
+  final String frequency;
+
+  /// `paid`, `upcoming` or `overdue`.
+  final String status;
+
+  /// `yyyy-MM-dd`.
+  final String nextDue;
+
+  Map<String, Object?> toJson() => {
+    'title': title,
+    'type': isIncome ? 'income' : 'expense',
+    'amount': roundMoney(amount),
+    'frequency': frequency,
+    'status': status,
+    'nextDue': nextDue,
+  };
+
+  @override
+  List<Object?> get props => [
+    title,
+    amount,
+    isIncome,
+    frequency,
+    status,
+    nextDue,
+  ];
+}
+
+/// Where the user stands with one person, sent only when the user shares
+/// people.
+class SummaryPerson extends Equatable {
+  const SummaryPerson({
+    required this.name,
+    required this.balance,
+    required this.openCount,
+  });
+
+  final String name;
+
+  /// Positive when the person owes the user, negative when the user owes
+  /// them.
+  final double balance;
+  final int openCount;
+
+  Map<String, Object?> toJson() => {
+    'name': name,
+    'balance': roundMoney(balance),
+    'openTransactions': openCount,
+  };
+
+  @override
+  List<Object?> get props => [name, balance, openCount];
+}
+
+/// What the assistant is told about the user's money, rebuilt from the
+/// phone's own data before every question.
+///
+/// By default it is totals only, with no room for descriptions, ids, people
+/// or single transactions. The optional parts carry exactly what the user
+/// chose to share (see `AssistantSharing`), and are left out otherwise.
 class SpendingSummary extends Equatable {
   const SpendingSummary({
     required this.currency,
@@ -188,6 +321,11 @@ class SpendingSummary extends Equatable {
     required this.months,
     required this.budget,
     required this.trend,
+    this.range,
+    this.transactions,
+    this.transactionsLeftOut = 0,
+    this.recurring,
+    this.people,
   });
 
   /// The symbol the user picked; empty when none was set.
@@ -203,12 +341,44 @@ class SpendingSummary extends Equatable {
   /// Spending per month, oldest first, as `yyyy-MM` → total.
   final List<(String, double)> trend;
 
-  SpendingSummary withMonths(List<SummaryMonth> months) => SpendingSummary(
+  /// Only for a custom range.
+  final SummaryRange? range;
+
+  /// Only when shared: newest first.
+  final List<SummaryTransaction>? transactions;
+
+  /// The oldest transactions left out to keep the request small.
+  final int transactionsLeftOut;
+
+  /// Only when shared.
+  final List<SummaryRecurring>? recurring;
+
+  /// Only when shared.
+  final List<SummaryPerson>? people;
+
+  SpendingSummary withMonths(List<SummaryMonth> months) =>
+      _copy(months: months);
+
+  SpendingSummary withTransactions(
+    List<SummaryTransaction> transactions, {
+    required int leftOut,
+  }) => _copy(transactions: transactions, transactionsLeftOut: leftOut);
+
+  SpendingSummary _copy({
+    List<SummaryMonth>? months,
+    List<SummaryTransaction>? transactions,
+    int? transactionsLeftOut,
+  }) => SpendingSummary(
     currency: currency,
     generatedOn: generatedOn,
-    months: months,
+    months: months ?? this.months,
     budget: budget,
     trend: trend,
+    range: range,
+    transactions: transactions ?? this.transactions,
+    transactionsLeftOut: transactionsLeftOut ?? this.transactionsLeftOut,
+    recurring: recurring,
+    people: people,
   );
 
   Map<String, Object?> toJson() => {
@@ -221,10 +391,31 @@ class SpendingSummary extends Equatable {
       for (final (period, total) in trend)
         {'period': period, 'total': roundMoney(total)},
     ],
+    if (range case final range?) 'range': range.toJson(),
+    if (transactions case final transactions?) ...{
+      'transactions': [for (final t in transactions) t.toJson()],
+      if (transactionsLeftOut > 0)
+        'olderTransactionsLeftOut': transactionsLeftOut,
+    },
+    if (recurring case final recurring?)
+      'recurring': [for (final r in recurring) r.toJson()],
+    if (people case final people?)
+      'people': [for (final p in people) p.toJson()],
   };
 
   @override
-  List<Object?> get props => [currency, generatedOn, months, budget, trend];
+  List<Object?> get props => [
+    currency,
+    generatedOn,
+    months,
+    budget,
+    trend,
+    range,
+    transactions,
+    transactionsLeftOut,
+    recurring,
+    people,
+  ];
 }
 
 /// Two decimals are all a money figure needs, and they keep the JSON small.

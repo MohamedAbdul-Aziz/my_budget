@@ -35,16 +35,28 @@ restore on any phone.
   figures, with no network and no AI service. *Compare months* sets the month
   against any other you pick, category by category, in a paired bar chart.
 - **AI assistant** (optional) — *Ask AI* on the Analyses tab opens a chat
-  about your own money ("Where can I save?"). It needs an account and your
-  agreement first, and *Stop sharing* withdraws it. Before every question the
+  about your own money ("Where can I save?"). No account is needed, only the
+  user's agreement first, and *Stop sharing* withdraws it. Before every question the
   phone builds a fresh summary of totals only (three months by category,
   income, budget limits, the six-month trend; at most 8 KB) with
-  `BuildSpendingSummary`; single transactions, notes, people and ids are never
-  sent. The `ai-assistant` Edge Function checks the session, counts 20
-  questions per account per UTC day (`ai_usage` table), adds the provider key
-  (a server secret) and asks an OpenAI-compatible model (Groq's free tier by
-  default). Nothing is stored except that daily count; the conversation lives
-  only while the screen is open.
+  `BuildSpendingSummary`; by default single transactions, notes, people and ids
+  are never sent. *What to share* lets the user pick the period (this month,
+  3 or 6 months, this year, or custom dates) and opt in to transactions, their
+  notes, recurring payments, or people and debts. The choices are kept per
+  phone (`ai_sharing` device setting), a notice shows while more than the
+  summary goes out, and the whole request stays under 16 KB (the oldest
+  transactions are left out first). The `ai-assistant` Edge Function (`verify_jwt` off) counts each
+  question per UTC day: per account for a signed-in user (`ai_usage`), or for a
+  guest per random device id and per salted IP hash (`ai_guest_usage`). The
+  limits are never shown; past one the user just sees "today's limit
+  reached". It adds the provider key (a server secret) and asks an
+  OpenAI-compatible model (Groq's free tier by default), which writes simple
+  Markdown (drawn by `MarkdownAnswer`) plus 2-3 suggested follow-up questions.
+  Answers can be copied or shared (buttons or a long press). The server
+  stores nothing except those daily counts. Answered chats are saved
+  on the phone only (`assistant_chats` / `assistant_messages`, never synced or
+  backed up): *New chat* starts another, *Chat history* reopens or deletes
+  them.
 - **Budgets** — an optional monthly limit and optional per-category limits,
   repeating every month. The home screen card shows what is left, with a bar
   that turns from green to orange at 70% and red past 90%. Logging an expense

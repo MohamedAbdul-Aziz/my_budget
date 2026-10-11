@@ -753,7 +753,8 @@ class AppStringsPl extends AppStrings {
     FailureCode.aiUnavailable =>
       'Asystent jest teraz niedostępny. Spróbuj później.',
     FailureCode.aiBusy => 'Asystent jest zajęty. Spróbuj za minutę.',
-    FailureCode.aiDailyLimit => 'Zadano już dziś 20 pytań. Spróbuj jutro.',
+    FailureCode.aiDailyLimit =>
+      'Osiągnięto dzisiejszy limit asystenta. Spróbuj jutro.',
   };
 
   @override
@@ -1400,15 +1401,11 @@ class AppStringsPl extends AppStrings {
   String get assistantSend => 'Wyślij';
 
   @override
-  String get assistantSignInBody =>
-      'Zaloguj się, aby korzystać z asystenta AI. Każde konto może zadać 20 pytań dziennie.';
-
-  @override
   String get assistantConsentTitle => 'Zanim zapytasz';
 
   @override
   String get assistantConsentBody =>
-      'Aby odpowiedzieć, aplikacja wysyła Twoje pytanie, kilka ostatnich wiadomości i podsumowanie Twoich sum z ostatnich trzech miesięcy (według kategorii, dochody, wydatki i budżety) przez nasz serwer do dostawcy AI Groq. Opisy, notatki i imiona osób nigdy nie są wysyłane. Nie przechowujemy Twoich pytań ani odpowiedzi; nasz serwer liczy tylko, ile pytań zadajesz każdego dnia. W każdej chwili możesz przestać udostępniać dane.';
+      'Aby odpowiedzieć, aplikacja wysyła Twoje pytanie, kilka ostatnich wiadomości i podsumowanie Twoich sum (według kategorii, dochody, wydatki i budżety, z ostatnich trzech miesięcy, chyba że wybierzesz inny okres) przez nasz serwer do dostawcy AI Groq. Domyślnie nic więcej nie jest wysyłane: żadnych pojedynczych transakcji, notatek ani imion. Możesz udostępnić więcej w sekcji Co udostępniać. Nasz serwer nie przechowuje Twoich pytań ani odpowiedzi; liczy tylko, ile pytań zadajesz każdego dnia. W każdej chwili możesz przestać udostępniać dane.';
 
   @override
   String get assistantConsentAgree => 'Zgadzam się';
@@ -1426,6 +1423,91 @@ class AppStringsPl extends AppStrings {
     'Jak ten miesiąc wypada na tle poprzedniego?',
     'Czy mieszczę się w budżecie?',
   ];
+
+  @override
+  String get assistantNewChat => 'Nowy czat';
+
+  @override
+  String get assistantHistory => 'Historia czatów';
+
+  @override
+  String get assistantNoChats =>
+      'Nie ma jeszcze zapisanych czatów. Twoje czaty z asystentem są przechowywane tylko na tym telefonie.';
+
+  @override
+  String get assistantDeleteChatTitle => 'Usunąć ten czat?';
+
+  @override
+  String get assistantDeleteAll => 'Usuń wszystkie czaty';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'Wszystkie zapisane czaty z asystentem zostaną usunięte z tego telefonu.';
+
+  @override
+  String get assistantSharingTitle => 'Co udostępniać';
+
+  @override
+  String get assistantSharingIntro =>
+      'Podsumowanie Twoich sum zawsze idzie z każdym pytaniem. Włącz to, co jeszcze asystent ma widzieć.';
+
+  @override
+  String get assistantPeriod => 'Okres';
+
+  @override
+  String get assistantRangeThisMonth => 'Ten miesiąc';
+
+  @override
+  String get assistantRangeLast3Months => '3 miesiące';
+
+  @override
+  String get assistantRangeLast6Months => '6 miesięcy';
+
+  @override
+  String get assistantRangeThisYear => 'Ten rok';
+
+  @override
+  String get assistantRangeCustom => 'Własny';
+
+  @override
+  String get assistantShareTransactions => 'Transakcje';
+
+  @override
+  String get assistantShareTransactionsHint => 'Każda: kwota, kategoria i data';
+
+  @override
+  String get assistantShareNotes => 'Notatki';
+
+  @override
+  String get assistantShareNotesHint => 'To, co wpisano przy transakcjach';
+
+  @override
+  String get assistantShareRecurring => 'Płatności cykliczne';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'Rachunki, subskrypcje i przychody oraz co jest do zapłaty';
+
+  @override
+  String get assistantSharePeople => 'Osoby i długi';
+
+  @override
+  String get assistantSharePeopleHint => 'Imiona i kto komu jest winien';
+
+  @override
+  String get assistantSharingReset => 'Tylko podsumowanie';
+
+  @override
+  String get assistantSharingMore => 'Udostępniasz więcej niż podsumowanie.';
+
+  @override
+  String get assistantCopy => 'Kopiuj';
+
+  @override
+  String get assistantShare => 'Udostępnij';
+
+  @override
+  String get assistantCopied => 'Skopiowano odpowiedź';
 
   @override
   String get otherCategories => 'Inne';

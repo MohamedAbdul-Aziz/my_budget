@@ -732,7 +732,7 @@ class AppStringsVi extends AppStrings {
     FailureCode.aiUnavailable => 'Trợ lý hiện không khả dụng. Hãy thử lại sau.',
     FailureCode.aiBusy => 'Trợ lý đang bận. Hãy thử lại sau một phút.',
     FailureCode.aiDailyLimit =>
-      'Bạn đã hỏi đủ 20 câu hôm nay. Hãy thử lại vào ngày mai.',
+      'Bạn đã đạt giới hạn sử dụng trợ lý hôm nay. Hãy thử lại vào ngày mai.',
   };
 
   @override
@@ -1348,15 +1348,11 @@ class AppStringsVi extends AppStrings {
   String get assistantSend => 'Gửi';
 
   @override
-  String get assistantSignInBody =>
-      'Đăng nhập để dùng trợ lý AI. Mỗi tài khoản có thể hỏi 20 câu mỗi ngày.';
-
-  @override
   String get assistantConsentTitle => 'Trước khi hỏi';
 
   @override
   String get assistantConsentBody =>
-      'Để trả lời, ứng dụng gửi câu hỏi của bạn, vài tin nhắn gần nhất và bản tóm tắt các khoản tổng trong ba tháng qua (theo danh mục, thu nhập, chi tiêu và ngân sách) qua máy chủ của chúng tôi đến nhà cung cấp AI Groq. Mô tả, ghi chú và tên người không bao giờ được gửi. Chúng tôi không lưu câu hỏi hay câu trả lời; máy chủ chỉ đếm số câu hỏi bạn đặt mỗi ngày. Bạn có thể ngừng chia sẻ bất cứ lúc nào.';
+      'Để trả lời, ứng dụng gửi câu hỏi của bạn, vài tin nhắn gần nhất và bản tóm tắt các khoản tổng (theo danh mục, thu nhập, chi tiêu và ngân sách, trong ba tháng qua trừ khi bạn chọn khoảng thời gian khác) qua máy chủ của chúng tôi đến nhà cung cấp AI Groq. Theo mặc định, không có gì khác được gửi: không có từng giao dịch, ghi chú hay tên người. Bạn có thể chọn chia sẻ thêm trong mục Chia sẻ gì. Máy chủ của chúng tôi không lưu câu hỏi hay câu trả lời; nó chỉ đếm số câu hỏi bạn đặt mỗi ngày. Bạn có thể ngừng chia sẻ bất cứ lúc nào.';
 
   @override
   String get assistantConsentAgree => 'Tôi đồng ý';
@@ -1374,6 +1370,92 @@ class AppStringsVi extends AppStrings {
     'Tháng này so với tháng trước thế nào?',
     'Tôi có đang giữ đúng ngân sách không?',
   ];
+
+  @override
+  String get assistantNewChat => 'Cuộc trò chuyện mới';
+
+  @override
+  String get assistantHistory => 'Lịch sử trò chuyện';
+
+  @override
+  String get assistantNoChats =>
+      'Chưa có cuộc trò chuyện nào được lưu. Các cuộc trò chuyện với trợ lý chỉ được lưu trên điện thoại này.';
+
+  @override
+  String get assistantDeleteChatTitle => 'Xóa cuộc trò chuyện này?';
+
+  @override
+  String get assistantDeleteAll => 'Xóa tất cả';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'Mọi cuộc trò chuyện đã lưu với trợ lý sẽ bị xóa khỏi điện thoại này.';
+
+  @override
+  String get assistantSharingTitle => 'Chia sẻ gì';
+
+  @override
+  String get assistantSharingIntro =>
+      'Bản tóm tắt các khoản tổng luôn được gửi kèm mỗi câu hỏi. Hãy bật những gì khác bạn muốn trợ lý xem.';
+
+  @override
+  String get assistantPeriod => 'Khoảng thời gian';
+
+  @override
+  String get assistantRangeThisMonth => 'Tháng này';
+
+  @override
+  String get assistantRangeLast3Months => '3 tháng';
+
+  @override
+  String get assistantRangeLast6Months => '6 tháng';
+
+  @override
+  String get assistantRangeThisYear => 'Năm nay';
+
+  @override
+  String get assistantRangeCustom => 'Tùy chỉnh';
+
+  @override
+  String get assistantShareTransactions => 'Giao dịch';
+
+  @override
+  String get assistantShareTransactionsHint =>
+      'Từng giao dịch: số tiền, danh mục và ngày';
+
+  @override
+  String get assistantShareNotes => 'Ghi chú';
+
+  @override
+  String get assistantShareNotesHint => 'Nội dung bạn ghi cho mỗi giao dịch';
+
+  @override
+  String get assistantShareRecurring => 'Khoản định kỳ';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'Hóa đơn, gói đăng ký và thu nhập, cùng các khoản đến hạn';
+
+  @override
+  String get assistantSharePeople => 'Mọi người và khoản nợ';
+
+  @override
+  String get assistantSharePeopleHint => 'Tên, và ai nợ ai';
+
+  @override
+  String get assistantSharingReset => 'Chỉ tóm tắt';
+
+  @override
+  String get assistantSharingMore => 'Bạn đang chia sẻ nhiều hơn bản tóm tắt.';
+
+  @override
+  String get assistantCopy => 'Sao chép';
+
+  @override
+  String get assistantShare => 'Chia sẻ';
+
+  @override
+  String get assistantCopied => 'Đã sao chép câu trả lời';
 
   @override
   String get otherCategories => 'Khác';

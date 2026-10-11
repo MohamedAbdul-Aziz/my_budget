@@ -729,7 +729,8 @@ class AppStringsAr extends AppStrings {
     FailureCode.summaryTooLarge => 'بياناتك كبيرة جدًا لتلخيصها للمساعد.',
     FailureCode.aiUnavailable => 'المساعد غير متاح الآن. حاول لاحقًا.',
     FailureCode.aiBusy => 'المساعد مشغول. حاول بعد دقيقة.',
-    FailureCode.aiDailyLimit => 'استخدمت أسئلتك العشرين لهذا اليوم. حاول غدًا.',
+    FailureCode.aiDailyLimit =>
+      'وصلت إلى حد استخدام المساعد لليوم. حاول مرة أخرى غدًا.',
   };
 
   @override
@@ -1356,15 +1357,11 @@ class AppStringsAr extends AppStrings {
   String get assistantSend => 'إرسال';
 
   @override
-  String get assistantSignInBody =>
-      'سجّل الدخول لاستخدام المساعد الذكي. يمكن لكل حساب طرح 20 سؤالًا في اليوم.';
-
-  @override
   String get assistantConsentTitle => 'قبل أن تسأل';
 
   @override
   String get assistantConsentBody =>
-      'للإجابة، يرسل التطبيق سؤالك وآخر رسائلك وملخصًا لإجمالياتك في آخر ثلاثة أشهر (حسب الفئة، والدخل، والمصروفات، والميزانيات) عبر خادمنا إلى مزوّد الذكاء الاصطناعي Groq. لا تُرسل الأوصاف أو الملاحظات أو أسماء الأشخاص أبدًا. لا نخزّن أسئلتك ولا الإجابات؛ خادمنا يحسب فقط عدد الأسئلة التي تطرحها كل يوم. يمكنك إيقاف المشاركة في أي وقت.';
+      'للإجابة، يرسل التطبيق سؤالك وآخر رسائلك وملخصًا لإجمالياتك (حسب الفئة، والدخل، والمصروفات، والميزانيات، لآخر ثلاثة أشهر ما لم تختر مدة أخرى) عبر خادمنا إلى مزوّد الذكاء الاصطناعي Groq. افتراضيًا لا يُرسل أي شيء آخر: لا عمليات منفردة ولا ملاحظات ولا أسماء أشخاص. يمكنك اختيار مشاركة المزيد من «ماذا تشارك». لا يخزّن خادمنا أسئلتك ولا الإجابات؛ بل يحسب فقط عدد الأسئلة التي تطرحها كل يوم. يمكنك إيقاف المشاركة في أي وقت.';
 
   @override
   String get assistantConsentAgree => 'أوافق';
@@ -1382,6 +1379,92 @@ class AppStringsAr extends AppStrings {
     'كيف كان هذا الشهر مقارنة بالشهر الماضي؟',
     'هل أنا ملتزم بميزانيتي؟',
   ];
+
+  @override
+  String get assistantNewChat => 'محادثة جديدة';
+
+  @override
+  String get assistantHistory => 'سجل المحادثات';
+
+  @override
+  String get assistantNoChats =>
+      'لا توجد محادثات محفوظة بعد. تُحفظ محادثاتك مع المساعد على هذا الهاتف فقط.';
+
+  @override
+  String get assistantDeleteChatTitle => 'حذف هذه المحادثة؟';
+
+  @override
+  String get assistantDeleteAll => 'حذف كل المحادثات';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'ستُحذف كل المحادثات المحفوظة مع المساعد من هذا الهاتف.';
+
+  @override
+  String get assistantSharingTitle => 'ماذا تشارك';
+
+  @override
+  String get assistantSharingIntro =>
+      'يُرسل ملخص لإجمالياتك مع كل سؤال دائمًا. فعّل أي شيء آخر تريد أن يراه المساعد.';
+
+  @override
+  String get assistantPeriod => 'المدة';
+
+  @override
+  String get assistantRangeThisMonth => 'هذا الشهر';
+
+  @override
+  String get assistantRangeLast3Months => '3 أشهر';
+
+  @override
+  String get assistantRangeLast6Months => '6 أشهر';
+
+  @override
+  String get assistantRangeThisYear => 'هذه السنة';
+
+  @override
+  String get assistantRangeCustom => 'مخصصة';
+
+  @override
+  String get assistantShareTransactions => 'العمليات';
+
+  @override
+  String get assistantShareTransactionsHint =>
+      'كل عملية: المبلغ والفئة والتاريخ';
+
+  @override
+  String get assistantShareNotes => 'الملاحظات';
+
+  @override
+  String get assistantShareNotesHint => 'ما كتبته مع كل عملية';
+
+  @override
+  String get assistantShareRecurring => 'المدفوعات المتكررة';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'الفواتير والاشتراكات والدخل، وما هو مستحق';
+
+  @override
+  String get assistantSharePeople => 'الأشخاص والديون';
+
+  @override
+  String get assistantSharePeopleHint => 'الأسماء، ومن يدين لمن';
+
+  @override
+  String get assistantSharingReset => 'الملخص فقط';
+
+  @override
+  String get assistantSharingMore => 'أنت تشارك أكثر من الملخص.';
+
+  @override
+  String get assistantCopy => 'نسخ';
+
+  @override
+  String get assistantShare => 'مشاركة';
+
+  @override
+  String get assistantCopied => 'تم نسخ الإجابة';
 
   @override
   String get otherCategories => 'أخرى';

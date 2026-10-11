@@ -752,7 +752,7 @@ class AppStringsRu extends AppStrings {
       'Помощник сейчас недоступен. Попробуйте позже.',
     FailureCode.aiBusy => 'Помощник занят. Попробуйте через минуту.',
     FailureCode.aiDailyLimit =>
-      'Вы уже задали 20 вопросов сегодня. Попробуйте завтра.',
+      'Вы достигли дневного лимита помощника. Попробуйте завтра.',
   };
 
   @override
@@ -1399,15 +1399,11 @@ class AppStringsRu extends AppStrings {
   String get assistantSend => 'Отправить';
 
   @override
-  String get assistantSignInBody =>
-      'Войдите, чтобы пользоваться ИИ-помощником. Каждый аккаунт может задать 20 вопросов в день.';
-
-  @override
   String get assistantConsentTitle => 'Прежде чем спросить';
 
   @override
   String get assistantConsentBody =>
-      'Чтобы ответить, приложение отправляет ваш вопрос, последние сообщения и сводку итогов за последние три месяца (по категориям, доходы, расходы и бюджеты) через наш сервер ИИ-провайдеру Groq. Описания, заметки и имена людей никогда не отправляются. Мы не храним ваши вопросы и ответы; наш сервер только считает, сколько вопросов вы задаёте за день. Вы можете прекратить передачу в любой момент.';
+      'Чтобы ответить, приложение отправляет ваш вопрос, последние сообщения и сводку итогов (по категориям, доходы, расходы и бюджеты, за последние три месяца, если вы не выберете другой период) через наш сервер ИИ-провайдеру Groq. По умолчанию больше ничего не отправляется: ни отдельные операции, ни заметки, ни имена людей. Передавать больше можно включить в разделе «Что передавать». Наш сервер не хранит ваши вопросы и ответы; он только считает, сколько вопросов вы задаёте за день. Вы можете прекратить передачу в любой момент.';
 
   @override
   String get assistantConsentAgree => 'Принимаю';
@@ -1425,6 +1421,92 @@ class AppStringsRu extends AppStrings {
     'Как этот месяц в сравнении с прошлым?',
     'Укладываюсь ли я в бюджет?',
   ];
+
+  @override
+  String get assistantNewChat => 'Новый чат';
+
+  @override
+  String get assistantHistory => 'История чатов';
+
+  @override
+  String get assistantNoChats =>
+      'Сохранённых чатов пока нет. Ваши чаты с помощником хранятся только на этом телефоне.';
+
+  @override
+  String get assistantDeleteChatTitle => 'Удалить этот чат?';
+
+  @override
+  String get assistantDeleteAll => 'Удалить все чаты';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'Все сохранённые чаты с помощником будут удалены с этого телефона.';
+
+  @override
+  String get assistantSharingTitle => 'Что передавать';
+
+  @override
+  String get assistantSharingIntro =>
+      'Сводка итогов всегда отправляется с каждым вопросом. Включите то, что ещё должен видеть помощник.';
+
+  @override
+  String get assistantPeriod => 'Период';
+
+  @override
+  String get assistantRangeThisMonth => 'Этот месяц';
+
+  @override
+  String get assistantRangeLast3Months => '3 месяца';
+
+  @override
+  String get assistantRangeLast6Months => '6 месяцев';
+
+  @override
+  String get assistantRangeThisYear => 'Этот год';
+
+  @override
+  String get assistantRangeCustom => 'Свой период';
+
+  @override
+  String get assistantShareTransactions => 'Операции';
+
+  @override
+  String get assistantShareTransactionsHint =>
+      'Каждая: сумма, категория и дата';
+
+  @override
+  String get assistantShareNotes => 'Заметки';
+
+  @override
+  String get assistantShareNotesHint => 'То, что вы писали к операциям';
+
+  @override
+  String get assistantShareRecurring => 'Регулярные платежи';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'Счета, подписки и доходы, и что к оплате';
+
+  @override
+  String get assistantSharePeople => 'Люди и долги';
+
+  @override
+  String get assistantSharePeopleHint => 'Имена и кто кому должен';
+
+  @override
+  String get assistantSharingReset => 'Только сводка';
+
+  @override
+  String get assistantSharingMore => 'Вы передаёте больше, чем сводку.';
+
+  @override
+  String get assistantCopy => 'Копировать';
+
+  @override
+  String get assistantShare => 'Поделиться';
+
+  @override
+  String get assistantCopied => 'Ответ скопирован';
 
   @override
   String get otherCategories => 'Другие';

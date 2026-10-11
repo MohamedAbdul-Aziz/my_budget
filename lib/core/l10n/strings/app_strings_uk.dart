@@ -753,7 +753,7 @@ class AppStringsUk extends AppStrings {
       'Помічник зараз недоступний. Спробуйте пізніше.',
     FailureCode.aiBusy => 'Помічник зайнятий. Спробуйте за хвилину.',
     FailureCode.aiDailyLimit =>
-      'Ви вже поставили 20 запитань сьогодні. Спробуйте завтра.',
+      'Ви досягли денного ліміту помічника. Спробуйте завтра.',
   };
 
   @override
@@ -1400,15 +1400,11 @@ class AppStringsUk extends AppStrings {
   String get assistantSend => 'Надіслати';
 
   @override
-  String get assistantSignInBody =>
-      'Увійдіть, щоб користуватися ШІ-помічником. Кожен акаунт може поставити 20 запитань на день.';
-
-  @override
   String get assistantConsentTitle => 'Перш ніж запитати';
 
   @override
   String get assistantConsentBody =>
-      'Щоб відповісти, застосунок надсилає ваше запитання, останні повідомлення та підсумок ваших сум за останні три місяці (за категоріями, доходи, витрати й бюджети) через наш сервер ШІ-провайдеру Groq. Описи, нотатки та імена людей ніколи не надсилаються. Ми не зберігаємо ваші запитання та відповіді; наш сервер лише рахує, скільки запитань ви ставите щодня. Ви можете припинити передавання будь-коли.';
+      'Щоб відповісти, застосунок надсилає ваше запитання, останні повідомлення та підсумок ваших сум (за категоріями, доходи, витрати й бюджети, за останні три місяці, якщо ви не оберете інший період) через наш сервер ШІ-провайдеру Groq. За замовчуванням більше нічого не надсилається: ні окремих операцій, ні нотаток, ні імен людей. Передавати більше можна в розділі «Що передавати». Наш сервер не зберігає ваші запитання й відповіді; він лише рахує, скільки запитань ви ставите щодня. Ви можете припинити передавання будь-коли.';
 
   @override
   String get assistantConsentAgree => 'Погоджуюся';
@@ -1426,6 +1422,91 @@ class AppStringsUk extends AppStrings {
     'Як цей місяць порівняно з минулим?',
     'Чи вкладаюся я в бюджет?',
   ];
+
+  @override
+  String get assistantNewChat => 'Новий чат';
+
+  @override
+  String get assistantHistory => 'Історія чатів';
+
+  @override
+  String get assistantNoChats =>
+      'Збережених чатів поки немає. Ваші чати з помічником зберігаються лише на цьому телефоні.';
+
+  @override
+  String get assistantDeleteChatTitle => 'Видалити цей чат?';
+
+  @override
+  String get assistantDeleteAll => 'Видалити всі чати';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'Усі збережені чати з помічником буде видалено з цього телефона.';
+
+  @override
+  String get assistantSharingTitle => 'Що передавати';
+
+  @override
+  String get assistantSharingIntro =>
+      'Підсумок ваших сум завжди надсилається з кожним запитанням. Увімкніть те, що ще має бачити помічник.';
+
+  @override
+  String get assistantPeriod => 'Період';
+
+  @override
+  String get assistantRangeThisMonth => 'Цей місяць';
+
+  @override
+  String get assistantRangeLast3Months => '3 місяці';
+
+  @override
+  String get assistantRangeLast6Months => '6 місяців';
+
+  @override
+  String get assistantRangeThisYear => 'Цей рік';
+
+  @override
+  String get assistantRangeCustom => 'Свій період';
+
+  @override
+  String get assistantShareTransactions => 'Операції';
+
+  @override
+  String get assistantShareTransactionsHint => 'Кожна: сума, категорія й дата';
+
+  @override
+  String get assistantShareNotes => 'Нотатки';
+
+  @override
+  String get assistantShareNotesHint => 'Те, що ви писали до операцій';
+
+  @override
+  String get assistantShareRecurring => 'Регулярні платежі';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'Рахунки, підписки й доходи, і що до сплати';
+
+  @override
+  String get assistantSharePeople => 'Люди й борги';
+
+  @override
+  String get assistantSharePeopleHint => 'Імена й хто кому винен';
+
+  @override
+  String get assistantSharingReset => 'Лише підсумок';
+
+  @override
+  String get assistantSharingMore => 'Ви передаєте більше, ніж підсумок.';
+
+  @override
+  String get assistantCopy => 'Копіювати';
+
+  @override
+  String get assistantShare => 'Поділитися';
+
+  @override
+  String get assistantCopied => 'Відповідь скопійовано';
 
   @override
   String get otherCategories => 'Інші';

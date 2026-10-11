@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:my_budget/core/error/api_result.dart';
 import 'package:my_budget/features/app_lock/domain/entities/app_lock_prompt.dart';
 import 'package:my_budget/features/app_lock/domain/repositories/app_lock_repository.dart';
+import 'package:my_budget/features/assistant/domain/entities/assistant_chat.dart';
 import 'package:my_budget/features/assistant/domain/entities/assistant_message.dart';
+import 'package:my_budget/features/assistant/domain/entities/assistant_reply.dart';
+import 'package:my_budget/features/assistant/domain/entities/assistant_sharing.dart';
 import 'package:my_budget/features/assistant/domain/entities/spending_summary.dart';
 import 'package:my_budget/features/assistant/domain/repositories/assistant_repository.dart';
 import 'package:my_budget/core/error/failures.dart';
@@ -563,8 +566,22 @@ class FakeAppLockRepository implements AppLockRepository {
 class FakeAssistantRepository implements AssistantRepository {
   bool consent = false;
 
-  /// Replies to give, in order: a `String` answers, a [Failure] fails.
+  /// Replies to give, in order: a `String` or an [AssistantReply] answers, a
+  /// [Failure] fails.
   final List<Object> replies = [];
+
+  /// Every text handed to the share sheet.
+  final List<String> shared = [];
+
+  /// Makes sharing fail, the way a phone without a share sheet would.
+  Failure? shareFailure;
+
+  @override
+  Future<ApiResult<void>> shareText(String text, {ShareAnchor? anchor}) async {
+    if (shareFailure case final failure?) return ResultFailure(failure);
+    shared.add(text);
+    return const Success(null);
+  }
 
   /// What reached the "server", one entry per question.
   final List<
@@ -581,7 +598,7 @@ class FakeAssistantRepository implements AssistantRepository {
   Completer<void>? gate;
 
   @override
-  Future<ApiResult<String>> ask({
+  Future<ApiResult<AssistantReply>> ask({
     required String question,
     required SpendingSummary summary,
     required List<AssistantMessage> history,
@@ -597,7 +614,8 @@ class FakeAssistantRepository implements AssistantRepository {
     final reply = replies.isEmpty ? 'OK' : replies.removeAt(0);
     return switch (reply) {
       final Failure failure => ResultFailure(failure),
-      final String answer => Success(answer),
+      final String answer => Success(AssistantReply(answer: answer)),
+      final AssistantReply reply => Success(reply),
       _ => throw ArgumentError(reply),
     };
   }
@@ -608,6 +626,83 @@ class FakeAssistantRepository implements AssistantRepository {
   @override
   Future<ApiResult<void>> setConsent({required bool granted}) async {
     consent = granted;
+    return const Success(null);
+  }
+
+  AssistantSharing sharing = AssistantSharing.defaults;
+
+  @override
+  Future<ApiResult<AssistantSharing>> getSharing() async => Success(sharing);
+
+  @override
+  Future<ApiResult<void>> setSharing(AssistantSharing sharing) async {
+    this.sharing = sharing;
+    return const Success(null);
+  }
+
+  /// Saved chats by id, with their messages, oldest first.
+  final Map<String, ({AssistantChat chat, List<AssistantMessage> messages})>
+  chats = {};
+
+  int _nextChat = 0;
+
+  /// Makes the next save fail, the way a broken database would.
+  Failure? saveFailure;
+
+  @override
+  Future<ApiResult<List<AssistantChat>>> getChats() async => Success(
+    [for (final saved in chats.values) saved.chat]
+      ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt)),
+  );
+
+  @override
+  Future<ApiResult<List<AssistantMessage>>> getMessages(String chatId) async {
+    final saved = chats[chatId];
+    if (saved == null) return ResultFailure(NotFoundFailure(chatId));
+    return Success(List.of(saved.messages));
+  }
+
+  @override
+  Future<ApiResult<String>> saveExchange({
+    String? chatId,
+    required String title,
+    required String question,
+    required String answer,
+  }) async {
+    if (saveFailure case final failure?) return ResultFailure(failure);
+    if (chatId != null && !chats.containsKey(chatId)) {
+      return ResultFailure(NotFoundFailure(chatId));
+    }
+    final id = chatId ?? 'chat_${_nextChat++}';
+    final previous = chats[id];
+    // Each save is a moment later, so the newest chat sorts first.
+    final updatedAt = DateTime(2026, 10, 10).add(Duration(minutes: _saves++));
+    chats[id] = (
+      chat: AssistantChat(
+        id: id,
+        title: previous?.chat.title ?? title,
+        updatedAt: updatedAt,
+      ),
+      messages: [
+        ...?previous?.messages,
+        AssistantMessage.user(question),
+        AssistantMessage.assistant(answer),
+      ],
+    );
+    return Success(id);
+  }
+
+  int _saves = 0;
+
+  @override
+  Future<ApiResult<void>> deleteChat(String chatId) async {
+    chats.remove(chatId);
+    return const Success(null);
+  }
+
+  @override
+  Future<ApiResult<void>> deleteAllChats() async {
+    chats.clear();
     return const Success(null);
   }
 }

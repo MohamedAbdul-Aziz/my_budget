@@ -57,9 +57,14 @@ lib/
     auth/            Supabase email sign-up/sign-in, OTP confirm, password reset by code,
                      delete account (AccountCubit)
     assistant/       optional AI chat about spending (AssistantCubit per screen): BuildSpendingSummary
-                     sends totals only (never transactions, notes, people), fresh per question; the
-                     ai-assistant Edge Function holds the provider key and a 20/day quota (ai_usage);
-                     consent is the phone-only `ai_consent` device setting
+                     sends totals only by default, fresh per question; *What to share* (AssistantSharing,
+                     phone-only `ai_sharing` device setting) opts in to a period, transactions, notes,
+                     recurring payments or people; the
+                     ai-assistant Edge Function (verify_jwt off, no account needed) holds the provider key and
+                     the daily limits: per account (ai_usage) or per device id + salted IP hash (ai_guest_usage);
+                     limits are never shown to the user;
+                     consent is the phone-only `ai_consent` device setting; chats are
+                     saved on the phone (AssistantHistoryCubit lists and deletes them)
     app_lock/        optional lock screen (local_auth) at launch and after 1 min away
                      (AppLockCubit + AppLockGate above the navigator)
     sync/            cloud backup and restore (SyncCubit), optional automatic backup on leaving
@@ -83,12 +88,13 @@ test/{core,data,domain,presentation}/
 ```
 
 ## 3) Data Model Essentials
-- Tables: `categories`, `expenses`, `settings` (key/value), `recurring_expenses`, and the people tables (`AppDatabase.peopleTables`). `_schemaVersion` is in `app_database.dart` (currently **6**).
+- Tables: `categories`, `expenses`, `settings` (key/value), `recurring_expenses`, and the people tables (`AppDatabase.peopleTables`). `_schemaVersion` is in `app_database.dart` (currently **7**).
 - v2 added sync columns: `updated_at` (ms), `deleted_at` (soft delete; every read must skip these rows), `dirty` (1 = not yet synced). Stamp local writes with `AppDatabase.changed(row)`.
 - v3 added `categories.type` (`expense` | `income`). A transaction's type is its category's type. The table stays named `expenses` for backup and cloud compatibility (`TransactionType.fromStorageKey`).
 - v4 added `recurring_expenses`: a schedule (`frequency` weekly|monthly|yearly, `due_day`, `due_month` for yearly), `mode` (`auto` | `reminder`), and `starts_on` / `paid_through` as `yyyy-MM-dd` text (calendar days, timezone-free). A payment it logs is an ordinary `expenses` row whose id is `<recurringId>_<yyyymmdd>`, so two phones logging the same payment merge into one row. Paying settles the oldest unpaid due date (`paid_through`) in the same SQLite transaction as the expense insert.
 - v5 added `people`, `settlements`, `person_transactions` and `person_transaction_edits` (the change log: values *before* each edit). A transaction is open until `settled_at` + `settlement_id` are set; the balance is summed in whole cents over open ones (`DebtBalance`). Settled transactions are locked. Deleting a person soft-deletes everything recorded with them; `LocalRecords` writes these tables parents first, skips orphans, and cascades a person deleted elsewhere. A settlement logged in the budget is an ordinary `expenses` row in Other / Other income, linked by `settlements.expense_id`.
 - v6 added `device_settings` (key/value, **phone-only**): preferences that belong to this device (`app_lock`, `auto_backup`). Like `sync_meta`, it is not in `SyncedTables`, so it never syncs, is not in backup files, and a restore/import never touches it. No Data Parity work for it.
+- v7 added `assistant_chats` and `assistant_messages` (**phone-only**, like `device_settings`): the AI assistant's saved chats, questions and answers only (never the summary). Not in `SyncedTables`, not in backups, untouched by a restore. No Data Parity work for them.
 - `expenses.month_key` drives monthly queries. Deleting a category moves its transactions and recurring payments to *Other*.
 - Budgets are stored as `budget.*` rows in `settings`, so they travel with backups without a schema change. The daily reminder is stored the same way, as `reminder.enabled` / `reminder.time` (`HH:mm`).
 - For any schema change, follow the **Data Parity Rule** below.

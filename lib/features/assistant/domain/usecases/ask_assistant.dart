@@ -2,6 +2,8 @@ import '../../../../core/error/api_result.dart';
 import '../../../../core/error/failures.dart';
 import '../../../categories/domain/entities/expense_category.dart';
 import '../entities/assistant_message.dart';
+import '../entities/assistant_reply.dart';
+import '../entities/assistant_sharing.dart';
 import '../entities/spending_summary.dart';
 import '../repositories/assistant_repository.dart';
 import 'build_spending_summary.dart';
@@ -30,12 +32,13 @@ class AskAssistant {
     return null;
   }
 
-  Future<ApiResult<String>> call({
+  Future<ApiResult<AssistantReply>> call({
     required String question,
     required List<AssistantMessage> history,
     required String Function(ExpenseCategory) labelOf,
     required String currency,
     required String languageCode,
+    AssistantSharing sharing = AssistantSharing.defaults,
     DateTime? now,
   }) async {
     if (validate(question) case final code?) {
@@ -46,6 +49,7 @@ class AskAssistant {
     switch (await _buildSummary(
       labelOf: labelOf,
       currency: currency,
+      sharing: sharing,
       now: now,
     )) {
       case Success(:final data):

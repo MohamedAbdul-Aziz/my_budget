@@ -8,9 +8,12 @@ import 'package:my_budget/core/database/app_database.dart';
 import 'package:my_budget/core/database/device_settings.dart';
 import 'package:my_budget/core/error/api_result.dart';
 import 'package:my_budget/core/error/failures.dart';
+import 'package:my_budget/features/assistant/data/datasources/assistant_local_data_source.dart';
 import 'package:my_budget/features/assistant/data/datasources/assistant_remote_data_source.dart';
 import 'package:my_budget/features/assistant/data/repositories/assistant_repository_impl.dart';
 import 'package:my_budget/features/assistant/domain/entities/assistant_message.dart';
+import 'package:my_budget/features/assistant/domain/entities/assistant_reply.dart';
+import 'package:my_budget/features/assistant/domain/entities/assistant_sharing.dart';
 import 'package:my_budget/features/assistant/domain/entities/spending_summary.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -55,6 +58,7 @@ void main() {
     addTearDown(functions.dispose);
     return AssistantRepositoryImpl(
       remote: AssistantRemoteDataSourceImpl(functions),
+      local: AssistantLocalDataSourceImpl(database),
       deviceSettings: DeviceSettings(database),
     );
   }
@@ -65,16 +69,17 @@ void main() {
     headers: {'content-type': 'application/json'},
   );
 
-  Future<ApiResult<String>> askWith(AssistantRepositoryImpl repository) =>
-      repository.ask(
-        question: 'Where can I save?',
-        summary: summary,
-        history: const [
-          AssistantMessage.user('Hi'),
-          AssistantMessage.assistant('Hello'),
-        ],
-        languageCode: 'ar',
-      );
+  Future<ApiResult<AssistantReply>> askWith(
+    AssistantRepositoryImpl repository,
+  ) => repository.ask(
+    question: 'Where can I save?',
+    summary: summary,
+    history: const [
+      AssistantMessage.user('Hi'),
+      AssistantMessage.assistant('Hello'),
+    ],
+    languageCode: 'ar',
+  );
 
   test('sends the question, summary, history and language', () async {
     final repository = repositoryAnswering(
@@ -83,10 +88,12 @@ void main() {
 
     final result = await askWith(repository);
 
-    expect(result.dataOrNull, 'Cook at home.');
+    expect(result.dataOrNull, const AssistantReply(answer: 'Cook at home.'));
     final request = requests.single;
     expect(request.url.path, '/functions/v1/ai-assistant');
-    expect(jsonDecode(request.body), {
+    final body = jsonDecode(request.body) as Map<String, Object?>;
+    expect(body['deviceId'], matches(RegExp(r'^[0-9a-f]{32}$')));
+    expect(body..remove('deviceId'), {
       'question': 'Where can I save?',
       'summary': summary.toJson(),
       'history': [
@@ -103,11 +110,16 @@ void main() {
       return (await askWith(repository)).failureOrNull;
     }
 
-    test('401 means signed out', () async {
-      final failure = await failureFor(reply({'error': 'not_signed_in'}, 401));
-      expect(failure, isA<AuthFailure>());
-      expect(failure?.code, FailureCode.signInRequired);
-    });
+    test(
+      'a 401 from an older server is unavailable: no sign-in needed',
+      () async {
+        final failure = await failureFor(
+          reply({'error': 'not_signed_in'}, 401),
+        );
+        expect(failure, isA<AssistantFailure>());
+        expect(failure?.code, FailureCode.aiUnavailable);
+      },
+    );
 
     test('429 daily_limit is the account quota', () async {
       final failure = await failureFor(reply({'error': 'daily_limit'}, 429));
@@ -154,5 +166,63 @@ void main() {
     await repository.setConsent(granted: false);
     expect((await repository.hasConsent()).dataOrNull, isFalse);
     expect(requests, isEmpty);
+  });
+
+  test(
+    'sharing choices start at the default and are kept on the phone',
+    () async {
+      final repository = repositoryAnswering((_) async => reply({}, 200));
+      expect(
+        (await repository.getSharing()).dataOrNull,
+        AssistantSharing.defaults,
+      );
+
+      const chosen = AssistantSharing(
+        range: AssistantRange.last6Months,
+        transactions: true,
+        people: true,
+      );
+      await repository.setSharing(chosen);
+
+      expect((await repository.getSharing()).dataOrNull, chosen);
+      final stored = await DeviceSettings(
+        database,
+      ).readValue(DeviceSettings.aiSharing);
+      expect(stored, contains('last_6_months'));
+      expect(requests, isEmpty);
+    },
+  );
+
+  test('reads the suggested questions, skipping anything odd', () async {
+    final repository = repositoryAnswering(
+      (_) async => reply({
+        'answer': '**Food** costs most.',
+        'followUps': ['Last month?', 7, '  ', ' Where to save? '],
+      }, 200),
+    );
+
+    final result = (await askWith(repository)).dataOrNull!;
+
+    expect(result.answer, '**Food** costs most.');
+    expect(result.followUps, ['Last month?', 'Where to save?']);
+  });
+
+  test('the device id is made once, kept on this phone, and reused', () async {
+    final repository = repositoryAnswering(
+      (_) async => reply({'answer': 'OK'}, 200),
+    );
+
+    await askWith(repository);
+    await askWith(repository);
+
+    final ids = {
+      for (final request in requests)
+        (jsonDecode(request.body) as Map)['deviceId'],
+    };
+    expect(ids, hasLength(1));
+    expect(
+      await DeviceSettings(database).readValue(DeviceSettings.aiDeviceId),
+      ids.single,
+    );
   });
 }

@@ -6,14 +6,18 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/assistant_message.dart';
+import '../../domain/entities/assistant_reply.dart';
 import '../../domain/entities/spending_summary.dart';
 
 abstract interface class AssistantRemoteDataSource {
-  Future<String> ask({
+  /// [deviceId] counts a guest's questions; the server ignores it for a
+  /// signed-in user, who is counted by account.
+  Future<AssistantReply> ask({
     required String question,
     required SpendingSummary summary,
     required List<AssistantMessage> history,
     required String languageCode,
+    required String deviceId,
   });
 }
 
@@ -31,11 +35,12 @@ class AssistantRemoteDataSourceImpl implements AssistantRemoteDataSource {
   final FunctionsClient _functions;
 
   @override
-  Future<String> ask({
+  Future<AssistantReply> ask({
     required String question,
     required SpendingSummary summary,
     required List<AssistantMessage> history,
     required String languageCode,
+    required String deviceId,
   }) async {
     final FunctionResponse response;
     try {
@@ -47,6 +52,7 @@ class AssistantRemoteDataSourceImpl implements AssistantRemoteDataSource {
               'summary': summary.toJson(),
               'history': [for (final message in history) message.toJson()],
               'language': languageCode,
+              'deviceId': deviceId,
             },
           )
           .timeout(timeout);
@@ -65,7 +71,15 @@ class AssistantRemoteDataSourceImpl implements AssistantRemoteDataSource {
 
     final data = response.data;
     if (data case {'answer': final String answer} when answer.isNotEmpty) {
-      return answer;
+      // Older servers sent no suggestions; anything odd is just left out.
+      final followUps = switch (data['followUps']) {
+        final List<Object?> list => [
+          for (final item in list)
+            if (item is String && item.trim().isNotEmpty) item.trim(),
+        ],
+        _ => const <String>[],
+      };
+      return AssistantReply(answer: answer, followUps: followUps);
     }
     throw const AssistantFailure(FailureCode.aiUnavailable, 'no answer');
   }
@@ -78,7 +92,6 @@ class AssistantRemoteDataSourceImpl implements AssistantRemoteDataSource {
       _ => null,
     };
     return switch ((error.status, code)) {
-      (401, _) => AuthFailure(FailureCode.signInRequired, '$error'),
       (429, 'daily_limit') => AssistantFailure(
         FailureCode.aiDailyLimit,
         '$error',

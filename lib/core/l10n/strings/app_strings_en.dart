@@ -730,7 +730,7 @@ class AppStringsEn extends AppStrings {
       "The assistant isn't available right now. Try again later.",
     FailureCode.aiBusy => 'The assistant is busy. Try again in a minute.',
     FailureCode.aiDailyLimit =>
-      "You've asked today's 20 questions. Try again tomorrow.",
+      "You've reached today's limit for the assistant. Try again tomorrow.",
   };
 
   @override
@@ -1346,15 +1346,11 @@ class AppStringsEn extends AppStrings {
   String get assistantSend => 'Send';
 
   @override
-  String get assistantSignInBody =>
-      'Sign in to use the AI assistant. Each account can ask 20 questions a day.';
-
-  @override
   String get assistantConsentTitle => 'Before you ask';
 
   @override
   String get assistantConsentBody =>
-      "To answer, the app sends your question, your last few messages and a summary of your totals for the last three months (by category, income, spending and budgets) through our server to the AI provider Groq. Descriptions, notes and people's names are never sent. We don't store your questions or the answers; our server only counts how many questions you ask each day. You can stop sharing at any time.";
+      "To answer, the app sends your question, your last few messages and a summary of your totals (by category, income, spending and budgets, for the last three months unless you choose another period) through our server to the AI provider Groq. By default nothing else is sent: no single transactions, notes or people's names. You can choose to share more under What to share. Our server doesn't store your questions or the answers; it only counts how many questions you ask each day. You can stop sharing at any time.";
 
   @override
   String get assistantConsentAgree => 'I agree';
@@ -1372,6 +1368,92 @@ class AppStringsEn extends AppStrings {
     'How does this month compare to last month?',
     'Am I on track with my budget?',
   ];
+
+  @override
+  String get assistantNewChat => 'New chat';
+
+  @override
+  String get assistantHistory => 'Chat history';
+
+  @override
+  String get assistantNoChats =>
+      'No saved chats yet. Your chats with the assistant are kept on this phone only.';
+
+  @override
+  String get assistantDeleteChatTitle => 'Delete this chat?';
+
+  @override
+  String get assistantDeleteAll => 'Delete all chats';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'Every saved chat with the assistant will be deleted from this phone.';
+
+  @override
+  String get assistantSharingTitle => 'What to share';
+
+  @override
+  String get assistantSharingIntro =>
+      'A summary of your totals always goes with each question. Turn on anything else you want the assistant to see.';
+
+  @override
+  String get assistantPeriod => 'Period';
+
+  @override
+  String get assistantRangeThisMonth => 'This month';
+
+  @override
+  String get assistantRangeLast3Months => '3 months';
+
+  @override
+  String get assistantRangeLast6Months => '6 months';
+
+  @override
+  String get assistantRangeThisYear => 'This year';
+
+  @override
+  String get assistantRangeCustom => 'Custom';
+
+  @override
+  String get assistantShareTransactions => 'Transactions';
+
+  @override
+  String get assistantShareTransactionsHint =>
+      'Each one: amount, category and date';
+
+  @override
+  String get assistantShareNotes => 'Notes';
+
+  @override
+  String get assistantShareNotesHint => 'What you typed with each transaction';
+
+  @override
+  String get assistantShareRecurring => 'Recurring payments';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'Bills, subscriptions and income, and what is due';
+
+  @override
+  String get assistantSharePeople => 'People and debts';
+
+  @override
+  String get assistantSharePeopleHint => 'Names, and who owes whom';
+
+  @override
+  String get assistantSharingReset => 'Summary only';
+
+  @override
+  String get assistantSharingMore => "You're sharing more than the summary.";
+
+  @override
+  String get assistantCopy => 'Copy';
+
+  @override
+  String get assistantShare => 'Share';
+
+  @override
+  String get assistantCopied => 'Answer copied';
 
   @override
   String get otherCategories => 'Others';

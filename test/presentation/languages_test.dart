@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_budget/core/di/injection.dart';
+import 'dart:async';
+
 import 'package:my_budget/core/l10n/app_strings.dart';
+import 'package:my_budget/features/assistant/domain/entities/assistant_sharing.dart';
+import 'package:my_budget/features/assistant/presentation/pages/assistant_page.dart';
+import 'package:my_budget/features/auth/domain/entities/app_user.dart';
 import 'package:my_budget/features/expenses/presentation/cubit/home_cubit.dart';
 import 'package:my_budget/features/expenses/presentation/cubit/search_cubit.dart';
 import 'package:my_budget/features/reminders/domain/entities/daily_reminder.dart';
@@ -192,6 +197,68 @@ void main() {
           await _languageOptions(tester),
           _allLanguages(strings, device: language),
         );
+      });
+    }
+  });
+
+  group('the AI assistant in every translation', () {
+    for (final language in AppLanguage.translated) {
+      final code = language.languageCode!;
+
+      testWidgets('${language.name}: chat, sharing and history fit', (
+        tester,
+      ) async {
+        tester.view.physicalSize = const Size(1080, 2220);
+        tester.view.devicePixelRatio = 3;
+        addTearDown(tester.view.reset);
+        final strings = AppStrings.forLanguageCode(code);
+
+        final harness = await bootApp(
+          tester,
+          localeName: code,
+          before: (harness) {
+            harness.auth.currentUser = const AppUser(
+              id: 'user-1',
+              email: 'me@example.com',
+            );
+            harness.assistant
+              ..consent = true
+              // Every switch on and a custom range: the longest labels.
+              ..sharing = AssistantSharing(
+                range: AssistantRange.custom,
+                customStart: DateTime(2026, 9, 1),
+                customEnd: DateTime(2026, 9, 30),
+                transactions: true,
+                descriptions: true,
+                recurring: true,
+                people: true,
+              );
+          },
+        );
+        unawaited(
+          Navigator.of(
+            tester.element(find.byType(Scaffold).first),
+          ).push(AssistantPage.route()),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text(strings.assistantTitle), findsOneWidget);
+        expect(find.text(strings.assistantSharingMore), findsOneWidget);
+
+        harness.assistant.replies.add('OK');
+        await tester.enterText(find.byType(TextField), 'How much?');
+        await tester.tap(find.byIcon(Icons.send));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byTooltip(strings.assistantSharingTitle));
+        await tester.pumpAndSettle();
+        expect(find.text(strings.assistantShareTransactions), findsOneWidget);
+        await _back(tester);
+
+        await tester.tap(find.byIcon(Icons.history));
+        await tester.pumpAndSettle();
+        expect(find.text(strings.assistantHistory), findsOneWidget);
+        expect(find.text('How much?'), findsOneWidget);
+        await _back(tester);
       });
     }
   });

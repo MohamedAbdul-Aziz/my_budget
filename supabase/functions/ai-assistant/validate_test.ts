@@ -6,6 +6,8 @@ import { test } from 'node:test';
 import {
   answerOf,
   buildMessages,
+  FOLLOW_UPS_MARKER,
+  splitReply,
   MAX_HISTORY,
   MAX_QUESTION_CHARS,
   MAX_SUMMARY_BYTES,
@@ -107,4 +109,41 @@ test('reads the answer from a chat completions response', () => {
   assert.equal(answerOf({ choices: [] }), null);
   assert.equal(answerOf({ choices: [{ message: { content: '  ' } }] }), null);
   assert.equal(answerOf({ error: 'x' }), null);
+});
+
+test('a device id is optional, and must look like the app\'s', () => {
+  assert.equal(parseAskRequest(valid)?.deviceId, null);
+  const id = '0123456789abcdef0123456789abcdef';
+  assert.equal(parseAskRequest({ ...valid, deviceId: id })?.deviceId, id);
+  assert.equal(parseAskRequest({ ...valid, deviceId: 'short' }), null);
+  assert.equal(parseAskRequest({ ...valid, deviceId: id.toUpperCase() }), null);
+  assert.equal(parseAskRequest({ ...valid, deviceId: 7 }), null);
+});
+
+test('the prompt asks for simple Markdown and follow-up questions', () => {
+  const [system] = buildMessages(parseAskRequest(valid)!);
+  assert.match(system.content, /No tables/);
+  assert.ok(system.content.includes(FOLLOW_UPS_MARKER));
+});
+
+test('splits the answer from its suggested questions', () => {
+  const reply = splitReply(
+    `**Food** costs most.\n\n${FOLLOW_UPS_MARKER}\n- How about last month?\n2. Where can I save?\n* Am I on budget?\n- One too many?\n`,
+  );
+  assert.deepEqual(reply, {
+    answer: '**Food** costs most.',
+    followUps: ['How about last month?', 'Where can I save?', 'Am I on budget?'],
+  });
+});
+
+test('a reply without suggestions is all answer; an empty one is none', () => {
+  assert.deepEqual(splitReply('Just this.'), {
+    answer: 'Just this.',
+    followUps: [],
+  });
+  assert.equal(splitReply(`  ${FOLLOW_UPS_MARKER}\n- Only questions?`), null);
+  assert.deepEqual(
+    splitReply(`OK\n${FOLLOW_UPS_MARKER}\n- ${'x'.repeat(200)}`)?.followUps,
+    [],
+  );
 });

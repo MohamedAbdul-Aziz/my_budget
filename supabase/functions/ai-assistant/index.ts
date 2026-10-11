@@ -7,29 +7,40 @@ import {
   byteLength,
   MAX_BODY_BYTES,
   parseAskRequest,
+  splitReply,
 } from './validate.ts';
 
-// Answers a question about the caller's spending. The app sends a small
-// summary of totals (never single transactions); this function adds the AI
-// provider's key, which never leaves the server, and asks the model.
+// Answers a question about the caller's spending. The app sends a summary
+// built on the phone (totals only, unless the user chose to share more);
+// this function adds the AI provider's key, which never leaves the server,
+// and asks the model.
 //
-// verify_jwt is on, so the platform has already turned away any request
-// without a valid session before this code runs. The user is still read
-// from the token here, because the quota is kept per user.
+// No account is needed. verify_jwt is OFF so guests can call it, and every
+// request is counted here instead:
+// * a signed-in user (a valid session token) per account, in ai_usage;
+// * a guest per device id (a random id the app keeps on the phone), and
+//   also per IP address, so a client that keeps changing its id is still
+//   held back. The IP is only stored as a salted hash.
+// The user is never told the numbers; past a limit the answer is
+// 429 {error:'daily_limit'}.
 //
-// Provider: any OpenAI-compatible chat completions API, chosen by secrets:
+// Secrets:
 //   AI_BASE_URL  e.g. https://api.groq.com/openai/v1
 //   AI_API_KEY   the provider's key
 //   AI_MODEL     e.g. openai/gpt-oss-120b
 //   AI_REASONING_EFFORT  optional, for reasoning models (low|medium|high):
 //                low keeps answers quick and leaves room under max_tokens,
 //                which reasoning tokens also count against
+//   AI_IP_SALT   random text that makes the stored IP hashes unguessable
 //
-// Never log a request body, the summary, the prompt, an answer or a secret:
-// only status codes and short error names.
+// Never log a request body, the summary, the prompt, an answer, an IP or a
+// secret: only status codes and short error names.
 
-/** Questions per account per UTC day (see the ai_usage migration). */
+/** Questions per account, or per device, per UTC day. */
 const DAILY_LIMIT = 20;
+
+/** Questions per IP address per UTC day, across every guest device on it. */
+const DAILY_IP_LIMIT = 60;
 
 const PROVIDER_TIMEOUT_MS = 30_000;
 
@@ -48,23 +59,24 @@ function json(body: unknown, status: number): Response {
   });
 }
 
+/** The caller's address as the platform saw it: the first hop. */
+function clientIp(req: Request): string | null {
+  const forwarded = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+  return forwarded || req.headers.get('x-real-ip')?.trim() || null;
+}
+
+async function hashed(salt: string, value: string): Promise<string> {
+  const digest = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(`${salt}:${value}`),
+  );
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
-
-  const token = req.headers.get('Authorization')?.replace(/^Bearer\s+/i, '');
-  if (!token) return json({ error: 'not_signed_in' }, 401);
-
-  const admin = createClient(Deno.env.get('SUPABASE_URL')!, secretKey(), {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-
-  // The account comes from the caller's own session token, never from the
-  // request body.
-  const {
-    data: { user },
-    error: userError,
-  } = await admin.auth.getUser(token);
-  if (userError || !user) return json({ error: 'not_signed_in' }, 401);
 
   const declared = Number(req.headers.get('Content-Length') ?? '0');
   if (declared > MAX_BODY_BYTES) return json({ error: 'bad_request' }, 400);
@@ -84,21 +96,51 @@ Deno.serve(async (req: Request) => {
   const apiKey = Deno.env.get('AI_API_KEY');
   const model = Deno.env.get('AI_MODEL');
   const reasoningEffort = Deno.env.get('AI_REASONING_EFFORT');
-  if (!baseUrl || !apiKey || !model) {
-    console.error('ai-assistant: provider secrets are not set');
+  const ipSalt = Deno.env.get('AI_IP_SALT');
+  if (!baseUrl || !apiKey || !model || !ipSalt) {
+    console.error('ai-assistant: secrets are not set');
     return json({ error: 'unavailable' }, 503);
   }
 
-  // Counted before the provider is called, in one atomic step.
-  const { data: allowed, error: quotaError } = await admin.rpc(
-    'bump_ai_usage',
-    { p_uid: user.id, p_limit: DAILY_LIMIT },
-  );
-  if (quotaError) {
-    console.error('ai-assistant: quota check failed:', quotaError.code);
-    return json({ error: 'unavailable' }, 503);
+  const admin = createClient(Deno.env.get('SUPABASE_URL')!, secretKey(), {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+
+  // A real user session counts against the account. Anything else (no
+  // token, the app's public key, an expired session) is a guest.
+  const token = req.headers.get('Authorization')?.replace(/^Bearer\s+/i, '');
+  let userId: string | null = null;
+  if (token) {
+    const { data, error } = await admin.auth.getUser(token);
+    if (!error && data.user) userId = data.user.id;
   }
-  if (allowed !== true) return json({ error: 'daily_limit' }, 429);
+
+  // Counted before the provider is called, each in one atomic step. The
+  // ids come from the token, the app's own device id and the connection,
+  // and the limits are constants here: nothing in the body sets them.
+  const checks: [string, Record<string, unknown>][] = [];
+  if (userId) {
+    checks.push(['bump_ai_usage', { p_uid: userId, p_limit: DAILY_LIMIT }]);
+  } else {
+    const ip = clientIp(req);
+    if (!request.deviceId || !ip) return json({ error: 'bad_request' }, 400);
+    checks.push([
+      'bump_ai_guest_usage',
+      { p_key: `device:${request.deviceId}`, p_limit: DAILY_LIMIT },
+    ]);
+    checks.push([
+      'bump_ai_guest_usage',
+      { p_key: `ip:${await hashed(ipSalt, ip)}`, p_limit: DAILY_IP_LIMIT },
+    ]);
+  }
+  for (const [fn, args] of checks) {
+    const { data: allowed, error } = await admin.rpc(fn, args);
+    if (error) {
+      console.error('ai-assistant: quota check failed:', error.code);
+      return json({ error: 'unavailable' }, 503);
+    }
+    if (allowed !== true) return json({ error: 'daily_limit' }, 429);
+  }
 
   let response: Response;
   try {
@@ -135,16 +177,17 @@ Deno.serve(async (req: Request) => {
     return json({ error: 'unavailable' }, 502);
   }
 
-  let answer: string | null = null;
+  let text: string | null = null;
   try {
-    answer = answerOf(await response.json());
+    text = answerOf(await response.json());
   } catch {
-    answer = null;
+    text = null;
   }
-  if (!answer) {
+  const reply = text === null ? null : splitReply(text);
+  if (!reply) {
     console.error('ai-assistant: provider sent no answer');
     return json({ error: 'unavailable' }, 502);
   }
 
-  return json({ answer }, 200);
+  return json({ answer: reply.answer, followUps: reply.followUps }, 200);
 });

@@ -736,7 +736,7 @@ class AppStringsId extends AppStrings {
       'Asisten sedang tidak tersedia. Coba lagi nanti.',
     FailureCode.aiBusy => 'Asisten sedang sibuk. Coba lagi dalam satu menit.',
     FailureCode.aiDailyLimit =>
-      'Kamu sudah mengajukan 20 pertanyaan hari ini. Coba lagi besok.',
+      'Kamu sudah mencapai batas penggunaan asisten hari ini. Coba lagi besok.',
   };
 
   @override
@@ -1357,15 +1357,11 @@ class AppStringsId extends AppStrings {
   String get assistantSend => 'Kirim';
 
   @override
-  String get assistantSignInBody =>
-      'Masuk untuk memakai asisten AI. Setiap akun bisa mengajukan 20 pertanyaan per hari.';
-
-  @override
   String get assistantConsentTitle => 'Sebelum bertanya';
 
   @override
   String get assistantConsentBody =>
-      'Untuk menjawab, aplikasi mengirim pertanyaanmu, beberapa pesan terakhir, dan ringkasan total tiga bulan terakhir (per kategori, pemasukan, pengeluaran, dan anggaran) melalui server kami ke penyedia AI Groq. Deskripsi, catatan, dan nama orang tidak pernah dikirim. Kami tidak menyimpan pertanyaan maupun jawabannya; server kami hanya menghitung jumlah pertanyaanmu setiap hari. Kamu bisa berhenti berbagi kapan saja.';
+      'Untuk menjawab, aplikasi mengirim pertanyaanmu, beberapa pesan terakhir, dan ringkasan totalmu (per kategori, pemasukan, pengeluaran, dan anggaran, untuk tiga bulan terakhir kecuali kamu memilih periode lain) melalui server kami ke penyedia AI Groq. Secara bawaan tidak ada hal lain yang dikirim: tidak ada transaksi satuan, catatan, atau nama orang. Kamu bisa memilih membagikan lebih banyak di Yang dibagikan. Server kami tidak menyimpan pertanyaan maupun jawabannya; server hanya menghitung jumlah pertanyaanmu setiap hari. Kamu bisa berhenti berbagi kapan saja.';
 
   @override
   String get assistantConsentAgree => 'Saya setuju';
@@ -1383,6 +1379,93 @@ class AppStringsId extends AppStrings {
     'Bagaimana bulan ini dibanding bulan lalu?',
     'Apakah anggaran saya aman?',
   ];
+
+  @override
+  String get assistantNewChat => 'Obrolan baru';
+
+  @override
+  String get assistantHistory => 'Riwayat obrolan';
+
+  @override
+  String get assistantNoChats =>
+      'Belum ada obrolan tersimpan. Obrolanmu dengan asisten hanya disimpan di ponsel ini.';
+
+  @override
+  String get assistantDeleteChatTitle => 'Hapus obrolan ini?';
+
+  @override
+  String get assistantDeleteAll => 'Hapus semua obrolan';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'Semua obrolan tersimpan dengan asisten akan dihapus dari ponsel ini.';
+
+  @override
+  String get assistantSharingTitle => 'Yang dibagikan';
+
+  @override
+  String get assistantSharingIntro =>
+      'Ringkasan totalmu selalu dikirim bersama setiap pertanyaan. Aktifkan hal lain yang ingin kamu tunjukkan ke asisten.';
+
+  @override
+  String get assistantPeriod => 'Periode';
+
+  @override
+  String get assistantRangeThisMonth => 'Bulan ini';
+
+  @override
+  String get assistantRangeLast3Months => '3 bulan';
+
+  @override
+  String get assistantRangeLast6Months => '6 bulan';
+
+  @override
+  String get assistantRangeThisYear => 'Tahun ini';
+
+  @override
+  String get assistantRangeCustom => 'Kustom';
+
+  @override
+  String get assistantShareTransactions => 'Transaksi';
+
+  @override
+  String get assistantShareTransactionsHint =>
+      'Satu per satu: jumlah, kategori, dan tanggal';
+
+  @override
+  String get assistantShareNotes => 'Catatan';
+
+  @override
+  String get assistantShareNotesHint => 'Yang kamu tulis di setiap transaksi';
+
+  @override
+  String get assistantShareRecurring => 'Pembayaran berulang';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'Tagihan, langganan, dan pemasukan, serta yang jatuh tempo';
+
+  @override
+  String get assistantSharePeople => 'Orang dan utang';
+
+  @override
+  String get assistantSharePeopleHint =>
+      'Nama, dan siapa berutang kepada siapa';
+
+  @override
+  String get assistantSharingReset => 'Ringkasan saja';
+
+  @override
+  String get assistantSharingMore => 'Kamu membagikan lebih dari ringkasan.';
+
+  @override
+  String get assistantCopy => 'Salin';
+
+  @override
+  String get assistantShare => 'Bagikan';
+
+  @override
+  String get assistantCopied => 'Jawaban disalin';
 
   @override
   String get otherCategories => 'Lainnya';

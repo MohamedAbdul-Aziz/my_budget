@@ -693,7 +693,7 @@ class AppStringsKo extends AppStrings {
     FailureCode.summaryTooLarge => '데이터가 너무 많아 도우미용으로 요약할 수 없어요.',
     FailureCode.aiUnavailable => '지금은 도우미를 사용할 수 없어요. 나중에 다시 시도하세요.',
     FailureCode.aiBusy => '도우미가 바빠요. 1분 후에 다시 시도하세요.',
-    FailureCode.aiDailyLimit => '오늘 질문 20개를 모두 사용했어요. 내일 다시 시도하세요.',
+    FailureCode.aiDailyLimit => '오늘 도우미 사용 한도에 도달했어요. 내일 다시 시도하세요.',
   };
 
   @override
@@ -1287,15 +1287,11 @@ class AppStringsKo extends AppStrings {
   String get assistantSend => '보내기';
 
   @override
-  String get assistantSignInBody =>
-      'AI 도우미를 사용하려면 로그인하세요. 계정마다 하루 20개까지 질문할 수 있어요.';
-
-  @override
   String get assistantConsentTitle => '질문하기 전에';
 
   @override
   String get assistantConsentBody =>
-      '답변을 위해 앱은 질문, 최근 메시지, 최근 3개월 합계 요약(카테고리별, 수입, 지출, 예산)을 저희 서버를 거쳐 AI 제공업체 Groq에 보냅니다. 설명, 메모, 사람 이름은 절대 보내지 않아요. 질문과 답변은 저장하지 않으며, 서버는 하루 질문 수만 셉니다. 언제든지 공유를 중지할 수 있어요.';
+      '답변을 위해 앱은 질문, 최근 메시지, 합계 요약(카테고리별, 수입, 지출, 예산. 다른 기간을 고르지 않으면 최근 3개월)을 저희 서버를 거쳐 AI 제공업체 Groq에 보냅니다. 기본적으로 그 밖의 내용은 보내지 않아요. 개별 거래, 메모, 사람 이름은 전송되지 않습니다. "공유할 내용"에서 더 공유하도록 선택할 수 있어요. 서버는 질문과 답변을 저장하지 않고 하루 질문 수만 셉니다. 언제든지 공유를 중지할 수 있어요.';
 
   @override
   String get assistantConsentAgree => '동의';
@@ -1312,6 +1308,88 @@ class AppStringsKo extends AppStrings {
     '이번 달은 지난달과 비교해 어때요?',
     '예산을 잘 지키고 있나요?',
   ];
+
+  @override
+  String get assistantNewChat => '새 채팅';
+
+  @override
+  String get assistantHistory => '채팅 기록';
+
+  @override
+  String get assistantNoChats => '저장된 채팅이 아직 없어요. 도우미와의 채팅은 이 휴대폰에만 저장돼요.';
+
+  @override
+  String get assistantDeleteChatTitle => '이 채팅을 삭제할까요?';
+
+  @override
+  String get assistantDeleteAll => '모든 채팅 삭제';
+
+  @override
+  String get assistantDeleteAllBody => '도우미와 저장된 모든 채팅이 이 휴대폰에서 삭제돼요.';
+
+  @override
+  String get assistantSharingTitle => '공유할 내용';
+
+  @override
+  String get assistantSharingIntro =>
+      '질문할 때마다 합계 요약이 항상 함께 전송돼요. 도우미가 더 볼 수 있게 할 항목을 켜세요.';
+
+  @override
+  String get assistantPeriod => '기간';
+
+  @override
+  String get assistantRangeThisMonth => '이번 달';
+
+  @override
+  String get assistantRangeLast3Months => '3개월';
+
+  @override
+  String get assistantRangeLast6Months => '6개월';
+
+  @override
+  String get assistantRangeThisYear => '올해';
+
+  @override
+  String get assistantRangeCustom => '직접 설정';
+
+  @override
+  String get assistantShareTransactions => '거래 내역';
+
+  @override
+  String get assistantShareTransactionsHint => '건별: 금액, 카테고리, 날짜';
+
+  @override
+  String get assistantShareNotes => '메모';
+
+  @override
+  String get assistantShareNotesHint => '거래마다 적은 내용';
+
+  @override
+  String get assistantShareRecurring => '반복 결제';
+
+  @override
+  String get assistantShareRecurringHint => '청구서, 구독, 수입과 납부 예정';
+
+  @override
+  String get assistantSharePeople => '사람과 빌린 돈';
+
+  @override
+  String get assistantSharePeopleHint => '이름과 누가 누구에게 빚졌는지';
+
+  @override
+  String get assistantSharingReset => '요약만';
+
+  @override
+  String get assistantSharingMore => '요약보다 많은 내용을 공유하고 있어요.';
+
+  @override
+  String get assistantCopy => '복사';
+
+  @override
+  String get assistantShare => '공유';
+
+  @override
+  String get assistantCopied => '답변을 복사했어요';
 
   @override
   String get otherCategories => '기타';

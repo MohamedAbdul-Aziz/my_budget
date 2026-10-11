@@ -73,7 +73,7 @@
 <main>
 
   <h1>Privacy Policy for My Budget</h1>
-  <p class="meta">Last updated: 9 October 2026</p>
+  <p class="meta">Last updated: 10 October 2026</p>
 
   <div class="summary">
     <p><strong>The short version:</strong> My Budget keeps your records on your
@@ -90,11 +90,12 @@
   information you enter into the app.</p>
 
   <h2>Using the app without an account</h2>
-  <p>You can use every feature except cloud backup and the AI assistant without signing in. Your
+  <p>You can use every feature except cloud backup without signing in. Your
   transactions, categories, budgets, recurring payments, people and debts, and
   settings are written to a private database inside the app's own storage on
   your device. Android isolates this storage so that other apps cannot read
-  it. Nothing you enter is sent anywhere while you are not signed in.</p>
+  it. Nothing you enter is sent anywhere while you are not signed in, except
+  what you choose to send to the optional AI assistant (see below).</p>
 
   <h2>Optional account and cloud backup</h2>
   <p>If you create an account, the app collects:</p>
@@ -124,32 +125,55 @@
 
       <h2>Optional AI assistant</h2>
       <p>The AI assistant answers questions about your spending, such as
-      &ldquo;Where can I save?&rdquo;. It is off until you open it while
-      signed in and agree to what it sends. You can withdraw that agreement
+      &ldquo;Where can I save?&rdquo;. No account is needed. It is off until
+      you open it and agree to what it sends. You can withdraw that agreement
       at any time with <em>Stop sharing</em> on the assistant's screen.</p>
       <p>Each time you ask a question, the app sends:</p>
       <ul>
         <li>Your question and up to six earlier messages from the same
           conversation.</li>
         <li>A summary of totals built on your phone for that question: for
-          the current month and the two before it, spending and income in
-          total and by category (by category name), daily average, the
-          costliest day's total, your budget limits for this month, and a
-          six-month spending trend, in your chosen currency.</li>
+          the current month and the two before it (or another period you
+          choose), spending and income in total and by category (by category
+          name), daily average, the costliest day's total, your budget limits
+          for this month, and a six-month spending trend, in your chosen
+          currency.</li>
       </ul>
-      <p>It never sends single transactions, notes or descriptions, the
-      people you track debts with, your email address, or record ids.</p>
+      <p>That summary is all it sends unless you choose otherwise. Under
+      <em>What to share</em> on the assistant's screen you can pick the
+      period and turn on any of these, each off by default:</p>
+      <ul>
+        <li><strong>Transactions</strong>: each transaction in the period,
+          with its amount, category and date (the most recent ones, up to a
+          size limit).</li>
+        <li><strong>Notes</strong>: the note you typed with each of those
+          transactions.</li>
+        <li><strong>Recurring payments</strong>: their titles, amounts,
+          schedules and whether they are paid, upcoming or overdue.</li>
+        <li><strong>People and debts</strong>: the names of the people you
+          track debts with and each balance.</li>
+      </ul>
+      <p>The assistant's screen shows a reminder while you share more than
+      the summary, and <em>Summary only</em> turns everything back off. These
+      choices are kept on your phone only. The app never sends your email
+      address, phone numbers or record ids.</p>
       <p>The request goes over HTTPS to the app's server at Supabase, which
-      checks that you are signed in and passes it to
+      counts the question against a daily limit and passes it to
       <a href="https://groq.com/privacy-policy/">Groq</a>, the AI provider
       that writes the answer. The app's server does not store your
-      questions, the summaries or the answers; it keeps only a count of how
-      many questions each account asked per day (up to 20), which is deleted
-      with your account. Groq processes the request under its own terms;
+      questions, the summaries or the answers. For the daily limit it keeps
+      only counts per day: per account if you are signed in (deleted with
+      your account); otherwise per a random id the app creates on your phone
+      (it says nothing about you or the phone) and per a salted, one-way hash
+      of your IP address (the address itself is never stored). These counts
+      are deleted after a week. Groq processes the request under its own terms;
       <a href="https://console.groq.com/docs/your-data">Groq states</a> that
       it does not retain request content by default, apart from limited cases
-      such as investigating failures or abuse. The conversation is kept on
-      your phone only while the assistant's screen is open.</p>
+      such as investigating failures or abuse. Your questions and the answers are saved as chats on your phone only,
+      so you can open them again later. They are never uploaded, never put in
+      backup files, and a restore does not change them; you can delete one
+      chat or all of them from the assistant's history. The summaries sent
+      with your questions are not saved.</p>
       <p>AI answers can be wrong. They are not financial, tax or legal
       advice.</p>
 

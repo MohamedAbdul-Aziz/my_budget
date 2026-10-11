@@ -8,28 +8,48 @@ import '../../../budgets/domain/entities/budget_status.dart';
 import '../../../budgets/domain/usecases/get_budget_status.dart';
 import '../../../categories/domain/entities/expense_category.dart';
 import '../../../expenses/domain/entities/category_breakdown.dart';
+import '../../../expenses/domain/entities/expense.dart';
 import '../../../expenses/domain/entities/month.dart';
+import '../../../expenses/domain/repositories/expense_repository.dart';
+import '../../../expenses/domain/usecases/get_period_overview.dart';
+import '../../../people/domain/entities/person_summary.dart';
+import '../../../people/domain/usecases/get_people.dart';
+import '../../../recurring/domain/entities/recurring_overview.dart';
+import '../../../recurring/domain/usecases/get_recurring_overview.dart';
+import '../entities/assistant_sharing.dart';
 import '../entities/spending_summary.dart';
 
-/// Turns the phone's own figures into the small summary the assistant
-/// answers from. It reuses the analyses and budget use cases, so every
-/// number matches what the Analyses tab shows.
+/// Turns the phone's own figures into the summary the assistant answers
+/// from. It reuses the analyses and budget use cases, so every number
+/// matches what the Analyses tab shows.
 ///
-/// Only totals go in: never a description, an id, a person or a single
-/// transaction ([MonthAnalysis.largestExpense] is left out for that reason).
+/// By default ([AssistantSharing.defaults]) only totals go in: never a
+/// description, an id, a person or a single transaction
+/// ([MonthAnalysis.largestExpense] is left out for that reason). Anything
+/// more is added only when the user turned it on.
 class BuildSpendingSummary {
   const BuildSpendingSummary({
     required GetMonthAnalysis getMonthAnalysis,
     required GetBudgetStatus getBudgetStatus,
+    required ExpenseRepository expenseRepository,
+    required GetRecurringOverview getRecurringOverview,
+    required GetPeople getPeople,
   }) : _analysis = getMonthAnalysis,
-       _budget = getBudgetStatus;
+       _budget = getBudgetStatus,
+       _expenses = expenseRepository,
+       _recurring = getRecurringOverview,
+       _people = getPeople;
 
-  /// The current month and the two before it.
-  static const int monthsIncluded = 3;
-
-  /// The most the summary may weigh once encoded, in bytes. The server
-  /// refuses anything larger.
+  /// The most the totals part may weigh once encoded, in bytes.
   static const int maxBytes = 8192;
+
+  /// The most the whole summary may weigh, shared parts included. The
+  /// server refuses anything larger, and the free AI tier only takes a few
+  /// thousand tokens a minute.
+  static const int maxTotalBytes = 16384;
+
+  /// The most recurring payments or people sent.
+  static const int maxListItems = 50;
 
   /// How far category lists are cut, in turn, when the summary is too big.
   static const List<int> categoryCaps = [10, 5];
@@ -40,27 +60,31 @@ class BuildSpendingSummary {
 
   final GetMonthAnalysis _analysis;
   final GetBudgetStatus _budget;
+  final ExpenseRepository _expenses;
+  final GetRecurringOverview _recurring;
+  final GetPeople _people;
 
   /// [labelOf] names a category as the user sees it (built-in categories are
-  /// translated in the presentation layer).
+  /// translated in the presentation layer). [sharing] says what goes in
+  /// besides the totals.
   Future<ApiResult<SpendingSummary>> call({
     required String Function(ExpenseCategory) labelOf,
     required String currency,
+    AssistantSharing sharing = AssistantSharing.defaults,
     DateTime? now,
   }) async {
     final today = now ?? DateTime.now();
     final current = Month.fromDate(today);
+    final resolved = sharing.resolve(today);
 
     final analyses = <MonthAnalysis>[];
-    var month = current;
-    for (var i = 0; i < monthsIncluded; i++) {
+    for (final month in resolved.months) {
       switch (await _analysis(month, now: today)) {
         case Success(:final data):
           analyses.add(data);
         case ResultFailure(:final failure):
           return ResultFailure(failure);
       }
-      month = month.previous;
     }
 
     final BudgetStatus budget;
@@ -71,19 +95,116 @@ class BuildSpendingSummary {
         return ResultFailure(failure);
     }
 
-    final summary = SpendingSummary(
-      currency: currency,
-      generatedOn: _day(today),
-      months: [
-        for (final analysis in analyses) _month(analysis, labelOf, today),
-      ],
-      budget: _budgetOf(budget, labelOf),
-      trend: [
-        for (final summary in analyses.first.trend)
-          (summary.month.key, summary.total),
-      ],
+    // Whatever the user shares that is read by dates rather than by month.
+    List<Expense>? inRange;
+    if (sharing.range == AssistantRange.custom || sharing.transactions) {
+      switch (await _expenses.getTransactionsBetween(
+        resolved.start,
+        resolved.endExclusive,
+      )) {
+        case Success(:final data):
+          inRange = [...data]..sort((a, b) => b.date.compareTo(a.date));
+        case ResultFailure(:final failure):
+          return ResultFailure(failure);
+      }
+    }
+
+    List<SummaryRecurring>? recurring;
+    if (sharing.recurring) {
+      switch (await _recurring(today: today)) {
+        case Success(:final data):
+          recurring = [
+            for (final item in data.commitments.take(maxListItems))
+              _recurringOf(item, labelOf),
+          ];
+        case ResultFailure(:final failure):
+          return ResultFailure(failure);
+      }
+    }
+
+    List<SummaryPerson>? people;
+    if (sharing.people) {
+      switch (await _people()) {
+        case Success(:final data):
+          people = [
+            for (final person in data.take(maxListItems)) _personOf(person),
+          ];
+        case ResultFailure(:final failure):
+          return ResultFailure(failure);
+      }
+    }
+
+    final totals = fitted(
+      SpendingSummary(
+        currency: currency,
+        generatedOn: _day(today),
+        months: [
+          for (final analysis in analyses) _month(analysis, labelOf, today),
+        ],
+        budget: _budgetOf(budget, labelOf),
+        trend: [
+          for (final summary in analyses.first.trend)
+            (summary.month.key, summary.total),
+        ],
+        range: sharing.range == AssistantRange.custom
+            ? _rangeOf(resolved, inRange!, labelOf)
+            : null,
+        recurring: recurring,
+        people: people,
+      ),
     );
-    return fitted(summary);
+    if (totals case ResultFailure(:final failure)) {
+      return ResultFailure(failure);
+    }
+    final summary = totals.dataOrNull!;
+    if (!sharing.transactions) {
+      return sizeOf(summary) <= maxTotalBytes
+          ? Success(summary)
+          : const ResultFailure(ValidationFailure(FailureCode.summaryTooLarge));
+    }
+    return withTransactions(summary, [
+      for (final expense in inRange!)
+        SummaryTransaction(
+          date: _day(expense.date),
+          amount: expense.amount,
+          isIncome: expense.isIncome,
+          category: labelOf(expense.category),
+          note: sharing.sendsDescriptions ? expense.description?.trim() : null,
+        ),
+    ]);
+  }
+
+  /// [summary] with as many of [transactions] (newest first) as fit in
+  /// [maxTotalBytes]; the model is told how many older ones were left out.
+  static ApiResult<SpendingSummary> withTransactions(
+    SpendingSummary summary,
+    List<SummaryTransaction> transactions,
+  ) {
+    SpendingSummary keeping(int count) => summary.withTransactions(
+      transactions.take(count).toList(),
+      leftOut: transactions.length - count,
+    );
+
+    if (sizeOf(keeping(transactions.length)) <= maxTotalBytes) {
+      return Success(keeping(transactions.length));
+    }
+    if (sizeOf(keeping(0)) > maxTotalBytes) {
+      return const ResultFailure(
+        ValidationFailure(FailureCode.summaryTooLarge),
+      );
+    }
+    // The most that fit, found by halving.
+    var fits = 0;
+    var tooMany = transactions.length;
+    while (tooMany - fits > 1) {
+      final middle = (fits + tooMany) ~/ 2;
+      if (sizeOf(keeping(middle)) <= maxTotalBytes) {
+        fits = middle;
+      } else {
+        tooMany = middle;
+      }
+    }
+    return Success(keeping(fits));
   }
 
   /// [summary] as it is, or with its category lists cut down until it fits
@@ -158,6 +279,39 @@ class BuildSpendingSummary {
         share: slice.share,
       ),
   ];
+
+  static SummaryRange _rangeOf(
+    ResolvedRange range,
+    List<Expense> expenses,
+    String Function(ExpenseCategory) labelOf,
+  ) {
+    final (spent, breakdown) = GetPeriodOverview.breakdownOf(expenses);
+    return SummaryRange(
+      from: _day(range.start),
+      to: _day(range.lastDay),
+      spent: spent,
+      income: GetPeriodOverview.incomeOf(expenses),
+      spendingByCategory: _categories(breakdown, labelOf),
+    );
+  }
+
+  static SummaryRecurring _recurringOf(
+    RecurringCommitment item,
+    String Function(ExpenseCategory) labelOf,
+  ) => SummaryRecurring(
+    title: item.recurring.title,
+    amount: item.recurring.amount,
+    isIncome: item.recurring.isIncome,
+    frequency: item.recurring.frequency.storageKey,
+    status: item.status.name,
+    nextDue: _day(item.nextDue),
+  );
+
+  static SummaryPerson _personOf(PersonSummary person) => SummaryPerson(
+    name: person.person.name,
+    balance: person.balance.amount,
+    openCount: person.openCount,
+  );
 
   static SummaryBudget _budgetOf(
     BudgetStatus status,

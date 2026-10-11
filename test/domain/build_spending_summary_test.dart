@@ -10,6 +10,12 @@ import 'package:my_budget/features/budgets/domain/usecases/get_budget_status.dar
 import 'package:my_budget/features/categories/domain/entities/expense_category.dart';
 import 'package:my_budget/features/expenses/domain/entities/expense.dart';
 import 'package:my_budget/features/expenses/domain/entities/month.dart';
+import 'package:my_budget/features/assistant/domain/entities/assistant_sharing.dart';
+import 'package:my_budget/features/people/domain/entities/person_transaction_type.dart';
+import 'package:my_budget/features/people/domain/usecases/get_people.dart';
+import 'package:my_budget/features/recurring/domain/entities/recurrence_frequency.dart';
+import 'package:my_budget/features/recurring/domain/entities/recurring_mode.dart';
+import 'package:my_budget/features/recurring/domain/usecases/get_recurring_overview.dart';
 
 import '../presentation/fakes.dart';
 
@@ -26,6 +32,8 @@ void main() {
   late FakeCategoryRepository categories;
   late FakeExpenseRepository expenses;
   late FakeBudgetRepository budgets;
+  late FakeRecurringRepository recurring;
+  late FakePeopleRepository people;
   late BuildSpendingSummary build;
 
   final now = DateTime(2026, 10, 10);
@@ -39,12 +47,17 @@ void main() {
           expenseRepository: expenses,
           categoryRepository: categories,
         ),
+        expenseRepository: expenses,
+        getRecurringOverview: GetRecurringOverview(recurring),
+        getPeople: GetPeople(people),
       );
 
   setUp(() {
     categories = FakeCategoryRepository();
     expenses = FakeExpenseRepository(categories);
     budgets = FakeBudgetRepository();
+    recurring = FakeRecurringRepository(categories, expenses);
+    people = FakePeopleRepository();
     build = buildOver(expenses);
   });
 
@@ -235,6 +248,179 @@ void main() {
       final result = BuildSpendingSummary.fitted(huge);
 
       expect(result.failureOrNull?.code, FailureCode.summaryTooLarge);
+    });
+  });
+
+  group('what the user shares', () {
+    Future<Map<String, Object?>> sent(AssistantSharing sharing) async {
+      final summary = (await build(
+        labelOf: labelOf,
+        currency: 'EGP',
+        sharing: sharing,
+        now: now,
+      )).dataOrNull!;
+      return jsonDecode(jsonEncode(summary.toJson())) as Map<String, Object?>;
+    }
+
+    setUp(() async {
+      await add(120, DateTime(2026, 10, 3), description: 'Lunch with Sara');
+      await add(80, DateTime(2026, 9, 20), description: 'Taxi');
+      await add(15, DateTime(2026, 4, 2), description: 'Old coffee');
+      await recurring.createRecurring(
+        title: 'Rent',
+        amount: 3000,
+        categoryId: 'cat_bills',
+        frequency: RecurrenceFrequency.monthly,
+        dueDay: 1,
+        mode: RecurringMode.reminder,
+        startsOn: DateTime(2026, 1, 1),
+      );
+      final sara = (await people.addPerson(
+        name: 'Sara',
+        colorValue: 0xFF000000,
+      )).dataOrNull!;
+      await people.addTransaction(
+        personId: sara.id,
+        amount: 50,
+        type: PersonTransactionType.iPaidForThem,
+        date: DateTime(2026, 10, 1),
+      );
+    });
+
+    test('by default it is the totals summary, exactly as before', () async {
+      final json = await sent(AssistantSharing.defaults);
+      expect(json.keys, {
+        'currency',
+        'generatedOn',
+        'note',
+        'months',
+        'budget',
+        'trend',
+      });
+      expect(
+        [for (final m in json['months']! as List) (m as Map)['period']],
+        ['2026-10', '2026-09', '2026-08'],
+      );
+      final encoded = jsonEncode(json);
+      for (final secret in ['Sara', 'Lunch', 'Taxi', 'Rent']) {
+        expect(encoded, isNot(contains(secret)), reason: secret);
+      }
+    });
+
+    test('transactions in the period, newest first, without notes', () async {
+      final json = await sent(const AssistantSharing(transactions: true));
+      final list = json['transactions']! as List;
+      expect(list, [
+        {
+          'date': '2026-10-03',
+          'type': 'expense',
+          'amount': 120.0,
+          'category': 'L:Food',
+        },
+        {
+          'date': '2026-09-20',
+          'type': 'expense',
+          'amount': 80.0,
+          'category': 'L:Food',
+        },
+      ]);
+      expect(jsonEncode(json), isNot(contains('Lunch')));
+      expect(json.containsKey('olderTransactionsLeftOut'), isFalse);
+    });
+
+    test('notes go only with transactions', () async {
+      final notesOnly = await sent(const AssistantSharing(descriptions: true));
+      expect(notesOnly.containsKey('transactions'), isFalse);
+      expect(jsonEncode(notesOnly), isNot(contains('Lunch')));
+
+      final both = await sent(
+        const AssistantSharing(transactions: true, descriptions: true),
+      );
+      expect(
+        ((both['transactions']! as List).first as Map)['note'],
+        'Lunch with Sara',
+      );
+    });
+
+    test('recurring payments and people, each only when shared', () async {
+      final json = await sent(
+        const AssistantSharing(recurring: true, people: true),
+      );
+      final rent = (json['recurring']! as List).single as Map;
+      expect(rent['title'], 'Rent');
+      expect(rent['frequency'], 'monthly');
+      expect(rent['type'], 'expense');
+      final sara = (json['people']! as List).single as Map;
+      expect(sara, {'name': 'Sara', 'balance': 50.0, 'openTransactions': 1});
+      expect(json.containsKey('transactions'), isFalse);
+    });
+
+    test('a longer preset covers more months', () async {
+      final json = await sent(
+        const AssistantSharing(
+          range: AssistantRange.last6Months,
+          transactions: true,
+        ),
+      );
+      expect(json['months'], hasLength(6));
+      expect(
+        [for (final t in json['transactions']! as List) (t as Map)['date']],
+        // May to October: April's is outside.
+        ['2026-10-03', '2026-09-20'],
+      );
+
+      final year = await sent(
+        const AssistantSharing(
+          range: AssistantRange.thisYear,
+          transactions: true,
+        ),
+      );
+      expect(year['months'], hasLength(10));
+      expect((year['transactions']! as List).length, 3);
+    });
+
+    test('a custom range sends its own totals and its transactions', () async {
+      final json = await sent(
+        AssistantSharing(
+          range: AssistantRange.custom,
+          customStart: DateTime(2026, 9, 15),
+          customEnd: DateTime(2026, 10, 2),
+          transactions: true,
+        ),
+      );
+      final range = json['range']! as Map;
+      expect(range['from'], '2026-09-15');
+      expect(range['to'], '2026-10-02');
+      expect(range['spent'], 80.0);
+      expect(
+        [for (final m in json['months']! as List) (m as Map)['period']],
+        ['2026-10', '2026-09'],
+      );
+      expect(
+        [for (final t in json['transactions']! as List) (t as Map)['date']],
+        ['2026-09-20'],
+      );
+    });
+
+    test('too many transactions: the newest that fit, and a count of the '
+        'rest', () async {
+      for (var day = 1; day <= 28; day++) {
+        for (var i = 0; i < 20; i++) {
+          await add(1.0 + i, DateTime(2026, 8, day), description: 'n$i');
+        }
+      }
+      final json = await sent(
+        const AssistantSharing(transactions: true, descriptions: true),
+      );
+      final kept = json['transactions']! as List;
+      final leftOut = json['olderTransactionsLeftOut']! as int;
+      expect(leftOut, greaterThan(0));
+      expect(kept.length + leftOut, 2 + 28 * 20);
+      expect((kept.first as Map)['date'], '2026-10-03');
+      expect(
+        utf8.encode(jsonEncode(json)).length,
+        lessThanOrEqualTo(BuildSpendingSummary.maxTotalBytes),
+      );
     });
   });
 }

@@ -756,7 +756,7 @@ class AppStringsNl extends AppStrings {
       'De assistent is nu niet beschikbaar. Probeer het later.',
     FailureCode.aiBusy => 'De assistent is bezet. Probeer het over een minuut.',
     FailureCode.aiDailyLimit =>
-      'Je hebt vandaag al 20 vragen gesteld. Probeer het morgen.',
+      'Je hebt de limiet van vandaag voor de assistent bereikt. Probeer het morgen opnieuw.',
   };
 
   @override
@@ -1397,15 +1397,11 @@ class AppStringsNl extends AppStrings {
   String get assistantSend => 'Versturen';
 
   @override
-  String get assistantSignInBody =>
-      'Log in om de AI-assistent te gebruiken. Elk account kan 20 vragen per dag stellen.';
-
-  @override
   String get assistantConsentTitle => 'Voordat je vraagt';
 
   @override
   String get assistantConsentBody =>
-      'Om te antwoorden stuurt de app je vraag, je laatste berichten en een overzicht van je totalen van de afgelopen drie maanden (per categorie, inkomsten, uitgaven en budgetten) via onze server naar AI-aanbieder Groq. Omschrijvingen, notities en namen van personen worden nooit verstuurd. We bewaren je vragen en de antwoorden niet; onze server telt alleen hoeveel vragen je per dag stelt. Je kunt het delen altijd stoppen.';
+      'Om te antwoorden stuurt de app je vraag, je laatste berichten en een overzicht van je totalen (per categorie, inkomsten, uitgaven en budgetten, over de afgelopen drie maanden tenzij je een andere periode kiest) via onze server naar AI-aanbieder Groq. Standaard wordt er verder niets verstuurd: geen losse transacties, notities of namen van personen. Onder Wat delen kun je kiezen om meer te delen. Onze server bewaart je vragen en de antwoorden niet; hij telt alleen hoeveel vragen je per dag stelt. Je kunt het delen altijd stoppen.';
 
   @override
   String get assistantConsentAgree => 'Akkoord';
@@ -1423,6 +1419,92 @@ class AppStringsNl extends AppStrings {
     'Hoe verhoudt deze maand zich tot vorige maand?',
     'Blijf ik binnen mijn budget?',
   ];
+
+  @override
+  String get assistantNewChat => 'Nieuwe chat';
+
+  @override
+  String get assistantHistory => 'Chatgeschiedenis';
+
+  @override
+  String get assistantNoChats =>
+      'Nog geen opgeslagen chats. Je chats met de assistent blijven alleen op deze telefoon.';
+
+  @override
+  String get assistantDeleteChatTitle => 'Deze chat verwijderen?';
+
+  @override
+  String get assistantDeleteAll => 'Alle chats verwijderen';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'Alle opgeslagen chats met de assistent worden van deze telefoon verwijderd.';
+
+  @override
+  String get assistantSharingTitle => 'Wat delen';
+
+  @override
+  String get assistantSharingIntro =>
+      'Een overzicht van je totalen gaat altijd mee met elke vraag. Zet aan wat de assistent nog meer mag zien.';
+
+  @override
+  String get assistantPeriod => 'Periode';
+
+  @override
+  String get assistantRangeThisMonth => 'Deze maand';
+
+  @override
+  String get assistantRangeLast3Months => '3 maanden';
+
+  @override
+  String get assistantRangeLast6Months => '6 maanden';
+
+  @override
+  String get assistantRangeThisYear => 'Dit jaar';
+
+  @override
+  String get assistantRangeCustom => 'Aangepast';
+
+  @override
+  String get assistantShareTransactions => 'Transacties';
+
+  @override
+  String get assistantShareTransactionsHint =>
+      'Elk apart: bedrag, categorie en datum';
+
+  @override
+  String get assistantShareNotes => 'Notities';
+
+  @override
+  String get assistantShareNotesHint => 'Wat je bij elke transactie typte';
+
+  @override
+  String get assistantShareRecurring => 'Terugkerende betalingen';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'Rekeningen, abonnementen en inkomsten, en wat er openstaat';
+
+  @override
+  String get assistantSharePeople => 'Personen en schulden';
+
+  @override
+  String get assistantSharePeopleHint => 'Namen, en wie wie wat schuldig is';
+
+  @override
+  String get assistantSharingReset => 'Alleen overzicht';
+
+  @override
+  String get assistantSharingMore => 'Je deelt meer dan het overzicht.';
+
+  @override
+  String get assistantCopy => 'Kopiëren';
+
+  @override
+  String get assistantShare => 'Delen';
+
+  @override
+  String get assistantCopied => 'Antwoord gekopieerd';
 
   @override
   String get otherCategories => 'Overige';

@@ -29,12 +29,13 @@ void main() {
       );
       expect(
         {for (final row in tables) row['name']},
-        // sync_meta and device_settings are the phone's own and never leave
-        // it.
+        // sync_meta, device_settings and the assistant's chats are the
+        // phone's own and never leave it.
         {
           for (final table in SyncedTables.all) table.name,
           'sync_meta',
           'device_settings',
+          ...AppDatabase.assistantTables,
         },
       );
     });
