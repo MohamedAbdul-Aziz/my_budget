@@ -688,6 +688,12 @@ class AppStringsJa extends AppStrings {
     FailureCode.transactionSettled => '精算済みの取引は変更できません。',
     FailureCode.nothingToSettle => '精算するものはありません。',
     FailureCode.settlementAlreadyLogged => 'この精算はすでに予算に記録されています。',
+    FailureCode.questionRequired => '質問を入力してください。',
+    FailureCode.questionTooLong => '質問は500文字未満にしてください。',
+    FailureCode.summaryTooLarge => 'データが多すぎてアシスタント用に要約できません。',
+    FailureCode.aiUnavailable => 'アシスタントは現在利用できません。後でもう一度お試しください。',
+    FailureCode.aiBusy => 'アシスタントが混み合っています。1分後にお試しください。',
+    FailureCode.aiDailyLimit => '今日のアシスタントの利用上限に達しました。明日もう一度お試しください。',
   };
 
   @override
@@ -1261,6 +1267,127 @@ class AppStringsJa extends AppStrings {
 
   @override
   String get askTopIncome => '最大の収入';
+
+  @override
+  String get askAi => 'AIに聞く';
+
+  @override
+  String get assistantTitle => 'AIアシスタント';
+
+  @override
+  String get assistantEmpty => '過去3か月の支出について何でも聞いてください。';
+
+  @override
+  String get assistantHint => '質問を入力';
+
+  @override
+  String get assistantSend => '送信';
+
+  @override
+  String get assistantConsentTitle => '質問する前に';
+
+  @override
+  String get assistantConsentBody =>
+      '回答のため、アプリはあなたの質問、直近のメッセージ、合計の要約（カテゴリ別、収入、支出、予算。別の期間を選ばない限り過去3か月分）を当社のサーバー経由でAIプロバイダーのGroqに送信します。初期設定ではそれ以外は送信されません。個々の取引、メモ、人の名前は送られません。「共有する内容」で追加の共有を選べます。当社のサーバーは質問や回答を保存せず、1日の質問回数だけを数えます。共有はいつでも停止できます。';
+
+  @override
+  String get assistantConsentAgree => '同意する';
+
+  @override
+  String get assistantStopSharing => '共有を停止';
+
+  @override
+  String get assistantDisclaimer => 'AIの回答は間違っていることがあります。重要な数字は確認してください。';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'どこで節約できますか？',
+    '今月は先月と比べてどうですか？',
+    '予算どおりに進んでいますか？',
+  ];
+
+  @override
+  String get assistantNewChat => '新しいチャット';
+
+  @override
+  String get assistantHistory => 'チャット履歴';
+
+  @override
+  String get assistantNoChats =>
+      '保存されたチャットはまだありません。アシスタントとのチャットはこのスマホにだけ保存されます。';
+
+  @override
+  String get assistantDeleteChatTitle => 'このチャットを削除しますか？';
+
+  @override
+  String get assistantDeleteAll => 'すべてのチャットを削除';
+
+  @override
+  String get assistantDeleteAllBody => 'アシスタントとの保存済みチャットがすべてこのスマホから削除されます。';
+
+  @override
+  String get assistantSharingTitle => '共有する内容';
+
+  @override
+  String get assistantSharingIntro =>
+      '質問には毎回、合計の要約が添えられます。アシスタントに見せたいものをオンにしてください。';
+
+  @override
+  String get assistantPeriod => '期間';
+
+  @override
+  String get assistantRangeThisMonth => '今月';
+
+  @override
+  String get assistantRangeLast3Months => '3か月';
+
+  @override
+  String get assistantRangeLast6Months => '6か月';
+
+  @override
+  String get assistantRangeThisYear => '今年';
+
+  @override
+  String get assistantRangeCustom => 'カスタム';
+
+  @override
+  String get assistantShareTransactions => '取引';
+
+  @override
+  String get assistantShareTransactionsHint => '1件ずつ：金額、カテゴリ、日付';
+
+  @override
+  String get assistantShareNotes => 'メモ';
+
+  @override
+  String get assistantShareNotesHint => '各取引に入力した内容';
+
+  @override
+  String get assistantShareRecurring => '定期的な支払い';
+
+  @override
+  String get assistantShareRecurringHint => '請求、サブスク、収入と支払期日';
+
+  @override
+  String get assistantSharePeople => '人と貸し借り';
+
+  @override
+  String get assistantSharePeopleHint => '名前と、誰が誰にいくら借りているか';
+
+  @override
+  String get assistantSharingReset => '要約のみ';
+
+  @override
+  String get assistantSharingMore => '要約以外も共有しています。';
+
+  @override
+  String get assistantCopy => 'コピー';
+
+  @override
+  String get assistantShare => '共有';
+
+  @override
+  String get assistantCopied => '回答をコピーしました';
 
   @override
   String get otherCategories => 'その他';

@@ -1,0 +1,6 @@
+Baharu dalam versi ini:
+• Pembantu AI: tanya tentang perbelanjaan anda dengan kata-kata sendiri, tanpa akaun
+• Cadangan soalan susulan selepas setiap jawapan
+• Pilih apa yang dilihat pembantu: tempoh, dan jika mahu transaksi, nota, bayaran berulang atau orang
+• Sembang anda disimpan di telefon: mulakan yang baharu atau buka yang lama
+• Salin atau kongsi mana-mana jawapan

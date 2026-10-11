@@ -1,0 +1,6 @@
+Novidades desta versão:
+• Assistente de IA: pergunte sobre seus gastos com suas palavras, sem conta
+• Perguntas de acompanhamento sugeridas após cada resposta
+• Escolha o que o assistente vê: o período e, se quiser, transações, notas, pagamentos recorrentes ou pessoas
+• Suas conversas ficam salvas no celular: comece uma nova ou abra uma antiga
+• Copie ou compartilhe qualquer resposta

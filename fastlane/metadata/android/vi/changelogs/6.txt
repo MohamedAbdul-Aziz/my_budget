@@ -1,0 +1,6 @@
+Có gì mới trong phiên bản này:
+• Trợ lý AI: hỏi về chi tiêu bằng lời của bạn, không cần tài khoản
+• Gợi ý câu hỏi tiếp theo sau mỗi câu trả lời
+• Chọn những gì trợ lý được xem: khoảng thời gian, và nếu muốn thì giao dịch, ghi chú, khoản định kỳ hoặc mọi người
+• Các cuộc trò chuyện được lưu trên điện thoại: bắt đầu cuộc mới hoặc mở lại cuộc cũ
+• Sao chép hoặc chia sẻ mọi câu trả lời

@@ -1,0 +1,6 @@
+New in this version:
+• AI assistant: ask about your spending in your own words, no account needed
+• Suggested follow-up questions after every answer
+• Choose what the assistant sees: the period, and optionally transactions, notes, recurring payments or people
+• Your chats are saved on your phone: start a new one or open an old one
+• Copy or share any answer

@@ -736,6 +736,15 @@ class AppStringsMs extends AppStrings {
     FailureCode.nothingToSettle => 'Tiada apa untuk dijelaskan.',
     FailureCode.settlementAlreadyLogged =>
       'Penjelasan ini sudah ada dalam bajet anda.',
+    FailureCode.questionRequired => 'Taip soalan.',
+    FailureCode.questionTooLong => 'Soalan mesti kurang daripada 500 aksara.',
+    FailureCode.summaryTooLarge =>
+      'Data anda terlalu besar untuk diringkaskan bagi pembantu.',
+    FailureCode.aiUnavailable =>
+      'Pembantu tidak tersedia sekarang. Cuba lagi nanti.',
+    FailureCode.aiBusy => 'Pembantu sedang sibuk. Cuba lagi dalam seminit.',
+    FailureCode.aiDailyLimit =>
+      'Anda telah mencapai had penggunaan pembantu hari ini. Cuba lagi esok.',
   };
 
   @override
@@ -1341,6 +1350,134 @@ class AppStringsMs extends AppStrings {
 
   @override
   String get askTopIncome => 'Pendapatan utama';
+
+  @override
+  String get askAi => 'Tanya AI';
+
+  @override
+  String get assistantTitle => 'Pembantu AI';
+
+  @override
+  String get assistantEmpty =>
+      'Tanya apa sahaja tentang perbelanjaan anda dalam tiga bulan lepas.';
+
+  @override
+  String get assistantHint => 'Tanya soalan';
+
+  @override
+  String get assistantSend => 'Hantar';
+
+  @override
+  String get assistantConsentTitle => 'Sebelum anda bertanya';
+
+  @override
+  String get assistantConsentBody =>
+      'Untuk menjawab, aplikasi menghantar soalan anda, beberapa mesej terakhir dan ringkasan jumlah anda (mengikut kategori, pendapatan, perbelanjaan dan bajet, bagi tiga bulan lepas melainkan anda memilih tempoh lain) melalui pelayan kami kepada penyedia AI Groq. Secara lalai tiada apa-apa lagi yang dihantar: tiada transaksi individu, nota atau nama orang. Anda boleh memilih untuk berkongsi lebih banyak di Apa yang dikongsi. Pelayan kami tidak menyimpan soalan atau jawapan anda; ia hanya mengira bilangan soalan yang anda tanya setiap hari. Anda boleh berhenti berkongsi pada bila-bila masa.';
+
+  @override
+  String get assistantConsentAgree => 'Saya setuju';
+
+  @override
+  String get assistantStopSharing => 'Berhenti berkongsi';
+
+  @override
+  String get assistantDisclaimer =>
+      'Jawapan AI mungkin salah. Semak angka yang penting.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'Di mana saya boleh berjimat?',
+    'Bagaimana bulan ini berbanding bulan lepas?',
+    'Adakah saya dalam bajet?',
+  ];
+
+  @override
+  String get assistantNewChat => 'Sembang baharu';
+
+  @override
+  String get assistantHistory => 'Sejarah sembang';
+
+  @override
+  String get assistantNoChats =>
+      'Belum ada sembang yang disimpan. Sembang anda dengan pembantu disimpan di telefon ini sahaja.';
+
+  @override
+  String get assistantDeleteChatTitle => 'Padam sembang ini?';
+
+  @override
+  String get assistantDeleteAll => 'Padam semua sembang';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'Semua sembang yang disimpan dengan pembantu akan dipadam daripada telefon ini.';
+
+  @override
+  String get assistantSharingTitle => 'Apa yang dikongsi';
+
+  @override
+  String get assistantSharingIntro =>
+      'Ringkasan jumlah anda sentiasa dihantar bersama setiap soalan. Hidupkan apa sahaja lagi yang anda mahu pembantu lihat.';
+
+  @override
+  String get assistantPeriod => 'Tempoh';
+
+  @override
+  String get assistantRangeThisMonth => 'Bulan ini';
+
+  @override
+  String get assistantRangeLast3Months => '3 bulan';
+
+  @override
+  String get assistantRangeLast6Months => '6 bulan';
+
+  @override
+  String get assistantRangeThisYear => 'Tahun ini';
+
+  @override
+  String get assistantRangeCustom => 'Tersuai';
+
+  @override
+  String get assistantShareTransactions => 'Transaksi';
+
+  @override
+  String get assistantShareTransactionsHint =>
+      'Setiap satu: amaun, kategori dan tarikh';
+
+  @override
+  String get assistantShareNotes => 'Nota';
+
+  @override
+  String get assistantShareNotesHint =>
+      'Apa yang anda taip untuk setiap transaksi';
+
+  @override
+  String get assistantShareRecurring => 'Bayaran berulang';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'Bil, langganan dan pendapatan, serta yang perlu dibayar';
+
+  @override
+  String get assistantSharePeople => 'Orang dan hutang';
+
+  @override
+  String get assistantSharePeopleHint =>
+      'Nama, dan siapa berhutang dengan siapa';
+
+  @override
+  String get assistantSharingReset => 'Ringkasan sahaja';
+
+  @override
+  String get assistantSharingMore => 'Anda berkongsi lebih daripada ringkasan.';
+
+  @override
+  String get assistantCopy => 'Salin';
+
+  @override
+  String get assistantShare => 'Kongsi';
+
+  @override
+  String get assistantCopied => 'Jawapan disalin';
 
   @override
   String get otherCategories => 'Lain-lain';

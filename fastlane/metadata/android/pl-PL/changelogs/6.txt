@@ -1,0 +1,6 @@
+Nowości w tej wersji:
+• Asystent AI: pytaj o swoje wydatki własnymi słowami, bez konta
+• Proponowane pytania uzupełniające po każdej odpowiedzi
+• Wybierz, co widzi asystent: okres oraz opcjonalnie transakcje, notatki, płatności cykliczne lub osoby
+• Twoje czaty zostają na telefonie: zacznij nowy lub otwórz stary
+• Kopiuj i udostępniaj odpowiedzi

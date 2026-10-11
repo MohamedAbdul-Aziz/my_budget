@@ -35,7 +35,7 @@ void main() {
       addTearDown(database.close);
       final db = await database.database;
 
-      expect(await db.getVersion(), 6);
+      expect(await db.getVersion(), 7);
 
       final expense = (await db.query('expenses')).single;
       expect(expense['updated_at'], expense['created_at']);
@@ -69,6 +69,10 @@ void main() {
       expect(await db.query('sync_meta'), isEmpty);
       // Phone-only preferences start empty: everything off.
       expect(await db.query('device_settings'), isEmpty);
+      // So do the assistant's chats, kept on the phone only.
+      for (final table in AppDatabase.assistantTables) {
+        expect(await db.query(table), isEmpty);
+      }
 
       // Recurring payments arrive empty, ready to be set up.
       expect(await db.query('recurring_expenses'), isEmpty);

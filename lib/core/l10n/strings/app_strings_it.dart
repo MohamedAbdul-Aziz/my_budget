@@ -746,6 +746,16 @@ class AppStringsIt extends AppStrings {
       'Le transazioni saldate non si possono modificare.',
     FailureCode.nothingToSettle => 'Non c’è nulla da saldare.',
     FailureCode.settlementAlreadyLogged => 'Questo saldo è già nel tuo budget.',
+    FailureCode.questionRequired => 'Scrivi una domanda.',
+    FailureCode.questionTooLong =>
+      'La domanda deve avere meno di 500 caratteri.',
+    FailureCode.summaryTooLarge =>
+      'I tuoi dati sono troppi da riassumere per l’assistente.',
+    FailureCode.aiUnavailable =>
+      'L’assistente non è disponibile ora. Riprova più tardi.',
+    FailureCode.aiBusy => 'L’assistente è occupato. Riprova tra un minuto.',
+    FailureCode.aiDailyLimit =>
+      'Hai raggiunto il limite di oggi per l’assistente. Riprova domani.',
   };
 
   @override
@@ -1367,6 +1377,133 @@ class AppStringsIt extends AppStrings {
 
   @override
   String get askTopIncome => 'Entrata principale';
+
+  @override
+  String get askAi => 'Chiedi all’IA';
+
+  @override
+  String get assistantTitle => 'Assistente IA';
+
+  @override
+  String get assistantEmpty =>
+      'Chiedi qualsiasi cosa sulle tue spese degli ultimi tre mesi.';
+
+  @override
+  String get assistantHint => 'Fai una domanda';
+
+  @override
+  String get assistantSend => 'Invia';
+
+  @override
+  String get assistantConsentTitle => 'Prima di chiedere';
+
+  @override
+  String get assistantConsentBody =>
+      'Per rispondere, l’app invia la tua domanda, i tuoi ultimi messaggi e un riepilogo dei tuoi totali (per categoria, entrate, spese e budget, degli ultimi tre mesi a meno che tu non scelga un altro periodo) tramite il nostro server al fornitore di IA Groq. Per impostazione predefinita non viene inviato nient’altro: niente singole transazioni, note o nomi di persone. Puoi scegliere di condividere di più in Cosa condividere. Il nostro server non conserva le tue domande né le risposte; conta solo quante domande fai ogni giorno. Puoi smettere di condividere in qualsiasi momento.';
+
+  @override
+  String get assistantConsentAgree => 'Accetto';
+
+  @override
+  String get assistantStopSharing => 'Smetti di condividere';
+
+  @override
+  String get assistantDisclaimer =>
+      'Le risposte dell’IA possono essere sbagliate. Controlla le cifre importanti.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'Dove posso risparmiare?',
+    'Com’è questo mese rispetto al precedente?',
+    'Sto rispettando il budget?',
+  ];
+
+  @override
+  String get assistantNewChat => 'Nuova chat';
+
+  @override
+  String get assistantHistory => 'Cronologia chat';
+
+  @override
+  String get assistantNoChats =>
+      'Ancora nessuna chat salvata. Le tue chat con l’assistente restano solo su questo telefono.';
+
+  @override
+  String get assistantDeleteChatTitle => 'Eliminare questa chat?';
+
+  @override
+  String get assistantDeleteAll => 'Elimina tutte le chat';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'Tutte le chat salvate con l’assistente verranno eliminate da questo telefono.';
+
+  @override
+  String get assistantSharingTitle => 'Cosa condividere';
+
+  @override
+  String get assistantSharingIntro =>
+      'Un riepilogo dei tuoi totali accompagna sempre ogni domanda. Attiva cos’altro vuoi che l’assistente veda.';
+
+  @override
+  String get assistantPeriod => 'Periodo';
+
+  @override
+  String get assistantRangeThisMonth => 'Questo mese';
+
+  @override
+  String get assistantRangeLast3Months => '3 mesi';
+
+  @override
+  String get assistantRangeLast6Months => '6 mesi';
+
+  @override
+  String get assistantRangeThisYear => 'Quest’anno';
+
+  @override
+  String get assistantRangeCustom => 'Personalizzato';
+
+  @override
+  String get assistantShareTransactions => 'Transazioni';
+
+  @override
+  String get assistantShareTransactionsHint =>
+      'Ognuna: importo, categoria e data';
+
+  @override
+  String get assistantShareNotes => 'Note';
+
+  @override
+  String get assistantShareNotesHint =>
+      'Ciò che hai scritto per ogni transazione';
+
+  @override
+  String get assistantShareRecurring => 'Pagamenti ricorrenti';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'Bollette, abbonamenti ed entrate, e cosa è in scadenza';
+
+  @override
+  String get assistantSharePeople => 'Persone e debiti';
+
+  @override
+  String get assistantSharePeopleHint => 'Nomi, e chi deve a chi';
+
+  @override
+  String get assistantSharingReset => 'Solo riepilogo';
+
+  @override
+  String get assistantSharingMore => 'Stai condividendo più del riepilogo.';
+
+  @override
+  String get assistantCopy => 'Copia';
+
+  @override
+  String get assistantShare => 'Condividi';
+
+  @override
+  String get assistantCopied => 'Risposta copiata';
 
   @override
   String get otherCategories => 'Altre';

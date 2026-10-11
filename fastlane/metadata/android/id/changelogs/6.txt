@@ -1,0 +1,6 @@
+Yang baru di versi ini:
+• Asisten AI: tanyakan pengeluaranmu dengan kata-katamu sendiri, tanpa akun
+• Saran pertanyaan lanjutan setelah setiap jawaban
+• Pilih apa yang dilihat asisten: periode, dan jika mau transaksi, catatan, pembayaran berulang, atau orang
+• Obrolanmu tersimpan di ponsel: mulai yang baru atau buka yang lama
+• Salin atau bagikan jawaban apa pun

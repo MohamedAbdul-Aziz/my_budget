@@ -718,6 +718,15 @@ class AppStringsFa extends AppStrings {
     FailureCode.nothingToSettle => 'چیزی برای تسویه نیست.',
     FailureCode.settlementAlreadyLogged =>
       'این تسویه قبلاً در بودجه شما ثبت شده.',
+    FailureCode.questionRequired => 'یک سؤال بنویس.',
+    FailureCode.questionTooLong => 'سؤال باید کمتر از ۵۰۰ نویسه باشد.',
+    FailureCode.summaryTooLarge =>
+      'داده‌هایت برای خلاصه کردن برای دستیار خیلی زیاد است.',
+    FailureCode.aiUnavailable =>
+      'دستیار الان در دسترس نیست. بعداً دوباره امتحان کن.',
+    FailureCode.aiBusy => 'دستیار مشغول است. یک دقیقه دیگر امتحان کن.',
+    FailureCode.aiDailyLimit =>
+      'به سقف استفاده امروز از دستیار رسیده‌ای. فردا دوباره امتحان کن.',
   };
 
   @override
@@ -1311,6 +1320,132 @@ class AppStringsFa extends AppStrings {
 
   @override
   String get askTopIncome => 'بیشترین درآمد';
+
+  @override
+  String get askAi => 'از هوش مصنوعی بپرس';
+
+  @override
+  String get assistantTitle => 'دستیار هوشمند';
+
+  @override
+  String get assistantEmpty =>
+      'هر سؤالی درباره هزینه‌های سه ماه اخیرت داری بپرس.';
+
+  @override
+  String get assistantHint => 'سؤالت را بنویس';
+
+  @override
+  String get assistantSend => 'ارسال';
+
+  @override
+  String get assistantConsentTitle => 'پیش از پرسیدن';
+
+  @override
+  String get assistantConsentBody =>
+      'برای پاسخ دادن، برنامه سؤالت، چند پیام آخرت و خلاصه‌ای از مجموع‌هایت (بر اساس دسته، درآمد، هزینه و بودجه، برای سه ماه اخیر مگر اینکه بازه دیگری انتخاب کنی) را از طریق سرور ما برای ارائه‌دهنده هوش مصنوعی Groq می‌فرستد. به‌طور پیش‌فرض چیز دیگری فرستاده نمی‌شود: نه تراکنش تکی، نه یادداشت و نه نام افراد. می‌توانی در «چه چیزی به اشتراک بگذاری» انتخاب کنی که بیشتر بفرستی. سرور ما سؤال‌ها و پاسخ‌هایت را نگه نمی‌دارد؛ فقط تعداد سؤال‌های روزانه‌ات را می‌شمارد. هر وقت خواستی می‌توانی اشتراک‌گذاری را متوقف کنی.';
+
+  @override
+  String get assistantConsentAgree => 'موافقم';
+
+  @override
+  String get assistantStopSharing => 'توقف اشتراک‌گذاری';
+
+  @override
+  String get assistantDisclaimer =>
+      'پاسخ‌های هوش مصنوعی ممکن است اشتباه باشند. عددهای مهم را بررسی کن.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'کجا می‌توانم صرفه‌جویی کنم؟',
+    'این ماه در مقایسه با ماه قبل چطور بود؟',
+    'آیا در محدوده بودجه‌ام هستم؟',
+  ];
+
+  @override
+  String get assistantNewChat => 'گفتگوی جدید';
+
+  @override
+  String get assistantHistory => 'تاریخچه گفتگوها';
+
+  @override
+  String get assistantNoChats =>
+      'هنوز گفتگوی ذخیره‌شده‌ای نیست. گفتگوهایت با دستیار فقط روی همین گوشی نگه داشته می‌شوند.';
+
+  @override
+  String get assistantDeleteChatTitle => 'این گفتگو حذف شود؟';
+
+  @override
+  String get assistantDeleteAll => 'حذف همه گفتگوها';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'همه گفتگوهای ذخیره‌شده با دستیار از این گوشی حذف می‌شوند.';
+
+  @override
+  String get assistantSharingTitle => 'چه چیزی به اشتراک بگذاری';
+
+  @override
+  String get assistantSharingIntro =>
+      'خلاصه‌ای از مجموع‌هایت همیشه همراه هر سؤال فرستاده می‌شود. هر چیز دیگری را که می‌خواهی دستیار ببیند روشن کن.';
+
+  @override
+  String get assistantPeriod => 'بازه زمانی';
+
+  @override
+  String get assistantRangeThisMonth => 'این ماه';
+
+  @override
+  String get assistantRangeLast3Months => '۳ ماه';
+
+  @override
+  String get assistantRangeLast6Months => '۶ ماه';
+
+  @override
+  String get assistantRangeThisYear => 'امسال';
+
+  @override
+  String get assistantRangeCustom => 'دلخواه';
+
+  @override
+  String get assistantShareTransactions => 'تراکنش‌ها';
+
+  @override
+  String get assistantShareTransactionsHint => 'هر کدام: مبلغ، دسته و تاریخ';
+
+  @override
+  String get assistantShareNotes => 'یادداشت‌ها';
+
+  @override
+  String get assistantShareNotesHint => 'آنچه برای هر تراکنش نوشته‌ای';
+
+  @override
+  String get assistantShareRecurring => 'پرداخت‌های تکراری';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'قبض‌ها، اشتراک‌ها و درآمد، و آنچه سررسید شده';
+
+  @override
+  String get assistantSharePeople => 'افراد و بدهی‌ها';
+
+  @override
+  String get assistantSharePeopleHint =>
+      'نام‌ها، و اینکه چه کسی به چه کسی بدهکار است';
+
+  @override
+  String get assistantSharingReset => 'فقط خلاصه';
+
+  @override
+  String get assistantSharingMore => 'داری بیشتر از خلاصه به اشتراک می‌گذاری.';
+
+  @override
+  String get assistantCopy => 'کپی';
+
+  @override
+  String get assistantShare => 'اشتراک‌گذاری';
+
+  @override
+  String get assistantCopied => 'پاسخ کپی شد';
 
   @override
   String get otherCategories => 'سایر';

@@ -38,10 +38,15 @@ import '../../features/categories/domain/entities/expense_category.dart';
 /// key/value rows such as app lock and automatic backup. Like `sync_meta` it
 /// never leaves the phone: these choices belong to this device, and a
 /// restore must never, say, lock a phone that has no screen lock.
+///
+/// AI assistant chats, added in schema version 7: `assistant_chats` and their
+/// `assistant_messages`. Phone-only as well: never synced, never in a backup
+/// file, never touched by a restore. Only questions and answers are kept,
+/// never the spending summary sent with them.
 class AppDatabase {
   AppDatabase({this.fileName = 'my_budget.db', this.inMemory = false});
 
-  static const int _schemaVersion = 6;
+  static const int _schemaVersion = 7;
 
   /// Now, in the form stored in `updated_at` and `deleted_at`.
   static int nowMillis() => DateTime.now().millisecondsSinceEpoch;
@@ -150,6 +155,7 @@ class AppDatabase {
     _addRecurring(batch);
     _addPeople(batch);
     _addDeviceSettings(batch);
+    _addAssistantChats(batch);
 
     await batch.commit(noResult: true);
   }
@@ -161,7 +167,41 @@ class AppDatabase {
     if (oldVersion < 4) _addRecurring(batch);
     if (oldVersion < 5) _addPeople(batch);
     if (oldVersion < 6) _addDeviceSettings(batch);
+    if (oldVersion < 7) _addAssistantChats(batch);
     await batch.commit(noResult: true);
+  }
+
+  /// The assistant's phone-only tables.
+  static const List<String> assistantTables = [
+    'assistant_chats',
+    'assistant_messages',
+  ];
+
+  /// Schema version 7. No sync columns, like `device_settings`. A chat's
+  /// messages go with it (`on delete cascade`; foreign keys are on).
+  static void _addAssistantChats(Batch batch) {
+    batch
+      ..execute('''
+        CREATE TABLE assistant_chats (
+          id TEXT PRIMARY KEY,
+          title TEXT NOT NULL,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        )
+      ''')
+      ..execute('''
+        CREATE TABLE assistant_messages (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          chat_id TEXT NOT NULL
+            REFERENCES assistant_chats (id) ON DELETE CASCADE,
+          role TEXT NOT NULL,
+          text TEXT NOT NULL,
+          created_at INTEGER NOT NULL
+        )
+      ''')
+      ..execute(
+        'CREATE INDEX assistant_messages_chat ON assistant_messages (chat_id)',
+      );
   }
 
   /// Schema version 6. No sync columns: the rows are never uploaded, backed

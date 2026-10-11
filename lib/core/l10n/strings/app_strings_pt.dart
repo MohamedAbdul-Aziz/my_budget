@@ -745,6 +745,16 @@ class AppStringsPt extends AppStrings {
     FailureCode.nothingToSettle => 'Não há nada para acertar.',
     FailureCode.settlementAlreadyLogged =>
       'Este acerto já está no seu orçamento.',
+    FailureCode.questionRequired => 'Escreva uma pergunta.',
+    FailureCode.questionTooLong =>
+      'A pergunta deve ter menos de 500 caracteres.',
+    FailureCode.summaryTooLarge =>
+      'Os seus dados são demasiado grandes para resumir para o assistente.',
+    FailureCode.aiUnavailable =>
+      'O assistente não está disponível agora. Tente mais tarde.',
+    FailureCode.aiBusy => 'O assistente está ocupado. Tente daqui a um minuto.',
+    FailureCode.aiDailyLimit =>
+      'Atingiu o limite de hoje do assistente. Tente novamente amanhã.',
   };
 
   @override
@@ -1365,6 +1375,132 @@ class AppStringsPt extends AppStrings {
 
   @override
   String get askTopIncome => 'Maior receita';
+
+  @override
+  String get askAi => 'Perguntar à IA';
+
+  @override
+  String get assistantTitle => 'Assistente de IA';
+
+  @override
+  String get assistantEmpty =>
+      'Pergunte o que quiser sobre os seus gastos dos últimos três meses.';
+
+  @override
+  String get assistantHint => 'Escreva uma pergunta';
+
+  @override
+  String get assistantSend => 'Enviar';
+
+  @override
+  String get assistantConsentTitle => 'Antes de perguntar';
+
+  @override
+  String get assistantConsentBody =>
+      'Para responder, a app envia a sua pergunta, as suas últimas mensagens e um resumo dos seus totais (por categoria, receitas, gastos e orçamentos, dos últimos três meses salvo se escolher outro período) através do nosso servidor ao fornecedor de IA Groq. Por predefinição, nada mais é enviado: nem transações avulsas, nem notas, nem nomes de pessoas. Pode escolher partilhar mais em O que partilhar. O nosso servidor não guarda as suas perguntas nem as respostas; apenas conta quantas perguntas faz por dia. Pode deixar de partilhar a qualquer momento.';
+
+  @override
+  String get assistantConsentAgree => 'Concordo';
+
+  @override
+  String get assistantStopSharing => 'Deixar de partilhar';
+
+  @override
+  String get assistantDisclaimer =>
+      'As respostas da IA podem estar erradas. Confirme os valores importantes.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'Onde posso poupar?',
+    'Como está este mês face ao anterior?',
+    'Estou dentro do orçamento?',
+  ];
+
+  @override
+  String get assistantNewChat => 'Nova conversa';
+
+  @override
+  String get assistantHistory => 'Histórico de conversas';
+
+  @override
+  String get assistantNoChats =>
+      'Ainda não há conversas guardadas. As suas conversas com o assistente ficam apenas neste telemóvel.';
+
+  @override
+  String get assistantDeleteChatTitle => 'Eliminar esta conversa?';
+
+  @override
+  String get assistantDeleteAll => 'Eliminar todas as conversas';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'Todas as conversas guardadas com o assistente serão eliminadas deste telemóvel.';
+
+  @override
+  String get assistantSharingTitle => 'O que partilhar';
+
+  @override
+  String get assistantSharingIntro =>
+      'Um resumo dos seus totais vai sempre com cada pergunta. Ative o que mais quiser que o assistente veja.';
+
+  @override
+  String get assistantPeriod => 'Período';
+
+  @override
+  String get assistantRangeThisMonth => 'Este mês';
+
+  @override
+  String get assistantRangeLast3Months => '3 meses';
+
+  @override
+  String get assistantRangeLast6Months => '6 meses';
+
+  @override
+  String get assistantRangeThisYear => 'Este ano';
+
+  @override
+  String get assistantRangeCustom => 'Personalizado';
+
+  @override
+  String get assistantShareTransactions => 'Transações';
+
+  @override
+  String get assistantShareTransactionsHint =>
+      'Cada uma: valor, categoria e data';
+
+  @override
+  String get assistantShareNotes => 'Notas';
+
+  @override
+  String get assistantShareNotesHint => 'O que escreveu em cada transação';
+
+  @override
+  String get assistantShareRecurring => 'Pagamentos recorrentes';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'Contas, subscrições e receitas, e o que está por pagar';
+
+  @override
+  String get assistantSharePeople => 'Pessoas e dívidas';
+
+  @override
+  String get assistantSharePeopleHint => 'Nomes, e quem deve a quem';
+
+  @override
+  String get assistantSharingReset => 'Só o resumo';
+
+  @override
+  String get assistantSharingMore => 'Está a partilhar mais do que o resumo.';
+
+  @override
+  String get assistantCopy => 'Copiar';
+
+  @override
+  String get assistantShare => 'Partilhar';
+
+  @override
+  String get assistantCopied => 'Resposta copiada';
 
   @override
   String get otherCategories => 'Outras';

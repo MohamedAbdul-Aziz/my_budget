@@ -1,0 +1,6 @@
+Neu in dieser Version:
+• KI-Assistent: Frag in eigenen Worten nach deinen Ausgaben, ganz ohne Konto
+• Vorgeschlagene Folgefragen nach jeder Antwort
+• Wähle, was der Assistent sieht: den Zeitraum und auf Wunsch Buchungen, Notizen, wiederkehrende Zahlungen oder Personen
+• Deine Chats bleiben auf deinem Handy: starte einen neuen oder öffne einen alten
+• Kopiere oder teile jede Antwort

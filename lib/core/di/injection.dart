@@ -12,6 +12,24 @@ import '../../features/app_lock/domain/usecases/unlock_app.dart';
 import '../../features/app_lock/presentation/cubit/app_lock_cubit.dart';
 import '../../features/analyses/presentation/cubit/analyses_cubit.dart';
 import '../../features/analyses/presentation/cubit/compare_months_cubit.dart';
+import '../../features/assistant/data/datasources/assistant_local_data_source.dart';
+import '../../features/assistant/data/datasources/assistant_remote_data_source.dart';
+import '../../features/assistant/data/repositories/assistant_repository_impl.dart';
+import '../../features/assistant/domain/repositories/assistant_repository.dart';
+import '../../features/assistant/domain/usecases/ask_assistant.dart';
+import '../../features/assistant/domain/usecases/build_spending_summary.dart';
+import '../../features/assistant/domain/usecases/delete_all_assistant_chats.dart';
+import '../../features/assistant/domain/usecases/delete_assistant_chat.dart';
+import '../../features/assistant/domain/usecases/get_assistant_chat_messages.dart';
+import '../../features/assistant/domain/usecases/get_assistant_chats.dart';
+import '../../features/assistant/domain/usecases/get_assistant_consent.dart';
+import '../../features/assistant/domain/usecases/get_assistant_sharing.dart';
+import '../../features/assistant/domain/usecases/save_assistant_exchange.dart';
+import '../../features/assistant/domain/usecases/set_assistant_consent.dart';
+import '../../features/assistant/domain/usecases/set_assistant_sharing.dart';
+import '../../features/assistant/domain/usecases/share_assistant_answer.dart';
+import '../../features/assistant/presentation/cubit/assistant_cubit.dart';
+import '../../features/assistant/presentation/cubit/assistant_history_cubit.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../features/data_management/data/datasources/device_files_data_source.dart';
 import '../../features/data_management/data/datasources/report_fonts_data_source.dart';
@@ -150,6 +168,7 @@ void configureDependencies({AppDatabase? database}) {
   _registerQuickExpense();
   _registerSync();
   _registerAnalyses();
+  _registerAssistant();
   _registerDataManagement();
 }
 
@@ -474,6 +493,58 @@ void _registerAnalyses() {
     ..registerLazySingleton(() => AnalysesCubit(getMonthAnalysis: sl()))
     ..registerFactory(
       () => CompareMonthsCubit(compareMonths: sl(), getMonthlySummaries: sl()),
+    );
+}
+
+void _registerAssistant() {
+  _registerRepository<AssistantRepository>(
+    () => AssistantRepositoryImpl(
+      remote: AssistantRemoteDataSourceImpl(sl<SupabaseClient>().functions),
+      local: AssistantLocalDataSourceImpl(sl()),
+      deviceSettings: sl(),
+    ),
+  );
+  sl
+    ..registerLazySingleton(
+      () => BuildSpendingSummary(
+        getMonthAnalysis: sl(),
+        getBudgetStatus: sl(),
+        expenseRepository: sl(),
+        getRecurringOverview: sl(),
+        getPeople: sl(),
+      ),
+    )
+    ..registerLazySingleton(
+      () => AskAssistant(repository: sl(), buildSummary: sl()),
+    )
+    ..registerLazySingleton(() => GetAssistantConsent(sl()))
+    ..registerLazySingleton(() => SetAssistantConsent(sl()))
+    ..registerLazySingleton(() => GetAssistantSharing(sl()))
+    ..registerLazySingleton(() => ShareAssistantAnswer(sl()))
+    ..registerLazySingleton(() => SetAssistantSharing(sl()))
+    ..registerLazySingleton(() => SaveAssistantExchange(sl()))
+    ..registerLazySingleton(() => GetAssistantChats(sl()))
+    ..registerLazySingleton(() => GetAssistantChatMessages(sl()))
+    ..registerLazySingleton(() => DeleteAssistantChat(sl()))
+    ..registerLazySingleton(() => DeleteAllAssistantChats(sl()))
+    ..registerFactory(
+      () => AssistantCubit(
+        getConsent: sl(),
+        setConsent: sl(),
+        askAssistant: sl(),
+        saveExchange: sl(),
+        getChatMessages: sl(),
+        getSharing: sl(),
+        setSharing: sl(),
+        shareAnswer: sl(),
+      ),
+    )
+    ..registerFactory(
+      () => AssistantHistoryCubit(
+        getChats: sl(),
+        deleteChat: sl(),
+        deleteAllChats: sl(),
+      ),
     );
 }
 

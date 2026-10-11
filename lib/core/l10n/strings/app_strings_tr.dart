@@ -724,6 +724,15 @@ class AppStringsTr extends AppStrings {
     FailureCode.transactionSettled => 'Kapatılan işlemler değiştirilemez.',
     FailureCode.nothingToSettle => 'Kapatılacak bir şey yok.',
     FailureCode.settlementAlreadyLogged => 'Bu hesaplaşma zaten bütçenizde.',
+    FailureCode.questionRequired => 'Bir soru yaz.',
+    FailureCode.questionTooLong => 'Soru 500 karakterden kısa olmalı.',
+    FailureCode.summaryTooLarge =>
+      'Verilerin asistan için özetlenemeyecek kadar büyük.',
+    FailureCode.aiUnavailable =>
+      'Asistan şu anda kullanılamıyor. Daha sonra tekrar dene.',
+    FailureCode.aiBusy => 'Asistan meşgul. Bir dakika sonra tekrar dene.',
+    FailureCode.aiDailyLimit =>
+      'Asistanın bugünkü kullanım sınırına ulaştın. Yarın tekrar dene.',
   };
 
   @override
@@ -1321,6 +1330,132 @@ class AppStringsTr extends AppStrings {
 
   @override
   String get askTopIncome => 'En büyük gelir';
+
+  @override
+  String get askAi => 'YZ’ye sor';
+
+  @override
+  String get assistantTitle => 'YZ asistanı';
+
+  @override
+  String get assistantEmpty =>
+      'Son üç ayki harcamaların hakkında her şeyi sor.';
+
+  @override
+  String get assistantHint => 'Bir soru sor';
+
+  @override
+  String get assistantSend => 'Gönder';
+
+  @override
+  String get assistantConsentTitle => 'Sormadan önce';
+
+  @override
+  String get assistantConsentBody =>
+      'Yanıt vermek için uygulama sorunu, son birkaç mesajını ve toplamlarının özetini (kategoriye göre, gelir, harcama ve bütçeler; başka bir dönem seçmezsen son üç ay) sunucumuz üzerinden YZ sağlayıcısı Groq’a gönderir. Varsayılan olarak başka hiçbir şey gönderilmez: tek tek işlemler, notlar veya kişi adları gönderilmez. Daha fazlasını paylaşmayı Neler paylaşılsın bölümünden seçebilirsin. Sunucumuz sorularını ve yanıtları saklamaz; yalnızca günde kaç soru sorduğunu sayar. Paylaşımı istediğin zaman durdurabilirsin.';
+
+  @override
+  String get assistantConsentAgree => 'Kabul ediyorum';
+
+  @override
+  String get assistantStopSharing => 'Paylaşımı durdur';
+
+  @override
+  String get assistantDisclaimer =>
+      'YZ yanıtları yanlış olabilir. Önemli rakamları kontrol et.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'Nerede tasarruf edebilirim?',
+    'Bu ay geçen aya göre nasıl?',
+    'Bütçeme uyuyor muyum?',
+  ];
+
+  @override
+  String get assistantNewChat => 'Yeni sohbet';
+
+  @override
+  String get assistantHistory => 'Sohbet geçmişi';
+
+  @override
+  String get assistantNoChats =>
+      'Henüz kayıtlı sohbet yok. Asistanla sohbetlerin yalnızca bu telefonda saklanır.';
+
+  @override
+  String get assistantDeleteChatTitle => 'Bu sohbet silinsin mi?';
+
+  @override
+  String get assistantDeleteAll => 'Tüm sohbetleri sil';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'Asistanla kaydedilen tüm sohbetler bu telefondan silinecek.';
+
+  @override
+  String get assistantSharingTitle => 'Neler paylaşılsın';
+
+  @override
+  String get assistantSharingIntro =>
+      'Her soruyla birlikte toplamlarının özeti her zaman gönderilir. Asistanın görmesini istediğin diğer şeyleri aç.';
+
+  @override
+  String get assistantPeriod => 'Dönem';
+
+  @override
+  String get assistantRangeThisMonth => 'Bu ay';
+
+  @override
+  String get assistantRangeLast3Months => '3 ay';
+
+  @override
+  String get assistantRangeLast6Months => '6 ay';
+
+  @override
+  String get assistantRangeThisYear => 'Bu yıl';
+
+  @override
+  String get assistantRangeCustom => 'Özel';
+
+  @override
+  String get assistantShareTransactions => 'İşlemler';
+
+  @override
+  String get assistantShareTransactionsHint =>
+      'Her biri: tutar, kategori ve tarih';
+
+  @override
+  String get assistantShareNotes => 'Notlar';
+
+  @override
+  String get assistantShareNotesHint => 'Her işleme yazdıkların';
+
+  @override
+  String get assistantShareRecurring => 'Düzenli ödemeler';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'Faturalar, abonelikler ve gelirler, vadesi gelenler';
+
+  @override
+  String get assistantSharePeople => 'Kişiler ve borçlar';
+
+  @override
+  String get assistantSharePeopleHint => 'Adlar ve kimin kime borcu olduğu';
+
+  @override
+  String get assistantSharingReset => 'Sadece özet';
+
+  @override
+  String get assistantSharingMore => 'Özetten fazlasını paylaşıyorsun.';
+
+  @override
+  String get assistantCopy => 'Kopyala';
+
+  @override
+  String get assistantShare => 'Paylaş';
+
+  @override
+  String get assistantCopied => 'Yanıt kopyalandı';
 
   @override
   String get otherCategories => 'Diğer';

@@ -51,6 +51,21 @@ enum FailureCode {
   transactionSettled,
   nothingToSettle,
   settlementAlreadyLogged,
+  questionRequired,
+  questionTooLong,
+
+  /// The spending summary could not be made small enough to send.
+  summaryTooLarge,
+
+  /// The assistant's server or AI provider failed in a way the user can only
+  /// retry later.
+  aiUnavailable,
+
+  /// The AI provider is rate limiting everyone for now.
+  aiBusy,
+
+  /// This account has asked its questions for the day.
+  aiDailyLimit,
 }
 
 /// Typed failures produced by the data layer and surfaced through `ApiResult`.
@@ -89,6 +104,11 @@ final class AuthFailure extends Failure {
 /// A backup or restore could not be completed.
 final class SyncFailure extends Failure {
   const SyncFailure(super.code, [super.debugMessage]);
+}
+
+/// The AI assistant could not answer.
+final class AssistantFailure extends Failure {
+  const AssistantFailure(super.code, [super.debugMessage]);
 }
 
 /// A file could not be written, read, shared or saved, or is not a usable

@@ -259,6 +259,54 @@ abstract class AppStrings {
   String get askCount;
   String get askTopIncome;
 
+  // The AI assistant
+  String get askAi;
+  String get assistantTitle;
+  String get assistantEmpty;
+  String get assistantHint;
+  String get assistantSend;
+  String get assistantConsentTitle;
+  String get assistantConsentBody;
+  String get assistantConsentAgree;
+  String get assistantStopSharing;
+  String get assistantDisclaimer;
+
+  /// Ready-made first questions, shown before the conversation starts.
+  List<String> get assistantSuggestions;
+
+  // Saved chats
+  String get assistantNewChat;
+  String get assistantHistory;
+  String get assistantNoChats;
+  String get assistantDeleteChatTitle;
+  String get assistantDeleteAll;
+  String get assistantDeleteAllBody;
+
+  // What the assistant may see
+  String get assistantSharingTitle;
+  String get assistantSharingIntro;
+  String get assistantPeriod;
+  String get assistantRangeThisMonth;
+  String get assistantRangeLast3Months;
+  String get assistantRangeLast6Months;
+  String get assistantRangeThisYear;
+  String get assistantRangeCustom;
+  String get assistantShareTransactions;
+  String get assistantShareTransactionsHint;
+  String get assistantShareNotes;
+  String get assistantShareNotesHint;
+  String get assistantShareRecurring;
+  String get assistantShareRecurringHint;
+  String get assistantSharePeople;
+  String get assistantSharePeopleHint;
+  String get assistantSharingReset;
+  String get assistantSharingMore;
+
+  // Copying and sharing answers
+  String get assistantCopy;
+  String get assistantShare;
+  String get assistantCopied;
+
   /// The bar that gathers the smaller categories in the comparison chart.
   String get otherCategories;
   String answerTopCategory(String category, String amount, String percent);

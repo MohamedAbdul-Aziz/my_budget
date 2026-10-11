@@ -744,6 +744,16 @@ class AppStringsUk extends AppStrings {
     FailureCode.nothingToSettle => 'Нічого закривати.',
     FailureCode.settlementAlreadyLogged =>
       'Цей розрахунок уже є у вашому бюджеті.',
+    FailureCode.questionRequired => 'Введіть запитання.',
+    FailureCode.questionTooLong =>
+      'Запитання має бути коротшим за 500 символів.',
+    FailureCode.summaryTooLarge =>
+      'Даних забагато, щоб скласти підсумок для помічника.',
+    FailureCode.aiUnavailable =>
+      'Помічник зараз недоступний. Спробуйте пізніше.',
+    FailureCode.aiBusy => 'Помічник зайнятий. Спробуйте за хвилину.',
+    FailureCode.aiDailyLimit =>
+      'Ви досягли денного ліміту помічника. Спробуйте завтра.',
   };
 
   @override
@@ -1372,6 +1382,131 @@ class AppStringsUk extends AppStrings {
 
   @override
   String get askTopIncome => 'Головний дохід';
+
+  @override
+  String get askAi => 'Запитати ШІ';
+
+  @override
+  String get assistantTitle => 'ШІ-помічник';
+
+  @override
+  String get assistantEmpty =>
+      'Запитайте будь-що про свої витрати за останні три місяці.';
+
+  @override
+  String get assistantHint => 'Поставте запитання';
+
+  @override
+  String get assistantSend => 'Надіслати';
+
+  @override
+  String get assistantConsentTitle => 'Перш ніж запитати';
+
+  @override
+  String get assistantConsentBody =>
+      'Щоб відповісти, застосунок надсилає ваше запитання, останні повідомлення та підсумок ваших сум (за категоріями, доходи, витрати й бюджети, за останні три місяці, якщо ви не оберете інший період) через наш сервер ШІ-провайдеру Groq. За замовчуванням більше нічого не надсилається: ні окремих операцій, ні нотаток, ні імен людей. Передавати більше можна в розділі «Що передавати». Наш сервер не зберігає ваші запитання й відповіді; він лише рахує, скільки запитань ви ставите щодня. Ви можете припинити передавання будь-коли.';
+
+  @override
+  String get assistantConsentAgree => 'Погоджуюся';
+
+  @override
+  String get assistantStopSharing => 'Припинити передавання';
+
+  @override
+  String get assistantDisclaimer =>
+      'Відповіді ШІ можуть бути помилковими. Перевіряйте важливі цифри.';
+
+  @override
+  List<String> get assistantSuggestions => [
+    'Де я можу заощадити?',
+    'Як цей місяць порівняно з минулим?',
+    'Чи вкладаюся я в бюджет?',
+  ];
+
+  @override
+  String get assistantNewChat => 'Новий чат';
+
+  @override
+  String get assistantHistory => 'Історія чатів';
+
+  @override
+  String get assistantNoChats =>
+      'Збережених чатів поки немає. Ваші чати з помічником зберігаються лише на цьому телефоні.';
+
+  @override
+  String get assistantDeleteChatTitle => 'Видалити цей чат?';
+
+  @override
+  String get assistantDeleteAll => 'Видалити всі чати';
+
+  @override
+  String get assistantDeleteAllBody =>
+      'Усі збережені чати з помічником буде видалено з цього телефона.';
+
+  @override
+  String get assistantSharingTitle => 'Що передавати';
+
+  @override
+  String get assistantSharingIntro =>
+      'Підсумок ваших сум завжди надсилається з кожним запитанням. Увімкніть те, що ще має бачити помічник.';
+
+  @override
+  String get assistantPeriod => 'Період';
+
+  @override
+  String get assistantRangeThisMonth => 'Цей місяць';
+
+  @override
+  String get assistantRangeLast3Months => '3 місяці';
+
+  @override
+  String get assistantRangeLast6Months => '6 місяців';
+
+  @override
+  String get assistantRangeThisYear => 'Цей рік';
+
+  @override
+  String get assistantRangeCustom => 'Свій період';
+
+  @override
+  String get assistantShareTransactions => 'Операції';
+
+  @override
+  String get assistantShareTransactionsHint => 'Кожна: сума, категорія й дата';
+
+  @override
+  String get assistantShareNotes => 'Нотатки';
+
+  @override
+  String get assistantShareNotesHint => 'Те, що ви писали до операцій';
+
+  @override
+  String get assistantShareRecurring => 'Регулярні платежі';
+
+  @override
+  String get assistantShareRecurringHint =>
+      'Рахунки, підписки й доходи, і що до сплати';
+
+  @override
+  String get assistantSharePeople => 'Люди й борги';
+
+  @override
+  String get assistantSharePeopleHint => 'Імена й хто кому винен';
+
+  @override
+  String get assistantSharingReset => 'Лише підсумок';
+
+  @override
+  String get assistantSharingMore => 'Ви передаєте більше, ніж підсумок.';
+
+  @override
+  String get assistantCopy => 'Копіювати';
+
+  @override
+  String get assistantShare => 'Поділитися';
+
+  @override
+  String get assistantCopied => 'Відповідь скопійовано';
 
   @override
   String get otherCategories => 'Інші';

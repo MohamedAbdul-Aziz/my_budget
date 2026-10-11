@@ -682,6 +682,12 @@ class AppStringsZh extends AppStrings {
     FailureCode.transactionSettled => '已结清的交易无法修改。',
     FailureCode.nothingToSettle => '没有需要结清的内容。',
     FailureCode.settlementAlreadyLogged => '这次结算已记入预算。',
+    FailureCode.questionRequired => '请输入问题。',
+    FailureCode.questionTooLong => '问题请少于 500 个字符。',
+    FailureCode.summaryTooLarge => '你的数据太多，无法为助手汇总。',
+    FailureCode.aiUnavailable => '助手暂时不可用，请稍后再试。',
+    FailureCode.aiBusy => '助手正忙，请一分钟后再试。',
+    FailureCode.aiDailyLimit => '今天的助手使用次数已达上限，请明天再试。',
   };
 
   @override
@@ -1253,6 +1259,125 @@ class AppStringsZh extends AppStrings {
 
   @override
   String get askTopIncome => '最大收入';
+
+  @override
+  String get askAi => '问 AI';
+
+  @override
+  String get assistantTitle => 'AI 助手';
+
+  @override
+  String get assistantEmpty => '询问你最近三个月支出的任何问题。';
+
+  @override
+  String get assistantHint => '输入问题';
+
+  @override
+  String get assistantSend => '发送';
+
+  @override
+  String get assistantConsentTitle => '提问之前';
+
+  @override
+  String get assistantConsentBody =>
+      '为了回答，应用会通过我们的服务器将你的问题、最近几条消息以及你的总额摘要（按类别、收入、支出和预算，默认为最近三个月，除非你选择其他时间范围）发送给 AI 服务商 Groq。默认情况下不会发送其他任何内容：没有单笔交易、备注或人名。你可以在“分享内容”中选择分享更多。我们的服务器不保存你的问题或回答，只统计你每天的提问次数。你可以随时停止共享。';
+
+  @override
+  String get assistantConsentAgree => '我同意';
+
+  @override
+  String get assistantStopSharing => '停止共享';
+
+  @override
+  String get assistantDisclaimer => 'AI 的回答可能有误，请核对重要数字。';
+
+  @override
+  List<String> get assistantSuggestions => [
+    '我可以在哪里省钱？',
+    '这个月和上个月相比如何？',
+    '我的预算执行得怎么样？',
+  ];
+
+  @override
+  String get assistantNewChat => '新对话';
+
+  @override
+  String get assistantHistory => '对话记录';
+
+  @override
+  String get assistantNoChats => '还没有保存的对话。你与助手的对话只保存在这部手机上。';
+
+  @override
+  String get assistantDeleteChatTitle => '删除此对话？';
+
+  @override
+  String get assistantDeleteAll => '删除所有对话';
+
+  @override
+  String get assistantDeleteAllBody => '与助手的所有已保存对话都将从这部手机上删除。';
+
+  @override
+  String get assistantSharingTitle => '分享内容';
+
+  @override
+  String get assistantSharingIntro => '每个问题都会附带你的总额摘要。打开你希望助手看到的其他内容。';
+
+  @override
+  String get assistantPeriod => '时间范围';
+
+  @override
+  String get assistantRangeThisMonth => '本月';
+
+  @override
+  String get assistantRangeLast3Months => '3 个月';
+
+  @override
+  String get assistantRangeLast6Months => '6 个月';
+
+  @override
+  String get assistantRangeThisYear => '今年';
+
+  @override
+  String get assistantRangeCustom => '自定义';
+
+  @override
+  String get assistantShareTransactions => '交易明细';
+
+  @override
+  String get assistantShareTransactionsHint => '每一笔：金额、类别和日期';
+
+  @override
+  String get assistantShareNotes => '备注';
+
+  @override
+  String get assistantShareNotesHint => '你为每笔交易写的内容';
+
+  @override
+  String get assistantShareRecurring => '定期付款';
+
+  @override
+  String get assistantShareRecurringHint => '账单、订阅和收入，以及到期情况';
+
+  @override
+  String get assistantSharePeople => '人员与欠款';
+
+  @override
+  String get assistantSharePeopleHint => '姓名，以及谁欠谁';
+
+  @override
+  String get assistantSharingReset => '仅摘要';
+
+  @override
+  String get assistantSharingMore => '你正在分享摘要以外的内容。';
+
+  @override
+  String get assistantCopy => '复制';
+
+  @override
+  String get assistantShare => '分享';
+
+  @override
+  String get assistantCopied => '已复制回答';
 
   @override
   String get otherCategories => '其他';
